@@ -5,6 +5,15 @@ on:
   push:
     branches: [main]
 
+# Least-privilege default for the default GITHUB_TOKEN (OWASP A05 Security
+# Misconfiguration): none of this workflow's jobs write to the repo, open PRs/issues, or
+# touch packages — read-only `contents` is all any of them needs, so declare it
+# explicitly here rather than relying on the repo/org's default token permission
+# setting (which this workflow can't see or verify, and which could change). A job can
+# still opt into more if a future job genuinely needs it.
+permissions:
+  contents: read
+
 jobs:
   guardrails:
     name: Factory guardrails
