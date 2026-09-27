@@ -37,7 +37,7 @@ export default async function RepoPage({ params }: PageProps) {
         href={`https://github.com/${repo.github}`}
         className="text-sm text-zinc-500 hover:underline"
         target="_blank"
-        rel="noreferrer"
+        rel="noopener noreferrer"
       >
         github.com/{repo.github}
       </a>
