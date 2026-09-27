@@ -1,11 +1,11 @@
 factory:
-  current_run: "2026-09-27T18:50:40Z"
-  holder: dev
-  last_run: "2026-09-27T17:04:02Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-27T19:09:01Z"
 
 product:
   current_version: "0.0.0-bootstrap"
-  current_focus: "Phase 1 walking skeleton"
+  current_focus: "Phase 2 — ingestion & metrics"
 
 execution:
   active_tasks: []
@@ -13,21 +13,21 @@ execution:
   open_prs: []
 
 health:
-  ci: unknown
+  ci: green
   security: unknown
   production: not_deployed
   infrastructure: none
 
 metrics:
-  runs: 1
-  features_completed: 0
+  runs: 2
+  features_completed: 1
   bugs_fixed: 0
   security_issues_fixed: 0
   deployments: 0
   failed_runs: 0
 
 next_actions:
-  - "Stand up Phase 1 walking skeleton (see docs/WORKPLAN.md)"
+  - "Phase 2: GitHub Actions ingestion job -> RepositorySnapshot in SQLite; star-growth chart; open Phase 2 roadmap issues (see PROJECT_STATE.md)"
 
 security:
   last_run: null

@@ -1,24 +1,24 @@
 {
-  "generated_at": "2026-09-27T17:16:20.401094+00:00",
+  "generated_at": "2026-09-27T19:14:19.295227+00:00",
   "product": {
     "current_version": "0.0.0-bootstrap",
-    "current_focus": "Phase 1 walking skeleton"
+    "current_focus": "Phase 2 \u2014 ingestion & metrics"
   },
   "metrics": {
-    "runs": 1,
-    "features_completed": 0,
+    "runs": 2,
+    "features_completed": 1,
     "bugs_fixed": 0,
     "security_issues_fixed": 0,
     "deployments": 0,
     "failed_runs": 0
   },
   "health": {
-    "ci": "unknown",
+    "ci": "green",
     "security": "unknown",
     "production": "not_deployed",
     "infrastructure": "none"
   },
-  "open_decisions": 3,
+  "open_decisions": 1,
   "security_findings": {
     "total": 0,
     "open": 0,
