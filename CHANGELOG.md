@@ -40,3 +40,11 @@ entries.
   idempotency, per-repo isolation, graceful degradation on fetch failure, `github`-slug
   shape validation against `docs/security/README.md`'s open SSRF item). Closes #16, #17.
   (dev)
+- 2026-09-27 — Expanded tracked repos from 2 to 5 (LangChain, vLLM, Coolify added
+  alongside Ollama, Supabase) to reach `docs/WORKPLAN.md`'s Phase 2 gate minimum. Each
+  new `content/repos/*.md` page is hand-drafted (What it does / Why people use it /
+  Pros / Cons), not a scraped GitHub description; licenses verified against each repo's
+  actual `LICENSE` file rather than assumed. Open WebUI deliberately excluded — its 2025
+  license change (v0.6.6+) moved it off an OSI-approved license. PR #23. Manually
+  triggered `ingestion.yml` afterward so day-1 snapshot history exists for all 5 repos
+  immediately rather than waiting for the next daily cron. (dev)

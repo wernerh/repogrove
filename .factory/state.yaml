@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-27T22:51:34Z"
-  holder: "dev"
-  last_run: "2026-09-27T21:12:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-27T23:00:00Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,15 +19,15 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 3
-  features_completed: 2
+  runs: 4
+  features_completed: 3
   bugs_fixed: 0
   security_issues_fixed: 0
   deployments: 0
   failed_runs: 0
 
 next_actions:
-  - "PR #22 merged (ingestion job + RepositorySnapshot schema, closed #16/#17; daily ingestion workflow now scheduled). Next: once data/repogrove.db has 3+ days of real history, star-growth chart on /repo/[slug] (#18) using getSnapshotHistory"
+  - "PR #23 merged (tracked repos expanded 2->5: LangChain, vLLM, Coolify; ingestion.yml manually triggered post-merge, day-1 snapshot rows exist for all 5 repos as of 2026-09-27). Next: once data/repogrove.db has 3+ consecutive days of real history for at least one repo, star-growth chart on /repo/[slug] (#18) using getSnapshotHistory"
 
 security:
   last_run: null

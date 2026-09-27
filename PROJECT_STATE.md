@@ -13,11 +13,13 @@ without the app needing an account, a database migration story, or a deploy targ
 **Phase 2 — Ingestion & metrics** (started this run). Phase 1 landed in PR #10.
 
 ## Next action (exactly one)
-PR #22 merged (ingestion job + SQLite schema, closed #16/#17; ingestion workflow now
-runs daily). Next: give it a few days to accumulate real snapshot history, then the
-star-growth chart on `/repo/[slug]` reading `getSnapshotHistory` (#18) — check
-`data/repogrove.db` has 3+ days of rows for at least one repo before starting; if not
-yet, that's a quiet-run-is-a-success wait, not a blocker to work around.
+PR #23 merged: tracked repos expanded 2→5 (added LangChain, vLLM, Coolify) to meet
+`docs/WORKPLAN.md`'s Phase 2 gate minimum; `ingestion.yml` manually triggered right
+after merge, so `data/repogrove.db` now has day-1 snapshot rows for all 5 repos
+(2026-09-27) — daily cron continues from here. Next: once 3+ consecutive days of real
+history exist for at least one repo, build the star-growth chart on `/repo/[slug]`
+reading `getSnapshotHistory` (#18) — check `data/repogrove.db` row-count-per-repo
+before starting; if under 3 days, that's a quiet-run-is-a-success wait, not a blocker.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -43,13 +45,15 @@ dev-lane runs (4h) before re-scoping if not done — run 1 shipped ingestion job
 (PR #22, merged); run 2 covers the star-growth chart, once history exists to chart.
 
 ## Blockers and attempts
-None — PR #22 (ingestion job + schema) merged clean this run, all CI green.
+None — PR #23 (5-repo expansion) merged clean this run, all CI green; ingestion
+manually triggered post-merge, day-1 history now exists for all 5 repos.
 
 ## Milestones
 - [x] 2026-09-27 — Repo created, factory bootstrapped
 - [x] 2026-09-27 — Phase 1 walking skeleton (homepage + Grove/repo pages, static content,
   static export for Azure Storage hosting) — #5, #6, #7
 - [x] 2026-09-27 — Phase 2 ingestion job + `RepositorySnapshot` schema (ADR-005) — #16,
-  #17, PR #22. Daily ingestion workflow now scheduled; chart/trending/rising/heat still
-  open (#18-#21), gated on real snapshot history accumulating.
+  #17, PR #22. Daily ingestion workflow now scheduled.
+- [x] 2026-09-27 — Tracked repos expanded 2→5 (PR #23), meeting WORKPLAN's Phase 2 gate
+  minimum; chart/trending/rising/heat (#18-#21) still open, gated on 3+ days of history.
 - [ ] Phase 3 — search, SEO, newsletter signup
