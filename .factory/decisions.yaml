@@ -10,7 +10,7 @@
   recommended_default: "Cloudflare Pages"
   reversibility: expensive
   asked_at: "2026-09-27T00:00:00Z"
-  email_thread_id: null
+  email_thread_id: "1a0e3c35fae4b534"
   default_due_at: null
   status: OPEN
   answer: null
@@ -26,7 +26,7 @@
   recommended_default: "Keep public"
   reversibility: cheap
   asked_at: "2026-09-27T00:00:00Z"
-  email_thread_id: null
+  email_thread_id: "1a0e3c35fae4b534"
   default_due_at: "2026-09-30T00:00:00Z"
   status: OPEN
   answer: null
@@ -42,7 +42,7 @@
   recommended_default: "Editorial/content-forward"
   reversibility: cheap
   asked_at: "2026-09-27T00:00:00Z"
-  email_thread_id: null
+  email_thread_id: "1a0e3c35fae4b534"
   default_due_at: "2026-09-30T00:00:00Z"
   status: OPEN
   answer: null
