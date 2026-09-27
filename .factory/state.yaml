@@ -1,0 +1,59 @@
+factory:
+  current_run: null
+  holder: null
+  last_run: null
+
+product:
+  current_version: "0.0.0-bootstrap"
+  current_focus: "Phase 1 walking skeleton"
+
+execution:
+  active_tasks: []
+  blocked_tasks: []
+  open_prs: []
+
+health:
+  ci: unknown
+  security: unknown
+  production: not_deployed
+  infrastructure: none
+
+metrics:
+  runs: 0
+  features_completed: 0
+  bugs_fixed: 0
+  security_issues_fixed: 0
+  deployments: 0
+  failed_runs: 0
+
+next_actions:
+  - "Stand up Phase 1 walking skeleton (see docs/WORKPLAN.md)"
+
+security:
+  last_run: null
+  next_action: "Bootstrap docs/security/: OWASP coverage pass on this bootstrap's CI/CD config"
+  timebox: null
+  failed_attempts: 0
+  open_findings:
+    critical: 0
+    high: 0
+    medium: 0
+    low: 0
+    info: 0
+  fixed_unverified: []
+  verified_fixes: []
+  owasp_reviewed: {}
+
+design:
+  last_run: null
+  next_action: "Start UX-PRINCIPLES.md and DESIGN-SYSTEM.md tokens for Phase 1 pages"
+  timebox: null
+  failed_attempts: 0
+  open_findings:
+    blocker: 0
+    major: 0
+    minor: 0
+    polish: 0
+  fixed_unverified: []
+  verified_fixes: []
+  pages_reviewed: {}

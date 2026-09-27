@@ -1,0 +1,49 @@
+# Owner-decision register. See docs/DECISION-PROTOCOL.md.
+- id: RG-2
+  lane: dev
+  question: >
+    Which hosting target should RepoGrove use? (1) Cloudflare Pages — matches your
+    original spec preference; (2) Vercel — first-party Next.js hosting, simplest DX;
+    (3) an existing cloud account of yours, if you have one. Deploy jobs stay disabled
+    until this is answered.
+  options: ["Cloudflare Pages", "Vercel", "Owner's existing account"]
+  recommended_default: "Cloudflare Pages"
+  reversibility: expensive
+  asked_at: "2026-09-27T00:00:00Z"
+  email_thread_id: null
+  default_due_at: null
+  status: OPEN
+  answer: null
+  answered_at: null
+
+- id: RG-3
+  lane: dev
+  question: >
+    Repo visibility — I created wernerh/repogrove as Public (supports future community
+    contributions per the spec, and there's no PII risk in a content-only repo). Keep it
+    public, or make it private for now?
+  options: ["Keep public", "Make private"]
+  recommended_default: "Keep public"
+  reversibility: cheap
+  asked_at: "2026-09-27T00:00:00Z"
+  email_thread_id: null
+  default_due_at: "2026-09-30T00:00:00Z"
+  status: OPEN
+  answer: null
+  answered_at: null
+
+- id: RG-4
+  lane: design
+  question: >
+    Overall visual direction for RepoGrove: a clean, content-forward editorial look
+    (recommended — reads as its own product, not a GitHub clone), or something closer to
+    a classic "directory/marketplace" look (cards, badges, more visual density)?
+  options: ["Editorial/content-forward", "Directory/marketplace-dense"]
+  recommended_default: "Editorial/content-forward"
+  reversibility: cheap
+  asked_at: "2026-09-27T00:00:00Z"
+  email_thread_id: null
+  default_due_at: "2026-09-30T00:00:00Z"
+  status: OPEN
+  answer: null
+  answered_at: null
