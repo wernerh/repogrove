@@ -10,19 +10,21 @@ knowing what it is, whether it's active, what else they could use, and why they'
 without the app needing an account, a database migration story, or a deploy target yet.
 
 ## Current phase
-**Phase 0 — Discovery & bootstrap** (this PR). Next: **Phase 1 — Walking skeleton.**
+**Phase 1 — Walking skeleton** (this PR closes it). Next: **Phase 2 — Ingestion & metrics.**
 
 ## Next action (exactly one)
-Stand up the Next.js walking skeleton: static homepage + one Grove page + one repo page,
-rendering from hand-written Markdown fixtures in `/content`, no database yet, no live
-ingestion yet. See `docs/WORKPLAN.md` Phase 1.
+Start Phase 2: GitHub Actions ingestion job for stars/forks/contributors/last-commit per
+`/content`-referenced repo, writing `RepositorySnapshot` history to SQLite; then a
+star-growth chart on `/repo/[slug]`. Design first: an ADR for whether SQLite is committed
+as a build artifact or regenerated at build time (`docs/WORKPLAN.md` Phase 2 flags this
+as a decision, not an ad-hoc call). Open the Phase 2 roadmap issues before starting.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
 |---|---|---|---|---|
 | 2026-09-27 | Stack: Next.js/React/TS + Tailwind, Git-native MD content + Postgres/SQLite for volatile data | Owner spec + ADR-001 | LOCKED | expensive |
-| 2026-09-27 | Hosting: undecided, deploy jobs disabled | Owner spec + ADR-002 | PROVISIONAL | expensive |
-| 2026-09-27 | Repo visibility: public | No PII in content repo; supports future community contribution | PROVISIONAL | cheap |
+| 2026-09-27 | Hosting: Azure Storage static-website hosting (owner answered RG-2); app built with `output: "export"` from Phase 1 on | Owner reply + ADR-002 | ANSWERED | expensive |
+| 2026-09-27 | Repo visibility: public | Owner confirmed ("happy with public") | ANSWERED | cheap |
 
 ## Assumptions
 - A1: "Grove" content and repo pages are hand-authored/agent-drafted Markdown reviewed via
@@ -35,14 +37,15 @@ Accounts, paid subscriptions, watchlists/alerts, elaborate recommendation engine
 crawling infra, admin CMS, live deploy — see spec §30, §33 and ADR-002.
 
 ## Timebox
-Phase 0 bootstrap: this run. Phase 1 walking skeleton: 2 dev-lane runs (4h) before
-re-scoping if not done.
+Phase 1 walking skeleton: done in 1 dev-lane run (within the 2-run/4h budget). Phase 2
+ingestion & metrics: 2 dev-lane runs (4h) before re-scoping if not done.
 
 ## Blockers and attempts
-None yet — first run.
+None — Phase 1 landed clean on the first attempt.
 
 ## Milestones
 - [x] 2026-09-27 — Repo created, factory bootstrapped
-- [ ] Phase 1 — walking skeleton (homepage + 1 Grove + 1 repo page, static content)
+- [x] 2026-09-27 — Phase 1 walking skeleton (homepage + Grove/repo pages, static content,
+  static export for Azure Storage hosting) — #5, #6, #7
 - [ ] Phase 2 — GitHub ingestion → SQLite/Postgres, trending/rising
 - [ ] Phase 3 — search, SEO, newsletter signup
