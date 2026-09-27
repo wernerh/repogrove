@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-27T20:20:00Z"
-  holder: "dev"
-  last_run: "2026-09-27T19:09:01Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-27T21:12:00Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -10,7 +10,8 @@ product:
 execution:
   active_tasks: []
   blocked_tasks: []
-  open_prs: []
+  open_prs:
+    - "#22 feat: Phase 2 kickoff — RepositorySnapshot ingestion job + storage (dev, factory label, awaiting CI)"
 
 health:
   ci: green
@@ -19,7 +20,7 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 2
+  runs: 3
   features_completed: 1
   bugs_fixed: 0
   security_issues_fixed: 0
@@ -27,7 +28,7 @@ metrics:
   failed_runs: 0
 
 next_actions:
-  - "Phase 2: GitHub Actions ingestion job -> RepositorySnapshot in SQLite; star-growth chart; open Phase 2 roadmap issues (see PROJECT_STATE.md)"
+  - "Merge PR #22 once CI is green (ingestion job + RepositorySnapshot schema, closes #16/#17); then star-growth chart on /repo/[slug] (#18) using getSnapshotHistory"
 
 security:
   last_run: null
