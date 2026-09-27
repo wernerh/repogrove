@@ -12,6 +12,8 @@ orchestrating agents.
 
 ## Core projects
 - [Ollama](/repo/ollama) — run large language models locally with a simple CLI/API.
+- [LangChain](/repo/langchain) — framework for composing LLM calls into applications.
+- [vLLM](/repo/vllm) — high-throughput inference and serving engine for production LLMs.
 
 ## Related Groves
 Developer Tools, Self-Hosted

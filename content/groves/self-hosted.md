@@ -12,6 +12,7 @@ Projects that let you replace a hosted SaaS with something you run and control y
 ## Core projects
 - [Supabase](/repo/supabase) — open-source Firebase alternative (Postgres, auth,
   storage, edge functions).
+- [Coolify](/repo/coolify) — self-hostable PaaS alternative to Vercel, Heroku, and Netlify.
 
 ## Related Groves
 AI, Developer Tools
