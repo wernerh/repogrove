@@ -9,12 +9,12 @@ Technical considerations / Testing / Security / Rollout / Documentation / Depend
 - [x] Factory bootstrap (this PR)
 
 ## Phase 1 — Walking skeleton
-- [ ] Scaffold Next.js + TypeScript + Tailwind app in `/src`
-- [ ] Content loader: read `/content` Markdown + YAML frontmatter at build time
-- [ ] Homepage (minimal — links to the one Grove and one repo page)
-- [ ] One Grove page (`/grove/ai`) rendering from `content/groves/ai.md`
-- [ ] One repo page (`/repo/ollama`) rendering from `content/repos/ollama.md`
-- [ ] Smoke tests for all three pages; CI lint/test/build green
+- [x] Scaffold Next.js + TypeScript + Tailwind app in `/src` (#5)
+- [x] Content loader: read `/content` Markdown + YAML frontmatter at build time (#6)
+- [x] Homepage (minimal — links to the one Grove and one repo page) (#7)
+- [x] One Grove page (`/grove/ai`) rendering from `content/groves/ai.md` (#7)
+- [x] One repo page (`/repo/ollama`) rendering from `content/repos/ollama.md` (#7)
+- [x] Smoke tests for all three pages; CI lint/test/build green (#7)
 
 ## Phase 2 — Ingestion & metrics
 - [ ] GitHub API ingestion job (GitHub Actions) → snapshot storage
