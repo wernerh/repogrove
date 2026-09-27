@@ -26,6 +26,10 @@ next-env.d.ts
 *.sqlite3
 *.db
 !**/fixtures/**
+# Exception: the RepositorySnapshot store is a deliberate, ADR-005-documented build
+# artifact of public GitHub repo metrics (stars/forks/open_issues), never real user data
+# or secrets — the scheduled ingestion job is the only writer, see ADR-005.
+!data/repogrove.db
 
 # Keys and credentials
 *.pem

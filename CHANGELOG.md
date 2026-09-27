@@ -27,3 +27,16 @@ entries.
   `generateStaticParams` — no hardcoded routes. Markdown bodies render through
   `react-markdown` (no `dangerouslySetInnerHTML`). 23 Vitest unit/render tests; `npm run
   lint`/`test`/`build` all green locally. Closes #5, #6, #7. (dev)
+- 2026-09-27 — Phase 2 kickoff: `RepositorySnapshot` ingestion. ADR-005 resolves
+  `docs/WORKPLAN.md`'s open storage question (committed SQLite, not build-time
+  regeneration — reconciles ADR-002/ADR-003 given Azure Storage static hosting has no
+  server to query live). `scripts/ingestion/fetch-snapshots.mjs` reads every repo in
+  `/content` frontmatter, fetches stars/forks/open_issues/watchers from the GitHub API,
+  and idempotently upserts into the now-committed `data/repogrove.db`
+  (`.gitignore` carries one explicit exception for it); a repo whose fetch fails is
+  skipped with a warning rather than failing the run. `.github/workflows/ingestion.yml`
+  runs it daily and commits snapshot changes directly (no PR — mechanical, non-editorial
+  data per `CLAUDE.md` rule 4). 15 new Vitest tests (schema round-trip, upsert
+  idempotency, per-repo isolation, graceful degradation on fetch failure, `github`-slug
+  shape validation against `docs/security/README.md`'s open SSRF item). Closes #16, #17.
+  (dev)

@@ -1,0 +1,75 @@
+name: Repository snapshot ingestion
+
+# Phase 2's RepositorySnapshot collector. Fetches public GitHub metrics for every repo
+# referenced in /content and idempotently upserts them into the committed
+# data/repogrove.db (see docs/adr/ADR-005-repository-snapshot-storage.md). Runs daily,
+# plus workflow_dispatch for a manual/on-demand run.
+#
+# Never touches secrets beyond the default GITHUB_TOKEN (raises the GitHub API rate
+# limit; no owner-provisioned credential is required) and never fails the build over a
+# single repo's fetch failure — see scripts/ingestion/fetch-snapshots.mjs.
+
+on:
+  schedule:
+    - cron: "17 4 * * *" # once a day, off the hour to avoid the GitHub Actions traffic spike
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ingestion
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    name: Fetch repository snapshots
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history, not the default shallow fetch-depth: 1 — the commit-and-push
+          # step below may need to rebase our one data-only commit onto a newer main if
+          # it moved during this run, which needs a real common ancestor to rebase onto.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install
+        run: npm ci
+
+      - name: Run ingestion
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/ingestion/fetch-snapshots.mjs
+
+      - name: Commit snapshot updates, if any
+        run: |
+          set -eu
+          if git diff --quiet -- data/repogrove.db; then
+            echo "No snapshot changes to commit."
+            exit 0
+          fi
+          git config user.name "repogrove-factory[bot]"
+          git config user.email "repogrove-factory@users.noreply.github.com"
+          git add data/repogrove.db
+          git commit -m "chore(data): refresh repository snapshots" -m "This is a mechanical ingestion commit (public GitHub repo metrics only) — CLAUDE.md rule 4: volatile/computed data is populated by ingestion jobs and never hand-edited. See docs/adr/ADR-005-repository-snapshot-storage.md."
+
+          # main can move between checkout and here (an editorial PR merging, or a
+          # concurrent manual workflow_dispatch run) — retry the push a few times,
+          # rebasing our one data-only commit onto whatever main became, rather than
+          # letting the run go red and silently lose a day's snapshot.
+          for attempt in 1 2 3; do
+            if git push; then
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/3) — rebasing onto the latest main and retrying."
+            git fetch origin main
+            git rebase origin/main
+          done
+          echo "::error::Failed to push repository snapshots after 3 attempts."
+          exit 1
