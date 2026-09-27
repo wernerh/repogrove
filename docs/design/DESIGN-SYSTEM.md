@@ -37,10 +37,19 @@ neon/Y2K, playful maximalism, script type, heavy skeuomorphism.
 ## Color
 
 Generated in OKLCH (perceptually uniform steps), validated against WCAG 2.1 contrast
-requirements programmatically (script + full output in this PR's description — not
-eyeballed). Three layers, never mixed: **primitive** (raw scale step) → **semantic**
-(role) → **component** (what a component actually references). Components must only ever
-reference semantic tokens, never a raw `neutral-40` or a hex value directly.
+requirements programmatically — see `docs/design/tokens/generate_palette.py`, committed
+in this PR, not eyeballed. Three layers, never mixed: **primitive** (raw scale step) →
+**semantic** (role) → **component** (what a component actually references). Components
+must only ever reference semantic tokens, never a raw `neutral-40` or a hex value
+directly.
+
+Both scales below use the full 11-/9-step convention from the method this doc follows
+even though only a subset is referenced elsewhere in this doc today (e.g. `brand-80`/
+`brand-90` are marked "rarely used"). That's deliberate headroom, not padding: a
+9-step brand scale is the minimum the method recommends for reliable hover/active/
+disabled derivations later, and regenerating a scale after the fact (once real
+components depend on specific steps) is a breaking token change — cheaper to have the
+full ramp now, when nothing yet depends on it, than to insert a step later.
 
 ### Neutral scale (hue 220 — cool, near-desaturated)
 
@@ -80,16 +89,20 @@ illustrated leaf anywhere.
 
 ### Semantic colors
 
-Each has a **text** value (validated ≥4.5:1 on `bg.default`) and a **surface** value
-(tinted background, decorative only — never the sole carrier of meaning; always paired
-with an icon and a text label per WCAG 2.1 SC 1.4.1, "Use of Color").
+Each has a **text** value, independently solved and validated ≥4.5:1 **in both themes**
+(light text against `bg.default` light = `neutral-0`; dark text against `bg.default` dark
+= `neutral-90` — not the same hex reused across themes, which would fail: see "Reproducing
+these numbers" below for what happens if you naively reuse the light value in dark mode).
+Each also has a **surface** value (tinted background, decorative only — never the sole
+carrier of meaning; always paired with an icon and a text label per WCAG 2.1 SC 1.4.1,
+"Use of Color").
 
-| Role | Text (on light bg) | Surface (light) | Contrast (text/bg) |
+| Role | Text — light (on `neutral-0`) | Text — dark (on `neutral-90`) | Surface (light) |
 |---|---|---|---|
-| `success` | `#00791e` (oklch 50% 0.16 145) | `neutral-0` + `brand-10`-style tint at hue 145, 95% L | 5.44:1 |
-| `warning` | `#986600` (oklch 55% 0.16 75) | same method, hue 75 | 4.82:1 |
-| `error` | `#ba2b2e` (oklch 52% 0.18 25) | same method, hue 25 | 5.88:1 |
-| `info` | `#0070a6` (oklch 52% 0.14 240) | same method, hue 240 | 5.28:1 |
+| `success` | `#00791e` (oklch 50% 0.16 145) — 5.44:1 | `#399341` (oklch 59% 0.147 145) — 4.66:1 | `neutral-0` + tint at hue 145, 95% L |
+| `warning` | `#986600` (oklch 55% 0.16 75) — 4.82:1 | `#af7600` (oklch 61% 0.147 75) — 4.65:1 | same method, hue 75 |
+| `error` | `#ba2b2e` (oklch 52% 0.18 25) — 5.88:1 | `#db5853` (oklch 63% 0.166 25) — 4.76:1 | same method, hue 25 |
+| `info` | `#0070a6` (oklch 52% 0.14 240) — 5.28:1 | `#1c89c5` (oklch 60% 0.129 240) — 4.67:1 | same method, hue 240 |
 
 Colorblind check: success (green, hue 145) and error (red, hue 25) are never the *only*
 distinguishing signal between two adjacent states in the same view (e.g. a pass/fail pair)
@@ -98,14 +111,15 @@ distinguishing signal between two adjacent states in the same view (e.g. a pass/
 ### Momentum / "Heat" (spec §7, §23 — product-specific, not a generic semantic color)
 
 Never a single opaque score. Four documented states, each **icon + label + color**, color
-never sole signal:
+never sole signal. Text color independently solved per theme, same method as semantic
+colors above (not a reused light-mode hex):
 
-| State | Icon | Label | Text color | Hex | Contrast |
-|---|---|---|---|---|---|
-| Rising | 🔥 | "Rising" | oklch(55% 0.17 45) | `#b84b00` | 5.05:1 |
-| Active | 🟢 | "Active" | oklch(45% 0.15 145) | `#006818` | 6.83:1 |
-| Slowing | 🟡 | "Slowing" | oklch(55% 0.16 75) | `#986600` | 4.82:1 (shares `warning` hue — both mean "caution/deceleration", intentional) |
-| Dormant | ⚪ | "Dormant" | `neutral-60` | `#5d6567` | 5.80:1 |
+| State | Icon | Label | Text — light (on `neutral-0`) | Text — dark (on `neutral-90`) |
+|---|---|---|---|---|
+| Rising | 🔥 | "Rising" | `#b84b00` (oklch 55% 0.17 45) — 5.05:1 | `#d06127` (oklch 62% 0.156 45) — 4.66:1 |
+| Active | 🟢 | "Active" | `#006818` (oklch 45% 0.15 145) — 6.83:1 | `#3f9246` (oklch 59% 0.138 145) — 4.65:1 |
+| Slowing | 🟡 | "Slowing" | `#986600` (oklch 55% 0.16 75) — 4.82:1 (shares `warning`'s hue — both mean "caution/deceleration", intentional) | `#af7600` — 4.65:1 |
+| Dormant | ⚪ | "Dormant" | `neutral-60` `#5d6567` — 5.80:1 | `neutral-40` `#a6acae` — 7.85:1 |
 
 A momentum chip's underlying signals (star growth, commit recency, release frequency,
 etc. — spec §7) must be inspectable on hover/expand, never just the badge alone — this is
@@ -128,16 +142,20 @@ sole boundary signal for an interactive element.
 
 ### Surfaces & text (semantic layer)
 
+Every contrast ratio below is measured against **that row's own theme** — the light
+column's ratio is against light `bg.default` (`neutral-0` / `#fbfcfc`), the dark column's
+against dark `bg.default` (`neutral-90` / `#131718`), never mixed across themes.
+
 | Token | Light | Dark |
 |---|---|---|
-| `bg.default` | `neutral-0` | `neutral-90` |
+| `bg.default` | `neutral-0` (`#fbfcfc`) | `neutral-90` (`#131718`) |
 | `bg.subtle` (page background behind cards) | `neutral-10` | `neutral-100` |
 | `bg.elevated` (cards, popovers) | `neutral-0` | `neutral-80` (stacks *upward* in dark mode per convention — elevated = lighter, not darker) |
-| `text.default` | `neutral-90` (17.56:1 on `bg.default`) | `neutral-10` (16.07:1 on `bg.default`) |
-| `text.secondary` | `neutral-60` (5.80:1) | `neutral-40` (7.85:1) |
-| `text.link` / `text.brand` | `brand-70` (9.47:1) | `brand-30` (9.88:1) |
-| `cta.fill` | `brand-60`, white text (6.26:1) | `brand-40`, `neutral-90` text |
-| `cta.fill.hover` | `brand-70` (9.73:1 with white text) | `brand-30` |
+| `text.default` | `neutral-90`, 17.56:1 vs. light `bg.default` | `neutral-10`, 16.07:1 vs. dark `bg.default` |
+| `text.secondary` | `neutral-60`, 5.80:1 vs. light `bg.default` | `neutral-40`, 7.85:1 vs. dark `bg.default` |
+| `text.link` / `text.brand` | `brand-70`, 9.47:1 vs. light `bg.default` | `brand-30`, 9.88:1 vs. dark `bg.default` |
+| `cta.fill` | `brand-60` fill, white text, 6.26:1 | `brand-40` fill, `neutral-90` (dark) text, 7.01:1 — white text would fail on this lighter dark-mode fill, so the CTA text flips to dark, not white |
+| `cta.fill.hover` | `brand-70` fill, white text, 9.73:1 | `brand-30` fill, `neutral-90` text |
 
 Dark mode is a second theme remapping semantics to different primitive steps — primitives
 themselves never change (per method: invert lightness, preserve hue, reduce chroma
@@ -169,10 +187,17 @@ prose**, per the blended theme statement above:
 **Scale:** ratio 1.25 ("Major Third" — editorial-leaning product, matches the blended
 tone), base 16px.
 
+`text-xs` sits below the practical legibility floor most style guides hold to for content
+a user actually needs to read. It stays in the scale (kept for the rare case of a purely
+decorative micro-label, e.g. a "sponsored" tag) but is scoped narrowly: **informational
+content never uses it.** Star counts, dates, and repo slugs — RepoGrove's actual
+"smallest-tier" content — use `text-sm` instead, not `text-xs`, precisely because they're
+informational, not decorative.
+
 | Token | Size (px / rem) | Role | Line height | Letter spacing |
 |---|---|---|---|---|
-| `text-xs` | 10px / 0.625rem | metadata, captions (mono for numbers) | 1.4 | +0.05em if all-caps |
-| `text-sm` | 13px / 0.8125rem | secondary body, helper text, table cells | 1.5 | 0 |
+| `text-xs` | 10px / 0.625rem | **decorative-only** micro-labels (e.g. a "sponsored" tag) — never metadata a user needs to read | 1.4 | +0.05em if all-caps |
+| `text-sm` | 13px / 0.8125rem | secondary body, helper text, table cells, **and all metadata** (star counts, dates, repo slugs — mono) | 1.5 | 0 |
 | `text-base` | 16px / 1rem | primary body copy | 1.6 (serif prose) / 1.5 (sans UI) | 0 |
 | `text-lg` | 20px / 1.25rem | card intros, lead paragraph | 1.5 | 0 |
 | `text-xl` | 25px / 1.5625rem | h3 — section headings | 1.25 | -0.01em |
@@ -189,15 +214,30 @@ statement; component-internal padding may drop to a 4px sub-unit where genuinely
 (the alternatives comparison table's cell padding), documented per-component, not as a
 second global scale.
 
-| Token | Value | Use |
-|---|---|---|
-| `space-1` | 8px | inline gap (icon + label), dense table cell padding |
-| `space-2` | 16px | padding inside small components (chips, buttons) |
-| `space-3` | 24px | padding inside standard components (card interior) |
-| `space-4` | 32px | section padding, card-to-card gap in a grid |
-| `space-5` | 40px | major section separation within a page |
-| `space-6` | 48px | page-level top/bottom padding |
-| `space-8` | 64px | hero whitespace (homepage only) |
+**Tailwind mapping — important, to avoid a config collision when this gets wired in
+(issue #5):** every value below is already a multiple of Tailwind's own default 4px
+spacing unit, so **do not** add a parallel `space-1`…`space-8` key set to
+`theme.extend.spacing` — that would either silently override Tailwind's default numeric
+scale (if keyed `1`…`8`) or produce non-idiomatic classes like `p-space-3` (if keyed
+literally). Instead this scale is documentation for *which* of Tailwind's own default
+numeric keys to use — no `theme.extend.spacing` entry needed at all. The "semantic name"
+column below is what this doc and future component specs call each step; the "Tailwind
+key" column is the literal class suffix a component uses (e.g. `p-6` for `space-3`):
+
+| Semantic name | Value | Tailwind key | Use |
+|---|---|---|---|
+| `space-1` | 8px | `2` (`p-2`, `gap-2`) | inline gap (icon + label), dense table cell padding |
+| `space-2` | 16px | `4` (`p-4`, `gap-4`) | padding inside small components (chips, buttons) |
+| `space-3` | 24px | `6` (`p-6`, `gap-6`) | padding inside standard components (card interior) |
+| `space-4` | 32px | `8` (`p-8`, `gap-8`) | section padding, card-to-card gap in a grid |
+| `space-5` | 40px | `10` (`p-10`) | major section separation within a page |
+| `space-6` | 48px | `12` (`p-12`) | page-level top/bottom padding |
+| `space-8` | 64px | `16` (`p-16`) | hero whitespace (homepage only) |
+
+The one config change actually needed later: constrain component code to *only* the
+even-numbered keys above (never odd keys like `p-3` or `p-5`) so the 8px rhythm holds —
+that's a lint/review convention for the dev lane to enforce once components exist, not a
+token-file change.
 
 **Grid:** 12-column, fluid gutters — desktop (≥1280px): 12 col / 24px gutter / 48px
 margin; tablet (768–1279px): 8 col / 16px gutter / 24px margin; mobile (<768px): 4 col /
@@ -262,12 +302,20 @@ Phase 1/2 pages land)
 
 ## WCAG 2.1 AA — floor, not aspiration
 
-Every token pairing above that carries text has a measured contrast ratio, not an
-eyeballed one (validated with `coloraide`, WCAG 2.1 formula, both themes). Full
-methodology and every candidate value tried (including the two that failed — a first
-`border.default` candidate at 1.59:1 and a first `warning` text candidate at 3.61:1 — and
-what replaced them) is recorded in this run's PR description so the reasoning survives,
-not just the final numbers.
+Every token pairing above that carries text has a measured contrast ratio, in **both**
+light and dark theme, not an eyeballed one and not a light-mode value naively reused in
+dark mode (reusing it would fail: e.g. `success`'s light-mode hex on the dark background
+measures 3.23:1, well under the 4.5:1 minimum — dark-mode values are independently
+solved, same recipe, higher lightness).
+
+Reproducing these numbers: `docs/design/tokens/generate_palette.py` (committed in this
+PR, not just described in a PR body — run it yourself, don't take the numbers on faith)
+regenerates every scale and re-validates every pairing above. Two candidate values from
+earlier in this run failed and are worth recording so the reasoning survives: a first
+`border.default` candidate at `neutral-30` measured 1.59:1 against the 3:1 UI minimum
+(replaced with `neutral-50`, 3.52:1), and a first `warning` light-mode text candidate at
+`oklch(62% 0.16 75)` measured 3.61:1 against the 4.5:1 text minimum (replaced with
+`oklch(55% 0.16 75)`, 4.82:1).
 
 ## Open questions / next steps for this lane
 
