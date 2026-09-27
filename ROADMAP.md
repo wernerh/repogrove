@@ -17,12 +17,12 @@ Technical considerations / Testing / Security / Rollout / Documentation / Depend
 - [x] Smoke tests for all three pages; CI lint/test/build green (#7)
 
 ## Phase 2 — Ingestion & metrics
-- [ ] GitHub API ingestion job (GitHub Actions) → snapshot storage
-- [ ] `RepositorySnapshot` schema + SQLite storage
-- [ ] Star-growth chart on repo pages
-- [ ] Trending page (`/trending`)
-- [ ] Rising page (`/rising`) — fast growth, not just absolute size
-- [ ] Momentum/"Heat" methodology implemented + documented (ADR-004)
+- [x] GitHub API ingestion job (GitHub Actions) → snapshot storage (#16, PR #22)
+- [x] `RepositorySnapshot` schema + SQLite storage (ADR-005) (#17, PR #22)
+- [ ] Star-growth chart on repo pages (#18)
+- [ ] Trending page (`/trending`) (#19)
+- [ ] Rising page (`/rising`) — fast growth, not just absolute size (#20)
+- [ ] Momentum/"Heat" methodology implemented + documented (ADR-004) (#21)
 
 ## Phase 3 — Search, SEO, alternatives, newsletter signup
 - [ ] Alternatives pages (`/alternative/:slug`) — open-source / free / commercial + best fit

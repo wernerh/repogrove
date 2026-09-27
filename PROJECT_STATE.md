@@ -13,10 +13,11 @@ without the app needing an account, a database migration story, or a deploy targ
 **Phase 2 — Ingestion & metrics** (started this run). Phase 1 landed in PR #10.
 
 ## Next action (exactly one)
-Merge PR #22 (RepositorySnapshot ingestion job + SQLite schema, closes #16/#17) once CI
-is green — opened this run, review already applied, awaiting CI on the PR head. Then:
-star-growth chart on `/repo/[slug]` reading `getSnapshotHistory` (#18), needs a few days
-of real snapshot history from the now-scheduled ingestion workflow to be worth building.
+PR #22 merged (ingestion job + SQLite schema, closed #16/#17; ingestion workflow now
+runs daily). Next: give it a few days to accumulate real snapshot history, then the
+star-growth chart on `/repo/[slug]` reading `getSnapshotHistory` (#18) — check
+`data/repogrove.db` has 3+ days of rows for at least one repo before starting; if not
+yet, that's a quiet-run-is-a-success wait, not a blocker to work around.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -38,16 +39,17 @@ crawling infra, admin CMS, live deploy — see spec §30, §33 and ADR-002.
 
 ## Timebox
 Phase 1 walking skeleton: done in 1 dev-lane run. Phase 2 ingestion & metrics: 2
-dev-lane runs (4h) before re-scoping if not done — this is run 1 of that budget
-(ingestion job + schema done, PR #22 open); run 2 covers the star-growth chart.
+dev-lane runs (4h) before re-scoping if not done — run 1 shipped ingestion job + schema
+(PR #22, merged); run 2 covers the star-growth chart, once history exists to chart.
 
 ## Blockers and attempts
-None — PR #22 (ingestion job + schema) opened clean this run, awaiting CI/merge.
+None — PR #22 (ingestion job + schema) merged clean this run, all CI green.
 
 ## Milestones
 - [x] 2026-09-27 — Repo created, factory bootstrapped
 - [x] 2026-09-27 — Phase 1 walking skeleton (homepage + Grove/repo pages, static content,
   static export for Azure Storage hosting) — #5, #6, #7
-- [ ] Phase 2 — GitHub ingestion → SQLite/Postgres, trending/rising — ingestion job +
-  schema in PR #22 (#16, #17); chart/trending/rising/heat still open (#18-#21)
+- [x] 2026-09-27 — Phase 2 ingestion job + `RepositorySnapshot` schema (ADR-005) — #16,
+  #17, PR #22. Daily ingestion workflow now scheduled; chart/trending/rising/heat still
+  open (#18-#21), gated on real snapshot history accumulating.
 - [ ] Phase 3 — search, SEO, newsletter signup

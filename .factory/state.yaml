@@ -10,8 +10,7 @@ product:
 execution:
   active_tasks: []
   blocked_tasks: []
-  open_prs:
-    - "#22 feat: Phase 2 kickoff — RepositorySnapshot ingestion job + storage (dev, factory label, awaiting CI)"
+  open_prs: []
 
 health:
   ci: green
@@ -21,14 +20,14 @@ health:
 
 metrics:
   runs: 3
-  features_completed: 1
+  features_completed: 2
   bugs_fixed: 0
   security_issues_fixed: 0
   deployments: 0
   failed_runs: 0
 
 next_actions:
-  - "Merge PR #22 once CI is green (ingestion job + RepositorySnapshot schema, closes #16/#17); then star-growth chart on /repo/[slug] (#18) using getSnapshotHistory"
+  - "PR #22 merged (ingestion job + RepositorySnapshot schema, closed #16/#17; daily ingestion workflow now scheduled). Next: once data/repogrove.db has 3+ days of real history, star-growth chart on /repo/[slug] (#18) using getSnapshotHistory"
 
 security:
   last_run: null
