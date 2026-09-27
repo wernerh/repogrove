@@ -187,13 +187,19 @@ def check_findings_headers() -> None:
         if not findings_dir.exists():
             continue
         for f in findings_dir.glob("*.md"):
-            if f.name.startswith(prefix) or True:  # check all .md files present
-                text = f.read_text(encoding="utf-8", errors="ignore")
-                missing = [h for h in REQUIRED_FINDING_HEADERS if h not in text]
-                if missing:
-                    record(f"finding header check: {f.relative_to(REPO_ROOT)}", "FAIL", f"missing: {missing}")
-                else:
-                    record(f"finding header check: {f.relative_to(REPO_ROOT)}", "PASS")
+            if not f.name.startswith(prefix):
+                record(
+                    f"finding filename convention: {f.relative_to(REPO_ROOT)}",
+                    "FAIL",
+                    f"expected filename to start with '{prefix}'",
+                )
+                continue
+            text = f.read_text(encoding="utf-8", errors="ignore")
+            missing = [h for h in REQUIRED_FINDING_HEADERS if h not in text]
+            if missing:
+                record(f"finding header check: {f.relative_to(REPO_ROOT)}", "FAIL", f"missing: {missing}")
+            else:
+                record(f"finding header check: {f.relative_to(REPO_ROOT)}", "PASS")
 
 
 def main() -> int:

@@ -52,7 +52,10 @@ scripts/factory — guard-rail checker and dashboard metrics generator
 ```
 
 ## Content schema (Git side)
-`content/repos/<owner>-<name>.md` frontmatter:
+`content/repos/<name-slug>.md` frontmatter (filename is the kebab-case repo-name slug,
+not `owner-name` — matches `CLAUDE.md`'s naming convention; the GitHub `owner/name` is
+recorded in the `github:` frontmatter field below, which is what disambiguates two
+different-owner repos that happen to share a name):
 ```yaml
 github: ollama/ollama
 name: Ollama
