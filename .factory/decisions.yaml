@@ -12,9 +12,19 @@
   asked_at: "2026-09-27T00:00:00Z"
   email_thread_id: "1a0e3c35fae4b534"
   default_due_at: null
-  status: OPEN
-  answer: null
-  answered_at: null
+  status: ANSWERED
+  answer: >
+    "can we host as a static app on azure storage" — owner's existing cloud account
+    (Azure), Storage static-website hosting. Recorded 2026-09-27 dev run. Caveat noted
+    in ADR-002: Azure Storage static-website hosting serves static files only (no SSR,
+    no API routes) — distinct from Azure Static Web Apps, which adds a Functions
+    backend. Next.js static export (`output: "export"`) is compatible with this for
+    Phase 1 (no API surface yet); Phase 3's search/newsletter-signup API will need
+    either a client-side-only design or Azure Static Web Apps/Functions — flagged as a
+    Phase 3 consideration, not a blocker now. Deploy jobs stay stubbed/disabled per
+    CLAUDE.md rule 6 (creating cloud resources is a human gate) regardless of this
+    answer — the owner still needs to provision the Azure Storage account itself.
+  answered_at: "2026-09-27T17:24:28Z"
 
 - id: RG-3
   lane: dev
@@ -28,9 +38,9 @@
   asked_at: "2026-09-27T00:00:00Z"
   email_thread_id: "1a0e3c35fae4b534"
   default_due_at: "2026-09-30T00:00:00Z"
-  status: OPEN
-  answer: null
-  answered_at: null
+  status: ANSWERED
+  answer: "happy with public" — Keep public. Recorded 2026-09-27 dev run.
+  answered_at: "2026-09-27T17:32:04Z"
 
 - id: RG-4
   lane: design
@@ -47,3 +57,10 @@
   status: OPEN
   answer: null
   answered_at: null
+  note: >
+    Same thread, 2026-09-27T17:32:04Z reply reads in full "happy with public and
+    suggestions" — the "public" part clearly answers RG-3; "and suggestions" is too
+    ambiguous for the dev lane to record as an RG-4 answer (could mean "go with your
+    recommended defaults" or refer to something else entirely). Left OPEN for the
+    design lane to interpret, or to default to "Editorial/content-forward" at the
+    2026-09-30 due date per docs/DECISION-PROTOCOL.md.
