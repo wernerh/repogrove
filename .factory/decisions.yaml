@@ -39,7 +39,8 @@
   email_thread_id: "1a0e3c35fae4b534"
   default_due_at: "2026-09-30T00:00:00Z"
   status: ANSWERED
-  answer: "happy with public" — Keep public. Recorded 2026-09-27 dev run.
+  answer: >
+    "happy with public" — Keep public. Recorded 2026-09-27 dev run.
   answered_at: "2026-09-27T17:32:04Z"
 
 - id: RG-4
