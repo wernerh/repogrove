@@ -13,10 +13,10 @@ import {
 } from "@/lib/content";
 
 describe("getAllRepos (real /content fixtures)", () => {
-  it("loads both example repos", () => {
+  it("loads every repo content file", () => {
     const repos = getAllRepos();
     const slugs = repos.map((r) => r.slug).sort();
-    expect(slugs).toEqual(["ollama", "supabase"]);
+    expect(slugs).toEqual(["coolify", "langchain", "ollama", "supabase", "vllm"]);
   });
 
   it("parses Ollama's frontmatter correctly", () => {
@@ -55,14 +55,14 @@ describe("getAllGroves (real /content fixtures)", () => {
 });
 
 describe("getReposInGrove (derived from repo frontmatter, per ADR-003)", () => {
-  it("finds Ollama under the AI grove via its groves: frontmatter field", () => {
+  it("finds every AI-grove repo under the AI grove via its groves: frontmatter field", () => {
     const reposInAi = getReposInGrove("ai");
-    expect(reposInAi.map((r) => r.slug)).toEqual(["ollama"]);
+    expect(reposInAi.map((r) => r.slug).sort()).toEqual(["langchain", "ollama", "vllm"]);
   });
 
-  it("finds Supabase under the self-hosted grove", () => {
+  it("finds every self-hosted-grove repo under the self-hosted grove", () => {
     const reposInSelfHosted = getReposInGrove("self-hosted");
-    expect(reposInSelfHosted.map((r) => r.slug)).toEqual(["supabase"]);
+    expect(reposInSelfHosted.map((r) => r.slug).sort()).toEqual(["coolify", "supabase"]);
   });
 
   it("returns an empty array for a grove with no member repos", () => {

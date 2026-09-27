@@ -5,7 +5,13 @@ import RepoPage, { generateStaticParams } from "@/app/repo/[slug]/page";
 describe("Repo page (/repo/[slug])", () => {
   it("statically generates params for every repo in /content", async () => {
     const params = generateStaticParams();
-    expect(params.map((p) => p.slug).sort()).toEqual(["ollama", "supabase"]);
+    expect(params.map((p) => p.slug).sort()).toEqual([
+      "coolify",
+      "langchain",
+      "ollama",
+      "supabase",
+      "vllm",
+    ]);
   });
 
   it("renders /repo/ollama from content/repos/ollama.md, not a hardcoded string", async () => {
