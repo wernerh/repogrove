@@ -24,14 +24,26 @@ const CONTENT_REPOS_DIR = path.join(process.cwd(), "content", "repos");
 // `owner/name` on GitHub: letters/digits/hyphens/underscores/dots either side of exactly
 // one slash, with each side rejected outright if it's just "." or ".." (a bare dot
 // segment has no legitimate GitHub owner/repo meaning and is the one thing that could
-// turn a same-host request into a path-traversal-shaped one, e.g. "../.."). Guards the
-// URL this value gets interpolated into in fetchRepoMetrics — the host is always the
-// hardcoded api.github.com, so this was never a true SSRF (no way to redirect off that
-// host), but docs/security/README.md's OWASP A10 row flags this exact value for review,
-// so it's held to a real allowlist shape rather than a loose one. content.ts already
-// requires `github` to be a non-empty string; this is the additional shape check that
-// field doesn't enforce.
-const GITHUB_SLUG_PATTERN = /^(?!\.{1,2}$)[\w.-]+\/(?!\.{1,2}$)[\w.-]+$/;
+// turn a same-host request into a path-traversal-shaped one, e.g. "../rate_limit").
+// Guards the URL this value gets interpolated into in fetchRepoMetrics — the host is
+// always the hardcoded api.github.com, so this was never a true cross-host SSRF (no way
+// to redirect off that host), but docs/security/README.md's OWASP A10 row flags this
+// exact value for review, so it's held to a real allowlist shape rather than a loose
+// one. content.ts already requires `github` to be a non-empty string; this is the
+// additional shape check that field doesn't enforce.
+//
+// SEC-001 follow-up (2026-09-27): the previous version of this pattern —
+// `/^(?!\.{1,2}$)[\w.-]+\/(?!\.{1,2}$)[\w.-]+$/` — had a dead owner-segment guard: its
+// `(?!\.{1,2}$)` lookahead anchors to the end of the *whole* matched string, which the
+// mandatory `/name` suffix makes unreachable for the first segment, so an owner of "."
+// or ".." was never actually rejected (only the name segment, whose lookahead sits at
+// the real string end, was enforced). "../rate_limit" passed validation as a result —
+// `new URL("https://api.github.com/repos/../rate_limit").pathname` resolves to
+// `/rate_limit`, a same-host path-traversal-shaped request. Each segment is now
+// anchored to its own boundary (the `/` on one side, start/end of string on the other),
+// so a bare `.`/`..` is rejected on either side of the slash. See
+// tests/ingestion/fetch-snapshots.test.ts for the regression tests.
+const GITHUB_SLUG_PATTERN = /^(?!\.{1,2}\/)[\w.-]+\/(?!\.{1,2}$)[\w.-]+$/;
 
 /** Every valid `github: owner/name` value declared in content/repos/*.md frontmatter. */
 export function readGithubSlugsFromContent(dir = CONTENT_REPOS_DIR) {
