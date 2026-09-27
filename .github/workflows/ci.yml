@@ -22,18 +22,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: "npm"
       - name: Check app exists
         id: app
         run: |
-          if [ -f package.json ]; then
+          if [ -f package.json ] && [ -f package-lock.json ]; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
           else
             echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
+      - uses: actions/setup-node@v4
+        if: steps.app.outputs.exists == 'true'
+        with:
+          node-version: "22"
+          cache: "npm"
       - name: Install
         if: steps.app.outputs.exists == 'true'
         run: npm ci
