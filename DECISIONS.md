@@ -10,3 +10,4 @@ register and email/issue links.
 | 2026-09-27 | RG-1 | Stack: Next.js/React/TS + Tailwind + SQLite→Postgres (ADR-001) | dev | expensive | LOCKED |
 | 2026-09-27 | RG-2 | Hosting target left undecided; deploy jobs disabled until owner provisions an account (ADR-002) | dev | expensive | OPEN — see decisions.yaml |
 | 2026-09-27 | RG-3 | Repo visibility: public (no PII risk in content-only repo; supports future community PRs per spec §21) | dev | cheap | PROVISIONAL |
+| 2026-09-27 | RG-4 | Visual direction: proceeding on recommended default (editorial/content-forward) — no owner reply yet, checked at design-lane run 1; auto-defaults 2026-09-30 if still unanswered | design | cheap | OPEN — see decisions.yaml |
