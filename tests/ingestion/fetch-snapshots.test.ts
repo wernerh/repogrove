@@ -68,6 +68,39 @@ describe("readGithubSlugsFromContent", () => {
     );
     warnSpy.mockRestore();
   });
+
+  // SEC-001 follow-up: an independent security review of the SEC-001 PR found that the
+  // pattern's *owner*-segment guard was dead code — `(?!\.{1,2}$)` anchors to the end of
+  // the whole string, which a mandatory `/name` suffix makes unreachable for the first
+  // segment, so "owner is '.' or '..'" was never actually being rejected. Only the name
+  // segment (anchored at the real string end) was protected. That let a bare-dot owner
+  // like "../rate_limit" through, which `new URL("https://api.github.com/repos/../rate_limit")`
+  // resolves to `/rate_limit` — a same-host path-traversal-shaped request the code
+  // comment and docs/security/README.md's A10 row both claimed was impossible.
+  it("rejects a bare-dot-segment OWNER slug (e.g. '../rate_limit'), not just a bare-dot name", () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    withFixtureContentDir(
+      {
+        "traversal.md": "---\ngithub: ../rate_limit\n---\nbody",
+        "traversal2.md": "---\ngithub: ./name\n---\nbody",
+      },
+      (dir) => {
+        expect(readGithubSlugsFromContent(dir)).toEqual([]);
+      },
+    );
+    warnSpy.mockRestore();
+  });
+
+  it("still accepts a real owner/name slug that merely contains dots (not a bare-dot segment)", () => {
+    withFixtureContentDir(
+      {
+        "good.md": "---\ngithub: some.owner/some.repo-name_v2\n---\nbody",
+      },
+      (dir) => {
+        expect(readGithubSlugsFromContent(dir)).toEqual(["some.owner/some.repo-name_v2"]);
+      },
+    );
+  });
 });
 
 describe("fetchRepoMetrics", () => {
