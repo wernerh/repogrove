@@ -1,6 +1,6 @@
 # SEC-001 — CI workflows missing explicit least-privilege `permissions:`
 
-- **Status:** PARTIALLY FIXED (see Notes — one workflow can't be touched by any factory
+- **Status: PARTIALLY FIXED** (see Notes — one workflow can't be touched by any factory
   lane)
 - **Severity:** LOW
 - **Summary:** `.github/workflows/ci.yml` and `.github/workflows/factory-guardrails.yml`

@@ -1,7 +1,7 @@
 # SEC-002 — Ingestion `GITHUB_SLUG_PATTERN` owner-segment guard was dead code
 
-- **Status:** FIXED (this run) — VERIFIED same run (regression tests added and passing;
-  see verification note below)
+- **Status: FIXED** (this run). **Verified: yes** — same run (regression tests added
+  and passing; see verification note below)
 - **Severity:** LOW (real validation bypass, narrow blast radius — see Impact)
 - **Summary:** `scripts/ingestion/fetch-snapshots.mjs`'s allowlist regex for the
   `github: owner/name` frontmatter field was supposed to reject a bare `.`/`..` on

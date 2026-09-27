@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-27T23:10:00Z"
-  holder: "security"
-  last_run: "2026-09-27T23:00:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-27T23:20:00Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -14,15 +14,15 @@ execution:
 
 health:
   ci: green
-  security: unknown
+  security: green
   production: not_deployed
   infrastructure: none
 
 metrics:
-  runs: 4
+  runs: 5
   features_completed: 3
   bugs_fixed: 0
-  security_issues_fixed: 0
+  security_issues_fixed: 2
   deployments: 0
   failed_runs: 0
 
@@ -30,19 +30,29 @@ next_actions:
   - "PR #23 merged (tracked repos expanded 2->5: LangChain, vLLM, Coolify; ingestion.yml manually triggered post-merge, day-1 snapshot rows exist for all 5 repos as of 2026-09-27). Next: once data/repogrove.db has 3+ consecutive days of real history for at least one repo, star-growth chart on /repo/[slug] (#18) using getSnapshotHistory"
 
 security:
-  last_run: null
-  next_action: "Bootstrap docs/security/: OWASP coverage pass on this bootstrap's CI/CD config"
+  last_run: "2026-09-27T23:20:00Z"
+  next_action: "Re-check SEC-001 (factory-guardrails.yml permissions gap, owner-blocked) each run; once app grows an API surface (Phase 3 search/newsletter) review A02/A03/A09 for real; least-recently-reviewed categories next: A01/A02/A07/A09 (still NOT APPLICABLE/NEEDS-VERIFICATION pending auth/logging existing)"
   timebox: null
   failed_attempts: 0
   open_findings:
     critical: 0
     high: 0
     medium: 0
-    low: 0
+    low: 1
     info: 0
   fixed_unverified: []
-  verified_fixes: []
-  owasp_reviewed: {}
+  verified_fixes: ["SEC-001 (partial — ci.yml fixed, factory-guardrails.yml open, owner-blocked)", "SEC-002 (ingestion slug regex traversal bypass, fixed + regression-tested)"]
+  owasp_reviewed:
+    A01: "NOT APPLICABLE"
+    A02: "NEEDS-VERIFICATION"
+    A03: "PASS"
+    A04: "PASS"
+    A05: "FINDING (LOW, partially fixed — SEC-001)"
+    A06: "PASS"
+    A07: "NOT APPLICABLE"
+    A08: "PASS"
+    A09: "NEEDS-VERIFICATION"
+    A10: "PASS (fixed a bypass — SEC-002)"
 
 design:
   last_run: "2026-09-27T17:04:02Z"

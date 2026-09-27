@@ -48,3 +48,15 @@ entries.
   license change (v0.6.6+) moved it off an OSI-approved license. PR #23. Manually
   triggered `ingestion.yml` afterward so day-1 snapshot history exists for all 5 repos
   immediately rather than waiting for the next daily cron. (dev)
+- 2026-09-27 — First real security-lane OWASP pass (bootstrap run had only populated the
+  table as NEEDS-VERIFICATION). Reviewed CI/CD workflow config, the content-rendering
+  path, the ingestion job's SSRF surface, `npm audit`, `.gitignore` secret-pattern
+  coverage, and the static-export build output; moved A03/A05/A06/A08/A10 to PASS with
+  evidence. Two findings fixed: SEC-001 (LOW) — `ci.yml` now declares an explicit
+  least-privilege `permissions: { contents: read }` instead of relying on an
+  unverifiable default (`factory-guardrails.yml` has the same gap but is locked from
+  all-lane edits by `CLAUDE.md` rule 7 — left open for the owner); SEC-002 (LOW,
+  surfaced by this PR's own independent review) — `scripts/ingestion/
+  fetch-snapshots.mjs`'s `GITHUB_SLUG_PATTERN` had a dead owner-segment guard that let
+  `../rate_limit`-shaped values past validation into a same-host path-traversal-shaped
+  request; fixed with a TDD regression test. PR #24. (security)
