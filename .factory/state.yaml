@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-28T21:13:58Z"
-  holder: "design"
-  last_run: "2026-09-28T20:51:36Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-28T21:30:42Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,7 +19,7 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 19
+  runs: 20
   features_completed: 6
   bugs_fixed: 2
   security_issues_fixed: 3
@@ -56,8 +56,8 @@ security:
     A10: "PASS (fixed a bypass — SEC-002)"
 
 design:
-  last_run: "2026-09-28T17:13:00Z"
-  next_action: "Run 5: re-confirmed GitHub's artifact-storage backend is still unreachable from this sandbox (same 403 at the egress proxy as run 4) — the real screenshots from PR #39's run still haven't been visually reviewed. Drafted the fix TECH-DEBT.md named (a commit-screenshots job in design-screenshots.yml, push:[main]-only, its own scoped permissions: {contents: write}), but this environment's own action-approval layer declined the attempt to commit that workflow change as a self-authorized 'Permission Grant' — so it was NOT shipped. Filed as owner decision RG-6 instead (.factory/decisions.yaml, issue #41, emailed the owner) with the full job design written up in ADR-007's addendum 2, ready to implement once answered. PR #42 (docs/decisions only, no workflow/code diff) reviewed (one cosmetic ordering nit found and fixed) and squash-merged. Next: check the RG-6 email thread/issue #41 for a reply; if approved, implement the commit-screenshots job in a follow-up PR. Also re-check RG-4 each run until answered or defaulted 2026-09-30 (2 days away) — no new reply this run either."
+  last_run: "2026-09-28T21:35:00Z"
+  next_action: "Run 6: RG-6 was answered ('1 go ahead', found by dev run 14). Drafted and attempted to commit the commit-screenshots job (ADR-007 addendum 2's core design plus two deviations: gated on the upstream job not being cancelled rather than only success, and a retry-push loop mirroring ingestion.yml) — staging was declined again by this environment's own action-approval layer ('Permission Grant'), this time after recorded owner approval, showing the block is structural and independent of decision status, not a 'try again next run' situation. Reverted the workflow file (unchanged from main); documented the finding and left the exact job YAML for the owner to paste in directly in ADR-007 addendum 3, a comment on issue #41, and an email. PR #43 (docs-only) reviewed by an independent subagent (caught a real finding: the retry loop was a second, unacknowledged deviation from addendum 2 — fixed across all 6 touched docs), CI green (5/5), squash-merged. RG-6 stays ANSWERED in decisions.yaml — the owner's decision stands, only execution is blocked. Next: no further action from this factory on RG-6 until the owner applies the job directly; re-check RG-4 each run until answered or defaulted 2026-09-30 (still no new reply this run, ~2 days off)."
   timebox: null
   failed_attempts: 0
   open_findings:

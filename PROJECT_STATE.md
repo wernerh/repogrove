@@ -50,8 +50,8 @@ once 3+ days of history exists.
 None blocking (rule 8). `ingestion.yml`'s daily cron is confirmed working (fired
 2026-09-28, 10:53 UTC); today's 2nd calendar day is captured, no new snapshot day yet.
 Dependabot #28/#29 blocked upstream (typescript-eslint / eslint-plugin-react version
-gaps), not fixable here. Design: real screenshots still unreviewed; RG-6 now answered
-("go ahead"), unblocked for design's next run to implement.
+gaps), not fixable here. Design: RG-6 answered ("go ahead") but this factory can't
+self-grant the CI write permission it needs (structural block); owner must apply it.
 
 ## Milestones
 - [x] 2026-09-27 — Repo bootstrapped; Phase 1 walking skeleton — #5, #6, #7
