@@ -85,7 +85,7 @@ async function resolveFile(urlPath) {
 // test-harness traffic reaches this server, so this was never a remote-exploitable
 // issue, but an uncaught exception silently killing a shared CI process for every other
 // route/test still running behind it is a real availability bug worth the two-line fix.
-// See tests/design/static-server.test.ts for the regression test (a raw-socket request,
+// See tests/scripts/design-static-server.test.ts for the regression test (a raw-socket request,
 // since normal HTTP clients don't let you send a malformed "%").
 const server = createServer(async (req, res) => {
   try {

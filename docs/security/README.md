@@ -126,7 +126,7 @@ Full detail: `docs/security/findings/SEC-001-ci-workflow-permissions.md`,
   request handler → unhandled rejection → fatal). Reproduced directly with `curl`
   before fixing. Fixed same run: the handler now catches `URIError` (→ 400) and any
   other unexpected error (→ 500) instead of crashing; wrote a failing regression test
-  first (`tests/design/static-server.test.ts`, using a raw TCP socket since normal HTTP
+  first (`tests/scripts/design-static-server.test.ts`, using a raw TCP socket since normal HTTP
   clients won't send a malformed `%` on their own), confirmed it failed against the
   pre-fix code, then applied the fix and confirmed it passes. Ran `npm ci` (0
   vulnerabilities), `npm run lint` (clean), `npm test` (75/75, up from 73 — the 2 new

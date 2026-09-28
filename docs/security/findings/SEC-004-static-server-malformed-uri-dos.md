@@ -63,7 +63,7 @@ Node.js v22.22.2
 it; `fetch()`/browsers construct requests through the URL Standard's parser, which
 normalizes or percent-encodes an invalid sequence rather than emitting it raw — that's
 why this needed a raw-socket request to reproduce in the regression test
-(`tests/design/static-server.test.ts`) rather than `fetch()`.
+(`tests/scripts/design-static-server.test.ts`) rather than `fetch()`.
 
 ## Impact
 - The server only ever binds `127.0.0.1` and only ever runs transiently inside a CI job
@@ -87,7 +87,7 @@ Wrapped the whole request-handler body in try/catch: a `URIError` (malformed per
 request can no longer take down every other route/test sharing the same server
 instance. See `scripts/design/static-server.mjs`'s inline comment for detail.
 
-Regression tests: `tests/design/static-server.test.ts` — spawns the real script as a
+Regression tests: `tests/scripts/design-static-server.test.ts` — spawns the real script as a
 child process and drives it with a raw TCP socket (the only way to send a genuinely
 malformed percent-encoding; normal HTTP clients won't let you). Confirmed the first
 test fails against the pre-fix code (empty response / dropped connection instead of
