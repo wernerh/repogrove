@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-28T04:50:23Z"
-  holder: "dev"
-  last_run: "2026-09-28T03:05:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-28T05:13:42Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,15 +19,15 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 6
-  features_completed: 3
+  runs: 7
+  features_completed: 4
   bugs_fixed: 1
   security_issues_fixed: 2
   deployments: 0
   failed_runs: 0
 
 next_actions:
-  - "Quiet run 2026-09-28: data/repogrove.db still has only day-1 history (2026-09-27) for all 5 repos; daily ingestion.yml cron (17 4 * * * UTC) hadn't fired a second time as of this run. Housekeeping only: reopened issue #19 (/trending, incorrectly auto-closed by PR #23's 'does not close #19/#20' phrasing matching GitHub's close-keyword regex) and closed issue #17 (RepositorySnapshot schema, done in PR #22 but never auto-closed). Next: once data/repogrove.db has 3+ consecutive days of real history for at least one repo, star-growth chart on /repo/[slug] (#18) using getSnapshotHistory"
+  - "2026-09-28 (run 7): shipped star-growth chart on /repo/[slug] (#18, PR #31) — computes growth over whatever history exists rather than requiring 3+ days, so it didn't wait on data maturity; degrades gracefully at 0/1 snapshot. Also manually dispatched ingestion.yml (its daily 17 4 * * * UTC cron hadn't self-fired in 2 days — GitHub Actions scheduler quirk, not a workflow bug), bringing data/repogrove.db to 2/3 days history for all 5 repos. Next: /trending (#19) and /rising (#20), which need real cross-repo history per the Phase 2 gate — 1 more day (cron or another manual dispatch) clears it. Keep dispatching manually each run until cron self-fires."
 
 security:
   last_run: "2026-09-28T03:05:00Z"

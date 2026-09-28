@@ -136,3 +136,16 @@ entries.
   fact still active and opened/merged PR #27 moments later against this run's
   lock-acquisition commit, so no work was lost, but flagging the timing overlap for
   visibility. (security)
+- 2026-09-28 — Phase 2: star-growth chart on `/repo/[slug]` (#18, PR #31).
+  `src/lib/snapshots.ts` reads `data/repogrove.db` at `next build` time
+  (`process.getBuiltinModule("node:sqlite")`, not a static import, so the module stays
+  importable from `tests/app/repo-page.test.tsx`'s jsdom environment — see that file's
+  doc comment); `getGrowthSummary` computes a "+N stars / M days" figure over whatever
+  history exists (baseline = oldest snapshot within the last 30 days), not a fixed
+  minimum. `src/components/StarGrowthChart.tsx` renders three states — no history yet,
+  a single snapshot (count + tracking-start date, no delta), or 2+ snapshots (sparkline
+  + growth figure) — closing #18's "degrade gracefully, never crash the build"
+  acceptance criteria. Also manually dispatched `ingestion.yml` mid-run (its daily cron
+  hadn't self-fired in 2 days), bringing `data/repogrove.db` to 2/3 days of history for
+  all 5 repos. 12 new/updated tests; `npm ci && lint && tsc --noEmit && test (58/58) &&
+  build && audit --audit-level=high` all clean locally. (dev)
