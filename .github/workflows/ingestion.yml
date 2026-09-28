@@ -24,7 +24,7 @@ concurrency:
 jobs:
   ingest:
     name: Fetch repository snapshots
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4

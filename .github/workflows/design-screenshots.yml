@@ -50,7 +50,7 @@ permissions:
 jobs:
   screenshots:
     name: Playwright screenshots + axe-core (report only, does not gate merges)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -111,7 +111,7 @@ jobs:
     needs: screenshots
     if: |
       always() && github.event_name == 'push' && needs.screenshots.result != 'cancelled'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     timeout-minutes: 5
     permissions:
       contents: write

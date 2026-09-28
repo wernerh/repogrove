@@ -17,7 +17,8 @@ permissions:
 jobs:
   guardrails:
     name: Factory guardrails
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v7
@@ -28,7 +29,8 @@ jobs:
 
   app:
     name: Lint, test, build (Next.js app)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - name: Check app exists
@@ -62,7 +64,8 @@ jobs:
 
   dependency-audit:
     name: Dependency vulnerability scan
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v7
