@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-28T07:05:36Z"
-  holder: "security"
-  last_run: "2026-09-28T07:00:20Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-28T07:15:34Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,7 +19,7 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 8
+  runs: 9
   features_completed: 5
   bugs_fixed: 1
   security_issues_fixed: 2
@@ -30,15 +30,15 @@ next_actions:
   - "2026-09-28 (run 8): /trending (#19)/rising (#20)/Heat (#21) still data-gated — data/repogrove.db still at 2/3 days (same calendar day as run 7, ingestion.yml's cron still hasn't self-fired: 0 scheduled runs since the workflow was added 2026-09-27, both runs so far manual workflow_dispatch). Did unblocked tech debt instead: real self-hosted fonts (Inter/Source Serif 4/IBM Plex Mono) via next/font/google (PR #32, ADR-006) — a review subagent caught and fixed a CSS var() fallback bug before merge (bare var(--unset) without an in-call fallback invalidates the whole declaration, not just that entry). Also checked the 3 open dependabot PRs' own CI: #28 (typescript 7.0.2) and #29 (eslint 10.11.0) both fail; #30 (jsdom 30.1.1) is green — none merged (not opened by this lane, don't carry factory label, outside this run's merge gate). Next: check for a 3rd calendar day of snapshot history (dispatch ingestion.yml if not present), then start /trending (#19)."
 
 security:
-  last_run: "2026-09-28T03:05:00Z"
-  next_action: "Re-check SEC-001 (factory-guardrails.yml permissions gap, owner-blocked) each run; once app grows an API surface (Phase 3 search/newsletter) review A02/A03/A09 for real; least-recently-reviewed categories A01/A02/A07/A09 re-confirmed unchanged 2026-09-28 (still NOT APPLICABLE/NEEDS-VERIFICATION, no auth/API/logging yet). No new findings this run — kept re-verification pace: SEC-001/SEC-002 both re-checked with evidence, npm audit re-run clean (0 vulns), docs/security/README.md's Findings table gap (SEC-002 missing) fixed"
+  last_run: "2026-09-28T07:15:34Z"
+  next_action: "Re-check SEC-001 (factory-guardrails.yml permissions gap, owner-blocked) and SEC-003 (Dependabot alerts disabled, owner-blocked, issue #33) each run; once app grows an API surface (Phase 3 search/newsletter) review A02/A03/A09 for real; least-recently-reviewed categories A01/A02/A07/A09 re-confirmed unchanged 2026-09-28 (still NOT APPLICABLE/NEEDS-VERIFICATION, no auth/API/logging yet). Run 4: re-verified SEC-001/SEC-002 (unchanged), reviewed PR #31/#32's new attack surface (both clean), broadened secret-pattern scan to full commit diffs since last run and re-checked all 3 GitHub Actions workflows for script-injection (none). One new finding: SEC-003 (LOW, Dependabot alerts disabled, owner-blocked) — PR #34 merged, issue #33 opened"
   timebox: null
   failed_attempts: 0
   open_findings:
     critical: 0
     high: 0
     medium: 0
-    low: 1
+    low: 2
     info: 0
   fixed_unverified: []
   verified_fixes: ["SEC-001 (partial — ci.yml fixed, factory-guardrails.yml open, owner-blocked; re-checked 2026-09-28, unchanged)", "SEC-002 (ingestion slug regex traversal bypass, fixed + regression-tested; re-checked 2026-09-28, regex and tests unmodified)"]
@@ -48,7 +48,7 @@ security:
     A03: "PASS"
     A04: "PASS"
     A05: "FINDING (LOW, partially fixed — SEC-001)"
-    A06: "PASS"
+    A06: "PASS (defense-in-depth gap noted — SEC-003)"
     A07: "NOT APPLICABLE"
     A08: "PASS"
     A09: "NEEDS-VERIFICATION"

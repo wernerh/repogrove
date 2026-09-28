@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-28T07:00:19.283739+00:00",
+  "generated_at": "2026-09-28T07:16:05.537297+00:00",
   "product": {
     "current_version": "0.0.0-bootstrap",
     "current_focus": "Phase 2 \u2014 ingestion & metrics"
   },
   "metrics": {
-    "runs": 8,
+    "runs": 9,
     "features_completed": 5,
     "bugs_fixed": 1,
     "security_issues_fixed": 2,
@@ -20,10 +20,10 @@
   },
   "open_decisions": 1,
   "security_findings": {
-    "total": 2,
-    "open": 0,
+    "total": 3,
+    "open": 1,
     "fixed": 1,
-    "verified": 1
+    "verified": 2
   },
   "design_findings": {
     "total": 0,
