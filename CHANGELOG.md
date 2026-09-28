@@ -161,3 +161,22 @@ entries.
   CLAUDE.md rule 7. `npm run build`'s font fetch can't be verified in this sandbox
   (network allowlisted to npm/GitHub only) — verified green on CI before merging.
   PR #32. (dev)
+- 2026-09-28 — Security re-verification pass; one new finding. Re-checked SEC-001/
+  SEC-002 with evidence (both unchanged: `factory-guardrails.yml` still owner-blocked,
+  SEC-002's regex/tests still intact). Reviewed dev lane's PR #31 (star-growth chart)
+  and PR #32 (self-hosted fonts) for new attack surface — both clean: PR #31's
+  `node:sqlite` reads are parameterised and rendered through JSX (no injection/XSS
+  surface); PR #32's fonts are fetched and self-hosted at `next build` time only, no
+  runtime CDN call, confirmed by reproducing the expected local build failure (sandbox
+  proxy blocks `fonts.googleapis.com`) and confirming CI's build job (real network
+  access) passed on `main`. `npm ci`, `lint`, `test` (58/58), `npm audit
+  --audit-level=high` (0 vulnerabilities) verified clean locally; broadened the
+  secret-pattern scan to every commit's diff since the last security run (none found);
+  re-reviewed all three GitHub Actions workflows for script-injection via untrusted
+  `${{ github.event.* }}` in `run:` steps (none present, unchanged). New finding:
+  SEC-003 (LOW) — GitHub's Dependabot security-alerts feature (distinct from
+  `dependabot.yml`'s scheduled version-update PRs) is disabled on the repo, confirmed
+  via the GitHub API; not fixable by this lane (normally repo-admin, and the enabling
+  endpoint is separately blocked by this sandbox's proxy). Opened issue #33
+  (`needs-human`) covering SEC-003 and the pre-existing branch-protection
+  recommendation together. This docs-only change opens as the next PR after #33. (security)
