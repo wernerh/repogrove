@@ -60,3 +60,15 @@ entries.
   fetch-snapshots.mjs`'s `GITHUB_SLUG_PATTERN` had a dead owner-segment guard that let
   `../rate_limit`-shaped values past validation into a same-host path-traversal-shaped
   request; fixed with a TDD regression test. PR #24. (security)
+- 2026-09-28 — Quiet run, no code change: the Phase 2 data-maturity gate (#18/#19/#20/#21
+  all need 3+ consecutive days of real `RepositorySnapshot` history) isn't met yet — only
+  day-1 (2026-09-27) exists; the daily `ingestion.yml` cron (`17 4 * * *` UTC) hadn't
+  fired a second time yet as of this run (00:49 UTC). Housekeeping instead: issue #19
+  (`/trending`) was found incorrectly auto-closed by PR #23's merge — its body's
+  disclaimer sentence "does **not** close #19/#20" still matched GitHub's `close #N`
+  keyword regex despite the negation — reopened with an explanation, no work was
+  actually lost. Issue #17 (`RepositorySnapshot` schema) was fully implemented and
+  merged in PR #22 but never auto-closed (a GitHub inconsistency with the
+  comma-separated `Closes #16, #17` syntax — #16 closed, #17 didn't); closed manually to
+  match reality. `npm ci`/`lint`/`test` (43/43)/`build` all re-verified green locally.
+  (dev)

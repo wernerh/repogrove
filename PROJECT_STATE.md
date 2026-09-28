@@ -13,13 +13,12 @@ without the app needing an account, a database migration story, or a deploy targ
 **Phase 2 — Ingestion & metrics** (started this run). Phase 1 landed in PR #10.
 
 ## Next action (exactly one)
-PR #23 merged: tracked repos expanded 2→5 (added LangChain, vLLM, Coolify) to meet
-`docs/WORKPLAN.md`'s Phase 2 gate minimum; `ingestion.yml` manually triggered right
-after merge, so `data/repogrove.db` now has day-1 snapshot rows for all 5 repos
-(2026-09-27) — daily cron continues from here. Next: once 3+ consecutive days of real
-history exist for at least one repo, build the star-growth chart on `/repo/[slug]`
-reading `getSnapshotHistory` (#18) — check `data/repogrove.db` row-count-per-repo
-before starting; if under 3 days, that's a quiet-run-is-a-success wait, not a blocker.
+Still gated on data maturity: `data/repogrove.db` has only day-1 history (2026-09-27) for
+all 5 repos; daily `ingestion.yml` cron (`17 4 * * *` UTC) hadn't fired its second run as
+of this run (2026-09-28T00:49 UTC). Once 3+ consecutive days of real history exist for at
+least one repo, build the star-growth chart on `/repo/[slug]` reading
+`getSnapshotHistory` (#18) — check `data/repogrove.db` row-count-per-repo before
+starting; if under 3 days, that's a quiet-run-is-a-success wait, not a blocker.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -45,8 +44,9 @@ dev-lane runs (4h) before re-scoping if not done — run 1 shipped ingestion job
 (PR #22, merged); run 2 covers the star-growth chart, once history exists to chart.
 
 ## Blockers and attempts
-None — PR #23 (5-repo expansion) merged clean this run, all CI green; ingestion
-manually triggered post-merge, day-1 history now exists for all 5 repos.
+None — waiting on data maturity (not a blocker per rule 8). This run was quiet on code:
+found and fixed two stale GitHub issue states (see TECH-DEBT.md 2026-09-28 row); local
+`lint`/`test`/`build` re-verified green.
 
 ## Milestones
 - [x] 2026-09-27 — Repo created, factory bootstrapped
