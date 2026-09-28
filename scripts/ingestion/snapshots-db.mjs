@@ -82,6 +82,10 @@ export function upsertSnapshot(db, snapshot) {
   stmt.run(github, capturedOn, stars, forks, openIssues, watchers, source, fetchedAt);
 }
 
+// Kept in sync by hand with the identical constant in src/lib/snapshots.ts
+// (that file's the read side used by src/app/repo/[slug]/page.tsx; this one
+// stays plain JS — see TECH-DEBT.md — so it can't import the TS copy). If
+// the schema changes, update both.
 const SELECT_COLUMNS = `
   github, captured_on AS capturedOn, stars, forks, open_issues AS openIssues,
   watchers, source, fetched_at AS fetchedAt

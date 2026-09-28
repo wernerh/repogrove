@@ -26,6 +26,18 @@ describe("Repo page (/repo/[slug])", () => {
     expect(screen.getByRole("link", { name: "AI" })).toHaveAttribute("href", "/grove/ai");
   });
 
+  it("renders the star-growth chart from the committed snapshot database (issue #18)", async () => {
+    // data/repogrove.db currently holds exactly one day of history per repo
+    // (2026-09-27) — see PROJECT_STATE.md — so this exercises the
+    // single-snapshot graceful-degradation state, not the full chart. Once
+    // the daily ingestion job accumulates a second day, this should start
+    // seeing a real delta instead; either way the page must not crash.
+    const element = await RepoPage({ params: Promise.resolve({ slug: "ollama" }) });
+    render(element);
+
+    expect(screen.getByText(/stars/)).toBeInTheDocument();
+  });
+
   it("calls notFound() for a repo slug that doesn't exist in /content", async () => {
     await expect(
       RepoPage({ params: Promise.resolve({ slug: "does-not-exist" }) }),
