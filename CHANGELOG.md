@@ -271,9 +271,11 @@ entries.
   `.github/workflows/design-screenshots.yml` — a `push:[main]`-only job with its own
   scoped `permissions: { contents: write }`, downloading the `screenshots` job's
   Playwright artifact and committing changed PNGs to `docs/design/screenshots/`
-  directly, plus one refinement (gated on `needs.screenshots.result != 'cancelled'`
-  rather than `== 'success'`, so a red axe-core run still gets its screenshots
-  committed for review). **Staging the change was declined again** by this
+  directly, with two deviations from addendum 2's core design: gated on
+  `needs.screenshots.result != 'cancelled'` rather than `== 'success'` (so a red
+  axe-core run still gets its screenshots committed for review), and a
+  fetch-rebase-retry push loop mirroring `ingestion.yml`'s (addendum 2 had explicitly
+  decided against a retry loop). **Staging the change was declined again** by this
   environment's own action-approval layer, tagged "Permission Grant" — the same
   category run 5 hit, but this time after recorded owner approval, showing the block is
   structural (independent of `.factory/decisions.yaml`'s answered/open state, which
