@@ -1,0 +1,105 @@
+name: Design screenshots & accessibility
+
+# Design lane's Playwright + axe-core harness (docs/adr/ADR-007-design-screenshot-a11y-harness.md,
+# tests/design/screenshots.spec.ts), run on GitHub-hosted runners so it can actually
+# fetch the self-hosted Google Fonts `next build` now needs (ADR-006) — the sandbox
+# this factory runs in cannot reach fonts.googleapis.com, so this workflow is the only
+# place the harness runs against the real, correctly-fonted production build.
+#
+# Deliberately NOT a required/blocking check (see ADR-007's addendum): it reports —
+# screenshots + an axe-core WCAG 2.1 A/AA scan as a downloadable artifact — rather than
+# gating other lanes' merges. A red run here is real signal for the design lane to
+# triage next run, not a merge blocker for whoever's PR triggered it.
+on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "content/**"
+      - "docs/design/**"
+      - "playwright.config.ts"
+      - "tests/design/**"
+      - "scripts/design/**"
+      - "package.json"
+      - "package-lock.json"
+      - "next.config.ts"
+      - ".github/workflows/design-screenshots.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "content/**"
+      - "docs/design/**"
+      - "playwright.config.ts"
+      - "tests/design/**"
+      - "scripts/design/**"
+      - "package.json"
+      - "package-lock.json"
+      - "next.config.ts"
+      - ".github/workflows/design-screenshots.yml"
+  workflow_dispatch:
+
+# Least-privilege (OWASP A05, same reasoning as ci.yml): this workflow only checks out
+# the repo, builds it, and uploads its own run artifacts (artifact upload uses the
+# runner's internal token, not GITHUB_TOKEN, so it needs no extra scope here) — no repo
+# writes, no PR/issue comments.
+permissions:
+  contents: read
+
+jobs:
+  screenshots:
+    name: Playwright screenshots + axe-core (report only, does not gate merges)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check app exists
+        id: app
+        run: |
+          if [ -f package.json ] && [ -f package-lock.json ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v7
+        if: steps.app.outputs.exists == 'true'
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        if: steps.app.outputs.exists == 'true'
+        run: npm ci
+
+      # Not the sandbox's pre-installed Chromium (playwright.config.ts's
+      # executablePath fallback only applies when that path exists) — a
+      # GitHub-hosted runner needs Playwright's own managed browser, matching the
+      # exact-pinned @playwright/test version (ADR-007).
+      - name: Install Playwright's Chromium
+        if: steps.app.outputs.exists == 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Build (static export)
+        if: steps.app.outputs.exists == 'true'
+        run: npm run build --if-present
+
+      - name: Screenshots + axe-core scan
+        if: steps.app.outputs.exists == 'true'
+        run: npm run design:screenshots
+
+      # always(): still upload whatever screenshots were captured even if an axe-core
+      # assertion failed partway through the suite — a red run is exactly when the
+      # design lane most wants to see the images, not just the pass/fail summary.
+      - name: Upload screenshots
+        if: steps.app.outputs.exists == 'true' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: design-screenshots
+          path: docs/design/screenshots/**
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: No app yet
+        if: steps.app.outputs.exists == 'false'
+        run: echo "No package.json yet (pre-Phase-1) — nothing to screenshot."
