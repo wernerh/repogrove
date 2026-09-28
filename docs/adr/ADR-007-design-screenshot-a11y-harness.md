@@ -232,3 +232,111 @@ job above in a PR (the owner's approval is what turns the permission grant from
 self-authorized into sanctioned); if still open past its default-due date, this stays
 stubbed per `CLAUDE.md` rule 4/6 rather than defaulting — a permission grant isn't the
 kind of cheap-reversal decision this factory auto-defaults on no-reply.
+
+## Addendum 3 (2026-09-28, design run 6): still blocked — owner approval did not change the outcome
+
+RG-6 was answered ("1 go ahead", 2026-09-28T17:25:33Z on the same thread; found and
+recorded by dev run 14, re-verified directly against the thread this run with no newer
+message since). Per addendum 2's own "next run" note, the owner's approval is what
+turns the permission grant from self-authorized into sanctioned — so this run drafted
+and attempted to commit a `commit-screenshots` job matching addendum 2's core design
+(`push:[main]`-only trigger, `permissions: { contents: write }` scoped to that one job,
+`[skip ci]` commit message, `repogrove-factory[bot]` identity) with **two** deviations
+from the addendum 2 draft, not one:
+
+1. Gating on `needs.screenshots.result != 'cancelled'` rather than the implicit
+   `== 'success'` default, so a red axe-core run still gets its screenshots committed
+   for review, since that's exactly when this lane most wants to look at them.
+2. A 3-attempt fetch-rebase-retry push loop mirroring `ingestion.yml`'s — addendum 2
+   explicitly decided *against* a retry loop ("not handled with a retry loop... not
+   worth the complexity yet"). This run added one anyway, on the view that
+   `ingestion.yml` already pays that complexity cost for the same class of problem
+   (a concurrent push racing this job's own push), so reusing its proven pattern here
+   is cheaper than re-deciding it — but that is a real change from what addendum 2
+   specified, not a restatement of it, and is called out explicitly here rather than
+   folded silently into "unchanged from addendum 2."
+
+**The attempt to stage the change was declined again** — this time by `git add`
+itself, not at commit time as in run 5, but the same category: this environment's own
+action-approval layer refused it, tagged "Permission Grant." This is the significant
+new finding this run adds: **owner approval over email does not change this
+environment's own answer.** The classifier that blocks a self-granted `contents: write`
+change to a workflow file operates independently of `.factory/decisions.yaml`'s
+answered/open state — it has no way to know RG-6 was answered, and this factory has no
+mechanism to inform it. Per this run's own operating instructions, the correct response
+to that kind of denial is not to retry through a different tool, a smaller commit, or a
+different phrasing of the same diff — all of those count as pursuing the same denied
+outcome — so the change was reverted (`.github/workflows/design-screenshots.yml` is
+back to its pre-run state; see `git log` for this run's commits, which touch only
+documentation) rather than shipped by another route.
+
+**What this means for RG-6 going forward:** this is not a "try again next run"
+situation like run 5 was. Granting `contents: write` to any workflow job, even scoped
+to one job, even after explicit owner sign-off, appears to be something this factory
+cannot execute from inside this environment at all — the block is structural, not
+procedural. The job design itself (below, addendum 2's core design plus the two
+deviations named above) is still believed correct and ready to ship, but
+shipping it now looks like it needs the owner to apply it directly (e.g., paste the
+diff into GitHub's web editor, or merge it from their own machine/session) rather than
+waiting for a future factory run to do it — no future run is likely to get a different
+answer from this same class of action. Flagged in `TECH-DEBT.md` and `.factory/
+decisions.yaml`'s RG-6 note; the owner should be told directly rather than this staying
+an open "next run" item indefinitely.
+
+The drafted job, unchanged, for the owner (or a human-supervised session) to apply
+directly to `.github/workflows/design-screenshots.yml`:
+
+```yaml
+  commit-screenshots:
+    name: Commit real screenshots to main (push only)
+    needs: screenshots
+    if: |
+      always() && github.event_name == 'push' && needs.screenshots.result != 'cancelled'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download screenshots artifact
+        id: download
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: design-screenshots
+          path: docs/design/screenshots
+
+      - name: Commit screenshot updates, if any
+        if: steps.download.outcome == 'success'
+        run: |
+          set -eu
+          git add docs/design/screenshots
+          if git diff --cached --quiet; then
+            echo "No screenshot changes to commit."
+            exit 0
+          fi
+          git config user.name "repogrove-factory[bot]"
+          git config user.email "repogrove-factory@users.noreply.github.com"
+          git commit -m "design: refresh committed screenshots [skip ci]" -m "Mechanical commit of the screenshots job's own Playwright output (docs/design/screenshots/) for this push to main — a deterministic rendering of pixels already reviewed via the PR that changed the page, not a new editorial decision. See docs/adr/ADR-007-design-screenshot-a11y-harness.md addendum 2/3 (RG-6)."
+          for attempt in 1 2 3; do
+            if git push; then
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/3) — rebasing onto the latest main and retrying."
+            git fetch origin main
+            git rebase origin/main
+          done
+          echo "::error::Failed to push committed screenshots after 3 attempts."
+          exit 1
+
+      - name: No screenshots artifact to commit
+        if: steps.download.outcome != 'success'
+        run: echo "No design-screenshots artifact this run (app didn't exist yet, or the screenshots job produced none) — nothing to commit."
+```
+
+(It also needs the workflow-level permissions comment updated to note that this job
+alone overrides `contents: read` with its own `contents: write` — cosmetic, not
+required for the job to function.)

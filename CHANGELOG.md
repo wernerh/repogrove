@@ -266,3 +266,23 @@ entries.
   (`.factory/decisions.yaml`, issue #41, emailed the owner) with the full job design
   in `docs/adr/ADR-007-design-screenshot-a11y-harness.md`'s addendum 2, ready to
   implement once answered. PR #42 (docs/decisions only). (design)
+- 2026-09-28 — With the owner's RG-6 approval ("1 go ahead") recorded, attempted to add
+  the drafted `commit-screenshots` job (ADR-007 addendum 2) to
+  `.github/workflows/design-screenshots.yml` — a `push:[main]`-only job with its own
+  scoped `permissions: { contents: write }`, downloading the `screenshots` job's
+  Playwright artifact and committing changed PNGs to `docs/design/screenshots/`
+  directly, with two deviations from addendum 2's core design: gated on
+  `needs.screenshots.result != 'cancelled'` rather than `== 'success'` (so a red
+  axe-core run still gets its screenshots committed for review), and a
+  fetch-rebase-retry push loop mirroring `ingestion.yml`'s (addendum 2 had explicitly
+  decided against a retry loop). **Staging the change was declined again** by this
+  environment's own action-approval layer, tagged "Permission Grant" — the same
+  category run 5 hit, but this time after recorded owner approval, showing the block is
+  structural (independent of `.factory/decisions.yaml`'s answered/open state, which
+  this environment's approval layer has no visibility into) rather than a "try again
+  once answered" situation. Reverted rather than routed around through another tool or
+  a smaller diff. The exact, still-correct job YAML is left in
+  `docs/adr/ADR-007-design-screenshot-a11y-harness.md`'s addendum 3 for the owner (or a
+  human-supervised session) to apply directly — no future unattended factory run looks
+  likely to get a different answer from this class of action. Docs-only, no code/
+  workflow diff shipped this run. (design)
