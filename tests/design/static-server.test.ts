@@ -10,15 +10,20 @@
 // happily sends a literal `%` as-is — see the finding doc's Evidence section, reproduced
 // with plain `curl`); a raw socket is the most direct, client-independent way to
 // reproduce exactly what a misbehaving/arbitrary client can put on the wire.
-import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
+import { spawn, type ChildProcessByStdio } from "node:child_process";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import net from "node:net";
+import type { Readable } from "node:stream";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
+// spawn() below is called with stdio: ["ignore", "pipe", "pipe"] — no stdin, so this is
+// not a ChildProcessWithoutNullStreams (which requires all three streams present).
+type SpawnedServer = ChildProcessByStdio<null, Readable, Readable>;
+
 let serverDir: string;
-let server: ChildProcessWithoutNullStreams;
+let server: SpawnedServer;
 let port: number;
 
 /** Sends a raw HTTP/1.1 request line and returns the full raw response text. */
@@ -38,7 +43,7 @@ function rawRequest(requestLine: string, port: number): Promise<string> {
   });
 }
 
-function waitForServerReady(proc: ChildProcessWithoutNullStreams): Promise<void> {
+function waitForServerReady(proc: SpawnedServer): Promise<void> {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error("server didn't start in time")), 10_000);
     proc.stdout.on("data", (chunk) => {
