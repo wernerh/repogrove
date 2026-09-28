@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-28T01:16:10Z"
-  holder: "design"
-  last_run: "2026-09-28T00:49:31Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-28T03:05:00Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -30,8 +30,8 @@ next_actions:
   - "Quiet run 2026-09-28: data/repogrove.db still has only day-1 history (2026-09-27) for all 5 repos; daily ingestion.yml cron (17 4 * * * UTC) hadn't fired a second time as of this run. Housekeeping only: reopened issue #19 (/trending, incorrectly auto-closed by PR #23's 'does not close #19/#20' phrasing matching GitHub's close-keyword regex) and closed issue #17 (RepositorySnapshot schema, done in PR #22 but never auto-closed). Next: once data/repogrove.db has 3+ consecutive days of real history for at least one repo, star-growth chart on /repo/[slug] (#18) using getSnapshotHistory"
 
 security:
-  last_run: "2026-09-27T23:20:00Z"
-  next_action: "Re-check SEC-001 (factory-guardrails.yml permissions gap, owner-blocked) each run; once app grows an API surface (Phase 3 search/newsletter) review A02/A03/A09 for real; least-recently-reviewed categories next: A01/A02/A07/A09 (still NOT APPLICABLE/NEEDS-VERIFICATION pending auth/logging existing)"
+  last_run: "2026-09-28T03:05:00Z"
+  next_action: "Re-check SEC-001 (factory-guardrails.yml permissions gap, owner-blocked) each run; once app grows an API surface (Phase 3 search/newsletter) review A02/A03/A09 for real; least-recently-reviewed categories A01/A02/A07/A09 re-confirmed unchanged 2026-09-28 (still NOT APPLICABLE/NEEDS-VERIFICATION, no auth/API/logging yet). No new findings this run — kept re-verification pace: SEC-001/SEC-002 both re-checked with evidence, npm audit re-run clean (0 vulns), docs/security/README.md's Findings table gap (SEC-002 missing) fixed"
   timebox: null
   failed_attempts: 0
   open_findings:
@@ -41,7 +41,7 @@ security:
     low: 1
     info: 0
   fixed_unverified: []
-  verified_fixes: ["SEC-001 (partial — ci.yml fixed, factory-guardrails.yml open, owner-blocked)", "SEC-002 (ingestion slug regex traversal bypass, fixed + regression-tested)"]
+  verified_fixes: ["SEC-001 (partial — ci.yml fixed, factory-guardrails.yml open, owner-blocked; re-checked 2026-09-28, unchanged)", "SEC-002 (ingestion slug regex traversal bypass, fixed + regression-tested; re-checked 2026-09-28, regex and tests unmodified)"]
   owasp_reviewed:
     A01: "NOT APPLICABLE"
     A02: "NEEDS-VERIFICATION"
@@ -56,7 +56,7 @@ security:
 
 design:
   last_run: "2026-09-28T01:16:10Z"
-  next_action: "Build the Playwright + axe-core screenshot harness as a dev-dependency (ADR line) so future runs don't hand-run a one-off script; then extend token application to component patterns (cards, alternatives table, status chips) as dev-lane pages land. Re-check RG-4 each run until answered or defaulted 2026-09-30"
+  next_action: "PR #25 (token wiring) was blocked by issue #26 (react/react-dom peer mismatch on main); dev lane fixed it via PR #27, merged this run — re-check PR #25 CI now green after merging main into its branch, then merge PR #25. After that: build the Playwright + axe-core screenshot harness as a dev-dependency (ADR line); re-check RG-4 each run until answered or defaulted 2026-09-30"
   timebox: null
   failed_attempts: 0
   open_findings:
