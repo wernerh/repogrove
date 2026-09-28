@@ -46,7 +46,9 @@ need to know how to run, so it gets the same ADR treatment.
   reliably green on every PR is a bigger commitment (flakiness, CI runtime, a new
   system-dependency install step) than this run's "one major task" scope covers, and
   it's this lane's own verification tool, not a merge gate for other lanes' PRs.
-  Tracked as a possible follow-up in `TECH-DEBT.md`, not decided here.
+  Tracked as a possible follow-up in `TECH-DEBT.md`, not decided here. **Update:** wired
+  into CI (a separate, non-blocking workflow, not `ci.yml` itself) in this ADR's
+  addendum below — read that before assuming this bullet is still current.
 - Chromium launch uses `launchOptions.executablePath` pointed at this sandbox's
   pre-installed `/opt/pw-browsers/chromium`, per this environment's own setup notes,
   rather than `npx playwright install` (which would try to download a browser build
@@ -123,3 +125,47 @@ re-verified (18/18 checks still pass against the same stubbed-build smoke test):
   missing (confirmed: `rm -rf out && node scripts/design/static-server.mjs` exits 1),
   and each test now asserts a real 2xx response and that the site header renders
   before running axe-core.
+
+## Addendum (2026-09-28, design run 4): wired into CI, report-only
+
+The "What's left" item above — no environment this factory runs in could reach
+`fonts.googleapis.com`, so the harness had never run against a real, correctly-fonted
+build — is resolved: `.github/workflows/design-screenshots.yml` runs it on
+`pull_request` (path-filtered to files that can affect rendered output),
+`push: [main]`, and `workflow_dispatch`, on GitHub-hosted runners, which have normal
+internet access (same reasoning `ci.yml`'s `app` job already relies on for its own
+`npm run build` step).
+
+Reverses the "not added to `ci.yml`" call in this ADR's original Decision section, but
+not the reasoning behind it — "keeping a browser-automation suite reliably green on
+every PR" is still a real cost this factory shouldn't take on for free. Resolved by
+**not** making it a required check instead of by accepting that cost:
+
+- A **separate workflow file**, not a new job in `ci.yml` — keeps it operationally
+  distinct from the lint/test/build/guardrails gate that already governs merges.
+- `permissions: { contents: read }` only, matching `ci.yml`'s own least-privilege
+  pattern (OWASP A05) — the job checks out, builds, and uploads its own artifact
+  (`actions/upload-artifact` uses the runner's internal token, not `GITHUB_TOKEN`, so
+  no extra scope is needed for that).
+- Nothing in this repository's branch-protection configuration (outside this factory's
+  control — see `CLAUDE.md` rule 6, changing branch protection isn't listed as
+  something this lane can do) marks it required, so a red run here — including a real
+  axe-core violation — reports without blocking anyone's merge. The design lane treats
+  a red run as a finding to triage on its next scheduled run (`docs/design/findings/`),
+  the same as any other UX/accessibility issue, not as something to silence.
+- `npx playwright install --with-deps chromium` replaces the sandbox's
+  `executablePath` pin for this environment only — `playwright.config.ts`'s
+  `existsSync(SANDBOX_CHROMIUM)` check already falls through to Playwright's normal
+  managed-browser resolution when that path doesn't exist (true on every GitHub-hosted
+  runner), so no config change was needed to support both environments.
+- Path-filtered on both `pull_request` and `push` (`src/**`, `content/**`,
+  `docs/design/**`, the harness's own files, `package.json`/`package-lock.json`,
+  `next.config.ts`) rather than running unconditionally on every PR — avoids adding a
+  browser-install-plus-build runtime tax to PRs that can't change what's on screen
+  (e.g. the two open dependabot PRs, `TECH-DEBT.md`).
+
+**Not done in the same run**: actually downloading the resulting artifact and
+committing real screenshots under `docs/design/screenshots/` — see this addendum's own
+PR for whether that happened in the same run or was left for the next one (check
+`docs/design/README.md`'s Status log, which is source of truth for what's actually
+been reviewed).
