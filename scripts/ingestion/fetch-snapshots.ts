@@ -116,10 +116,13 @@ export async function fetchRepoMetrics(
     stars: body.stargazers_count,
     forks: body.forks_count,
     openIssues: body.open_issues_count,
-    // NOTE: `watchers_count` currently mirrors `stargazers_count` in the GitHub REST
-    // API, not the older distinct "watch" concept. The real watch count
-    // (`subscribers_count`) needs a separate endpoint — deferred, see TECH-DEBT.md.
-    watchers: body.watchers_count,
+    // `watchers_count` mirrors `stargazers_count` in the modern GitHub REST API, not
+    // the older, distinct "watch" concept — that's `subscribers_count`, and (unlike
+    // contributor counts) it's already part of this same `GET /repos/{owner}/{repo}`
+    // response body, so no second API call is needed. See ADR-005's addendum
+    // (2026-09-28: watchers/subscribers_count) and the former TECH-DEBT.md row this
+    // resolves.
+    watchers: body.subscribers_count,
   };
 }
 
