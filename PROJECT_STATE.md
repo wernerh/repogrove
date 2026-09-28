@@ -47,6 +47,7 @@ dev-lane runs (4h) before re-scoping if not done — run 1 shipped ingestion job
 None — waiting on data maturity (not a blocker per rule 8). This run was quiet on code:
 found and fixed two stale GitHub issue states (see TECH-DEBT.md 2026-09-28 row); local
 `lint`/`test`/`build` re-verified green.
+- (design, 2026-09-28) CI on `main` is red: `react`/`react-dom` peer mismatch from dependabot PR #11's merge — blocks PR #25 too; fix proposed in issue #26, dev lane to apply.
 
 ## Milestones
 - [x] 2026-09-27 — Repo created, factory bootstrapped
