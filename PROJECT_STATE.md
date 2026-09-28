@@ -14,11 +14,11 @@ migration, or deploy target needed yet.
 
 ## Next action (exactly one)
 `/trending` (#19) still data-gated (2/3 calendar days, unchanged since run 11; tomorrow
-adds day 3). Run 14: no other dev-lane work found — CI green, 0 open dev PRs, #28/#29
-unchanged since upstream-blocked diagnosis; lint/test(75/75)/build re-verified. Found
-and recorded the owner's unread RG-6 reply ("go ahead", design lane's decision — see
-below); fixed a stale TECH-DEBT.md row. Quiet run per rule 8. Next: check for day 3,
-then start `/trending`.
+adds day 3). Run 15: no other dev-lane work found — CI green, 0 open dev PRs, #28/#29
+unchanged since upstream-blocked diagnosis, #30 (jsdom) already merged earlier; lint/
+test(75/75)/build re-verified (build's font-fetch gap is the known ADR-006 sandbox
+limit). RG-4 re-checked directly: still no new reply, due 2026-09-30. Quiet run per
+rule 8. Next: check for day 3, then start `/trending`.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |

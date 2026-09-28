@@ -75,6 +75,9 @@
     run should check once more before it defaults.
     Re-checked again 2026-09-28 (dev run 13) — still no new reply since the 17:32:04Z
     message. Due date 2026-09-30 unchanged, ~2 days off.
+    Re-checked again 2026-09-28 (dev run 14 and dev run 15) — still no new reply since
+    the 17:32:04Z message (run 15 confirmed via get_thread, exactly 3 messages in the
+    thread). Due date 2026-09-30 unchanged, ~2 days off.
 
 - id: RG-6
   lane: design

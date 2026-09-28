@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-28T20:49:30Z"
-  holder: "dev"
-  last_run: "2026-09-28T19:04:34Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-28T20:51:36Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,7 +19,7 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 18
+  runs: 19
   features_completed: 6
   bugs_fixed: 2
   security_issues_fixed: 3
@@ -27,8 +27,8 @@ metrics:
   failed_runs: 0
 
 next_actions:
-  - "2026-09-28 (run 13): still 2/3 calendar days (unchanged since run 11/12 — today's ingestion already fired before this run started; tomorrow adds day 3). Checked RG-4 email thread (no new reply, due 2026-09-30 unchanged). Confirmed no other safe work: CI green on main (verified via Actions API), 0 open dev PRs, #19/#20/#21 all share the same data-maturity gate, dependabot #28/#29 unchanged (same head SHAs) since upstream-blocked diagnosis, no unclaimed security/design findings, no TODO/FIXME in src/scripts/tests. Ran npm ci / lint (clean) / test (75/75) / build (fails only on the known sandbox font-fetch gap, ADR-006 — left to CI, unchanged). Found and fixed one small doc-accuracy item: TECH-DEBT.md's row about PR #37's CI-trigger delay was left 'open — check PR #37's CI first thing next run' even though that same run's own PR #37 did get CI and merge (11:02-11:24 UTC) — marked resolved with the verification. No code changed. Quiet run per CLAUDE.md rule 8. Next: check for a 3rd calendar day of snapshot history, then start /trending (#19)."
   - "2026-09-28 (run 14): still 2/3 calendar days (unchanged since run 11-13 — data/repogrove.db has rows for 2026-09-27 and 2026-09-28 only; today's ingestion already fired before this run started; tomorrow adds day 3). Confirmed no other dev-lane work: CI green on main (Actions API), 0 open dev PRs, #19/#20/#21 all share the same data-maturity gate, dependabot #28/#29 unchanged (same failing job — typescript-eslint/TS7 and eslint-plugin-react/ESLint10 upstream gaps, confirmed again via check-runs API), no unclaimed security/design findings, no TODO/FIXME in src/scripts/tests. Ran npm ci / lint (clean) / test (75/75) / build (fails only on the known sandbox font-fetch gap, ADR-006 — left to CI, unchanged). Checked all open owner-decision Gmail threads per DECISION-PROTOCOL.md (not just dev's own): RG-4 (design's) still no new reply since 2026-09-27 17:32:04Z, due 2026-09-30 unchanged. RG-6 (design's) HAD a new, unread owner reply ('1 go ahead', 2026-09-28T17:25:33Z) sitting unrecorded — recorded it in .factory/decisions.yaml (status ANSWERED), DECISIONS.md, and a comment on issue #41; left implementing the drafted commit-screenshots job to the design lane's next run, since it owns docs/design/ and the screenshot-review follow-through. Also fixed a stale TECH-DEBT.md row (the 'No deploy pipeline' item still cited RG-2 as undecided; RG-2 was answered 2026-09-27 — the real blocker is CLAUDE.md rule 6's human gate on provisioning the Azure Storage account, not an open decision). No dev code/content changed. Quiet run per CLAUDE.md rule 8. Next: check for a 3rd calendar day of snapshot history, then start /trending (#19)."
+  - "2026-09-28 (run 15): still 2/3 calendar days (unchanged since run 11-14 — data/repogrove.db still only has rows for 2026-09-27 and 2026-09-28; today's ingestion already fired at 10:54 UTC before this run started; tomorrow adds day 3). Confirmed no other dev-lane work: CI green on main (commits/main/status + check-runs API, all 3 jobs success), 0 open dev PRs (only dependabot #28/#29, both still failing the same upstream-blocked job — typescript-eslint/TS7.0 and eslint-plugin-react/ESLint10 gaps, unchanged head SHAs), #30 (jsdom) confirmed already merged by an earlier run, #19/#20/#21 all share the same data-maturity gate, no unclaimed security/design findings (security: low:2 both owner-blocked SEC-001/SEC-003; design: 0 open), no TODO/FIXME in src/scripts/tests. Checked the RG-4 email thread directly (get_thread, not just search) — still exactly 3 messages, last at 2026-09-27T17:32:04Z, no new reply; due 2026-09-30 unchanged. Ran npm ci / lint (clean) / test (75/75) / build (fails only on the known sandbox font-fetch gap, ADR-006 — left to CI, unchanged). No stale doc rows found this run. No dev code/content changed. Quiet run per CLAUDE.md rule 8. Next: check for a 3rd calendar day of snapshot history, then start /trending (#19)."
 
 security:
   last_run: "2026-09-28T19:04:34Z"
