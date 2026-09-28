@@ -73,3 +73,5 @@
     17:32:04Z message; this run's task (wiring the screenshot harness into CI) didn't
     depend on this answer either way. Due date is 2026-09-30, still 2 days off; next
     run should check once more before it defaults.
+    Re-checked again 2026-09-28 (dev run 13) — still no new reply since the 17:32:04Z
+    message. Due date 2026-09-30 unchanged, ~2 days off.

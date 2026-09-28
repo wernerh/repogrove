@@ -13,13 +13,12 @@ migration, or deploy target needed yet.
 **Phase 2 — Ingestion & metrics**. Phase 1 landed in PR #10.
 
 ## Next action (exactly one)
-`/trending` (#19) still leads Phase 2 but is still data-gated (`data/repogrove.db` still
-at 2/3 calendar days — unchanged since run 11; tomorrow's scheduled ingestion adds the
-3rd day). Run 12: no other safe work found either — CI green, 0 open dev PRs, no
-unclaimed findings, #20/#21 share #19's data-maturity gate, #28/#29 unchanged since
-diagnosis. Local `npm ci`/lint/test (73/73) clean; build fails only on the known
-sandbox font-fetch gap (ADR-006). A quiet run per CLAUDE.md rule 8. Next run: check for
-a 3rd calendar day of history, then start `/trending`.
+`/trending` (#19) still data-gated (`data/repogrove.db` at 2/3 calendar days, unchanged
+since run 11; today's ingestion already fired, tomorrow adds day 3). Run 13: no other
+safe work found — CI green, 0 open dev PRs, #20/#21 share #19's gate, #28/#29 unchanged
+since upstream-blocked diagnosis. Local lint/test(75/75)/build (known font-fetch gap)
+re-verified; closed a stale TECH-DEBT note (PR #37 merged fine, just unmarked). Quiet
+run per rule 8. Next run: check for day 3, then start `/trending`.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
