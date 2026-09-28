@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-28T15:05:53Z"
-  holder: "security"
-  last_run: "2026-09-28T14:51:41Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-28T15:23:13Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,10 +19,10 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 14
+  runs: 15
   features_completed: 6
   bugs_fixed: 2
-  security_issues_fixed: 2
+  security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
 
@@ -31,8 +31,8 @@ next_actions:
   - "2026-09-28 (run 12): still 2/3 calendar days (unchanged since run 11 — today's ingestion had already fired at 10:53 UTC before this run started; tomorrow adds day 3). Widened the search for unblocked work before accepting a quiet run: CI green (verified via Actions API), 0 open dev PRs, no unclaimed security/design findings, #19/#20/#21 all explicitly gate on 3+ days of real snapshot history per their own acceptance criteria (not just #19), dependabot #28/#29 unchanged (same head SHAs) since their prior-run upstream-blocked diagnosis (typescript-eslint doesn't support TS 7; eslint-plugin-react doesn't support ESLint 10's rule-context API), grep for TODO/FIXME across src/scripts/tests found nothing, scripts/factory/check.py all PASS. Ran npm ci / lint (clean) / test (73/73 passing, up from 58 — test count grew from PRs #31-#38) / build (fails only on the known sandbox font-fetch gap, ADR-006/TECH-DEBT — left to CI, unchanged). No code or content changed this run. Quiet run per CLAUDE.md rule 8. Next: check for a 3rd calendar day of snapshot history, then start /trending (#19)."
 
 security:
-  last_run: "2026-09-28T07:15:34Z"
-  next_action: "Re-check SEC-001 (factory-guardrails.yml permissions gap, owner-blocked) and SEC-003 (Dependabot alerts disabled, owner-blocked, issue #33) each run; once app grows an API surface (Phase 3 search/newsletter) review A02/A03/A09 for real; least-recently-reviewed categories A01/A02/A07/A09 re-confirmed unchanged 2026-09-28 (still NOT APPLICABLE/NEEDS-VERIFICATION, no auth/API/logging yet). Run 4: re-verified SEC-001/SEC-002 (unchanged), reviewed PR #31/#32's new attack surface (both clean), broadened secret-pattern scan to full commit diffs since last run and re-checked all 3 GitHub Actions workflows for script-injection (none). One new finding: SEC-003 (LOW, Dependabot alerts disabled, owner-blocked) — PR #34 merged, issue #33 opened"
+  last_run: "2026-09-28T15:23:13Z"
+  next_action: "Re-check SEC-001 (factory-guardrails.yml permissions gap, owner-blocked) and SEC-003 (Dependabot alerts disabled, owner-blocked, issue #33) each run; once app grows an API surface (Phase 3 search/newsletter) review A02/A03/A09 for real; least-recently-reviewed categories A01/A02/A07/A09 re-confirmed unchanged 2026-09-28 (still NOT APPLICABLE/NEEDS-VERIFICATION, no auth/API/logging yet). Run 5: re-verified SEC-001 (factory-guardrails.yml still no permissions: block, owner-blocked, unchanged) and SEC-002 (regex + regression tests in fetch-snapshots.ts confirmed unmodified after the .mjs→.ts conversion). Reviewed every PR merged since run 4 (#35 ingestion→TS, #37 contributor counts, #38 subscribers_count fix, #39 screenshot-harness-in-CI) for new attack surface — all clean (parameterised SQL throughout, validated-slug reuse in the new fetchContributorCount, new design-screenshots.yml already least-privilege). New finding SEC-004 (LOW): design lane's local static-file test server (scripts/design/static-server.mjs, added by #36/#39) crashed its whole process on one malformed-percent-encoding request (unhandled rejection from an uncaught URIError) — reproduced with curl, fixed same run (try/catch, 400/500 instead of crash), regression-tested (TDD, raw-socket test), independent-reviewer-approved, PR #40 squash-merged. npm ci/lint/test(75/75)/audit clean locally; build left to CI (known ADR-006 font-fetch gap, unchanged)."
   timebox: null
   failed_attempts: 0
   open_findings:
@@ -42,13 +42,13 @@ security:
     low: 2
     info: 0
   fixed_unverified: []
-  verified_fixes: ["SEC-001 (partial — ci.yml fixed, factory-guardrails.yml open, owner-blocked; re-checked 2026-09-28, unchanged)", "SEC-002 (ingestion slug regex traversal bypass, fixed + regression-tested; re-checked 2026-09-28, regex and tests unmodified)"]
+  verified_fixes: ["SEC-001 (partial — ci.yml fixed, factory-guardrails.yml open, owner-blocked; re-checked 2026-09-28, unchanged)", "SEC-002 (ingestion slug regex traversal bypass, fixed + regression-tested; re-checked 2026-09-28, regex and tests unmodified across the .mjs→.ts conversion)", "SEC-004 (design static-server malformed-URI crash, fixed + regression-tested this run — PR #40, commit 95ed8f1)"]
   owasp_reviewed:
     A01: "NOT APPLICABLE"
     A02: "NEEDS-VERIFICATION"
     A03: "PASS"
     A04: "PASS"
-    A05: "FINDING (LOW, partially fixed — SEC-001)"
+    A05: "FINDING (LOW, partially fixed — SEC-001 open/owner-blocked; SEC-004 fixed+verified this run)"
     A06: "PASS (defense-in-depth gap noted — SEC-003)"
     A07: "NOT APPLICABLE"
     A08: "PASS"

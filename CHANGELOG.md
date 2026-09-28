@@ -242,3 +242,17 @@ entries.
   2026-09-27. `/trending`/`/rising`/Heat (#19-21) remain data-gated (still 2/3 days of
   snapshot history), so this run picked up this bounded, unblocked correctness fix
   instead. PR #38. (dev)
+- 2026-09-28 — SEC-004: the design lane's local Playwright screenshot-harness server
+  (`scripts/design/static-server.mjs`, 127.0.0.1-only, CI/contributor-machine-only)
+  crashed its entire Node process on a single malformed-percent-encoding HTTP request
+  (`decodeURIComponent` throwing an uncaught `URIError` inside an unawaited `async`
+  request handler — an unhandled promise rejection, fatal in Node). Reproduced
+  directly with `curl` before fixing. Fixed: the handler now catches `URIError` (→
+  400) and any other unexpected error (→ 500) instead of crashing. Regression test
+  (`tests/scripts/design-static-server.test.ts`) uses a raw TCP socket, the only way
+  to send a genuinely malformed `%` (normal HTTP clients like `fetch()` reject/
+  normalize it client-side) — confirmed it failed against the pre-fix code first
+  (TDD). Independent reviewer subagent found no blocking issues. Severity LOW: never
+  internet-facing, CI/local-dev only. See
+  `docs/security/findings/SEC-004-static-server-malformed-uri-dos.md`. PR #40.
+  (security)
