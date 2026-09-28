@@ -85,3 +85,28 @@ entries.
   future bumps can't split them again. `npm ci && npm run lint && npm test` (43/43)
   `&& npm run build && npm audit --audit-level=high` all verified clean on a fresh
   install. (dev)
+- 2026-09-28 — Security re-verification pass, no new findings: re-checked both prior
+  FIXED findings with evidence rather than on faith. SEC-001 (`factory-guardrails.yml`
+  permissions gap) confirmed still open/owner-blocked, unchanged. SEC-002 (ingestion
+  slug-traversal regex) confirmed still fixed — regex and both regression tests
+  unmodified. Found and fixed a gap in `docs/security/README.md`'s own Findings table:
+  SEC-002 had never been added to it despite being FIXED and VERIFIED since 2026-09-27.
+  Re-ran `npm audit` fresh: 0 vulnerabilities (the 2 moderate findings noted 2026-09-27
+  are resolved via dependabot's vitest 5.0.1 bump, PR #15). Re-checked `out/` for
+  leaked source maps/env values (clean) and re-attempted the branch-protection /
+  workflow-permissions API reads from SEC-001 (both still 403, unchanged). Reviewed
+  design lane's merged PR #25 (CSS token wiring, 4 pages restyled) and dev lane's PR #27
+  (opened and merged during this same run — fixes issue #26's CI-breaking
+  `react`/`react-dom` peer mismatch, and incidentally the `@vitejs/plugin-react`/`vite`
+  peer conflict that was separately breaking `npm test` on a clean `main` checkout at
+  the time this review started) for new attack surface — neither introduces a security
+  issue; PR #27 only adds a `// @vitest-environment node` docblock to the two ingestion
+  test files, doesn't touch SEC-002's fix or weaken its tests. `lint`/`build`/`npm audit`
+  verified clean via `--legacy-peer-deps` install before PR #27 merged (`npm ci` failed
+  cleanly until then, issue #26); re-verified `npm ci && npm test` (43/43) clean after
+  PR #27 landed. Also found the shared factory lock (`holder: dev`,
+  `current_run: 2026-09-28T02:00:00Z`) was 65+ minutes old with no dev section update at
+  run start — reclaimed for this run per the lock-staleness rule; dev's session was in
+  fact still active and opened/merged PR #27 moments later against this run's
+  lock-acquisition commit, so no work was lost, but flagging the timing overlap for
+  visibility. (security)
