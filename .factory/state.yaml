@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-28T10:51:00Z"
-  holder: "dev"
-  last_run: "2026-09-28T09:32:40Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-28T11:12:00Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -10,7 +10,7 @@ product:
 execution:
   active_tasks: []
   blocked_tasks: []
-  open_prs: []
+  open_prs: ["#37 (feat/contributor-counts) — opened by dev, CI not yet started ~9min after opening (see TECH-DEBT.md); not mergeable until CI reports green"]
 
 health:
   ci: green
@@ -19,7 +19,7 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 11
+  runs: 12
   features_completed: 5
   bugs_fixed: 1
   security_issues_fixed: 2
@@ -27,7 +27,7 @@ metrics:
   failed_runs: 0
 
 next_actions:
-  - "2026-09-28 (run 9): /trending (#19)/rising (#20)/Heat (#21) still data-gated — data/repogrove.db at 2/3 days; ingestion.yml's cron still hasn't self-fired (0 scheduled runs across 2 calendar days, 3rd consecutive run observing this — see TECH-DEBT.md). Did unblocked tech debt instead: converted scripts/ingestion/{fetch-snapshots,snapshots-db}.mjs to TypeScript now that @types/node (^26) ships node:sqlite's types (PR #35) — behavior unchanged, ingestion.yml updated to run the .ts file directly (Node 22 strips TS syntax natively). Also fully diagnosed (pulled the actual failing job logs) why dependabot #28 (typescript 7.0.2) and #29 (eslint 10.11.0) fail their own CI: both are genuine upstream incompatibilities (typescript-eslint doesn't support TS 7.0 yet; eslint-plugin-react breaks under ESLint 10's changed rule-context API) — not fixable from this repo, no longer worth re-investigating each run. #30 (jsdom) still green but outside this lane's merge gate. Next: check for a 3rd calendar day of snapshot history (dispatch ingestion.yml if still not self-firing), then start /trending (#19)."
+  - "2026-09-28 (run 10): /trending (#19)/rising (#20)/Heat (#21) still data-gated — data/repogrove.db at 2/3 days. Good news mid-run: ingestion.yml's schedule cron finally self-fired (run #3, event=schedule, 10:53-10:54 UTC, 6h37m late but unprompted — first time ever; TECH-DEBT.md's long-standing 'cron never fires' row marked resolved), but it only re-touched today's already-captured row (a new calendar day needs tomorrow's run). Did unblocked pipeline work instead: added contributor-count capture (fetchContributorCount — GET /repos/{owner}/{repo}/contributors?per_page=1&anon=true, Link-header rel=\"last\" page-count trick; nullable `contributors` column via an additive migration, applied to the real committed data/repogrove.db; failure-isolated from the main stars/forks/issues fetch, COALESCE-preserves a known value across a failed same-day re-run). Independent review caught and fixed a real bug pre-push (silent under-count when a Link header lacked rel=\"last\"). PR #37 opened, labelled factory, subscribed — but its own CI had produced 0 check runs after ~9 minutes (confirmed 3x), a *different* non-firing-trigger symptom, now seen on pull_request too (new TECH-DEBT.md row) — left open rather than blocking the run past its lock timebox. Also fixed a stale TECH-DEBT.md row (content/repos filename-collision check already shipped in PR #10, was never marked done). Next: check PR #37's CI first — merge if green per usual gate, escalate to owner if still 0 check runs. Then check for a 3rd calendar day of snapshot history, then start /trending (#19)."
 
 security:
   last_run: "2026-09-28T07:15:34Z"
