@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-28T11:22:28Z"
-  holder: "dev"
-  last_run: "2026-09-28T11:12:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-28T11:25:00Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -10,7 +10,7 @@ product:
 execution:
   active_tasks: []
   blocked_tasks: []
-  open_prs: ["#37 (feat/contributor-counts) — opened by dev, CI not yet started ~9min after opening (see TECH-DEBT.md); not mergeable until CI reports green"]
+  open_prs: []
 
 health:
   ci: green
@@ -20,14 +20,14 @@ health:
 
 metrics:
   runs: 12
-  features_completed: 5
+  features_completed: 6
   bugs_fixed: 1
   security_issues_fixed: 2
   deployments: 0
   failed_runs: 0
 
 next_actions:
-  - "2026-09-28 (run 10): /trending (#19)/rising (#20)/Heat (#21) still data-gated — data/repogrove.db at 2/3 days. Good news mid-run: ingestion.yml's schedule cron finally self-fired (run #3, event=schedule, 10:53-10:54 UTC, 6h37m late but unprompted — first time ever; TECH-DEBT.md's long-standing 'cron never fires' row marked resolved), but it only re-touched today's already-captured row (a new calendar day needs tomorrow's run). Did unblocked pipeline work instead: added contributor-count capture (fetchContributorCount — GET /repos/{owner}/{repo}/contributors?per_page=1&anon=true, Link-header rel=\"last\" page-count trick; nullable `contributors` column via an additive migration, applied to the real committed data/repogrove.db; failure-isolated from the main stars/forks/issues fetch, COALESCE-preserves a known value across a failed same-day re-run). Independent review caught and fixed a real bug pre-push (silent under-count when a Link header lacked rel=\"last\"). PR #37 opened, labelled factory, subscribed — but its own CI had produced 0 check runs after ~9 minutes (confirmed 3x), a *different* non-firing-trigger symptom, now seen on pull_request too (new TECH-DEBT.md row) — left open rather than blocking the run past its lock timebox. Also fixed a stale TECH-DEBT.md row (content/repos filename-collision check already shipped in PR #10, was never marked done). Next: check PR #37's CI first — merge if green per usual gate, escalate to owner if still 0 check runs. Then check for a 3rd calendar day of snapshot history, then start /trending (#19)."
+  - "2026-09-28 (run 10): /trending (#19)/rising (#20)/Heat (#21) still data-gated — data/repogrove.db at 2/3 days. Good news mid-run: ingestion.yml's schedule cron finally self-fired (run #3, event=schedule, 10:53-10:54 UTC, 6h37m late but unprompted — first time ever; TECH-DEBT.md's long-standing 'cron never fires' row marked resolved), but it only re-touched today's already-captured row (a new calendar day needs tomorrow's run). Did unblocked pipeline work instead: added contributor-count capture (fetchContributorCount — GET /repos/{owner}/{repo}/contributors?per_page=1&anon=true, Link-header rel=\"last\" page-count trick; nullable `contributors` column via an additive migration, applied to the real committed data/repogrove.db; failure-isolated from the main stars/forks/issues fetch, COALESCE-preserves a known value across a failed same-day re-run). Independent review caught and fixed a real bug pre-push (silent under-count when a Link header lacked rel=\"last\"). PR #37 opened, labelled factory, subscribed — its own CI sat at 0 check runs for ~16 minutes (a different, pull_request-trigger non-firing symptom, new TECH-DEBT.md row, open — watch next run) before another session resolved a data/repogrove.db merge conflict against main's routine ingestion commit; CI then ran clean (4/4) and this run squash-merged it (commit 7616fca). Also fixed a stale TECH-DEBT.md row (content/repos filename-collision check already shipped in PR #10, was never marked done). Next: check for a 3rd calendar day of snapshot history, then start /trending (#19)."
 
 security:
   last_run: "2026-09-28T07:15:34Z"

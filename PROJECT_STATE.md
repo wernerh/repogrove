@@ -16,9 +16,8 @@ migration, or deploy target needed yet.
 `/trending` (#19) still leads Phase 2 but is data-gated (`data/repogrove.db` at 2/3
 days — today's `schedule` ingestion run only re-touched today's row). This run did
 unblocked pipeline work instead: contributor-count capture via `fetchContributorCount`
-— PR #37, open, CI not yet started ~9 min after opening (see Blockers). Next run:
-check PR #37's CI and merge/nudge; check for a 3rd calendar day, then start
-`/trending`.
+— PR #37 merged (its CI eventually ran and went green; see Blockers). Next run: check
+for a 3rd calendar day of history, then start `/trending`.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -46,15 +45,13 @@ not a failed attempt. Start `/trending` (#19) once 3+ days of history exists.
 
 ## Blockers and attempts
 None blocking (rule 8). `ingestion.yml`'s `schedule` cron finally self-fired mid-run
-today (10:53 UTC, 6h37m late but unprompted — TECH-DEBT.md, resolved). PR #37's CI
-still hadn't started ~9 min after opening though — same symptom now seen on
-`pull_request`; check first next run, escalate to owner if still stuck. Dependabot
-#28/#29 blocked upstream, not fixable here; #30 green but outside this lane's merge
-gate — TECH-DEBT.md.
+today (10:53 UTC, 6h37m late but unprompted — TECH-DEBT.md, resolved). PR #37's own
+CI sat at 0 check runs for ~16 min after opening (a different, `pull_request`-trigger
+non-firing symptom — TECH-DEBT.md, open, watch next run) but then ran clean and merged.
+Dependabot #28/#29 blocked upstream, not fixable here; #30 merged.
 
 ## Milestones
 - [x] 2026-09-27 — Repo bootstrapped; Phase 1 walking skeleton — #5, #6, #7
 - [x] 2026-09-27 — Phase 2 ingestion job + schema (ADR-005) — #16/17, PR #22; repos 2→5
-- [x] 2026-09-28 — CI red fixed (#26, PR #27); star-growth chart (#18, PR #31); self-hosted fonts (ADR-006, PR #32); ingestion scripts to TS (PR #35).
-- [ ] Contributor-count capture — PR #37 open, CI pending
+- [x] 2026-09-28 — CI red fixed (#26, PR #27); star-growth chart (#18, PR #31); self-hosted fonts (ADR-006, PR #32); ingestion scripts to TS (PR #35); contributor counts (PR #37).
 - [ ] Phase 3 — search, SEO, newsletter signup

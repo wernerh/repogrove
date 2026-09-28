@@ -205,3 +205,15 @@ entries.
   mechanically this run (18/18 checks passed against a temporary local build); real
   screenshots with the production font stack are left to a future run/CI with network
   access to Google Fonts (ADR-006's existing constraint). (design)
+- 2026-09-28 — Ingestion now captures total contributor counts alongside
+  stars/forks/open_issues/watchers, resolving the item ADR-005 deferred. A second,
+  independent GitHub API call per repo (`GET /repos/{owner}/{repo}/contributors?
+  per_page=1&anon=true`) reads the total off the `Link` header's `rel="last"` page
+  number rather than paging through every contributor; `repository_snapshots` gained a
+  nullable `contributors` column via an additive migration, applied to the real
+  committed `data/repogrove.db` as part of this change. A contributor-fetch failure is
+  isolated from the main metrics fetch (stores `contributors: null`, keeps the day's
+  star/fork/issue snapshot; a same-day re-run's failure doesn't clobber an
+  already-known value). Independent review caught and fixed a real bug pre-merge: the
+  single-page fallback could silently under-count when a `Link` header lacked
+  `rel="last"`. See ADR-005's addendum. PR #37. (dev)
