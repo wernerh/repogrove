@@ -196,3 +196,12 @@ entries.
   both are genuine upstream incompatibilities (`typescript-eslint` doesn't support TS
   7.0 yet; `eslint-plugin-react` breaks under ESLint 10's changed rule-context API),
   not fixable from this repo. PR #35. (dev)
+- 2026-09-28: design lane — added a reusable Playwright + axe-core screenshot/
+  accessibility harness (`@playwright/test`, `@axe-core/playwright` as devDependencies;
+  `playwright.config.ts`, `tests/design/screenshots.spec.ts`,
+  `scripts/design/static-server.mjs`, `npm run design:screenshots`) so future runs and
+  contributors can check every route × viewport × color-scheme for WCAG 2.1 AA
+  violations without a one-off, globally-installed script. See ADR-007. Verified
+  mechanically this run (18/18 checks passed against a temporary local build); real
+  screenshots with the production font stack are left to a future run/CI with network
+  access to Google Fonts (ADR-006's existing constraint). (design)

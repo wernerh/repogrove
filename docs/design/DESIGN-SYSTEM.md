@@ -8,8 +8,10 @@ four Phase 1 pages (`layout.tsx`, `page.tsx`, `repo/[slug]/page.tsx`,
 `grove/[slug]/page.tsx`) were restyled to consume the new semantic classes
 (`bg-bg-default`, `text-text-link`, `font-serif`, etc.) instead of raw Tailwind defaults
 (`zinc-*`, `emerald-700`). Screenshotted light + dark, desktop/tablet/mobile with
-Playwright (globally installed, not yet a project dependency — see "Open questions"
-below) before merging. **Not yet wired:** the actual Inter/Source Serif 4/IBM Plex Mono
+Playwright (at the time, globally installed, not yet a project dependency — as of
+2026-09-28 this is now a reusable, checked-in harness, see "Open questions" below and
+`docs/adr/ADR-007-design-screenshot-a11y-harness.md`) before merging. **Not yet wired:**
+the actual Inter/Source Serif 4/IBM Plex Mono
 font *files* — `next/font` loading is explicitly dev-lane work per this doc's Typography
 section (needs an ADR note); the fallback stacks (system sans/serif/mono) are live now
 and already produce the correct visual hierarchy (sans UI chrome, serif prose, mono
@@ -328,18 +330,25 @@ earlier in this run failed and are worth recording so the reasoning survives: a 
 ## Open questions / next steps for this lane
 
 - RG-4 (visual direction) — still open as of 2026-09-28 (checked the email thread again
-  this run, no new reply from whurter5@gmail.com since the ambiguous "happy with public
-  and suggestions" already recorded); proceeding on the recommended default
-  (editorial/content-forward) per `.factory/decisions.yaml`, defaults 2026-09-30 if still
-  unanswered.
+  this run — design run 3 — no new reply from whurter5@gmail.com since the ambiguous
+  "happy with public and suggestions" already recorded); proceeding on the recommended
+  default (editorial/content-forward) per `.factory/decisions.yaml`, defaults
+  2026-09-30 if still unanswered — two days away, next run should check again.
 - Density modes, additional radius/elevation tiers, and a compact table mode are
   deliberately deferred until a real page exists to test them against (see Spacing &
   layout above).
-- **Next major task:** build the repeatable screenshot + axe-core harness (Playwright as
-  a dev-dependency, with an ADR line) so future runs don't hand-run a throwaway script
-  outside the project the way this run did to verify the token wiring visually. Once
-  that harness exists, extend it to the component patterns below (cards, alternatives
-  table, status chips) as the dev lane builds the pages that need them.
+- **Done this run (2026-09-28, design run 3):** the repeatable screenshot + axe-core
+  harness is built — `@playwright/test` + `@axe-core/playwright` as devDependencies,
+  `playwright.config.ts`, `tests/design/screenshots.spec.ts`, `npm run
+  design:screenshots` — see `docs/adr/ADR-007-design-screenshot-a11y-harness.md` for
+  the full design and its one real limitation (this sandbox can't fetch the Google
+  Fonts this repo's build now needs — ADR-006 — so this run verified the harness's
+  mechanics against a locally-stubbed build rather than the real one; real screenshots
+  need a future run/CI with that network access). **Next major task:** once that
+  happens and real screenshots exist, extend `ROUTES` in the spec to the component
+  patterns below (cards, alternatives table, status chips) as the dev lane builds the
+  pages that need them, and review the actual rendered output against this doc's specs
+  for the first time.
 - Component patterns (repo/Grove card, alternatives table, status chips, dates,
   loading/empty/error states) are still specs only — no page yet needs them. Wire them in
   as each dev-lane page lands, not speculatively ahead of it.
