@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
 import { getAllRepos, getRepo } from "@/lib/content";
+import { getSnapshotHistory } from "@/lib/snapshots";
+import StarGrowthChart from "@/components/StarGrowthChart";
 import type { Metadata } from "next";
 
 interface PageProps {
@@ -58,6 +60,8 @@ export default async function RepoPage({ params }: PageProps) {
           <dd className="inline">{repo.category.join(", ")}</dd>
         </div>
       </dl>
+
+      <StarGrowthChart history={getSnapshotHistory(repo.github)} />
 
       <div className="mt-6">
         {/* The body's own "## Related Grove" section (hand-authored in
