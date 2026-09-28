@@ -42,6 +42,9 @@ export interface SnapshotRow {
   watchers: number;
   source: string;
   fetchedAt: string;
+  /** Total contributor count, or `null` for a row whose contributor fetch failed or
+   * predates this column (see scripts/ingestion/snapshots-db.ts's migration). */
+  contributors: number | null;
 }
 
 // Kept in sync by hand with the identical constant in
@@ -52,7 +55,7 @@ export interface SnapshotRow {
 // SQL fragment. If the schema changes, update both.
 const SELECT_COLUMNS = `
   github, captured_on AS capturedOn, stars, forks, open_issues AS openIssues,
-  watchers, source, fetched_at AS fetchedAt
+  watchers, source, fetched_at AS fetchedAt, contributors
 `;
 
 /**

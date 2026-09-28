@@ -108,3 +108,39 @@ end and start the star-growth chart in a follow-up run).
   pre-launch) and an already-answered hosting decision (RG-2) — not a new
   expensive-to-reverse pivot, so it does not require a fresh owner decision under
   `docs/DECISION-PROTOCOL.md`.
+
+## Addendum (2026-09-28): contributor counts
+
+This ADR originally deferred contributor counts (see "Deferred, not decided against"
+above) until the daily stars/forks pipeline was proven. Two full days of successful
+`workflow_dispatch` ingestion runs (2026-09-27, 2026-09-28), both idempotent and both
+committing clean, is enough evidence for that — this run adds it as a schema evolution
+of the same `data/repogrove.db`, not a new ADR (same file, same storage decision, no
+new dependency or expensive-to-reverse choice).
+
+- `repository_snapshots` gained a nullable `contributors INTEGER` column, applied via an
+  additive `ALTER TABLE ... ADD COLUMN` migration in `snapshots-db.ts`'s `openDb()` —
+  safe to run on every open (checks `PRAGMA table_info` first) and applied once, by
+  hand, against the already-committed `data/repogrove.db` as part of this change so the
+  schema on disk and the code reading it never disagree. Existing rows read back with
+  `contributors: null` — a real "unknown for that day," not a data error.
+- Fetched via a second GitHub API call,
+  `GET /repos/{owner}/{repo}/contributors?per_page=1&anon=true`, reading the total off
+  the `Link` header's `rel="last"` page number (the standard pagination-count trick) —
+  not the `/stats/contributors` endpoint, which can return `202` while GitHub computes
+  results asynchronously and would need its own poll/retry handling.
+- Deliberately **not** the "lower-frequency" fetch this ADR's deferred note first
+  imagined: at five tracked repos, one extra request per repo per day is two calls
+  total per hour of ingestion budget-wise — nowhere near GitHub's rate limits (60/hr
+  unauthenticated, 5,000/hr with the Actions `GITHUB_TOKEN`) to justify the added
+  complexity of a separate lower-frequency schedule. Revisit if/when the tracked-repo
+  count grows enough for that math to change.
+- Failure isolation: a contributor-count fetch failing (rate limit, network blip) never
+  throws away that day's star/fork/issue snapshot — `runIngestion` catches it
+  independently of `fetchRepoMetrics`'s failure path and stores `contributors: null` for
+  the row. A same-day re-run whose contributor fetch fails does not clobber an
+  already-known value either (`upsertSnapshot`'s `ON CONFLICT` uses
+  `COALESCE(excluded.contributors, repository_snapshots.contributors)`).
+- Not yet surfaced on any page — `src/lib/snapshots.ts`'s `SnapshotRow` carries it
+  through for `/repo/[slug]` and a future Heat methodology (ADR-004, issue #21, which
+  lists "contributor growth" as one of its inputs) to use once there's a UI consumer.

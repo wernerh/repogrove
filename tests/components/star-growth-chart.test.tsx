@@ -13,6 +13,7 @@ function row(overrides: Partial<SnapshotRow> = {}): SnapshotRow {
     watchers: 100,
     source: "github-api",
     fetchedAt: "2026-09-27T12:00:00.000Z",
+    contributors: null,
     ...overrides,
   };
 }
