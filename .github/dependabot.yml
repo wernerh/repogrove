@@ -17,6 +17,15 @@ updates:
           - "react-dom"
           - "@types/react"
           - "@types/react-dom"
+    ignore:
+      # typescript-eslint (bundled transitively via eslint-config-next) doesn't support
+      # TypeScript 7.x yet — see typescript-eslint/typescript-eslint#10940. PR #28 bumped
+      # to 7.0.2 anyway (dependabot proposed it, then the owner merged it directly outside
+      # the factory's CI-gated flow) and broke `npm run lint` on main — see TECH-DEBT.md
+      # 2026-09-28. Reverted; ignoring major bumps here until that upstream gap closes so
+      # dependabot doesn't keep re-proposing the same breaking change.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
