@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-28T08:49:39Z"
-  holder: "dev"
-  last_run: "2026-09-28T07:15:34Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-28T09:03:00Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,7 +19,7 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 9
+  runs: 10
   features_completed: 5
   bugs_fixed: 1
   security_issues_fixed: 2
@@ -27,7 +27,7 @@ metrics:
   failed_runs: 0
 
 next_actions:
-  - "2026-09-28 (run 8): /trending (#19)/rising (#20)/Heat (#21) still data-gated — data/repogrove.db still at 2/3 days (same calendar day as run 7, ingestion.yml's cron still hasn't self-fired: 0 scheduled runs since the workflow was added 2026-09-27, both runs so far manual workflow_dispatch). Did unblocked tech debt instead: real self-hosted fonts (Inter/Source Serif 4/IBM Plex Mono) via next/font/google (PR #32, ADR-006) — a review subagent caught and fixed a CSS var() fallback bug before merge (bare var(--unset) without an in-call fallback invalidates the whole declaration, not just that entry). Also checked the 3 open dependabot PRs' own CI: #28 (typescript 7.0.2) and #29 (eslint 10.11.0) both fail; #30 (jsdom 30.1.1) is green — none merged (not opened by this lane, don't carry factory label, outside this run's merge gate). Next: check for a 3rd calendar day of snapshot history (dispatch ingestion.yml if not present), then start /trending (#19)."
+  - "2026-09-28 (run 9): /trending (#19)/rising (#20)/Heat (#21) still data-gated — data/repogrove.db at 2/3 days; ingestion.yml's cron still hasn't self-fired (0 scheduled runs across 2 calendar days, 3rd consecutive run observing this — see TECH-DEBT.md). Did unblocked tech debt instead: converted scripts/ingestion/{fetch-snapshots,snapshots-db}.mjs to TypeScript now that @types/node (^26) ships node:sqlite's types (PR #35) — behavior unchanged, ingestion.yml updated to run the .ts file directly (Node 22 strips TS syntax natively). Also fully diagnosed (pulled the actual failing job logs) why dependabot #28 (typescript 7.0.2) and #29 (eslint 10.11.0) fail their own CI: both are genuine upstream incompatibilities (typescript-eslint doesn't support TS 7.0 yet; eslint-plugin-react breaks under ESLint 10's changed rule-context API) — not fixable from this repo, no longer worth re-investigating each run. #30 (jsdom) still green but outside this lane's merge gate. Next: check for a 3rd calendar day of snapshot history (dispatch ingestion.yml if still not self-firing), then start /trending (#19)."
 
 security:
   last_run: "2026-09-28T07:15:34Z"

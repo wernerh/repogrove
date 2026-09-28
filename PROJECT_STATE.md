@@ -14,12 +14,12 @@ migration, or deploy target needed yet.
 
 ## Next action (exactly one)
 `/trending` (#19) / `/rising` (#20) / Heat (#21) still lead Phase 2 but are still
-data-gated: `data/repogrove.db` is still at 2/3 days (same calendar day as last run —
-no new day could accumulate) and `ingestion.yml`'s cron still hasn't self-fired (0
-scheduled runs since 2026-09-27; both runs manual `workflow_dispatch`). This run did
-unblocked tech debt instead: real self-hosted fonts via `next/font/google` (PR #32,
-ADR-006). Next run: check for a 3rd calendar day of history (dispatch `ingestion.yml`
-if not) — once present, start `/trending` (#19).
+data-gated: `data/repogrove.db` is at 2/3 days and `ingestion.yml`'s cron still hasn't
+self-fired (0 scheduled runs across 2 calendar days — see TECH-DEBT.md). This run did
+unblocked tech debt instead: converted `scripts/ingestion/*.mjs` to TypeScript (PR
+#35) and diagnosed (not fixable here) why dependabot #28/#29 fail their own CI — both
+blocked on upstream. Next run: check for a 3rd calendar day of history (dispatch
+`ingestion.yml` if still not self-firing) — once present, start `/trending` (#19).
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -40,21 +40,21 @@ Accounts, paid subscriptions, watchlists/alerts, elaborate recommendation engine
 crawling infra, admin CMS, live deploy — see spec §30, §33 and ADR-002.
 
 ## Timebox
-Phase 2: run 1 shipped ingestion+schema (PR #22); run 2 the star-growth chart (PR #31);
-run 3 (this run) did unblocked tech debt (fonts, PR #32) since #19-21 stayed
-data-gated. Re-timebox #19-21 if still stuck after 1 more run.
+Phase 2: run 1 ingestion+schema (PR #22); run 2 star-growth chart (PR #31); runs 3-4
+did unblocked tech debt (fonts PR #32, ingestion-to-TS PR #35) since #19-21 stayed
+data-gated — a calendar-time blocker, not a failed attempt, so not counted against
+the "3 failed attempts" rule. Start `/trending` (#19) the run 3+ days of history exists.
 
 ## Blockers and attempts
-None blocking (rule 8). `ingestion.yml`'s cron still hasn't self-fired (2 days, 0
-scheduled runs) — worked around via manual dispatch; not yet worth an owner email.
-Dependabot #28/#29 (typescript 7.0.2/eslint 10.11.0) fail their own CI, not merged;
-#30 (jsdom 30.1.1) is green but outside this run's merge gate — see TECH-DEBT.md.
+None blocking (rule 8). `ingestion.yml`'s cron hasn't self-fired in 2 calendar days
+(3rd consecutive run observing this) — worked around via manual dispatch; escalate to
+owner email if a 4th day shows the same (TECH-DEBT.md). Dependabot #28/#29 diagnosed
+this run: both blocked on real upstream incompatibilities, not fixable here. #30
+(jsdom) green but outside this lane's merge gate (no `factory` label) — TECH-DEBT.md.
 
 ## Milestones
 - [x] 2026-09-27 — Repo bootstrapped; Phase 1 walking skeleton — #5, #6, #7
 - [x] 2026-09-27 — Phase 2 ingestion job + schema (ADR-005) — #16/17, PR #22; repos 2→5
-- [x] 2026-09-28 — CI red on `main` fixed (react/react-dom peer + node:sqlite test env,
-  #26, PR #27); dependabot groups react/react-dom now to prevent a repeat.
-- [x] 2026-09-28 — Star-growth chart on repo pages (#18, PR #31).
-- [x] 2026-09-28 — Real self-hosted fonts wired in (ADR-006, PR #32).
+- [x] 2026-09-28 — CI red on `main` fixed (react/react-dom peer + node:sqlite test env, #26, PR #27); dependabot groups react/react-dom now.
+- [x] 2026-09-28 — Star-growth chart (#18, PR #31); self-hosted fonts (ADR-006, PR #32); ingestion scripts converted to TypeScript (PR #35).
 - [ ] Phase 3 — search, SEO, newsletter signup

@@ -180,3 +180,19 @@ entries.
   endpoint is separately blocked by this sandbox's proxy). Opened issue #33
   (`needs-human`) covering SEC-003 and the pre-existing branch-protection
   recommendation together. PR #34. (security)
+
+### Changed
+- 2026-09-28 — `scripts/ingestion/fetch-snapshots.mjs`/`snapshots-db.mjs` converted to
+  TypeScript (`.ts`) now that `@types/node` (`^26`) ships `node:sqlite`'s types;
+  behavior unchanged (same SQL, upsert logic, fetch/skip-on-failure loop). `.github/
+  workflows/ingestion.yml` now runs `node scripts/ingestion/fetch-snapshots.ts`
+  directly (Node 22 strips TS syntax at runtime, no build step). `/trending`/`/rising`/
+  Heat (#19-21) remain data-gated (2/3 days of real snapshot history; `ingestion.yml`'s
+  daily cron still hasn't self-fired even 4.5h past its scheduled time today — worked
+  around via `workflow_dispatch` both prior calendar days), so this run picked up this
+  bounded, unblocked tech-debt item instead — closes the TECH-DEBT.md row flagged
+  "partially stale" by a prior run. Also fully diagnosed (not fixed — see TECH-DEBT.md)
+  why dependabot PRs #28 (typescript 7.0.2) and #29 (eslint 10.11.0) fail their own CI:
+  both are genuine upstream incompatibilities (`typescript-eslint` doesn't support TS
+  7.0 yet; `eslint-plugin-react` breaks under ESLint 10's changed rule-context API),
+  not fixable from this repo. PR #35. (dev)
