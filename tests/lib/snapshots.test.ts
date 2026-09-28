@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Building the fixture DB reuses scripts/ingestion/snapshots-db.mjs's
+// Building the fixture DB reuses scripts/ingestion/snapshots-db.ts's
 // openDb/upsertSnapshot, which statically imports node:sqlite — that needs
 // the same per-file node environment override as tests/ingestion/*.test.ts
 // (see TECH-DEBT.md). src/lib/snapshots.ts itself avoids that bundling
@@ -10,7 +10,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { openDb, upsertSnapshot } from "../../scripts/ingestion/snapshots-db.mjs";
+import { openDb, upsertSnapshot } from "../../scripts/ingestion/snapshots-db.ts";
 import { getGrowthSummary, getSnapshotHistory, type SnapshotRow } from "@/lib/snapshots";
 
 const tempDirs: string[] = [];

@@ -44,7 +44,7 @@ is a human gate per `CLAUDE.md` rule 6).
 committed to Git**, and updated incrementally:
 
 1. A scheduled GitHub Actions workflow (`.github/workflows/ingestion.yml`) runs the
-   ingestion script (`scripts/ingestion/fetch-snapshots.mjs`) daily.
+   ingestion script (`scripts/ingestion/fetch-snapshots.ts`) daily.
 2. The script reads every repo referenced in `/content` frontmatter (`github: owner/name`
    — via the same field `src/lib/content.ts` already validates as unique), fetches
    `GET /repos/{owner}/{repo}` from the GitHub API, and **upserts** one row per
@@ -67,7 +67,9 @@ committed to Git**, and updated incrementally:
    during the build, so build output stays reproducible and doesn't depend on GitHub API
    availability/rate limits at build time. **Not built yet as of this ADR**: this PR
    lands the storage/ingestion side only (schema + read helpers in
-   `scripts/ingestion/snapshots-db.mjs`); no page imports them yet. The star-growth
+   `scripts/ingestion/snapshots-db.mjs`, converted to `snapshots-db.ts` once
+   `@types/node` gained `node:sqlite` types — see `TECH-DEBT.md`); no page imports them
+   yet. The star-growth
    chart, `/trending`, and `/rising` (issues #18-#20) are what will actually call
    `getLatestSnapshot`/`getSnapshotHistory`/`getTrackedRepos` from `src/` — they're the
    ones that will exercise this build-time-read claim, once there's a few days of real

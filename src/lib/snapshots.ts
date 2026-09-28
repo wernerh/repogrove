@@ -5,7 +5,7 @@
  * `/rising` (#19, #20) will read the same helpers later.
  *
  * This module only *reads*. Nothing here writes to `data/repogrove.db` —
- * that's `scripts/ingestion/fetch-snapshots.mjs`'s job alone (CLAUDE.md
+ * that's `scripts/ingestion/fetch-snapshots.ts`'s job alone (CLAUDE.md
  * rule 4: volatile/computed data is populated by ingestion jobs, never
  * hand-edited). See docs/adr/ADR-005-repository-snapshot-storage.md for why
  * this file is committed SQLite, read synchronously at `next build` time,
@@ -45,9 +45,11 @@ export interface SnapshotRow {
 }
 
 // Kept in sync by hand with the identical constant in
-// scripts/ingestion/snapshots-db.mjs (that file stays plain JS — see
-// TECH-DEBT.md — so it can't import this one's copy). If the schema
-// changes, update both.
+// scripts/ingestion/snapshots-db.ts — both are now TypeScript, but one is a
+// standalone Node script run directly by `node` (ingestion.yml) and the
+// other is bundled into the Next.js app; sharing an import across
+// `scripts/` and `src/` isn't worth the build-graph coupling for one small
+// SQL fragment. If the schema changes, update both.
 const SELECT_COLUMNS = `
   github, captured_on AS capturedOn, stars, forks, open_issues AS openIssues,
   watchers, source, fetched_at AS fetchedAt

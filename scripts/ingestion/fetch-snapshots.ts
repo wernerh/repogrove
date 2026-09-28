@@ -12,12 +12,17 @@
  * a renamed/deleted repo) — logs a warning and moves on, per docs/WORKPLAN.md's Phase 2
  * gate: ingestion "doesn't fail CI when GitHub API is rate-limited".
  *
- * Not TypeScript, to match scripts/ingestion/snapshots-db.mjs (see its header comment).
+ * TypeScript: see snapshots-db.ts's header comment — `@types/node` now ships
+ * `node:sqlite`'s types, so this and snapshots-db.ts no longer need to stay plain JS
+ * (TECH-DEBT.md). Run directly via `node scripts/ingestion/fetch-snapshots.ts`; Node 22
+ * strips TS syntax at runtime without a build step (no enums/namespaces/decorators used
+ * here, so nothing this project relies on needs full type-checking to execute — CI's
+ * separate `tsc --noEmit` step still type-checks it).
  */
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import { openDb, upsertSnapshot } from "./snapshots-db.mjs";
+import { openDb, upsertSnapshot } from "./snapshots-db.ts";
 
 const CONTENT_REPOS_DIR = path.join(process.cwd(), "content", "repos");
 
@@ -46,7 +51,7 @@ const CONTENT_REPOS_DIR = path.join(process.cwd(), "content", "repos");
 const GITHUB_SLUG_PATTERN = /^(?!\.{1,2}\/)[\w.-]+\/(?!\.{1,2}$)[\w.-]+$/;
 
 /** Every valid `github: owner/name` value declared in content/repos/*.md frontmatter. */
-export function readGithubSlugsFromContent(dir = CONTENT_REPOS_DIR) {
+export function readGithubSlugsFromContent(dir: string = CONTENT_REPOS_DIR): string[] {
   if (!fs.existsSync(dir)) return [];
   return fs
     .readdirSync(dir)
@@ -70,13 +75,23 @@ export function readGithubSlugsFromContent(dir = CONTENT_REPOS_DIR) {
  * loop, and (via the workflow's cancel-in-progress: false) the next scheduled run too. */
 const FETCH_TIMEOUT_MS = 15_000;
 
+export interface RepoMetrics {
+  stars: number;
+  forks: number;
+  openIssues: number;
+  watchers: number;
+}
+
 /**
  * Fetches the current metrics GitHub exposes for one `owner/name` repo.
  * Throws on any non-2xx response, network failure, or timeout — callers decide how to
  * handle that per-repo failure (see runIngestion, which logs and continues).
  */
-export async function fetchRepoMetrics(github, { fetchImpl = fetch, token = process.env.GITHUB_TOKEN } = {}) {
-  const headers = {
+export async function fetchRepoMetrics(
+  github: string,
+  { fetchImpl = fetch, token = process.env.GITHUB_TOKEN }: { fetchImpl?: typeof fetch; token?: string } = {},
+): Promise<RepoMetrics> {
+  const headers: Record<string, string> = {
     Accept: "application/vnd.github+json",
     "User-Agent": "repogrove-ingestion",
   };
@@ -101,6 +116,11 @@ export async function fetchRepoMetrics(github, { fetchImpl = fetch, token = proc
   };
 }
 
+export interface IngestionResults {
+  ok: string[];
+  failed: string[];
+}
+
 /**
  * Fetches and upserts a snapshot for each given `owner/name` slug, skipping (with a
  * logged warning) any repo whose fetch fails, so one bad/rate-limited call never stops
@@ -111,10 +131,20 @@ export async function fetchRepoMetrics(github, { fetchImpl = fetch, token = proc
  * repo behind it, and the workflow's `cancel-in-progress: false` would let that stall
  * push into the next scheduled run too.
  */
-export async function runIngestion({ db, githubSlugs, fetchMetrics = fetchRepoMetrics, now = () => new Date() }) {
+export async function runIngestion({
+  db,
+  githubSlugs,
+  fetchMetrics = fetchRepoMetrics,
+  now = () => new Date(),
+}: {
+  db: ReturnType<typeof openDb>;
+  githubSlugs: string[];
+  fetchMetrics?: (github: string) => Promise<RepoMetrics>;
+  now?: () => Date;
+}): Promise<IngestionResults> {
   const timestamp = now();
   const capturedOn = timestamp.toISOString().slice(0, 10); // YYYY-MM-DD — one row/repo/day
-  const results = { ok: [], failed: [] };
+  const results: IngestionResults = { ok: [], failed: [] };
 
   for (const github of githubSlugs) {
     try {
@@ -137,7 +167,7 @@ export async function runIngestion({ db, githubSlugs, fetchMetrics = fetchRepoMe
   return results;
 }
 
-async function main() {
+async function main(): Promise<void> {
   const githubSlugs = readGithubSlugsFromContent();
   if (githubSlugs.length === 0) {
     console.warn("[ingestion] no repos found in content/repos — nothing to do");
@@ -156,7 +186,7 @@ async function main() {
   }
 }
 
-// Only auto-run when executed directly (`node scripts/ingestion/fetch-snapshots.mjs`),
+// Only auto-run when executed directly (`node scripts/ingestion/fetch-snapshots.ts`),
 // never when imported by tests.
 if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch((err) => {

@@ -11,7 +11,7 @@ which is explicitly excepted.
 
 The one named exception to the rule above: `data/repogrove.db` is a small SQLite
 database, committed to Git on purpose and updated only by the scheduled ingestion job
-(`scripts/ingestion/fetch-snapshots.mjs`, run by `.github/workflows/ingestion.yml`).
+(`scripts/ingestion/fetch-snapshots.ts`, run by `.github/workflows/ingestion.yml`).
 It holds `RepositorySnapshot` history (stars/forks/open_issues/watchers per repo per
 day) — public GitHub repo metadata, never user data — and is the input the Phase 2
 star-growth chart/trending/rising pages will read at `next build` time.
