@@ -217,3 +217,17 @@ entries.
   already-known value). Independent review caught and fixed a real bug pre-merge: the
   single-page fallback could silently under-count when a `Link` header lacked
   `rel="last"`. See ADR-005's addendum. PR #37. (dev)
+
+### Fixed
+- 2026-09-28 — Ingestion's `watchers` metric now captures the real, distinct GitHub
+  "watch" count (`subscribers_count`) instead of `watchers_count`, which the modern
+  GitHub REST API deliberately keeps identical to `stargazers_count` — every
+  `repository_snapshots.watchers` value captured so far was actually a duplicate of
+  `stars`. `subscribers_count` is already present on the same `GET /repos/{owner}/{repo}`
+  response `fetchRepoMetrics` already fetches, so this needed no new API call or schema
+  change — only the value written to the existing `watchers` column changes going
+  forward; existing rows are left as captured (volatile, ingestion-owned data, not
+  backfilled). Resolves the item deferred at ADR-005 and tracked in TECH-DEBT.md since
+  2026-09-27. `/trending`/`/rising`/Heat (#19-21) remain data-gated (still 2/3 days of
+  snapshot history), so this run picked up this bounded, unblocked correctness fix
+  instead. PR #38. (dev)

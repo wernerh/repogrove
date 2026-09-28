@@ -13,11 +13,12 @@ migration, or deploy target needed yet.
 **Phase 2 — Ingestion & metrics**. Phase 1 landed in PR #10.
 
 ## Next action (exactly one)
-`/trending` (#19) still leads Phase 2 but is data-gated (`data/repogrove.db` at 2/3
-days — today's `schedule` ingestion run only re-touched today's row). This run did
-unblocked pipeline work instead: contributor-count capture via `fetchContributorCount`
-— PR #37 merged (its CI eventually ran and went green; see Blockers). Next run: check
-for a 3rd calendar day of history, then start `/trending`.
+`/trending` (#19) still leads Phase 2 but is data-gated (`data/repogrove.db` still at
+2/3 calendar days: 2026-09-27, 2026-09-28). This run did another bounded, unblocked fix
+instead: ingestion's `watchers` field now reads `subscribers_count` (real watch count)
+instead of `watchers_count` (mirrors stars) — no new API call; resolves a TECH-DEBT.md
+item open since ADR-005. PR #38 merged, CI green 4/4. Next run: check for a 3rd
+calendar day of snapshot history, then start `/trending`.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -38,20 +39,22 @@ Accounts, paid subscriptions, watchlists/alerts, recommendation engine, massive
 crawling infra, admin CMS, live deploy — see spec §30, §33 and ADR-002.
 
 ## Timebox
-Phase 2: run 1 ingestion+schema (PR #22); run 2 star-growth chart (PR #31); runs 3-5
+Phase 2: run 1 ingestion+schema (PR #22); run 2 star-growth chart (PR #31); runs 3-6
 did unblocked tech debt/pipeline work (fonts PR #32, ingestion-to-TS PR #35,
-contributor counts PR #37) since #19-21 stayed data-gated — a calendar-time blocker,
-not a failed attempt. Start `/trending` (#19) once 3+ days of history exists.
+contributor counts PR #37, watchers/subscribers_count fix PR #38) since #19-21 stayed
+data-gated — a calendar-time blocker, not a failed attempt. Start `/trending` (#19)
+once 3+ days of history exists.
 
 ## Blockers and attempts
-None blocking (rule 8). `ingestion.yml`'s `schedule` cron finally self-fired mid-run
-today (10:53 UTC, 6h37m late but unprompted — TECH-DEBT.md, resolved). PR #37's own
-CI sat at 0 check runs for ~16 min after opening (a different, `pull_request`-trigger
-non-firing symptom — TECH-DEBT.md, open, watch next run) but then ran clean and merged.
-Dependabot #28/#29 blocked upstream, not fixable here; #30 merged.
+None blocking (rule 8). `ingestion.yml`'s `schedule` cron self-fired once already
+(2026-09-28, 10:53 UTC, 6h37m late but unprompted — TECH-DEBT.md, resolved); today's
+2nd calendar day is done, no new snapshot day exists yet. PR #37's CI-trigger delay
+(0 check runs for ~16 min) did not recur on PR #38 (green in ~35s) — one data point,
+not yet enough to call it resolved; keep watching. Dependabot #28/#29 blocked
+upstream, not fixable here; #30 merged.
 
 ## Milestones
 - [x] 2026-09-27 — Repo bootstrapped; Phase 1 walking skeleton — #5, #6, #7
 - [x] 2026-09-27 — Phase 2 ingestion job + schema (ADR-005) — #16/17, PR #22; repos 2→5
-- [x] 2026-09-28 — CI red fixed (#26, PR #27); star-growth chart (#18, PR #31); self-hosted fonts (ADR-006, PR #32); ingestion scripts to TS (PR #35); contributor counts (PR #37).
+- [x] 2026-09-28 — CI red fixed (#26, PR #27); star-growth chart (#18, PR #31); self-hosted fonts (ADR-006, PR #32); ingestion scripts to TS (PR #35); contributor counts (PR #37); watchers/subscribers_count fix (PR #38).
 - [ ] Phase 3 — search, SEO, newsletter signup

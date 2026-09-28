@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-28T12:51:10Z"
-  holder: "dev"
-  last_run: "2026-09-28T11:25:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-28T13:05:00Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,15 +19,15 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 12
+  runs: 13
   features_completed: 6
-  bugs_fixed: 1
+  bugs_fixed: 2
   security_issues_fixed: 2
   deployments: 0
   failed_runs: 0
 
 next_actions:
-  - "2026-09-28 (run 10): /trending (#19)/rising (#20)/Heat (#21) still data-gated — data/repogrove.db at 2/3 days. Good news mid-run: ingestion.yml's schedule cron finally self-fired (run #3, event=schedule, 10:53-10:54 UTC, 6h37m late but unprompted — first time ever; TECH-DEBT.md's long-standing 'cron never fires' row marked resolved), but it only re-touched today's already-captured row (a new calendar day needs tomorrow's run). Did unblocked pipeline work instead: added contributor-count capture (fetchContributorCount — GET /repos/{owner}/{repo}/contributors?per_page=1&anon=true, Link-header rel=\"last\" page-count trick; nullable `contributors` column via an additive migration, applied to the real committed data/repogrove.db; failure-isolated from the main stars/forks/issues fetch, COALESCE-preserves a known value across a failed same-day re-run). Independent review caught and fixed a real bug pre-push (silent under-count when a Link header lacked rel=\"last\"). PR #37 opened, labelled factory, subscribed — its own CI sat at 0 check runs for ~16 minutes (a different, pull_request-trigger non-firing symptom, new TECH-DEBT.md row, open — watch next run) before another session resolved a data/repogrove.db merge conflict against main's routine ingestion commit; CI then ran clean (4/4) and this run squash-merged it (commit 7616fca). Also fixed a stale TECH-DEBT.md row (content/repos filename-collision check already shipped in PR #10, was never marked done). Next: check for a 3rd calendar day of snapshot history, then start /trending (#19)."
+  - "2026-09-28 (run 11): /trending (#19)/rising (#20)/Heat (#21) still data-gated — data/repogrove.db still at 2/3 calendar days (2026-09-27, 2026-09-28); no new ingestion run fired during this run. Picked up another bounded, unblocked correctness fix instead: fetchRepoMetrics now reads body.subscribers_count (the real, distinct GitHub watch count) instead of body.watchers_count (which the modern GitHub REST API deliberately keeps identical to stargazers_count) — subscribers_count was already present on the same GET /repos/{owner}/{repo} response, so no new API call or schema change was needed. Resolves the watchers/subscribers_count item deferred at ADR-005 (2026-09-27) and tracked in TECH-DEBT.md. TDD: wrote a failing test first (distinct watchers_count vs subscribers_count values in the fixture, asserting the output uses subscribers_count) before the one-line fix. Independent reviewer subagent verified subscribers_count is a real GitHub API field, checked for other stale call sites (none), and re-ran the full local suite — approved, no findings. PR #38 opened, labelled factory, subscribed; CI ran clean 4/4 in ~35s (no repeat of PR #37's CI-trigger delay — one data point, keep watching); squash-merged (commit 3b0798a). Existing data/repogrove.db rows are not backfilled (volatile, ingestion-owned data — CLAUDE.md rule 4). Next: check for a 3rd calendar day of snapshot history, then start /trending (#19)."
 
 security:
   last_run: "2026-09-28T07:15:34Z"
