@@ -4,13 +4,17 @@
  * See docs/adr/ADR-005-repository-snapshot-storage.md for why this data lives in a
  * committed SQLite file (data/repogrove.db) rather than a live database or being
  * regenerated at build time. Nothing here is hand-edited: rows are written only by
- * scripts/ingestion/fetch-snapshots.mjs — CLAUDE.md rule 4 ("volatile / computed data
+ * scripts/ingestion/fetch-snapshots.ts — CLAUDE.md rule 4 ("volatile / computed data
  * ... lives in the database, populated by ingestion jobs, never hand-edited").
  *
- * Plain JS (not TypeScript): node:sqlite ships with Node 22 but isn't in the
- * @types/node version this project currently pins (see TECH-DEBT.md). Keeping this
- * module untyped avoids fighting that gap; it isn't part of the Next.js app's
- * type-checked surface.
+ * TypeScript: `@types/node` is now `^26` and ships `node:sqlite`'s types (see
+ * TECH-DEBT.md — this file and fetch-snapshots.ts used to stay plain JS because the
+ * previously-pinned `@types/node` didn't have them). Uses a static
+ * `import { DatabaseSync } from "node:sqlite"` — safe here because, unlike
+ * src/lib/snapshots.ts, nothing in this file is ever reachable from a Vitest test that
+ * needs the jsdom environment (see that file's doc comment for why *it* can't do the
+ * same); this module is only ever run directly under Node (the ingestion job) or
+ * imported by tests/ingestion/*.test.ts, both under `@vitest-environment node`.
  */
 import { DatabaseSync } from "node:sqlite";
 import fs from "node:fs";
@@ -43,7 +47,7 @@ CREATE INDEX IF NOT EXISTS idx_repository_snapshots_github
  * Opens (creating if needed) the snapshot database and ensures its schema exists.
  * Pass ":memory:" in tests to avoid touching disk.
  */
-export function openDb(dbPath = DEFAULT_DB_PATH) {
+export function openDb(dbPath: string = DEFAULT_DB_PATH): DatabaseSync {
   if (dbPath !== ":memory:") {
     fs.mkdirSync(path.dirname(dbPath), { recursive: true });
   }
@@ -52,14 +56,37 @@ export function openDb(dbPath = DEFAULT_DB_PATH) {
   return db;
 }
 
-const REQUIRED_FIELDS = ["github", "capturedOn", "stars", "forks", "openIssues", "watchers", "fetchedAt"];
+export interface SnapshotInput {
+  github: string;
+  /** YYYY-MM-DD, the calendar day the ingestion job captured this snapshot. */
+  capturedOn: string;
+  stars: number;
+  forks: number;
+  openIssues: number;
+  watchers: number;
+  fetchedAt: string;
+  source?: string;
+}
+
+export interface SnapshotRow {
+  github: string;
+  capturedOn: string;
+  stars: number;
+  forks: number;
+  openIssues: number;
+  watchers: number;
+  source: string;
+  fetchedAt: string;
+}
+
+const REQUIRED_FIELDS = ["github", "capturedOn", "stars", "forks", "openIssues", "watchers", "fetchedAt"] as const;
 
 /**
  * Idempotently writes one snapshot row. Calling this twice for the same
  * (github, capturedOn) pair updates the existing row instead of creating a duplicate —
  * the idempotency docs/WORKPLAN.md's Phase 2 gate requires.
  */
-export function upsertSnapshot(db, snapshot) {
+export function upsertSnapshot(db: DatabaseSync, snapshot: SnapshotInput): void {
   for (const field of REQUIRED_FIELDS) {
     if (snapshot[field] === undefined || snapshot[field] === null) {
       throw new Error(`upsertSnapshot: missing required field "${field}"`);
@@ -82,17 +109,25 @@ export function upsertSnapshot(db, snapshot) {
   stmt.run(github, capturedOn, stars, forks, openIssues, watchers, source, fetchedAt);
 }
 
-// Kept in sync by hand with the identical constant in src/lib/snapshots.ts
-// (that file's the read side used by src/app/repo/[slug]/page.tsx; this one
-// stays plain JS — see TECH-DEBT.md — so it can't import the TS copy). If
-// the schema changes, update both.
+// Kept in sync by hand with the identical constant in src/lib/snapshots.ts (that
+// file's the read side used by src/app/repo/[slug]/page.tsx, and stays on
+// `process.getBuiltinModule` rather than importing this module directly — see its own
+// doc comment for why). If the schema changes, update both.
 const SELECT_COLUMNS = `
   github, captured_on AS capturedOn, stars, forks, open_issues AS openIssues,
   watchers, source, fetched_at AS fetchedAt
 `;
 
+// `StatementSync.get`/`.all` (@types/node) type each column as
+// `SQLOutputValue` (a union including `bigint`/`Uint8Array`/`null`, since
+// SQLite columns can hold any of those), not the narrower shape this schema
+// actually produces. The `as unknown as` casts below assert what the SCHEMA
+// constant above guarantees (every column is `NOT NULL TEXT`/`INTEGER`) —
+// this was always an implicit assumption in the pre-TypeScript version of
+// this file; the cast just makes it visible rather than changing behavior.
+
 /** Most recent snapshot for a repo, or null if none has ever been captured. */
-export function getLatestSnapshot(db, github) {
+export function getLatestSnapshot(db: DatabaseSync, github: string): SnapshotRow | null {
   const stmt = db.prepare(`
     SELECT ${SELECT_COLUMNS}
     FROM repository_snapshots
@@ -100,22 +135,22 @@ export function getLatestSnapshot(db, github) {
     ORDER BY captured_on DESC
     LIMIT 1
   `);
-  return stmt.get(github) ?? null;
+  return (stmt.get(github) as unknown as SnapshotRow) ?? null;
 }
 
 /** Full snapshot history for a repo, oldest first — the input a star-growth chart needs. */
-export function getSnapshotHistory(db, github) {
+export function getSnapshotHistory(db: DatabaseSync, github: string): SnapshotRow[] {
   const stmt = db.prepare(`
     SELECT ${SELECT_COLUMNS}
     FROM repository_snapshots
     WHERE github = ?
     ORDER BY captured_on ASC
   `);
-  return stmt.all(github);
+  return stmt.all(github) as unknown as SnapshotRow[];
 }
 
 /** All distinct repos that have at least one snapshot. */
-export function getTrackedRepos(db) {
+export function getTrackedRepos(db: DatabaseSync): string[] {
   const stmt = db.prepare(`SELECT DISTINCT github FROM repository_snapshots ORDER BY github ASC`);
-  return stmt.all().map((row) => row.github);
+  return (stmt.all() as unknown as { github: string }[]).map((row) => row.github);
 }

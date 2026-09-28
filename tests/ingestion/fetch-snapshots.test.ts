@@ -1,14 +1,13 @@
 // @vitest-environment node
-// This suite exercises Node-only ingestion scripts (node:sqlite via snapshots-db.mjs);
+// This suite exercises Node-only ingestion scripts (node:sqlite via snapshots-db.ts);
 // the jsdom environment made Vite refuse to bundle that built-in once vitest 5.0.1 /
 // @vitejs/plugin-react 6.1.1 landed (PRs #14/#15) — see TECH-DEBT.md.
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
-// Plain JS modules; see snapshots-db.test.ts for why no suppression comment is needed.
-import { openDb, getLatestSnapshot, getTrackedRepos } from "../../scripts/ingestion/snapshots-db.mjs";
-import { readGithubSlugsFromContent, fetchRepoMetrics, runIngestion } from "../../scripts/ingestion/fetch-snapshots.mjs";
+import { openDb, getLatestSnapshot, getTrackedRepos } from "../../scripts/ingestion/snapshots-db.ts";
+import { readGithubSlugsFromContent, fetchRepoMetrics, runIngestion } from "../../scripts/ingestion/fetch-snapshots.ts";
 
 function withFixtureContentDir(files: Record<string, string>, run: (dir: string) => void) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "repogrove-ingestion-test-"));

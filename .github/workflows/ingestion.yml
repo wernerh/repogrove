@@ -7,7 +7,7 @@ name: Repository snapshot ingestion
 #
 # Never touches secrets beyond the default GITHUB_TOKEN (raises the GitHub API rate
 # limit; no owner-provisioned credential is required) and never fails the build over a
-# single repo's fetch failure — see scripts/ingestion/fetch-snapshots.mjs.
+# single repo's fetch failure — see scripts/ingestion/fetch-snapshots.ts.
 
 on:
   schedule:
@@ -45,7 +45,7 @@ jobs:
       - name: Run ingestion
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node scripts/ingestion/fetch-snapshots.mjs
+        run: node scripts/ingestion/fetch-snapshots.ts
 
       - name: Commit snapshot updates, if any
         run: |
