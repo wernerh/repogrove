@@ -26,6 +26,7 @@ run per rule 8. Next run: check for day 3, then start `/trending`.
 | 2026-09-27 | Stack: Next.js/React/TS + Tailwind, Git-native MD content + Postgres/SQLite for volatile data | Owner spec + ADR-001 | LOCKED | expensive |
 | 2026-09-27 | Hosting: Azure Storage static-website hosting (owner answered RG-2); app built with `output: "export"` from Phase 1 on | Owner reply + ADR-002 | ANSWERED | expensive |
 | 2026-09-27 | Repo visibility: public | Owner confirmed ("happy with public") | ANSWERED | cheap |
+| 2026-09-28 | RG-6: grant `design-screenshots.yml` a scoped `contents:write` job to commit real screenshots | Design lane's sandbox can't reach GitHub artifact storage to review them any other way | OPEN — see decisions.yaml | expensive |
 | 2026-09-27 | RepositorySnapshot: committed SQLite (`data/repogrove.db`), not build-time regen | ADR-005 | LOCKED | cheap |
 
 ## Assumptions
@@ -49,7 +50,7 @@ once 3+ days of history exists.
 None blocking (rule 8). `ingestion.yml`'s daily cron is confirmed working (fired
 2026-09-28, 10:53 UTC); today's 2nd calendar day is captured, no new snapshot day yet.
 Dependabot #28/#29 blocked upstream (typescript-eslint / eslint-plugin-react version
-gaps), not fixable here.
+gaps), not fixable here. Design: real screenshots still unreviewed, owner-blocked (RG-6).
 
 ## Milestones
 - [x] 2026-09-27 — Repo bootstrapped; Phase 1 walking skeleton — #5, #6, #7
