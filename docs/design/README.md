@@ -14,11 +14,13 @@ dates, loading/empty/error states, page headers).
 Run 2 (2026-09-28) wired those tokens into code (`src/app/globals.css`'s Tailwind v4
 `@theme`/`@theme inline` blocks, now that Phase 1 pages exist) and restyled the four
 existing pages to consume them instead of raw Tailwind defaults. Verified with
-Playwright screenshots (light/dark × desktop/tablet/mobile) before merging — see PR
-history. Next design-lane run: build the reusable screenshot + axe-core harness (a
-dev-dependency-only Playwright addition, with an ADR line) so this becomes a checked-in
-step instead of a one-off script; revisit RG-4 if the owner replies, or apply the
-2026-09-30 default.
+Playwright screenshots (light/dark × desktop/tablet/mobile); an independent review
+caught and fixed a CSS cascade-layer bug and a spec-drifted `<h1>` size before merging
+as PR #25 (briefly blocked by an unrelated main-CI break, issue #26, fixed by the dev
+lane's PR #27). Next design-lane run: build the reusable screenshot + axe-core harness
+(a dev-dependency-only Playwright addition, with an ADR line) so this becomes a
+checked-in step instead of a one-off script; revisit RG-4 if the owner replies, or
+apply the 2026-09-30 default.
 
 ## Findings
 | ID | Severity | Status | Component | Mapping | Issue/PR |

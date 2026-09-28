@@ -55,8 +55,8 @@ security:
     A10: "PASS (fixed a bypass — SEC-002)"
 
 design:
-  last_run: "2026-09-28T01:16:10Z"
-  next_action: "PR #25 (token wiring) was blocked by issue #26 (react/react-dom peer mismatch on main); dev lane fixed it via PR #27, merged this run — re-check PR #25 CI now green after merging main into its branch, then merge PR #25. After that: build the Playwright + axe-core screenshot harness as a dev-dependency (ADR line); re-check RG-4 each run until answered or defaulted 2026-09-30"
+  last_run: "2026-09-28T04:02:47Z"
+  next_action: "PR #25 (token wiring) merged — DESIGN-SYSTEM.md's v1 tokens are now live in src/app/globals.css and all four Phase 1 pages. Next: build the Playwright + axe-core screenshot harness as a dev-dependency (ADR line) so future runs don't hand-run a one-off script; then extend token application to component patterns (cards, alternatives table, status chips) as dev-lane pages land. Re-check RG-4 each run until answered or defaulted 2026-09-30"
   timebox: null
   failed_attempts: 0
   open_findings:
