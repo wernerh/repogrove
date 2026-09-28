@@ -41,7 +41,9 @@ on:
 # Least-privilege (OWASP A05, same reasoning as ci.yml): this workflow only checks out
 # the repo, builds it, and uploads its own run artifacts (artifact upload uses the
 # runner's internal token, not GITHUB_TOKEN, so it needs no extra scope here) — no repo
-# writes, no PR/issue comments.
+# writes, no PR/issue comments. The one exception is the `commit-screenshots` job below,
+# which overrides this default with its own job-level `contents: write` (RG-6, ADR-007
+# addenda 2-3); every other job stays `contents: read`.
 permissions:
   contents: read
 
@@ -103,3 +105,52 @@ jobs:
       - name: No app yet
         if: steps.app.outputs.exists == 'false'
         run: echo "No package.json yet (pre-Phase-1) — nothing to screenshot."
+
+  commit-screenshots:
+    name: Commit real screenshots to main (push only)
+    needs: screenshots
+    if: |
+      always() && github.event_name == 'push' && needs.screenshots.result != 'cancelled'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download screenshots artifact
+        id: download
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: design-screenshots
+          path: docs/design/screenshots
+
+      - name: Commit screenshot updates, if any
+        if: steps.download.outcome == 'success'
+        run: |
+          set -eu
+          git add docs/design/screenshots
+          if git diff --cached --quiet; then
+            echo "No screenshot changes to commit."
+            exit 0
+          fi
+          git config user.name "repogrove-factory[bot]"
+          git config user.email "repogrove-factory@users.noreply.github.com"
+          git commit -m "design: refresh committed screenshots [skip ci]" -m "Mechanical commit of the screenshots job's own Playwright output (docs/design/screenshots/) for this push to main — a deterministic rendering of pixels already reviewed via the PR that changed the page, not a new editorial decision. See docs/adr/ADR-007-design-screenshot-a11y-harness.md addendum 2/3 (RG-6)."
+          for attempt in 1 2 3; do
+            if git push; then
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/3) — rebasing onto the latest main and retrying."
+            git fetch origin main
+            git rebase origin/main
+          done
+          echo "::error::Failed to push committed screenshots after 3 attempts."
+          exit 1
+
+      - name: No screenshots artifact to commit
+        if: steps.download.outcome != 'success'
+        run: echo "No design-screenshots artifact this run (app didn't exist yet, or the screenshots job produced none) — nothing to commit."

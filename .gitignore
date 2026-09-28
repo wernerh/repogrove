@@ -57,3 +57,5 @@ test-results/
 playwright-report/
 blob-report/
 playwright/.cache/
+/.vs/repogrove.slnx/FileContentIndex
+/.vs/repogrove/CopilotIndices/18.10.1201.59691
