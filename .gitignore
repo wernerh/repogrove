@@ -51,3 +51,9 @@ npm-debug.log*
 
 # Coverage
 coverage/
+
+# Playwright (design lane's screenshot + a11y harness — see playwright.config.ts)
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/

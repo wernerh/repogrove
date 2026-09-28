@@ -17,10 +17,20 @@ existing pages to consume them instead of raw Tailwind defaults. Verified with
 Playwright screenshots (light/dark × desktop/tablet/mobile); an independent review
 caught and fixed a CSS cascade-layer bug and a spec-drifted `<h1>` size before merging
 as PR #25 (briefly blocked by an unrelated main-CI break, issue #26, fixed by the dev
-lane's PR #27). Next design-lane run: build the reusable screenshot + axe-core harness
-(a dev-dependency-only Playwright addition, with an ADR line) so this becomes a
-checked-in step instead of a one-off script; revisit RG-4 if the owner replies, or
-apply the 2026-09-30 default.
+lane's PR #27).
+
+Run 3 (2026-09-28) built the reusable screenshot + axe-core harness this lane's mission
+calls for: `@playwright/test` + `@axe-core/playwright` as devDependencies,
+`playwright.config.ts` (6 projects: desktop/tablet/mobile × light/dark),
+`tests/design/screenshots.spec.ts` (screenshots + a WCAG 2.1 A/AA axe-core scan per
+route), `scripts/design/static-server.mjs` to serve the static export locally, and
+`npm run design:screenshots` to run it — see
+`docs/adr/ADR-007-design-screenshot-a11y-harness.md`. Verified the harness's mechanics
+end-to-end this run (18/18 checks passed, 0 axe violations) against a temporary,
+uncommitted local build; this sandbox can't fetch the Google Fonts the real build now
+needs (ADR-006), so real screenshots with the actual typefaces are the next run's or
+CI's job once that network access is available. RG-4 still unanswered as of this run
+(two days from its 2026-09-30 default).
 
 ## Findings
 | ID | Severity | Status | Component | Mapping | Issue/PR |
