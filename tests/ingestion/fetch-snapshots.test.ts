@@ -1,3 +1,7 @@
+// @vitest-environment node
+// This suite exercises Node-only ingestion scripts (node:sqlite via snapshots-db.mjs);
+// the jsdom environment made Vite refuse to bundle that built-in once vitest 5.0.1 /
+// @vitejs/plugin-react 6.1.1 landed (PRs #14/#15) — see TECH-DEBT.md.
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";

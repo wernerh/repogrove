@@ -1,3 +1,7 @@
+// @vitest-environment node
+// This suite exercises node:sqlite (via snapshots-db.mjs) directly; the jsdom environment
+// made Vite refuse to bundle that built-in once vitest 5.0.1 / @vitejs/plugin-react
+// 6.1.1 landed (PRs #14/#15) — see TECH-DEBT.md.
 import { describe, expect, it } from "vitest";
 // Plain JS module (node:sqlite predates this project's @types/node pin — see
 // docs/adr/ADR-005-repository-snapshot-storage.md and TECH-DEBT.md). TypeScript infers

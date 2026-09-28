@@ -7,6 +7,16 @@ updates:
     open-pull-requests-limit: 5
     labels:
       - "tech-debt"
+    groups:
+      # react and react-dom are peer-linked (react-dom@X requires react@^X) and must be
+      # bumped together — see TECH-DEBT.md 2026-09-28: #11 bumped react-dom alone and
+      # broke `npm ci` on main for every PR until issue #26 was fixed.
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
 
   - package-ecosystem: "github-actions"
     directory: "/"

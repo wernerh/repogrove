@@ -72,3 +72,16 @@ entries.
   comma-separated `Closes #16, #17` syntax — #16 closed, #17 didn't); closed manually to
   match reality. `npm ci`/`lint`/`test` (43/43)/`build` all re-verified green locally.
   (dev)
+- 2026-09-28 — Fixed CI red on `main` (issue #26): dependabot PR #11 bumped `react-dom`
+  to `19.3.0` without a matching `react` bump, so `npm ci` failed with an ERESOLVE peer
+  error from a clean checkout, blocking CI for every PR (including the design lane's
+  PR #25). Bumped `react` to `19.3.0` to match and regenerated `package-lock.json`.
+  While validating, found a second CI-breaking regression from the same dependabot
+  batch: `@vitejs/plugin-react` 6.1.1 / `vitest` 5.0.1 (PRs #14/#15) made Vite refuse to
+  bundle the Node built-in `node:sqlite` under the default jsdom test environment,
+  failing `tests/ingestion/{fetch-snapshots,snapshots-db}.test.ts`; fixed by pinning
+  those two Node-only suites to `// @vitest-environment node`. Also grouped
+  `react`/`react-dom`/`@types/react`/`@types/react-dom` in `.github/dependabot.yml` so
+  future bumps can't split them again. `npm ci && npm run lint && npm test` (43/43)
+  `&& npm run build && npm audit --audit-level=high` all verified clean on a fresh
+  install. (dev)
