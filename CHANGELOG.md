@@ -149,3 +149,15 @@ entries.
   hadn't self-fired in 2 days), bringing `data/repogrove.db` to 2/3 days of history for
   all 5 repos. 12 new/updated tests; `npm ci && lint && tsc --noEmit && test (58/58) &&
   build && audit --audit-level=high` all clean locally. (dev)
+- 2026-09-28 — Real self-hosted fonts (Inter/Source Serif 4/IBM Plex Mono) via
+  `next/font/google` in `src/app/layout.tsx`, replacing the system-fallback-only
+  stacks `src/app/globals.css` used since PR #25; `--font-sans`/`--font-serif`/
+  `--font-mono` now resolve `var(--font-x, fallback)` with the fallback passed inside
+  the `var()` call (an independent review subagent caught that a fallback appended
+  after a comma outside `var()` would invalidate the whole declaration, not just that
+  entry, if the loaded variable were ever unset — fixed before merge). `next/font`
+  self-hosts at `next build` time, no runtime Google CDN request, compatible with
+  `output: "export"`. `docs/adr/ADR-006-font-loading.md` records the decision per
+  CLAUDE.md rule 7. `npm run build`'s font fetch can't be verified in this sandbox
+  (network allowlisted to npm/GitHub only) — verified green on CI before merging.
+  PR #32. (dev)

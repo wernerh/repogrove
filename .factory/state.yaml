@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-28T06:50:23Z"
-  holder: "dev"
-  last_run: "2026-09-28T05:13:42Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-28T07:00:20Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,15 +19,15 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 7
-  features_completed: 4
+  runs: 8
+  features_completed: 5
   bugs_fixed: 1
   security_issues_fixed: 2
   deployments: 0
   failed_runs: 0
 
 next_actions:
-  - "2026-09-28 (run 7): shipped star-growth chart on /repo/[slug] (#18, PR #31) — computes growth over whatever history exists rather than requiring 3+ days, so it didn't wait on data maturity; degrades gracefully at 0/1 snapshot. Also manually dispatched ingestion.yml (its daily 17 4 * * * UTC cron hadn't self-fired in 2 days — GitHub Actions scheduler quirk, not a workflow bug), bringing data/repogrove.db to 2/3 days history for all 5 repos. Next: /trending (#19) and /rising (#20), which need real cross-repo history per the Phase 2 gate — 1 more day (cron or another manual dispatch) clears it. Keep dispatching manually each run until cron self-fires."
+  - "2026-09-28 (run 8): /trending (#19)/rising (#20)/Heat (#21) still data-gated — data/repogrove.db still at 2/3 days (same calendar day as run 7, ingestion.yml's cron still hasn't self-fired: 0 scheduled runs since the workflow was added 2026-09-27, both runs so far manual workflow_dispatch). Did unblocked tech debt instead: real self-hosted fonts (Inter/Source Serif 4/IBM Plex Mono) via next/font/google (PR #32, ADR-006) — a review subagent caught and fixed a CSS var() fallback bug before merge (bare var(--unset) without an in-call fallback invalidates the whole declaration, not just that entry). Also checked the 3 open dependabot PRs' own CI: #28 (typescript 7.0.2) and #29 (eslint 10.11.0) both fail; #30 (jsdom 30.1.1) is green — none merged (not opened by this lane, don't carry factory label, outside this run's merge gate). Next: check for a 3rd calendar day of snapshot history (dispatch ingestion.yml if not present), then start /trending (#19)."
 
 security:
   last_run: "2026-09-28T03:05:00Z"
