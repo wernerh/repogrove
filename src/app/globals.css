@@ -14,11 +14,12 @@
  *        per theme below)
  *   Components must only ever use the semantic layer.
  *
- * Font faces: the fallback stacks below (Inter/Source Serif 4/IBM Plex Mono
- * -> system fallbacks) are wired in now. Loading the actual self-hosted
- * font files via `next/font` is explicitly dev-lane work per
- * DESIGN-SYSTEM.md's Typography section (it requires an ADR note when
- * wired in) — out of scope for this design-lane change.
+ * Font faces: Inter / Source Serif 4 / IBM Plex Mono are loaded and
+ * self-hosted at build time via `next/font/google` in src/app/layout.tsx
+ * (each exposed as a CSS variable — --font-inter etc. — applied to <html>).
+ * The tokens below reference those variables first, falling back to the
+ * system stacks below if a variable is ever unset (e.g. a test render that
+ * doesn't mount RootLayout). See docs/adr/ADR-006-font-loading.md.
  */
 
 @theme {
@@ -49,11 +50,20 @@
   /* ---- Typography ---- */
   /* "Technical / precise" base (Inter) with a serif exception for
      long-form editorial prose (Source Serif 4); mono for stats/dates/
-     code/slugs (IBM Plex Mono). Fallback stacks only until next/font
-     wires in the actual faces (dev lane, see file header). */
-  --font-sans: Inter, "Helvetica Neue", Arial, sans-serif;
-  --font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+     code/slugs (IBM Plex Mono). --font-inter/--font-source-serif-4/
+     --font-ibm-plex-mono come from next/font/google (see file header).
+     The fallback lives INSIDE each var() call (var(--x, fallback)), not
+     appended after a comma: a bare var(--unset-property) with no
+     in-call fallback makes the whole containing declaration invalid at
+     computed-value time (CSS Custom Properties spec), not just that one
+     comma-list item — so a render path that never mounts RootLayout
+     (and so never sets --font-inter etc.) would otherwise lose the
+     entire stack, not just the loaded face. */
+  --font-sans: var(--font-inter, Inter), "Helvetica Neue", Arial, sans-serif;
+  --font-serif: var(--font-source-serif-4, "Source Serif 4"), Georgia,
+    "Times New Roman", serif;
+  --font-mono: var(--font-ibm-plex-mono, "IBM Plex Mono"), ui-monospace,
+    SFMono-Regular, Menlo, monospace;
 
   /* Type scale — ratio 1.25 ("Major Third"), base 16px. Overrides
      Tailwind's default sizes so `text-sm`...`text-3xl` match the doc. */
