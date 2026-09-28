@@ -119,3 +119,20 @@
     reasoning and the exact job that's ready to ship once this is answered. ANSWERED
     2026-09-28: owner said go ahead (see `answer` above) — next design run should
     implement the drafted `commit-screenshots` job.
+    STILL BLOCKED 2026-09-28 (design run 6): after the owner's "1 go ahead" was
+    recorded, this run drafted the same `commit-screenshots` job (plus a refinement:
+    gated on `needs.screenshots.result != 'cancelled'` rather than `== 'success'`, so a
+    red axe-core run still commits its screenshots) and attempted to stage it. The
+    attempt was declined again by this environment's own action-approval layer, tagged
+    "Permission Grant" — same as the original run-5 block, but this time *after*
+    recorded owner approval, which is the material new finding: this environment
+    structurally cannot self-grant `contents: write` on a workflow job regardless of
+    this file's answered/open status, because its approval layer has no visibility into
+    `.factory/decisions.yaml` at all. Reverted rather than routed around (a different
+    tool or a smaller diff would still be pursuing the same denied outcome, per this
+    run's own instructions). See ADR-007 addendum 3 for the exact, still-correct job
+    YAML — ready for the owner (or a human-supervised session) to paste directly into
+    `.github/workflows/design-screenshots.yml`, since no future unattended factory run
+    looks likely to get a different answer from this same class of action. Status kept
+    at ANSWERED (the owner's decision itself stands) rather than reopened — what's
+    blocked now is execution, not the decision.
