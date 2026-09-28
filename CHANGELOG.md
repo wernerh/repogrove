@@ -179,4 +179,4 @@ entries.
   via the GitHub API; not fixable by this lane (normally repo-admin, and the enabling
   endpoint is separately blocked by this sandbox's proxy). Opened issue #33
   (`needs-human`) covering SEC-003 and the pre-existing branch-protection
-  recommendation together. This docs-only change opens as the next PR after #33. (security)
+  recommendation together. PR #34. (security)
