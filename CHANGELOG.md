@@ -180,6 +180,17 @@ entries.
   endpoint is separately blocked by this sandbox's proxy). Opened issue #33
   (`needs-human`) covering SEC-003 and the pre-existing branch-protection
   recommendation together. PR #34. (security)
+- 2026-09-28 — `.github/workflows/design-screenshots.yml`: wires the Playwright +
+  axe-core screenshot/accessibility harness (ADR-007) into CI on GitHub-hosted
+  runners, so it can finally run against the real, correctly-fonted production build
+  (this factory's sandbox network can't reach `fonts.googleapis.com`, which `next
+  build` needs per ADR-006). A separate workflow, not a job inside `ci.yml`, and not a
+  required/blocking check — see ADR-007's addendum. First real run (PR #39, triggered
+  by the PR that added the workflow itself): 18/18 checks passed, 0 axe-core WCAG 2.1
+  A/AA violations across `/`, `/grove/ai`, `/repo/ollama` × desktop/tablet/mobile ×
+  light/dark. The 18 real screenshots exist as a workflow artifact but couldn't be
+  downloaded into this sandbox (blocked network path to GitHub's artifact-storage
+  backend) — visual review is still outstanding. PR #39. (design)
 
 ### Changed
 - 2026-09-28 — `scripts/ingestion/fetch-snapshots.mjs`/`snapshots-db.mjs` converted to

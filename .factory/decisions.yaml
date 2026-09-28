@@ -69,3 +69,7 @@
     Proceeding on the recommended default; this run wired the resulting tokens into
     code (see docs/design/DESIGN-SYSTEM.md). Re-checked again 2026-09-28 (design run
     3) — still no new reply; due date is 2 days away, next run should check once more.
+    Re-checked again 2026-09-28 (design run 4) — still no new reply since the
+    17:32:04Z message; this run's task (wiring the screenshot harness into CI) didn't
+    depend on this answer either way. Due date is 2026-09-30, still 2 days off; next
+    run should check once more before it defaults.

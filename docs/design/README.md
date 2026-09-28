@@ -32,6 +32,19 @@ needs (ADR-006), so real screenshots with the actual typefaces are the next run'
 CI's job once that network access is available. RG-4 still unanswered as of this run
 (two days from its 2026-09-30 default).
 
+Run 4 (2026-09-28) wired the harness into CI: `.github/workflows/design-screenshots.yml`
+(new, separate, path-filtered, non-required workflow — see ADR-007's addendum). Its
+first real run, on PR #39 itself, built the real production build (fonts fetched
+successfully on the GitHub-hosted runner) and ran all 18 checks for real: **18/18
+passed, 0 axe-core WCAG 2.1 A/AA violations** across `/`, `/grove/ai`, `/repo/ollama` ×
+desktop/tablet/mobile × light/dark. This is the first automated accessibility signal
+against the actual typeface stack, and it's clean. The 18 real screenshots exist as a
+GitHub Actions artifact but could not be downloaded into this sandbox this run (its
+network allowlist blocks GitHub's artifact-storage backend, confirmed via a direct
+`curl` 403 — see `TECH-DEBT.md`), so they have not yet been visually reviewed — the
+"look at screenshots before judging" step is still outstanding for the real build.
+RG-4 still unanswered (`.factory/decisions.yaml`; due 2026-09-30).
+
 ## Findings
 | ID | Severity | Status | Component | Mapping | Issue/PR |
 |---|---|---|---|---|---|

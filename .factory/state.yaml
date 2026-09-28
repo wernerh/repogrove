@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-28T13:22:45Z"
-  holder: "design"
-  last_run: "2026-09-28T13:05:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-28T13:22:45Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -55,8 +55,8 @@ security:
     A10: "PASS (fixed a bypass — SEC-002)"
 
 design:
-  last_run: "2026-09-28T09:32:40Z"
-  next_action: "Playwright + axe-core screenshot harness built this run (ADR-007): @playwright/test + @axe-core/playwright as devDependencies, playwright.config.ts, tests/design/screenshots.spec.ts, scripts/design/static-server.mjs, `npm run design:screenshots`. Verified mechanically (18/18 checks, 0 axe violations) against a temporary local build with fonts stubbed out — this sandbox can't reach fonts.googleapis.com, which next build now needs (ADR-006), so no real screenshots exist yet. Next: once network access to Google Fonts is available (owner's machine, a future sandbox, or CI), run `npm run build && npm run design:screenshots` for real, commit the small PNGs under docs/design/screenshots/, and do the first real visual review against DESIGN-SYSTEM.md's specs. Then extend ROUTES to component patterns (cards, alternatives table, status chips) as dev-lane pages land. Re-check RG-4 each run until answered or defaulted 2026-09-30 (2 days away)"
+  last_run: "2026-09-28T13:22:45Z"
+  next_action: "Wired the screenshot+axe-core harness into CI this run (ADR-007 addendum): .github/workflows/design-screenshots.yml, a separate path-filtered non-required workflow (pull_request/push:[main]/workflow_dispatch) — GitHub-hosted runners have real internet access, unlike this sandbox. First real run (PR #39, triggered by the PR that added the workflow itself): 18/18 checks passed, 0 axe-core WCAG 2.1 A/AA violations against the real, correctly-fonted build (fonts.googleapis.com resolved fine on the runner). PR #39 merged (commit 81e5868). Blocker hit: the 18 real screenshots exist only as a GitHub Actions artifact — downloading it needs productionresultssa6.blob.core.windows.net (GitHub's artifact-storage backend), which this sandbox's network allowlist blocks (confirmed: curl 403 at the egress proxy), same class of constraint as ADR-006's font-fetch gap. Next: re-check whether artifact storage is reachable from a future run/environment; if still not, this lane's next major task is deciding + implementing how to get real screenshots into docs/design/screenshots/ (options: owner's machine, a sandbox without this restriction, or a workflow change that commits the PNGs directly — the last one needs a real elevated-permissions decision, not done this run). Once real screenshots exist, extend ROUTES to component patterns (cards, alternatives table, status chips) as dev-lane pages land. Re-check RG-4 each run until answered or defaulted 2026-09-30 (2 days away)"
   timebox: null
   failed_attempts: 0
   open_findings:
