@@ -16,8 +16,8 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className="h-full">
-      <body className="min-h-full flex flex-col bg-white text-zinc-900">
-        <header className="border-b border-zinc-200">
+      <body className="min-h-full flex flex-col bg-bg-default text-text-default">
+        <header className="border-b border-border-subtle">
           <div className="mx-auto max-w-3xl px-6 py-4">
             <Link href="/" className="text-lg font-semibold tracking-tight">
               🌱 RepoGrove
@@ -27,8 +27,8 @@ export default function RootLayout({
         <main className="flex-1 mx-auto w-full max-w-3xl px-6 py-10">
           {children}
         </main>
-        <footer className="border-t border-zinc-200">
-          <div className="mx-auto max-w-3xl px-6 py-6 text-sm text-zinc-500">
+        <footer className="border-t border-border-subtle">
+          <div className="mx-auto max-w-3xl px-6 py-6 text-sm text-text-secondary">
             RepoGrove — a curated map of the open-source ecosystem.
           </div>
         </footer>

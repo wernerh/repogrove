@@ -1,50 +1,263 @@
 @import "tailwindcss";
 
+/*
+ * RepoGrove design tokens.
+ *
+ * Source of truth: docs/design/DESIGN-SYSTEM.md. Values below are a
+ * mechanical, verbatim port of that document's color/type/radius/elevation/
+ * motion tables into Tailwind v4's CSS-first theme config — this file is
+ * not a place to redecide values (see DESIGN-SYSTEM.md's own instruction).
+ *
+ * Layers, never mixed (see DESIGN-SYSTEM.md "Color"):
+ *   primitive (`--color-neutral-*`, `--color-brand-*`, raw scale steps)
+ *     -> semantic (`--color-bg-*`, `--color-text-*`, ..., a role, redefined
+ *        per theme below)
+ *   Components must only ever use the semantic layer.
+ *
+ * Font faces: the fallback stacks below (Inter/Source Serif 4/IBM Plex Mono
+ * -> system fallbacks) are wired in now. Loading the actual self-hosted
+ * font files via `next/font` is explicitly dev-lane work per
+ * DESIGN-SYSTEM.md's Typography section (it requires an ADR note when
+ * wired in) — out of scope for this design-lane change.
+ */
+
+@theme {
+  /* ---- Primitives: neutral scale (hue 220, cool/near-desaturated) ---- */
+  --color-neutral-0: #fbfcfc;
+  --color-neutral-10: #f0f2f3;
+  --color-neutral-20: #dee2e3;
+  --color-neutral-30: #c6cbcd;
+  --color-neutral-40: #a6acae;
+  --color-neutral-50: #80888a;
+  --color-neutral-60: #5d6567;
+  --color-neutral-70: #43494b;
+  --color-neutral-80: #2a2f31;
+  --color-neutral-90: #131718;
+  --color-neutral-100: #050607;
+
+  /* ---- Primitives: brand scale (hue 205, "deep pond" blue-teal) ---- */
+  --color-brand-10: #d8f5f8;
+  --color-brand-20: #b2e2e7;
+  --color-brand-30: #86cbd3;
+  --color-brand-40: #41b0bc;
+  --color-brand-50: #008b96;
+  --color-brand-60: #006b74;
+  --color-brand-70: #004c53;
+  --color-brand-80: #002f34;
+  --color-brand-90: #001518;
+
+  /* ---- Typography ---- */
+  /* "Technical / precise" base (Inter) with a serif exception for
+     long-form editorial prose (Source Serif 4); mono for stats/dates/
+     code/slugs (IBM Plex Mono). Fallback stacks only until next/font
+     wires in the actual faces (dev lane, see file header). */
+  --font-sans: Inter, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Type scale — ratio 1.25 ("Major Third"), base 16px. Overrides
+     Tailwind's default sizes so `text-sm`...`text-3xl` match the doc. */
+  --text-xs: 0.625rem; /* 10px — decorative-only, never metadata */
+  --text-xs--line-height: 1.4;
+  --text-sm: 0.8125rem; /* 13px — secondary body, table cells, metadata */
+  --text-sm--line-height: 1.5;
+  --text-base: 1rem; /* 16px — primary body copy */
+  --text-base--line-height: 1.6;
+  --text-lg: 1.25rem; /* 20px — card intros, lead paragraph */
+  --text-lg--line-height: 1.5;
+  --text-xl: 1.5625rem; /* 25px — h3, section headings */
+  --text-xl--line-height: 1.25;
+  --text-2xl: 1.9375rem; /* 31px — h2, page headings */
+  --text-2xl--line-height: 1.15;
+  --text-3xl: 2.4375rem; /* 39px — h1, display (homepage hero only) */
+  --text-3xl--line-height: 1.1;
+
+  /* ---- Radius ---- */
+  --radius-sm: 4px; /* chips, badges, inputs */
+  --radius-md: 8px; /* cards, buttons */
+  --radius-lg: 12px; /* modals/popovers only */
+
+  /* ---- Elevation (prefer border + bg.elevated over shadow where possible) ---- */
+  --shadow-elevation-1:
+    0 1px 2px rgb(0 0 0 / 0.06), 0 1px 1px rgb(0 0 0 / 0.04);
+  --shadow-elevation-2: 0 4px 12px rgb(0 0 0 / 0.1);
+
+}
+
+/*
+ * Semantic layer. Defined as plain CSS custom properties (not inside
+ * `@theme`) so they can be redefined per color scheme below, then re-exposed
+ * to Tailwind via `@theme inline` — the same pattern this file already used
+ * for --background/--foreground, generalized to the full semantic set.
+ * Components reference these only (e.g. `bg-bg-default`, `text-text-link`),
+ * never a raw `neutral-*`/`brand-*` step.
+ *
+ * Motion tokens live here too, deliberately *outside* `@theme` above:
+ * Tailwind v4 only recognizes a fixed set of theme namespaces (`--color-*`,
+ * `--radius-*`, `--shadow-*`, etc.) and silently drops anything else placed
+ * inside `@theme` — a `--duration-*` key there compiles away entirely
+ * (verified: it never reaches the output CSS as a custom property, and
+ * Tailwind's `duration-*` utility doesn't read theme config for its scale
+ * regardless). Defining them as plain custom properties instead makes them
+ * real, inspectable, and usable via Tailwind's arbitrary-value syntax:
+ * `duration-[var(--duration-fast)]`.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --duration-fast: 120ms; /* hover states, chip color changes */
+  --duration-base: 200ms; /* panel expand/collapse, dropdown open */
+
+  --color-bg-default: var(--color-neutral-0);
+  --color-bg-subtle: var(--color-neutral-10);
+  --color-bg-elevated: var(--color-neutral-0);
+
+  --color-text-default: var(--color-neutral-90);
+  --color-text-secondary: var(--color-neutral-60);
+  --color-text-link: var(--color-brand-70);
+
+  --color-border-default: var(--color-neutral-50);
+  --color-border-subtle: var(--color-neutral-20);
+
+  --color-cta-fill: var(--color-brand-60);
+  --color-cta-fill-hover: var(--color-brand-70);
+  --color-cta-text: var(--color-neutral-0);
+
+  --color-success-text: #00791e;
+  --color-warning-text: #986600;
+  --color-error-text: #ba2b2e;
+  --color-info-text: #0070a6;
+
+  /* Momentum / "Heat" (spec §7, §23) — color is never the sole signal;
+     components must always pair these with the matching icon + label. */
+  --color-momentum-rising: #b84b00;
+  --color-momentum-active: #006818;
+  --color-momentum-slowing: #986600;
+  --color-momentum-dormant: var(--color-neutral-60);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg-default: var(--color-neutral-90);
+    --color-bg-subtle: var(--color-neutral-100);
+    /* Elevated surfaces stack *upward* (lighter) in dark mode, not darker. */
+    --color-bg-elevated: var(--color-neutral-80);
+
+    --color-text-default: var(--color-neutral-10);
+    --color-text-secondary: var(--color-neutral-40);
+    --color-text-link: var(--color-brand-30);
+
+    --color-border-default: var(--color-neutral-60);
+    --color-border-subtle: var(--color-neutral-70);
+
+    --color-cta-fill: var(--color-brand-40);
+    --color-cta-fill-hover: var(--color-brand-30);
+    /* White text would fail contrast on this lighter dark-mode fill. */
+    --color-cta-text: var(--color-neutral-90);
+
+    --color-success-text: #399341;
+    --color-warning-text: #af7600;
+    --color-error-text: #db5853;
+    --color-info-text: #1c89c5;
+
+    --color-momentum-rising: #d06127;
+    --color-momentum-active: #3f9246;
+    --color-momentum-slowing: #af7600;
+    --color-momentum-dormant: var(--color-neutral-40);
+  }
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-bg-default: var(--color-bg-default);
+  --color-bg-subtle: var(--color-bg-subtle);
+  --color-bg-elevated: var(--color-bg-elevated);
+
+  --color-text-default: var(--color-text-default);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-link: var(--color-text-link);
+
+  --color-border-default: var(--color-border-default);
+  --color-border-subtle: var(--color-border-subtle);
+
+  --color-cta-fill: var(--color-cta-fill);
+  --color-cta-fill-hover: var(--color-cta-fill-hover);
+  --color-cta-text: var(--color-cta-text);
+
+  --color-success-text: var(--color-success-text);
+  --color-warning-text: var(--color-warning-text);
+  --color-error-text: var(--color-error-text);
+  --color-info-text: var(--color-info-text);
+
+  --color-momentum-rising: var(--color-momentum-rising);
+  --color-momentum-active: var(--color-momentum-active);
+  --color-momentum-slowing: var(--color-momentum-slowing);
+  --color-momentum-dormant: var(--color-momentum-dormant);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    Helvetica,
-    Arial,
-    sans-serif;
+/*
+ * Everything below is wrapped in Tailwind's own `base` layer (declared by
+ * `@import "tailwindcss"` as `theme, base, components, utilities`, in that
+ * priority order — `utilities` wins). Unlayered CSS always beats layered
+ * CSS regardless of specificity, so an unwrapped `article :where(a) {
+ * color: ... }` here would silently override *any* `text-*` utility class
+ * applied to a link inside `<article>` (e.g. the repo page's outbound
+ * GitHub link, styled `text-text-secondary`, rendered as `text-link` teal
+ * instead — caught by this run's own review screenshots and fixed here).
+ * Placing these defaults in `@layer base` instead lets a component's own
+ * utility classes override them, same as Tailwind's own preflight.
+ */
+@layer base {
+  body {
+    background: var(--color-bg-default);
+    color: var(--color-text-default);
+    font-family: var(--font-sans);
+  }
+
+  /* Long-form editorial prose (Grove/repo write-ups) reads as serif, per
+     the blended "structured, trustworthy, technical-editorial" theme
+     statement — this visually marks curated editorial content vs. UI
+     chrome as the reader scans a page. Prose measure capped at 65ch;
+     tables/grids are exempt. */
+  article {
+    font-family: var(--font-serif);
+    max-width: 65ch;
+  }
+
+  article :where(h2, h3) {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+  }
+
+  article :where(ul, ol) {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    padding-left: 1.5em;
+  }
+
+  article :where(ul) {
+    list-style-type: disc;
+  }
+
+  article :where(p) {
+    margin-top: 0.75em;
+    margin-bottom: 0.75em;
+  }
+
+  article :where(a) {
+    color: var(--color-text-link);
+    text-decoration: underline;
+  }
 }
 
-article :where(h2, h3) {
-  font-weight: 600;
-  margin-top: 1.5em;
-  margin-bottom: 0.5em;
-}
-
-article :where(ul, ol) {
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-  padding-left: 1.5em;
-}
-
-article :where(ul) {
-  list-style-type: disc;
-}
-
-article :where(p) {
-  margin-top: 0.75em;
-  margin-bottom: 0.75em;
-}
-
-article :where(a) {
-  color: #15803d;
-  text-decoration: underline;
+/* WCAG 2.1 floor: disable non-essential motion for anyone who has asked
+   the OS for it, rather than leaving this to each component to remember. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
