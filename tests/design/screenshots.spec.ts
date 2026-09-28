@@ -33,7 +33,14 @@ test.beforeAll(async () => {
 
 for (const route of ROUTES) {
   test(`${route.name} — screenshot + a11y scan`, async ({ page }, testInfo) => {
-    await page.goto(route.path);
+    const response = await page.goto(route.path);
+    // Guards against a false-green run: if the static server 404s (stale/missing
+    // `out/`, wrong route, etc.), axe-core would find ~0 violations on an empty error
+    // page and this suite would "pass" without testing anything real. Every real
+    // RepoGrove page renders the site header (`src/app/layout.tsx`), so require both
+    // a real 2xx response and that header to be present before scoring accessibility.
+    expect(response?.ok(), `expected a 2xx response for ${route.path}`).toBe(true);
+    await expect(page.getByRole("link", { name: /RepoGrove/ })).toBeVisible();
     await page.waitForLoadState("networkidle");
 
     await page.screenshot({

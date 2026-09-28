@@ -96,3 +96,30 @@ need to know how to run, so it gets the same ADR treatment.
 - `.gitignore` gained `test-results/`, `playwright-report/`, `blob-report/`,
   `playwright/.cache/` — Playwright's own run-output directories, not the harness's
   committed screenshots (which live under `docs/design/screenshots/`, not gitignored).
+
+## Review fixes (same run)
+
+An independent review (a skeptical senior product designer/front-end engineer
+subagent, per this lane's brief) caught three real issues before merge, all fixed and
+re-verified (18/18 checks still pass against the same stubbed-build smoke test):
+
+- `playwright.config.ts`'s `executablePath` was hardcoded to
+  `/opt/pw-browsers/chromium` with no existence check — correct only in this exact
+  sandbox image, and would fail outright with an executablePath-not-found error on the
+  owner's machine or in a future CI job (both places this ADR itself names as where
+  this harness should eventually run for real). Fixed: falls back to `undefined`
+  (Playwright's normal managed-browser resolution) via `existsSync()`, and reads a
+  `PLAYWRIGHT_CHROMIUM_EXECUTABLE` env var override first.
+- `scripts/design/static-server.mjs`'s traversal guard (`resolved.startsWith(rootDir)`)
+  was a bare prefix match, not true path containment — a request could resolve into a
+  sibling directory that merely shares `rootDir` as a string prefix (e.g. `out-evil`
+  next to `out`). Fixed to require an exact match or `rootDir + path.sep`. Confirmed
+  with a standalone repro before and after the fix.
+- Nothing guarded against a false-green run: if `out/` were stale or missing, the
+  server would 404 every route, `page.goto` wouldn't throw on a non-2xx response, and
+  axe-core would find ~0 violations on an empty error page — the whole suite would
+  "pass" without testing anything real. Fixed two ways: the static server now checks
+  for `out/index.html` at startup and exits non-zero with a clear message if it's
+  missing (confirmed: `rm -rf out && node scripts/design/static-server.mjs` exits 1),
+  and each test now asserts a real 2xx response and that the site header renders
+  before running axe-core.

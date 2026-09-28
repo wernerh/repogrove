@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import { existsSync } from "node:fs";
 
 /**
  * Design lane's screenshot + accessibility harness (docs/design/DESIGN-SYSTEM.md,
@@ -19,7 +20,17 @@ import { defineConfig, devices } from "@playwright/test";
  */
 const PORT = 4310;
 const BASE_URL = `http://127.0.0.1:${PORT}`;
-const CHROMIUM_EXECUTABLE = "/opt/pw-browsers/chromium";
+
+// Prefer a pre-installed Chromium (this sandbox's setup — see the header comment
+// above) via PLAYWRIGHT_CHROMIUM_EXECUTABLE or the sandbox's known path, but only if
+// it actually exists. Outside that sandbox (the owner's machine, a future CI job),
+// fall back to `undefined`, which tells Playwright to resolve its own managed
+// browser install (`playwright install`) the normal way — hardcoding a path that
+// doesn't exist there would otherwise fail every run outright.
+const SANDBOX_CHROMIUM = "/opt/pw-browsers/chromium";
+const CHROMIUM_EXECUTABLE =
+  process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE ??
+  (existsSync(SANDBOX_CHROMIUM) ? SANDBOX_CHROMIUM : undefined);
 
 const VIEWPORTS = {
   desktop: { width: 1440, height: 900 },

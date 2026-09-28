@@ -13,7 +13,8 @@
  */
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
-import { extname, join, normalize } from "node:path";
+import { existsSync } from "node:fs";
+import { extname, join, normalize, sep } from "node:path";
 
 const args = process.argv.slice(2);
 function argValue(flag, fallback) {
@@ -23,6 +24,18 @@ function argValue(flag, fallback) {
 
 const rootDir = normalize(join(process.cwd(), argValue("--dir", "out")));
 const port = Number(argValue("--port", "4310"));
+
+// Fail loudly (non-zero exit) rather than serving 404s for every route, which would
+// otherwise let the Playwright suite "pass" (axe-core finds ~0 violations on an empty
+// 404 page) without ever actually testing a real page. Run `npm run build` first.
+if (!existsSync(rootDir) || !existsSync(join(rootDir, "index.html"))) {
+  console.error(
+    `design static server: "${rootDir}" doesn't exist or has no index.html — run ` +
+      `\`npm run build\` first (it produces this static export; see next.config.ts's ` +
+      `output: "export"). Refusing to start and silently 404 every route.`,
+  );
+  process.exit(1);
+}
 
 const CONTENT_TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -46,7 +59,11 @@ async function resolveFile(urlPath) {
   ];
   for (const candidate of candidates) {
     const resolved = normalize(candidate);
-    if (!resolved.startsWith(rootDir)) continue; // no path traversal outside `out/`
+    // True containment check, not a bare prefix match: `resolved.startsWith(rootDir)`
+    // alone would wrongly accept a sibling directory that merely shares rootDir as a
+    // string prefix (e.g. rootDir "/x/out" would accept "/x/out-evil/secret"). Require
+    // an exact match or a path separator right after rootDir.
+    if (resolved !== rootDir && !resolved.startsWith(rootDir + sep)) continue;
     try {
       const info = await stat(resolved);
       if (info.isFile()) return resolved;
