@@ -31,28 +31,30 @@ export default async function RepoPage({ params }: PageProps) {
 
   return (
     <article>
-      <p className="text-sm font-medium text-emerald-700">Repository</p>
-      <h1 className="text-3xl font-semibold tracking-tight">{repo.name}</h1>
+      <p className="font-sans text-sm font-medium text-text-link">Repository</p>
+      <h1 className="font-sans text-2xl font-semibold tracking-tight text-text-default">
+        {repo.name}
+      </h1>
       <a
         href={`https://github.com/${repo.github}`}
-        className="text-sm text-zinc-500 hover:underline"
+        className="font-mono text-sm text-text-secondary hover:underline"
         target="_blank"
         rel="noopener noreferrer"
       >
         github.com/{repo.github}
       </a>
 
-      <dl className="mt-4 flex flex-wrap gap-x-6 gap-y-1 text-sm text-zinc-600">
+      <dl className="mt-4 flex flex-wrap gap-x-6 gap-y-1 font-sans text-sm text-text-secondary">
         <div>
-          <dt className="inline font-medium text-zinc-900">Status: </dt>
+          <dt className="inline font-medium text-text-default">Status: </dt>
           <dd className="inline">{STATUS_LABEL[repo.status] ?? repo.status}</dd>
         </div>
         <div>
-          <dt className="inline font-medium text-zinc-900">License: </dt>
+          <dt className="inline font-medium text-text-default">License: </dt>
           <dd className="inline">📜 {repo.license}</dd>
         </div>
         <div>
-          <dt className="inline font-medium text-zinc-900">Category: </dt>
+          <dt className="inline font-medium text-text-default">Category: </dt>
           <dd className="inline">{repo.category.join(", ")}</dd>
         </div>
       </dl>

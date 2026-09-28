@@ -72,3 +72,29 @@ entries.
   comma-separated `Closes #16, #17` syntax — #16 closed, #17 didn't); closed manually to
   match reality. `npm ci`/`lint`/`test` (43/43)/`build` all re-verified green locally.
   (dev)
+- 2026-09-28 — Wired `docs/design/DESIGN-SYSTEM.md`'s v1 tokens into code, now that
+  Phase 1 pages exist (issues #5/#7 closed): `src/app/globals.css` gained a full
+  primitive → semantic token layer (neutral/brand color scales, the 1.25-ratio type
+  scale, radius/elevation/motion) in Tailwind v4's CSS-first `@theme`/`@theme inline`
+  config, with light/dark redefined per `prefers-color-scheme` — the same pattern the
+  scaffold already used for `--background`/`--foreground`, generalized. All four Phase 1
+  pages (`layout.tsx`, `page.tsx`, `repo/[slug]/page.tsx`, `grove/[slug]/page.tsx`)
+  restyled onto the semantic classes (sans UI chrome, serif long-form prose, mono
+  stats/slugs, brand-teal links) in place of raw `zinc-*`/`emerald-700` Tailwind
+  defaults, plus a global `prefers-reduced-motion` baseline (WCAG 2.3.3 floor). Verified
+  with Playwright screenshots — light/dark × desktop/tablet/mobile, all 6 pages/viewports
+  — before merging; font *files* (Inter/Source Serif 4/IBM Plex Mono via `next/font`)
+  intentionally left for the dev lane per this doc's own Typography section (needs an
+  ADR note), fallback stacks are live now. An independent review subagent caught two
+  real defects before merge, both fixed: (1) the `article :where(a)`/`body` base styles
+  were unlayered CSS, which always beats Tailwind's own `@layer utilities` regardless of
+  specificity — silently overriding any text-color utility on a link inside `<article>`
+  (visible in the repo page's GitHub link, rendered teal instead of the intended muted
+  gray); moved into `@layer base` to fix. (2) the repo/Grove page `<h1>` used `text-3xl`,
+  which the new type scale sizes at 39px/hero — DESIGN-SYSTEM.md's own "Page headers"
+  spec calls for `text-2xl` (31px), reserving `text-3xl` for the homepage hero only;
+  fixed on both pages. Also caught in review: the `--duration-fast`/`--duration-base`
+  tokens, if placed inside `@theme` as first drafted, compile away entirely (Tailwind v4
+  doesn't recognize a `--duration-*` theme namespace) — moved to plain `:root` custom
+  properties instead, usable via `duration-[var(--duration-fast)]`. Re-verified
+  `npm ci`/`lint`/`test` (43/43)/`build` and re-screenshotted after every fix. (design)

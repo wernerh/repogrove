@@ -11,7 +11,7 @@ export default function Home() {
         <h1 className="text-3xl font-semibold tracking-tight">
           Discover the projects shaping open source.
         </h1>
-        <p className="mt-3 text-zinc-600">
+        <p className="mt-3 font-serif text-lg text-text-secondary">
           RepoGrove is a curated map of the open-source ecosystem — what a
           project actually does, whether it&apos;s active, and what else you
           could use instead.
@@ -19,8 +19,8 @@ export default function Home() {
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold">🌳 Groves</h2>
-        <p className="text-sm text-zinc-500">
+        <h2 className="text-xl font-semibold">🌳 Groves</h2>
+        <p className="text-sm text-text-secondary">
           Curated collections of repositories around a problem or ecosystem.
         </p>
         <ul className="mt-3 flex flex-col gap-2">
@@ -28,19 +28,19 @@ export default function Home() {
             <li key={grove.slug}>
               <Link
                 href={`/grove/${grove.slug}`}
-                className="font-medium text-emerald-700 hover:underline"
+                className="font-medium text-text-link hover:underline"
               >
                 {grove.name}
               </Link>
-              <span className="text-zinc-500"> — {grove.description}</span>
+              <span className="text-text-secondary"> — {grove.description}</span>
             </li>
           ))}
         </ul>
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold">📦 Repositories</h2>
-        <p className="text-sm text-zinc-500">
+        <h2 className="text-xl font-semibold">📦 Repositories</h2>
+        <p className="text-sm text-text-secondary">
           Repository intelligence pages — what it is, why people use it, and
           what to use instead.
         </p>
@@ -49,11 +49,14 @@ export default function Home() {
             <li key={repo.slug}>
               <Link
                 href={`/repo/${repo.slug}`}
-                className="font-medium text-emerald-700 hover:underline"
+                className="font-medium text-text-link hover:underline"
               >
                 {repo.name}
               </Link>
-              <span className="text-zinc-500"> — {repo.github}</span>
+              <span className="text-text-secondary">
+                {" "}
+                — <span className="font-mono text-sm">{repo.github}</span>
+              </span>
             </li>
           ))}
         </ul>

@@ -1,11 +1,19 @@
 # DESIGN-SYSTEM.md
 
-**Status:** v1 — tokens and pattern specs defined in documentation. Not yet wired into
-code: there is no `package.json` / Tailwind config to wire into until the dev lane
-scaffolds the Next.js app (issue #5, Phase 1). When that lands, the dev lane (or a
-follow-up design-lane run) ports the values below into `tailwind.config`'s `theme.extend`
-verbatim — this doc is the source of truth, Tailwind config is a mechanical translation
-of it, not a place to redecide values.
+**Status:** v1.1 — tokens (color, type scale, radius, elevation, motion) are wired into
+code as of 2026-09-28, in `src/app/globals.css`'s Tailwind v4 `@theme`/`@theme inline`
+blocks (Tailwind v4 has no `tailwind.config.js` `theme.extend`; config is CSS-first —
+the values below are ported verbatim into that file's custom properties instead). The
+four Phase 1 pages (`layout.tsx`, `page.tsx`, `repo/[slug]/page.tsx`,
+`grove/[slug]/page.tsx`) were restyled to consume the new semantic classes
+(`bg-bg-default`, `text-text-link`, `font-serif`, etc.) instead of raw Tailwind defaults
+(`zinc-*`, `emerald-700`). Screenshotted light + dark, desktop/tablet/mobile with
+Playwright (globally installed, not yet a project dependency — see "Open questions"
+below) before merging. **Not yet wired:** the actual Inter/Source Serif 4/IBM Plex Mono
+font *files* — `next/font` loading is explicitly dev-lane work per this doc's Typography
+section (needs an ADR note); the fallback stacks (system sans/serif/mono) are live now
+and already produce the correct visual hierarchy (sans UI chrome, serif prose, mono
+slugs/stats), so this is a swap-in-place upgrade, not a blocker.
 
 Working assumption while no UI exists to test against: values here are derived from
 documented design method (`design-superpowers:creative` — Palette Architect, Typography
@@ -319,11 +327,19 @@ earlier in this run failed and are worth recording so the reasoning survives: a 
 
 ## Open questions / next steps for this lane
 
-- RG-4 (visual direction) — still open; revisit at 2026-09-30 default or sooner if the
-  owner replies.
+- RG-4 (visual direction) — still open as of 2026-09-28 (checked the email thread again
+  this run, no new reply from whurter5@gmail.com since the ambiguous "happy with public
+  and suggestions" already recorded); proceeding on the recommended default
+  (editorial/content-forward) per `.factory/decisions.yaml`, defaults 2026-09-30 if still
+  unanswered.
 - Density modes, additional radius/elevation tiers, and a compact table mode are
   deliberately deferred until a real page exists to test them against (see Spacing &
   layout above).
-- Screenshots + axe-core checks start once issue #7 (walking-skeleton pages) lands —
-  building that harness (Playwright, dev-dependency-only) is a valid future major task,
-  not this run's.
+- **Next major task:** build the repeatable screenshot + axe-core harness (Playwright as
+  a dev-dependency, with an ADR line) so future runs don't hand-run a throwaway script
+  outside the project the way this run did to verify the token wiring visually. Once
+  that harness exists, extend it to the component patterns below (cards, alternatives
+  table, status chips) as the dev lane builds the pages that need them.
+- Component patterns (repo/Grove card, alternatives table, status chips, dates,
+  loading/empty/error states) are still specs only — no page yet needs them. Wire them in
+  as each dev-lane page lands, not speculatively ahead of it.

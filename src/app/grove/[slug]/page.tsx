@@ -25,9 +25,13 @@ export default async function GrovePage({ params }: PageProps) {
 
   return (
     <article>
-      <p className="text-sm font-medium text-emerald-700">Grove</p>
-      <h1 className="text-3xl font-semibold tracking-tight">{grove.name}</h1>
-      <p className="mt-2 text-zinc-600">{grove.description}</p>
+      <p className="font-sans text-sm font-medium text-text-link">Grove</p>
+      <h1 className="font-sans text-2xl font-semibold tracking-tight text-text-default">
+        {grove.name}
+      </h1>
+      <p className="mt-2 font-serif text-lg text-text-secondary">
+        {grove.description}
+      </p>
 
       <div className="mt-6">
         {/* The body's own "## Related Groves" section (hand-authored in
