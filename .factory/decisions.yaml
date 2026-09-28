@@ -98,9 +98,14 @@
   asked_at: "2026-09-28T17:35:00Z"
   email_thread_id: "1a0e90b30d17b4d6"
   default_due_at: null
-  status: OPEN
-  answer: null
-  answered_at: null
+  status: ANSWERED
+  answer: >
+    "1 go ahead" — option 1, add the contents:write job as drafted. Recorded 2026-09-28
+    (dev run 14, found on the RG-6 email thread while checking all open threads per
+    DECISION-PROTOCOL.md; this is a design-lane decision, so implementation is left for
+    the design lane's next run — see ADR-007 addendum 2 for the exact job that's ready
+    to ship).
+  answered_at: "2026-09-28T17:25:33Z"
   note: >
     Emailed and mirrored as github.com/wernerh/repogrove/issues/41. Marked
     expensive/no-auto-default even though the resulting commits themselves are
@@ -108,4 +113,6 @@
     that actually needs sign-off is granting the CI token write scope in the first
     place, not the reversibility of what it would then write. See
     docs/adr/ADR-007-design-screenshot-a11y-harness.md's addendum 2 for the full
-    reasoning and the exact job that's ready to ship once this is answered.
+    reasoning and the exact job that's ready to ship once this is answered. ANSWERED
+    2026-09-28: owner said go ahead (see `answer` above) — next design run should
+    implement the drafted `commit-screenshots` job.

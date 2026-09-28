@@ -13,12 +13,12 @@ migration, or deploy target needed yet.
 **Phase 2 — Ingestion & metrics**. Phase 1 landed in PR #10.
 
 ## Next action (exactly one)
-`/trending` (#19) still data-gated (`data/repogrove.db` at 2/3 calendar days, unchanged
-since run 11; today's ingestion already fired, tomorrow adds day 3). Run 13: no other
-safe work found — CI green, 0 open dev PRs, #20/#21 share #19's gate, #28/#29 unchanged
-since upstream-blocked diagnosis. Local lint/test(75/75)/build (known font-fetch gap)
-re-verified; closed a stale TECH-DEBT note (PR #37 merged fine, just unmarked). Quiet
-run per rule 8. Next run: check for day 3, then start `/trending`.
+`/trending` (#19) still data-gated (2/3 calendar days, unchanged since run 11; tomorrow
+adds day 3). Run 14: no other dev-lane work found — CI green, 0 open dev PRs, #28/#29
+unchanged since upstream-blocked diagnosis; lint/test(75/75)/build re-verified. Found
+and recorded the owner's unread RG-6 reply ("go ahead", design lane's decision — see
+below); fixed a stale TECH-DEBT.md row. Quiet run per rule 8. Next: check for day 3,
+then start `/trending`.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -27,7 +27,7 @@ run per rule 8. Next run: check for day 3, then start `/trending`.
 | 2026-09-27 | Hosting: Azure Storage static-website hosting (owner answered RG-2); app built with `output: "export"` from Phase 1 on | Owner reply + ADR-002 | ANSWERED | expensive |
 | 2026-09-27 | Repo visibility: public | Owner confirmed ("happy with public") | ANSWERED | cheap |
 | 2026-09-27 | RepositorySnapshot: committed SQLite (`data/repogrove.db`), not build-time regen | ADR-005 | LOCKED | cheap |
-| 2026-09-28 | RG-6: grant `design-screenshots.yml` a scoped `contents:write` job to commit real screenshots | Design lane's sandbox can't reach GitHub artifact storage to review them any other way | OPEN — see decisions.yaml | expensive |
+| 2026-09-28 | RG-6: grant `design-screenshots.yml` a scoped `contents:write` job to commit real screenshots | Design lane's sandbox can't reach GitHub artifact storage to review them any other way | ANSWERED ("go ahead") — see decisions.yaml | expensive |
 
 ## Assumptions
 - A1: "Grove"/repo pages are hand-authored/agent-drafted Markdown reviewed via PR, not
@@ -50,7 +50,8 @@ once 3+ days of history exists.
 None blocking (rule 8). `ingestion.yml`'s daily cron is confirmed working (fired
 2026-09-28, 10:53 UTC); today's 2nd calendar day is captured, no new snapshot day yet.
 Dependabot #28/#29 blocked upstream (typescript-eslint / eslint-plugin-react version
-gaps), not fixable here. Design: real screenshots still unreviewed, owner-blocked (RG-6).
+gaps), not fixable here. Design: real screenshots still unreviewed; RG-6 now answered
+("go ahead"), unblocked for design's next run to implement.
 
 ## Milestones
 - [x] 2026-09-27 — Repo bootstrapped; Phase 1 walking skeleton — #5, #6, #7

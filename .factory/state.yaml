@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-28T18:51:04Z"
-  holder: "dev"
-  last_run: "2026-09-28T17:13:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-28T18:51:04Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,7 +19,7 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 17
+  runs: 18
   features_completed: 6
   bugs_fixed: 2
   security_issues_fixed: 3
@@ -27,8 +27,8 @@ metrics:
   failed_runs: 0
 
 next_actions:
-  - "2026-09-28 (run 12): still 2/3 calendar days (unchanged since run 11 — today's ingestion had already fired at 10:53 UTC before this run started; tomorrow adds day 3). Widened the search for unblocked work before accepting a quiet run: CI green (verified via Actions API), 0 open dev PRs, no unclaimed security/design findings, #19/#20/#21 all explicitly gate on 3+ days of real snapshot history per their own acceptance criteria (not just #19), dependabot #28/#29 unchanged (same head SHAs) since their prior-run upstream-blocked diagnosis (typescript-eslint doesn't support TS 7; eslint-plugin-react doesn't support ESLint 10's rule-context API), grep for TODO/FIXME across src/scripts/tests found nothing, scripts/factory/check.py all PASS. Ran npm ci / lint (clean) / test (73/73 passing, up from 58 — test count grew from PRs #31-#38) / build (fails only on the known sandbox font-fetch gap, ADR-006/TECH-DEBT — left to CI, unchanged). No code or content changed this run. Quiet run per CLAUDE.md rule 8. Next: check for a 3rd calendar day of snapshot history, then start /trending (#19)."
   - "2026-09-28 (run 13): still 2/3 calendar days (unchanged since run 11/12 — today's ingestion already fired before this run started; tomorrow adds day 3). Checked RG-4 email thread (no new reply, due 2026-09-30 unchanged). Confirmed no other safe work: CI green on main (verified via Actions API), 0 open dev PRs, #19/#20/#21 all share the same data-maturity gate, dependabot #28/#29 unchanged (same head SHAs) since upstream-blocked diagnosis, no unclaimed security/design findings, no TODO/FIXME in src/scripts/tests. Ran npm ci / lint (clean) / test (75/75) / build (fails only on the known sandbox font-fetch gap, ADR-006 — left to CI, unchanged). Found and fixed one small doc-accuracy item: TECH-DEBT.md's row about PR #37's CI-trigger delay was left 'open — check PR #37's CI first thing next run' even though that same run's own PR #37 did get CI and merge (11:02-11:24 UTC) — marked resolved with the verification. No code changed. Quiet run per CLAUDE.md rule 8. Next: check for a 3rd calendar day of snapshot history, then start /trending (#19)."
+  - "2026-09-28 (run 14): still 2/3 calendar days (unchanged since run 11-13 — data/repogrove.db has rows for 2026-09-27 and 2026-09-28 only; today's ingestion already fired before this run started; tomorrow adds day 3). Confirmed no other dev-lane work: CI green on main (Actions API), 0 open dev PRs, #19/#20/#21 all share the same data-maturity gate, dependabot #28/#29 unchanged (same failing job — typescript-eslint/TS7 and eslint-plugin-react/ESLint10 upstream gaps, confirmed again via check-runs API), no unclaimed security/design findings, no TODO/FIXME in src/scripts/tests. Ran npm ci / lint (clean) / test (75/75) / build (fails only on the known sandbox font-fetch gap, ADR-006 — left to CI, unchanged). Checked all open owner-decision Gmail threads per DECISION-PROTOCOL.md (not just dev's own): RG-4 (design's) still no new reply since 2026-09-27 17:32:04Z, due 2026-09-30 unchanged. RG-6 (design's) HAD a new, unread owner reply ('1 go ahead', 2026-09-28T17:25:33Z) sitting unrecorded — recorded it in .factory/decisions.yaml (status ANSWERED), DECISIONS.md, and a comment on issue #41; left implementing the drafted commit-screenshots job to the design lane's next run, since it owns docs/design/ and the screenshot-review follow-through. Also fixed a stale TECH-DEBT.md row (the 'No deploy pipeline' item still cited RG-2 as undecided; RG-2 was answered 2026-09-27 — the real blocker is CLAUDE.md rule 6's human gate on provisioning the Azure Storage account, not an open decision). No dev code/content changed. Quiet run per CLAUDE.md rule 8. Next: check for a 3rd calendar day of snapshot history, then start /trending (#19)."
 
 security:
   last_run: "2026-09-28T15:23:13Z"
