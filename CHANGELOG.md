@@ -286,3 +286,13 @@ entries.
   human-supervised session) to apply directly — no future unattended factory run looks
   likely to get a different answer from this class of action. Docs-only, no code/
   workflow diff shipped this run. (design)
+- 2026-09-28 — Dependabot PR #28 (`typescript` 5.9.3→7.0.2), already diagnosed across
+  several runs as breaking `npm run lint` (`typescript-eslint` doesn't support TS 7.0
+  yet — bundled transitively via `eslint-config-next`; upstream
+  typescript-eslint/typescript-eslint#10940), was merged directly by the owner outside
+  the factory's CI-gated flow, putting `main` red. Reverted `typescript` to `^5`
+  (regenerated `package-lock.json`) and added a `.github/dependabot.yml` ignore rule
+  for `typescript` semver-major bumps so the same breaking proposal doesn't keep
+  recurring until that upstream gap closes. Independent reviewer subagent found no
+  issues; CI green for real (including a real `next build` on the GitHub-hosted
+  runner). PR #45. (dev)
