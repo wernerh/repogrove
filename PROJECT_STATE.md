@@ -13,12 +13,13 @@ migration, or deploy target needed yet.
 **Phase 2 — Ingestion & metrics**. Phase 1 landed in PR #10.
 
 ## Next action (exactly one)
-`/trending` (#19) still leads Phase 2 but is data-gated (`data/repogrove.db` still at
-2/3 calendar days: 2026-09-27, 2026-09-28). This run did another bounded, unblocked fix
-instead: ingestion's `watchers` field now reads `subscribers_count` (real watch count)
-instead of `watchers_count` (mirrors stars) — no new API call; resolves a TECH-DEBT.md
-item open since ADR-005. PR #38 merged, CI green 4/4. Next run: check for a 3rd
-calendar day of snapshot history, then start `/trending`.
+`/trending` (#19) still leads Phase 2 but is still data-gated (`data/repogrove.db` still
+at 2/3 calendar days — unchanged since run 11; tomorrow's scheduled ingestion adds the
+3rd day). Run 12: no other safe work found either — CI green, 0 open dev PRs, no
+unclaimed findings, #20/#21 share #19's data-maturity gate, #28/#29 unchanged since
+diagnosis. Local `npm ci`/lint/test (73/73) clean; build fails only on the known
+sandbox font-fetch gap (ADR-006). A quiet run per CLAUDE.md rule 8. Next run: check for
+a 3rd calendar day of history, then start `/trending`.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -46,12 +47,10 @@ data-gated — a calendar-time blocker, not a failed attempt. Start `/trending` 
 once 3+ days of history exists.
 
 ## Blockers and attempts
-None blocking (rule 8). `ingestion.yml`'s `schedule` cron self-fired once already
-(2026-09-28, 10:53 UTC, 6h37m late but unprompted — TECH-DEBT.md, resolved); today's
-2nd calendar day is done, no new snapshot day exists yet. PR #37's CI-trigger delay
-(0 check runs for ~16 min) did not recur on PR #38 (green in ~35s) — one data point,
-not yet enough to call it resolved; keep watching. Dependabot #28/#29 blocked
-upstream, not fixable here; #30 merged.
+None blocking (rule 8). `ingestion.yml`'s daily cron is confirmed working (fired
+2026-09-28, 10:53 UTC); today's 2nd calendar day is captured, no new snapshot day yet.
+Dependabot #28/#29 blocked upstream (typescript-eslint / eslint-plugin-react version
+gaps), not fixable here.
 
 ## Milestones
 - [x] 2026-09-27 — Repo bootstrapped; Phase 1 walking skeleton — #5, #6, #7

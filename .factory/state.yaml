@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-28T14:51:41Z"
-  holder: "dev"
-  last_run: "2026-09-28T13:22:45Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-28T14:51:41Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,7 +19,7 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 13
+  runs: 14
   features_completed: 6
   bugs_fixed: 2
   security_issues_fixed: 2
@@ -28,6 +28,7 @@ metrics:
 
 next_actions:
   - "2026-09-28 (run 11): /trending (#19)/rising (#20)/Heat (#21) still data-gated — data/repogrove.db still at 2/3 calendar days (2026-09-27, 2026-09-28); no new ingestion run fired during this run. Picked up another bounded, unblocked correctness fix instead: fetchRepoMetrics now reads body.subscribers_count (the real, distinct GitHub watch count) instead of body.watchers_count (which the modern GitHub REST API deliberately keeps identical to stargazers_count) — subscribers_count was already present on the same GET /repos/{owner}/{repo} response, so no new API call or schema change was needed. Resolves the watchers/subscribers_count item deferred at ADR-005 (2026-09-27) and tracked in TECH-DEBT.md. TDD: wrote a failing test first (distinct watchers_count vs subscribers_count values in the fixture, asserting the output uses subscribers_count) before the one-line fix. Independent reviewer subagent verified subscribers_count is a real GitHub API field, checked for other stale call sites (none), and re-ran the full local suite — approved, no findings. PR #38 opened, labelled factory, subscribed; CI ran clean 4/4 in ~35s (no repeat of PR #37's CI-trigger delay — one data point, keep watching); squash-merged (commit 3b0798a). Existing data/repogrove.db rows are not backfilled (volatile, ingestion-owned data — CLAUDE.md rule 4). Next: check for a 3rd calendar day of snapshot history, then start /trending (#19)."
+  - "2026-09-28 (run 12): still 2/3 calendar days (unchanged since run 11 — today's ingestion had already fired at 10:53 UTC before this run started; tomorrow adds day 3). Widened the search for unblocked work before accepting a quiet run: CI green (verified via Actions API), 0 open dev PRs, no unclaimed security/design findings, #19/#20/#21 all explicitly gate on 3+ days of real snapshot history per their own acceptance criteria (not just #19), dependabot #28/#29 unchanged (same head SHAs) since their prior-run upstream-blocked diagnosis (typescript-eslint doesn't support TS 7; eslint-plugin-react doesn't support ESLint 10's rule-context API), grep for TODO/FIXME across src/scripts/tests found nothing, scripts/factory/check.py all PASS. Ran npm ci / lint (clean) / test (73/73 passing, up from 58 — test count grew from PRs #31-#38) / build (fails only on the known sandbox font-fetch gap, ADR-006/TECH-DEBT — left to CI, unchanged). No code or content changed this run. Quiet run per CLAUDE.md rule 8. Next: check for a 3rd calendar day of snapshot history, then start /trending (#19)."
 
 security:
   last_run: "2026-09-28T07:15:34Z"
