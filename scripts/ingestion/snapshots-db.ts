@@ -44,6 +44,25 @@ CREATE INDEX IF NOT EXISTS idx_repository_snapshots_github
 `;
 
 /**
+ * Schema migrations applied after `SCHEMA`'s `CREATE TABLE IF NOT EXISTS`, which only
+ * creates the table the first time and never alters an existing one. Each entry here
+ * must be safe to run every time `openDb` is called (checks before it acts), so the
+ * committed `data/repogrove.db` — which already has rows from before a given column
+ * existed — upgrades in place rather than needing a one-off backfill script.
+ */
+function migrate(db: DatabaseSync): void {
+  const columns = db.prepare(`PRAGMA table_info(repository_snapshots)`).all() as unknown as { name: string }[];
+  const hasContributors = columns.some((col) => col.name === "contributors");
+  if (!hasContributors) {
+    // Nullable, not NOT NULL: pre-migration rows (and any future row whose
+    // contributor-count fetch failed independently of the main metrics fetch — see
+    // fetch-snapshots.ts's runIngestion) have no value for this column, and that's a
+    // real "unknown", not a data-entry omission the schema should reject.
+    db.exec(`ALTER TABLE repository_snapshots ADD COLUMN contributors INTEGER`);
+  }
+}
+
+/**
  * Opens (creating if needed) the snapshot database and ensures its schema exists.
  * Pass ":memory:" in tests to avoid touching disk.
  */
@@ -53,6 +72,7 @@ export function openDb(dbPath: string = DEFAULT_DB_PATH): DatabaseSync {
   }
   const db = new DatabaseSync(dbPath);
   db.exec(SCHEMA);
+  migrate(db);
   return db;
 }
 
@@ -66,6 +86,10 @@ export interface SnapshotInput {
   watchers: number;
   fetchedAt: string;
   source?: string;
+  /** Total contributor count, or `null`/omitted if that fetch failed or hasn't run yet
+   * for this row (see fetch-snapshots.ts's `fetchContributorCount` — a separate,
+   * best-effort API call from the main stars/forks/issues/watchers fetch). */
+  contributors?: number | null;
 }
 
 export interface SnapshotRow {
@@ -77,6 +101,7 @@ export interface SnapshotRow {
   watchers: number;
   source: string;
   fetchedAt: string;
+  contributors: number | null;
 }
 
 const REQUIRED_FIELDS = ["github", "capturedOn", "stars", "forks", "openIssues", "watchers", "fetchedAt"] as const;
@@ -92,21 +117,35 @@ export function upsertSnapshot(db: DatabaseSync, snapshot: SnapshotInput): void 
       throw new Error(`upsertSnapshot: missing required field "${field}"`);
     }
   }
-  const { github, capturedOn, stars, forks, openIssues, watchers, fetchedAt, source = "github-api" } = snapshot;
+  const {
+    github,
+    capturedOn,
+    stars,
+    forks,
+    openIssues,
+    watchers,
+    fetchedAt,
+    source = "github-api",
+    contributors = null,
+  } = snapshot;
 
   const stmt = db.prepare(`
     INSERT INTO repository_snapshots
-      (github, captured_on, stars, forks, open_issues, watchers, source, fetched_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      (github, captured_on, stars, forks, open_issues, watchers, source, fetched_at, contributors)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(github, captured_on) DO UPDATE SET
       stars = excluded.stars,
       forks = excluded.forks,
       open_issues = excluded.open_issues,
       watchers = excluded.watchers,
       source = excluded.source,
-      fetched_at = excluded.fetched_at
+      fetched_at = excluded.fetched_at,
+      -- A re-run whose contributor fetch failed (or that simply omits it) must not
+      -- clobber a good value already on record for this (github, captured_on) row —
+      -- only overwrite when the new upsert actually has one.
+      contributors = COALESCE(excluded.contributors, repository_snapshots.contributors)
   `);
-  stmt.run(github, capturedOn, stars, forks, openIssues, watchers, source, fetchedAt);
+  stmt.run(github, capturedOn, stars, forks, openIssues, watchers, source, fetchedAt, contributors);
 }
 
 // Kept in sync by hand with the identical constant in src/lib/snapshots.ts (that
@@ -115,7 +154,7 @@ export function upsertSnapshot(db: DatabaseSync, snapshot: SnapshotInput): void 
 // doc comment for why). If the schema changes, update both.
 const SELECT_COLUMNS = `
   github, captured_on AS capturedOn, stars, forks, open_issues AS openIssues,
-  watchers, source, fetched_at AS fetchedAt
+  watchers, source, fetched_at AS fetchedAt, contributors
 `;
 
 // `StatementSync.get`/`.all` (@types/node) type each column as

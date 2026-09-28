@@ -53,6 +53,7 @@ function row(overrides: Partial<SnapshotRow> = {}): SnapshotRow {
     watchers: 100,
     source: "github-api",
     fetchedAt: "2026-09-27T12:00:00.000Z",
+    contributors: null,
     ...overrides,
   };
 }
@@ -83,6 +84,15 @@ describe("getSnapshotHistory", () => {
     const dbPath = path.join(dir, "corrupt.db");
     fs.writeFileSync(dbPath, "not a sqlite file");
     expect(getSnapshotHistory("ollama/ollama", dbPath)).toEqual([]);
+  });
+
+  it("surfaces a row's contributor count, or null when that day's fetch never recorded one", () => {
+    const dbPath = fixtureDb([
+      { capturedOn: "2026-09-26", contributors: 12 },
+      { capturedOn: "2026-09-27" }, // no contributors override — stays null
+    ]);
+    const history = getSnapshotHistory("ollama/ollama", dbPath);
+    expect(history.map((r) => r.contributors)).toEqual([12, null]);
   });
 });
 

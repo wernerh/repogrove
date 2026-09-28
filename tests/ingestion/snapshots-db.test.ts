@@ -2,6 +2,9 @@
 // This suite exercises node:sqlite (via snapshots-db.ts) directly; the jsdom environment
 // made Vite refuse to bundle that built-in once vitest 5.0.1 / @vitejs/plugin-react
 // 6.1.1 landed (PRs #14/#15) — see TECH-DEBT.md.
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { openDb, upsertSnapshot, getLatestSnapshot, getSnapshotHistory, getTrackedRepos } from "../../scripts/ingestion/snapshots-db.ts";
 
@@ -93,5 +96,71 @@ describe("snapshots-db", () => {
     expect(() => upsertSnapshot(db, makeSnapshot({ stars: undefined }))).toThrow(/missing required field "stars"/);
     expect(getTrackedRepos(db)).toEqual([]);
     db.close();
+  });
+
+  describe("contributors", () => {
+    it("round-trips a contributor count", () => {
+      const db = openDb(":memory:");
+      upsertSnapshot(db, makeSnapshot({ contributors: 42 }));
+      expect(getLatestSnapshot(db, "ollama/ollama")).toMatchObject({ contributors: 42 });
+      db.close();
+    });
+
+    it("stores null when a snapshot omits contributors — e.g. that day's fetch failed", () => {
+      const db = openDb(":memory:");
+      upsertSnapshot(db, makeSnapshot());
+      expect(getLatestSnapshot(db, "ollama/ollama")).toMatchObject({ contributors: null });
+      db.close();
+    });
+
+    it("does not clobber a known contributor count when a same-day re-upsert omits it", () => {
+      const db = openDb(":memory:");
+      upsertSnapshot(db, makeSnapshot({ contributors: 42 }));
+      // Re-run later the same day (e.g. a manual dispatch), this time without a
+      // contributor count — the earlier good value must survive, not be overwritten
+      // with null (see upsertSnapshot's COALESCE).
+      upsertSnapshot(db, makeSnapshot({ stars: 105, fetchedAt: "2026-09-27T18:00:00.000Z" }));
+      expect(getLatestSnapshot(db, "ollama/ollama")).toMatchObject({ stars: 105, contributors: 42 });
+      db.close();
+    });
+
+    it("does overwrite an existing contributor count when the re-upsert has a new one", () => {
+      const db = openDb(":memory:");
+      upsertSnapshot(db, makeSnapshot({ contributors: 42 }));
+      upsertSnapshot(db, makeSnapshot({ contributors: 45, fetchedAt: "2026-09-27T18:00:00.000Z" }));
+      expect(getLatestSnapshot(db, "ollama/ollama")).toMatchObject({ contributors: 45 });
+      db.close();
+    });
+  });
+
+  it("migrates a database created before the contributors column existed", () => {
+    // openDb's SCHEMA constant intentionally doesn't declare `contributors` — every
+    // fresh `:memory:` db exercises the same `ALTER TABLE ... ADD COLUMN` migrate()
+    // path a real pre-existing committed data/repogrove.db goes through, rather than
+    // only being tested against an already-migrated fixture.
+    const db = openDb(":memory:");
+    const columns = db.prepare(`PRAGMA table_info(repository_snapshots)`).all() as unknown as { name: string }[];
+    expect(columns.map((c) => c.name)).toContain("contributors");
+    db.close();
+  });
+
+  it("re-opening an already-migrated database is a no-op, not an error", () => {
+    // Unlike ":memory:", a real file path persists across separate openDb() calls, so
+    // this actually exercises migrate() running a second time against a db that
+    // already has the column — `ALTER TABLE ADD COLUMN` on a column that already
+    // exists would throw if migrate() re-ran it unconditionally.
+    const dbPath = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "repogrove-snapshots-db-test-")), "test.db");
+    try {
+      const first = openDb(dbPath);
+      upsertSnapshot(first, makeSnapshot({ contributors: 42 }));
+      first.close();
+
+      expect(() => openDb(dbPath)).not.toThrow();
+      const second = openDb(dbPath);
+      expect(getLatestSnapshot(second, "ollama/ollama")).toMatchObject({ contributors: 42 });
+      second.close();
+    } finally {
+      fs.rmSync(path.dirname(dbPath), { recursive: true, force: true });
+    }
   });
 });
