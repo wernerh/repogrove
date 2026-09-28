@@ -144,3 +144,19 @@ new dependency or expensive-to-reverse choice).
 - Not yet surfaced on any page — `src/lib/snapshots.ts`'s `SnapshotRow` carries it
   through for `/repo/[slug]` and a future Heat methodology (ADR-004, issue #21, which
   lists "contributor growth" as one of its inputs) to use once there's a UI consumer.
+
+## Addendum (2026-09-28): watchers/subscribers_count
+
+This ADR's original "Deferred, not decided against" section also flagged that
+`watchers_count` mirrors `stargazers_count` in the modern GitHub REST API, and that the
+real, distinct "watch" count is `subscribers_count` — deferred at the time on the
+(incorrect) assumption it would need its own endpoint the way contributor counts do.
+
+It doesn't: `subscribers_count` is already a field on the same `GET
+/repos/{owner}/{repo}` response `fetchRepoMetrics` was already calling. This run fixed
+`fetchRepoMetrics` to read `body.subscribers_count` instead of `body.watchers_count` — a
+one-line data-correctness fix, no new API call, no schema change (the `watchers` column
+already existed; only the value written to it changes going forward). Existing rows keep
+whatever `watchers_count`-mirrors-stars value they were captured with on their day; this
+isn't backfilled (volatile, ingestion-owned data — the next daily snapshot naturally
+records the correct figure).

@@ -123,20 +123,24 @@ describe("readGithubSlugsFromContent", () => {
 });
 
 describe("fetchRepoMetrics", () => {
-  it("maps the GitHub API repo response to our metric fields", async () => {
+  it("maps the GitHub API repo response to our metric fields, using subscribers_count (the real watch count) for watchers, not watchers_count (which mirrors stars)", async () => {
     const fetchImpl = vi.fn().mockResolvedValue(
       jsonResponse({
         stargazers_count: 12345,
         forks_count: 678,
         open_issues_count: 42,
+        // `watchers_count` deliberately mirrors stars here — the real GitHub API
+        // behaviour this test guards against regressing back to. `subscribers_count`
+        // is the distinct, genuinely-lower "watch" count.
         watchers_count: 12345,
+        subscribers_count: 842,
       }),
     );
     // `token: ""` (not `undefined`) forces "no token" — an omitted/undefined token
     // falls back to process.env.GITHUB_TOKEN by design (see fetchRepoMetrics), which in
     // CI is always set, so `undefined` alone can't simulate "no token" here.
     const metrics = await fetchRepoMetrics("ollama/ollama", { fetchImpl, token: "" });
-    expect(metrics).toEqual({ stars: 12345, forks: 678, openIssues: 42, watchers: 12345 });
+    expect(metrics).toEqual({ stars: 12345, forks: 678, openIssues: 42, watchers: 842 });
     expect(fetchImpl).toHaveBeenCalledWith(
       "https://api.github.com/repos/ollama/ollama",
       expect.objectContaining({ headers: expect.not.objectContaining({ Authorization: expect.anything() }) }),
@@ -144,7 +148,9 @@ describe("fetchRepoMetrics", () => {
   });
 
   it("sends a bearer token when one is available (e.g. the Actions GITHUB_TOKEN)", async () => {
-    const fetchImpl = vi.fn().mockResolvedValue(jsonResponse({ stargazers_count: 1, forks_count: 0, open_issues_count: 0, watchers_count: 1 }));
+    const fetchImpl = vi.fn().mockResolvedValue(
+      jsonResponse({ stargazers_count: 1, forks_count: 0, open_issues_count: 0, watchers_count: 1, subscribers_count: 1 }),
+    );
     await fetchRepoMetrics("ollama/ollama", { fetchImpl, token: "test-token" });
     expect(fetchImpl).toHaveBeenCalledWith(
       expect.anything(),
@@ -158,7 +164,9 @@ describe("fetchRepoMetrics", () => {
   });
 
   it("passes an abort signal so a hung request doesn't block the run forever", async () => {
-    const fetchImpl = vi.fn().mockResolvedValue(jsonResponse({ stargazers_count: 1, forks_count: 0, open_issues_count: 0, watchers_count: 1 }));
+    const fetchImpl = vi.fn().mockResolvedValue(
+      jsonResponse({ stargazers_count: 1, forks_count: 0, open_issues_count: 0, watchers_count: 1, subscribers_count: 1 }),
+    );
     await fetchRepoMetrics("ollama/ollama", { fetchImpl, token: "" });
     const [, options] = fetchImpl.mock.calls[0];
     expect(options.signal).toBeInstanceOf(AbortSignal);
