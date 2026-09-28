@@ -296,3 +296,15 @@ entries.
   recurring until that upstream gap closes. Independent reviewer subagent found no
   issues; CI green for real (including a real `next build` on the GitHub-hosted
   runner). PR #45. (dev)
+- 2026-09-28 — Security review of the design lane's `commit-screenshots` job
+  (`.github/workflows/design-screenshots.yml`, RG-6), which the owner applied directly
+  to `main` (commit `517c8e4`) after this class of change was previously blocked from
+  being self-granted by any factory lane. Confirmed job-level `contents: write` is
+  correctly scoped (unreachable from the workflow's `pull_request` trigger, every
+  other job stays `contents: read`, the artifact download is limited to the triggering
+  run) — least-privilege, no finding. Re-verified all 4 open/fixed security findings
+  (SEC-001 through SEC-004) with fresh evidence — all unchanged. Re-ran `npm ci` (0
+  vulnerabilities), `npm run lint` (clean), `npm test` (75/75), `npm audit
+  --audit-level=high` (0 vulnerabilities); `npm run build` confirmed green on CI's
+  GitHub-hosted runner (this sandbox still can't reach `fonts.googleapis.com`, unrelated
+  ADR-006 gap). Docs-only, no code/workflow diff shipped this run. (security)
