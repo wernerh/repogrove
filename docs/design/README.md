@@ -45,6 +45,21 @@ network allowlist blocks GitHub's artifact-storage backend, confirmed via a dire
 "look at screenshots before judging" step is still outstanding for the real build.
 RG-4 still unanswered (`.factory/decisions.yaml`; due 2026-09-30).
 
+Run 5 (2026-09-28) re-checked whether this sandbox can reach GitHub's artifact-storage
+backend to download the real screenshots from PR #39's run — still blocked (`403` at
+the egress proxy, same as run 4). Drafted the auto-commit path `TECH-DEBT.md` named as
+the third option (a `commit-screenshots` job in `design-screenshots.yml`, scoped to
+`push: [main]` only, with its own `permissions: { contents: write }`, downloading the
+`screenshots` job's artifact and committing changed PNGs straight to
+`docs/design/screenshots/` — see ADR-007's addendum 2), but did **not** ship it: this
+environment declined the attempt to commit a workflow file requesting write access as
+a "Permission Grant" this factory can't self-authorize, even scoped to one job and even
+for something as low-risk as committing screenshots. Filed as a new owner decision
+(`.factory/decisions.yaml` RG-6) and emailed the owner instead — the job itself is
+fully drafted and ready to implement once that's answered. RG-4 still unanswered
+(checked the email thread again this run — no new reply since the
+2026-09-27T17:32:04Z message; due 2026-09-30).
+
 ## Findings
 | ID | Severity | Status | Component | Mapping | Issue/PR |
 |---|---|---|---|---|---|

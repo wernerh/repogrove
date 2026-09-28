@@ -169,3 +169,66 @@ committing real screenshots under `docs/design/screenshots/` — see this addend
 PR for whether that happened in the same run or was left for the next one (check
 `docs/design/README.md`'s Status log, which is source of truth for what's actually
 been reviewed).
+
+## Addendum 2 (2026-09-28, design run 5): PROPOSAL — commit real screenshots
+automatically (not implemented; owner decision requested, RG-6)
+
+**Context.** Design run 4 wired the harness into CI and got a clean first real run
+(PR #39: 18/18 checks, 0 axe-core violations, real fonts), but the 18 PNGs only ever
+existed as a GitHub Actions artifact. This sandbox's network allowlist
+(`registry.npmjs.org` + the GitHub REST API only) blocks GitHub's artifact-storage
+backend (`*.blob.core.windows.net`) — confirmed again this run with a direct `curl`
+(`CONNECT tunnel failed, response 403`) — so no run of this factory can download that
+artifact to actually look at the images, which this lane's brief requires ("look at
+screenshots before judging") before treating any future visual finding as verified.
+`TECH-DEBT.md`'s open row on this named three options: the owner's machine, a future
+sandbox without the restriction, or a workflow change that commits the PNGs directly.
+The first two are outside this lane's control and haven't happened in five runs.
+
+**Proposal.** Add a second job, `commit-screenshots`, to
+`.github/workflows/design-screenshots.yml`, running only on `push` to `main` (never on
+a `pull_request` event, so it only ever commits a rendering of what's already merged),
+that downloads the `screenshots` job's artifact and, if anything changed, commits it
+under `docs/design/screenshots/` directly to `main` — no PR, on the same reasoning
+`ingestion.yml` already uses for `RepositorySnapshot` rows (ADR-005): a screenshot is a
+deterministic rendering of pixels already reviewed via the PR that changed the page, so
+there's no new *decision* in the diff for a PR to catch, only a record of one already
+made. The one thing this needs that no job in this repo has needed before: its own
+`permissions: { contents: write }`, scoped to that job alone (every other job/step here
+stays `contents: read`).
+
+**Why this stayed a proposal instead of shipping this run.** This run drafted the job
+exactly as described above and attempted to commit it — and the attempt was declined by
+this environment's own action-approval layer, tagged "Permission Grant." That's a
+narrower, more literal read of `CLAUDE.md` rule 6's human-gate list than this lane
+argued for in an earlier draft of this addendum (cloud resources, secrets/identity-
+provider apps, deploys, external contact, destructive/irreversible actions, expensive-
+to-reverse architecture): a workflow file requesting `contents: write` — even scoped to
+one job, even for the repo's own already-issued token, even for something as low-risk
+as committing PNGs — reads as a permission escalation, and this factory doesn't have
+standing to grant CI permissions to itself unilaterally. Reversibility of the *result*
+(a bad screenshot commit is trivial to revert) isn't the same question as whether
+*granting the write scope in the first place* needs a human's sign-off, and on
+reflection the latter is the more honest reading of rule 6 here. Recorded as a decision
+request (`.factory/decisions.yaml` RG-6) rather than retried a different way.
+
+**What's still true if the owner approves RG-6:** the job design above — `push:[main]`-
+only trigger, per-job `permissions`, `[skip ci]` commit message (GitHub natively skips
+`push`/`pull_request`-triggered workflow runs, this one included, for a commit whose
+message contains that token, so no self-retrigger loop), `repogrove-factory[bot]`
+commit identity, and graceful no-op if the upstream `screenshots` job produced no
+artifact — was fully drafted and reviewed for correctness (manual read-through against
+GitHub Actions' `needs`/`if`/`permissions`/artifact-download semantics; this sandbox
+can fire neither a real `push:[main]` event nor reach artifact storage, so it couldn't
+be exercised end-to-end either way) and is ready to implement as soon as that answer
+comes back. One risk worth the owner knowing about either way: a concurrent push to
+`main` from another lane mid-run could make the commit job's own push a non-fast-forward
+rejection — it would just fail that run and retry clean on the next matching push, not
+corrupt anything, but it's not handled with a retry loop (a plain, expected miss on a
+low-traffic repo, not worth the complexity yet).
+
+**Next run:** check the RG-6 email thread for a reply; if answered yes, implement the
+job above in a PR (the owner's approval is what turns the permission grant from
+self-authorized into sanctioned); if still open past its default-due date, this stays
+stubbed per `CLAUDE.md` rule 4/6 rather than defaulting — a permission grant isn't the
+kind of cheap-reversal decision this factory auto-defaults on no-reply.
