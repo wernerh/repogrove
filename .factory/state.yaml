@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-28T19:04:34Z"
-  holder: "security"
-  last_run: "2026-09-28T18:51:04Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-28T19:04:34Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -31,8 +31,8 @@ next_actions:
   - "2026-09-28 (run 14): still 2/3 calendar days (unchanged since run 11-13 — data/repogrove.db has rows for 2026-09-27 and 2026-09-28 only; today's ingestion already fired before this run started; tomorrow adds day 3). Confirmed no other dev-lane work: CI green on main (Actions API), 0 open dev PRs, #19/#20/#21 all share the same data-maturity gate, dependabot #28/#29 unchanged (same failing job — typescript-eslint/TS7 and eslint-plugin-react/ESLint10 upstream gaps, confirmed again via check-runs API), no unclaimed security/design findings, no TODO/FIXME in src/scripts/tests. Ran npm ci / lint (clean) / test (75/75) / build (fails only on the known sandbox font-fetch gap, ADR-006 — left to CI, unchanged). Checked all open owner-decision Gmail threads per DECISION-PROTOCOL.md (not just dev's own): RG-4 (design's) still no new reply since 2026-09-27 17:32:04Z, due 2026-09-30 unchanged. RG-6 (design's) HAD a new, unread owner reply ('1 go ahead', 2026-09-28T17:25:33Z) sitting unrecorded — recorded it in .factory/decisions.yaml (status ANSWERED), DECISIONS.md, and a comment on issue #41; left implementing the drafted commit-screenshots job to the design lane's next run, since it owns docs/design/ and the screenshot-review follow-through. Also fixed a stale TECH-DEBT.md row (the 'No deploy pipeline' item still cited RG-2 as undecided; RG-2 was answered 2026-09-27 — the real blocker is CLAUDE.md rule 6's human gate on provisioning the Azure Storage account, not an open decision). No dev code/content changed. Quiet run per CLAUDE.md rule 8. Next: check for a 3rd calendar day of snapshot history, then start /trending (#19)."
 
 security:
-  last_run: "2026-09-28T15:23:13Z"
-  next_action: "Re-check SEC-001 (factory-guardrails.yml permissions gap, owner-blocked) and SEC-003 (Dependabot alerts disabled, owner-blocked, issue #33) each run; once app grows an API surface (Phase 3 search/newsletter) review A02/A03/A09 for real; least-recently-reviewed categories A01/A02/A07/A09 re-confirmed unchanged 2026-09-28 (still NOT APPLICABLE/NEEDS-VERIFICATION, no auth/API/logging yet). Run 5: re-verified SEC-001 (factory-guardrails.yml still no permissions: block, owner-blocked, unchanged) and SEC-002 (regex + regression tests in fetch-snapshots.ts confirmed unmodified after the .mjs→.ts conversion). Reviewed every PR merged since run 4 (#35 ingestion→TS, #37 contributor counts, #38 subscribers_count fix, #39 screenshot-harness-in-CI) for new attack surface — all clean (parameterised SQL throughout, validated-slug reuse in the new fetchContributorCount, new design-screenshots.yml already least-privilege). New finding SEC-004 (LOW): design lane's local static-file test server (scripts/design/static-server.mjs, added by #36/#39) crashed its whole process on one malformed-percent-encoding request (unhandled rejection from an uncaught URIError) — reproduced with curl, fixed same run (try/catch, 400/500 instead of crash), regression-tested (TDD, raw-socket test), independent-reviewer-approved, PR #40 squash-merged. npm ci/lint/test(75/75)/audit clean locally; build left to CI (known ADR-006 font-fetch gap, unchanged)."
+  last_run: "2026-09-28T19:04:34Z"
+  next_action: "Re-check SEC-001 (factory-guardrails.yml permissions gap, owner-blocked) and SEC-003 (Dependabot alerts disabled, owner-blocked, issue #33) each run; once app grows an API surface (Phase 3 search/newsletter) review A02/A03/A09 for real. Run 6: no code/workflow changes landed since run 5 (confirmed via git diff --stat — only docs/decisions/dashboard files touched, via PR #42 and lock commits). Re-verified all 4 findings with fresh evidence: SEC-001 (factory-guardrails.yml still no permissions: block, owner-blocked, unchanged), SEC-002 (GITHUB_SLUG_PATTERN + both regression tests unmodified), SEC-003 (dependabot alerts still confirmed disabled via GitHub's own API; branch-protection still real 403 no-admin-scope; secret-scanning-alerts still blocked at the sandbox proxy, NOT VERIFIED as before), SEC-004 (static-server.mjs try/catch fix + regression tests unmodified). Re-confirmed A01/A02/A07/A09 with fresh greps (no src/app/api or middleware.ts, no auth/session/cookie/JWT code, no dangerouslySetInnerHTML usage) rather than assuming unchanged. Re-read all 4 workflow files (ci.yml, ingestion.yml, design-screenshots.yml, dependabot.yml) for script-injection/pull_request_target — none found. npm ci (0 vulns)/lint (clean)/test (75/75)/audit --audit-level=high (0 vulns) all run locally; build left to CI (known ADR-006 font-fetch sandbox gap, reproduced, unchanged). No new findings — genuinely quiet run."
   timebox: null
   failed_attempts: 0
   open_findings:
@@ -42,7 +42,7 @@ security:
     low: 2
     info: 0
   fixed_unverified: []
-  verified_fixes: ["SEC-001 (partial — ci.yml fixed, factory-guardrails.yml open, owner-blocked; re-checked 2026-09-28, unchanged)", "SEC-002 (ingestion slug regex traversal bypass, fixed + regression-tested; re-checked 2026-09-28, regex and tests unmodified across the .mjs→.ts conversion)", "SEC-004 (design static-server malformed-URI crash, fixed + regression-tested this run — PR #40, commit 95ed8f1)"]
+  verified_fixes: ["SEC-001 (partial — ci.yml fixed, factory-guardrails.yml open, owner-blocked; re-checked 2026-09-28 run 6, unchanged)", "SEC-002 (ingestion slug regex traversal bypass, fixed + regression-tested; re-checked 2026-09-28 run 6, regex and tests unmodified)", "SEC-004 (design static-server malformed-URI crash, fixed + regression-tested — PR #40, commit 95ed8f1; re-checked 2026-09-28 run 6, unmodified)"]
   owasp_reviewed:
     A01: "NOT APPLICABLE"
     A02: "NEEDS-VERIFICATION"

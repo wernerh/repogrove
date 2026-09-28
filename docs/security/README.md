@@ -7,14 +7,14 @@ PASS / FINDING / NOT APPLICABLE / NEEDS-VERIFICATION.
 | Category | Status | Notes |
 |---|---|---|
 | A01 Broken Access Control | NOT APPLICABLE | No auth/accounts exist yet (MVP has none) |
-| A02 Cryptographic Failures | NEEDS-VERIFICATION | No user data handled yet; revisit at newsletter-signup (Phase 3), the first feature to collect PII (subscriber emails). Re-confirmed 2026-09-28 (security run 3): still no `/api/*` routes, no signup form, no PII-handling code anywhere in `src/` |
+| A02 Cryptographic Failures | NEEDS-VERIFICATION | No user data handled yet; revisit at newsletter-signup (Phase 3), the first feature to collect PII (subscriber emails). Re-confirmed 2026-09-28 (security run 6): still no `/api/*` routes, no signup form, no PII-handling code anywhere in `src/` |
 | A03 Injection | PASS | Reviewed 2026-09-27 (security run 1): repo/Grove body Markdown is rendered via `react-markdown` (`src/app/repo/[slug]/page.tsx`, `src/app/grove/[slug]/page.tsx`) with no `rehype-raw`/`remark-html`/`dangerouslySetInnerHTML` anywhere in `src/` — raw HTML in content is dropped by default, not executed. No API/DB query surface exists yet (SQLite ingestion writer uses parameterised upserts — see `scripts/ingestion/snapshots-db.mjs`); revisit when Phase 3 adds search/API routes with external input. Re-confirmed 2026-09-28: design lane's PR #25 (token/CSS restyle, `globals.css`/4 pages) added no new rendering paths; grepped `src/`/`scripts/` for `dangerouslySetInnerHTML`/`rehype-raw`/`remark-html`/`eval(`/`new Function(` — none found |
 | A04 Insecure Design | PASS | Hybrid architecture keeps agent output non-authoritative by construction (ADR-003) |
 | A05 Security Misconfiguration | FINDING (LOW) — partially fixed; one new finding fixed+verified this run | SEC-001: CI workflows ran with the default (unverifiable) `GITHUB_TOKEN` permission set rather than an explicit least-privilege grant. Fixed in `ci.yml` this run; `factory-guardrails.yml` has the identical gap but is locked from all-lane edits by CLAUDE.md rule 7 — stays open, needs the owner. `ingestion.yml` was already correctly scoped (`contents: write`, the one job that needs it). See `docs/security/findings/SEC-001-ci-workflow-permissions.md`. Re-checked 2026-09-28 (run 5): `factory-guardrails.yml` still has no `permissions:` block — unchanged, still owner-blocked; the new `design-screenshots.yml` workflow (PR #39) already carries a correct `permissions: contents: read` block, reviewed and confirmed least-privilege. SEC-004 (LOW, FIXED+VERIFIED this run): the design lane's new local test-harness server (`scripts/design/static-server.mjs`, PR #36/#39) crashed its whole process on a single malformed-percent-encoding request (unhandled rejection from an uncaught `URIError`) — reproduced, fixed (handler now catches and answers 400/500 instead of crashing), regression-tested. See `docs/security/findings/SEC-004-static-server-malformed-uri-dos.md` |
 | A06 Vulnerable Components | PASS (defense-in-depth gap noted — SEC-003) | `npm audit` re-run 2026-09-28 (security run 4): **0 vulnerabilities at any level**, unchanged since run 3. CI's `dependency-audit` job gates on `--audit-level=high`; `dependabot.yml` covers both `npm` and `github-actions` ecosystems weekly (version-update PRs #28/#29/#30 open on `main` today). Run 4 additionally checked the repo's GitHub-side Dependabot **alerts** feature (real-time CVE alerts, separate from `dependabot.yml`'s scheduled version-update PRs) — confirmed disabled via the GitHub API itself; the factory can't enable it — the enabling endpoint is blocked by this sandbox's own egress proxy before it reaches GitHub, so whether the installed GitHub App also lacks admin scope for it was never directly tested. See SEC-003 — LOW, owner-actionable, doesn't downgrade this PASS since existing scheduled/CI coverage already catches the same class of issue, just not immediately on CVE publication. Prior note: `main` briefly failed a clean `npm ci` for an unrelated reason (issue #26, `react`/`react-dom` peer mismatch from PR #11 — a build-breaking bug, not a vulnerability); dev lane's PR #27 fixed it same-run as security run 3 |
-| A07 Auth Failures | NOT APPLICABLE | No auth in MVP. Re-confirmed 2026-09-28: still no auth/session code anywhere in `src/` |
+| A07 Auth Failures | NOT APPLICABLE | No auth in MVP. Re-confirmed 2026-09-28 (run 6): still no auth/session code anywhere in `src/` |
 | A08 Data Integrity Failures | PASS (defense-in-depth noted) | Dependabot is configured for both ecosystems (weekly); lockfile (`package-lock.json`) is committed and `npm ci` (not `npm install`) is used in every workflow. GitHub Actions are pinned by major-version tag (`@v4`/`@v7`), not by commit SHA — stricter SHA-pinning would be more defensive but isn't a gap given Dependabot's action-update coverage; noted as informational, not a blocking finding |
-| A09 Logging/Monitoring Failures | NEEDS-VERIFICATION | No logging/observability infra exists yet — nothing to configure until there's a live deployment (ADR-002) or a server-side API surface (Phase 3). Re-confirmed 2026-09-28: ADR-002/RG-2 hosting still undecided, no deploy job enabled |
+| A09 Logging/Monitoring Failures | NEEDS-VERIFICATION | No logging/observability infra exists yet — nothing to configure until there's a live deployment (ADR-002) or a server-side API surface (Phase 3). Re-confirmed 2026-09-28 (run 6): RG-2/ADR-002 answered (Azure Storage) but still no deploy job enabled (CLAUDE.md rule 6 human gate) |
 | A10 SSRF | PASS (fixed a real bypass — SEC-002) | Reviewed 2026-09-27: `scripts/ingestion/fetch-snapshots.mjs` fetches `https://api.github.com/repos/${github}` where `github` is drawn from `/content/repos/*.md` frontmatter. Host is hardcoded (never derived from the value) so this was never a cross-host SSRF vector, but the independent review of this run's own PR (SEC-001) found the `GITHUB_SLUG_PATTERN` allowlist's owner-segment guard was dead code — `../rate_limit` passed validation and resolved (`new URL(...)`) to a same-host path-traversal-shaped request (`/repos/../rate_limit` → `/rate_limit`), letting the ingestion job's token probe arbitrary single-segment `api.github.com` paths. Fixed same run: each segment (owner and name) is now anchored to its own boundary rather than sharing one end-of-string anchor; regression tests added (`tests/ingestion/fetch-snapshots.test.ts`). See SEC-002 for detail. Re-verified 2026-09-28: `GITHUB_SLUG_PATTERN` in `scripts/ingestion/fetch-snapshots.mjs` still carries the fixed pattern, and both regression tests (`rejects a bare-dot-segment OWNER slug`, `still accepts a real owner/name slug that merely contains dots`) are still present in `tests/ingestion/fetch-snapshots.test.ts` |
 
 ## OWASP API Security Top 10
@@ -135,3 +135,37 @@ Full detail: `docs/security/findings/SEC-001-ci-workflow-permissions.md`,
   ADR-006 — unchanged, reproduced and confirmed still the same failure mode).
   Least-recently-reviewed categories A01/A02/A07/A09 re-confirmed unchanged (still no
   auth, no API routes, no PII collection, no logging infra — all still Phase 3+).
+- **2026-09-28 (run 6):** no code or workflow changes landed on `main` since run 5
+  (`git log --since` shows only lock-acquire/close-out commits plus PR #42, which is
+  docs/decisions-only — confirmed via `git diff --stat` across the full range: 10 files,
+  all `.md`/`.yaml`/`dashboard`, zero `src/`/`scripts/`/`.github/workflows/` changes).
+  Re-verified every open/fixed finding with fresh evidence rather than trusting the
+  prior write-up: SEC-001 — `factory-guardrails.yml` still has no `permissions:` block
+  (`grep -n permissions .github/workflows/factory-guardrails.yml` empty), still
+  owner-blocked, unchanged; `ci.yml`'s `permissions: contents: read` and
+  `ingestion.yml`'s job-scoped `permissions: contents: write` both still correct.
+  SEC-002 — `GITHUB_SLUG_PATTERN` in `scripts/ingestion/fetch-snapshots.ts` and both
+  regression tests in `tests/ingestion/fetch-snapshots.test.ts` confirmed present and
+  unmodified. SEC-003 — re-ran the same two API checks: `GET .../dependabot/alerts`
+  still returns GitHub's own "Dependabot alerts are disabled" (real, not a proxy
+  artifact); `GET .../branches/main/protection` still 403 "Resource not accessible by
+  integration" (also a real GitHub answer — no repo-admin scope, unchanged);
+  `GET .../secret-scanning/alerts` still blocked at this sandbox's own egress proxy
+  ("Access to this GitHub API path is not permitted through this proxy"), so that one
+  stays NOT VERIFIED as before, not confirmed either way. SEC-004 — the `static-server.mjs`
+  handler's `try/catch`/`URIError`→400/`500` fix and both regression tests confirmed
+  still present and unmodified. Re-confirmed the least-recently-reviewed categories with
+  fresh greps rather than assumption: no `src/app/**/api` or `middleware.ts` directory
+  exists (`find`/`grep` came back empty), no auth/session/cookie/JWT code anywhere in
+  `src/`/`scripts/`, and the one `dangerouslySetInnerHTML` grep hit is a code *comment*
+  in `src/lib/content.ts` explaining why the codebase avoids it, not a usage — A01/A02/A07/A09
+  stay NOT APPLICABLE/NEEDS-VERIFICATION on the same grounds as every prior run (no
+  auth, no API routes, no PII collection, no logging infra — all still Phase 3+). Also
+  re-read `ci.yml`, `ingestion.yml`, `design-screenshots.yml`, and `dependabot.yml` in
+  full for script-injection via untrusted `${{ github.event.* }}` context in `run:`
+  steps and for `pull_request_target` usage — none found, unchanged from prior reviews.
+  Ran `npm ci` (0 vulnerabilities), `npm run lint` (clean), `npm test` (75/75),
+  `npm audit --audit-level=high` (0 vulnerabilities) locally; `npm run build` left to CI
+  as usual (known sandbox font-fetch gap, ADR-006 — reproduced, unchanged). No new
+  findings. Quiet run per CLAUDE.md rule 8 — nothing unverified, nothing regressed,
+  nothing new to fix.
