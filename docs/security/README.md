@@ -10,7 +10,7 @@ PASS / FINDING / NOT APPLICABLE / NEEDS-VERIFICATION.
 | A02 Cryptographic Failures | NEEDS-VERIFICATION | No user data handled yet; revisit at newsletter-signup (Phase 3), the first feature to collect PII (subscriber emails). Re-confirmed 2026-09-28 (security run 3): still no `/api/*` routes, no signup form, no PII-handling code anywhere in `src/` |
 | A03 Injection | PASS | Reviewed 2026-09-27 (security run 1): repo/Grove body Markdown is rendered via `react-markdown` (`src/app/repo/[slug]/page.tsx`, `src/app/grove/[slug]/page.tsx`) with no `rehype-raw`/`remark-html`/`dangerouslySetInnerHTML` anywhere in `src/` — raw HTML in content is dropped by default, not executed. No API/DB query surface exists yet (SQLite ingestion writer uses parameterised upserts — see `scripts/ingestion/snapshots-db.mjs`); revisit when Phase 3 adds search/API routes with external input. Re-confirmed 2026-09-28: design lane's PR #25 (token/CSS restyle, `globals.css`/4 pages) added no new rendering paths; grepped `src/`/`scripts/` for `dangerouslySetInnerHTML`/`rehype-raw`/`remark-html`/`eval(`/`new Function(` — none found |
 | A04 Insecure Design | PASS | Hybrid architecture keeps agent output non-authoritative by construction (ADR-003) |
-| A05 Security Misconfiguration | FINDING (LOW) — partially fixed | SEC-001: CI workflows ran with the default (unverifiable) `GITHUB_TOKEN` permission set rather than an explicit least-privilege grant. Fixed in `ci.yml` this run; `factory-guardrails.yml` has the identical gap but is locked from all-lane edits by CLAUDE.md rule 7 — stays open, needs the owner. `ingestion.yml` was already correctly scoped (`contents: write`, the one job that needs it). See `docs/security/findings/SEC-001-ci-workflow-permissions.md`. Re-checked 2026-09-28: `factory-guardrails.yml` still has no `permissions:` block — unchanged, still owner-blocked |
+| A05 Security Misconfiguration | FINDING (LOW) — partially fixed; one new finding fixed+verified this run | SEC-001: CI workflows ran with the default (unverifiable) `GITHUB_TOKEN` permission set rather than an explicit least-privilege grant. Fixed in `ci.yml` this run; `factory-guardrails.yml` has the identical gap but is locked from all-lane edits by CLAUDE.md rule 7 — stays open, needs the owner. `ingestion.yml` was already correctly scoped (`contents: write`, the one job that needs it). See `docs/security/findings/SEC-001-ci-workflow-permissions.md`. Re-checked 2026-09-28 (run 5): `factory-guardrails.yml` still has no `permissions:` block — unchanged, still owner-blocked; the new `design-screenshots.yml` workflow (PR #39) already carries a correct `permissions: contents: read` block, reviewed and confirmed least-privilege. SEC-004 (LOW, FIXED+VERIFIED this run): the design lane's new local test-harness server (`scripts/design/static-server.mjs`, PR #36/#39) crashed its whole process on a single malformed-percent-encoding request (unhandled rejection from an uncaught `URIError`) — reproduced, fixed (handler now catches and answers 400/500 instead of crashing), regression-tested. See `docs/security/findings/SEC-004-static-server-malformed-uri-dos.md` |
 | A06 Vulnerable Components | PASS (defense-in-depth gap noted — SEC-003) | `npm audit` re-run 2026-09-28 (security run 4): **0 vulnerabilities at any level**, unchanged since run 3. CI's `dependency-audit` job gates on `--audit-level=high`; `dependabot.yml` covers both `npm` and `github-actions` ecosystems weekly (version-update PRs #28/#29/#30 open on `main` today). Run 4 additionally checked the repo's GitHub-side Dependabot **alerts** feature (real-time CVE alerts, separate from `dependabot.yml`'s scheduled version-update PRs) — confirmed disabled via the GitHub API itself; the factory can't enable it — the enabling endpoint is blocked by this sandbox's own egress proxy before it reaches GitHub, so whether the installed GitHub App also lacks admin scope for it was never directly tested. See SEC-003 — LOW, owner-actionable, doesn't downgrade this PASS since existing scheduled/CI coverage already catches the same class of issue, just not immediately on CVE publication. Prior note: `main` briefly failed a clean `npm ci` for an unrelated reason (issue #26, `react`/`react-dom` peer mismatch from PR #11 — a build-breaking bug, not a vulnerability); dev lane's PR #27 fixed it same-run as security run 3 |
 | A07 Auth Failures | NOT APPLICABLE | No auth in MVP. Re-confirmed 2026-09-28: still no auth/session code anywhere in `src/` |
 | A08 Data Integrity Failures | PASS (defense-in-depth noted) | Dependabot is configured for both ecosystems (weekly); lockfile (`package-lock.json`) is committed and `npm ci` (not `npm install`) is used in every workflow. GitHub Actions are pinned by major-version tag (`@v4`/`@v7`), not by commit SHA — stricter SHA-pinning would be more defensive but isn't a gap given Dependabot's action-update coverage; noted as informational, not a blocking finding |
@@ -31,10 +31,12 @@ See `docs/security/PRODUCTION-HARDENING.md`.
 | SEC-001 | LOW | PARTIALLY FIXED | `.github/workflows/ci.yml`, `.github/workflows/factory-guardrails.yml` | A05 | PR #24 |
 | SEC-002 | LOW | FIXED, VERIFIED | `scripts/ingestion/fetch-snapshots.mjs` (`GITHUB_SLUG_PATTERN`) | A10 | PR #24 |
 | SEC-003 | LOW | OPEN, owner-blocked | GitHub repo security settings (Dependabot alerts) | A06 | issue #33 |
+| SEC-004 | LOW | FIXED, VERIFIED | `scripts/design/static-server.mjs` | A05 | (this run, no PR yet) |
 
 Full detail: `docs/security/findings/SEC-001-ci-workflow-permissions.md`,
 `docs/security/findings/SEC-002-ingestion-slug-traversal-regex.md`,
-`docs/security/findings/SEC-003-dependabot-alerts-disabled.md`.
+`docs/security/findings/SEC-003-dependabot-alerts-disabled.md`,
+`docs/security/findings/SEC-004-static-server-malformed-uri-dos.md`.
 
 ## Review log
 - **2026-09-27 (run 1, bootstrap):** initial OWASP table populated as NEEDS-VERIFICATION
@@ -103,3 +105,33 @@ Full detail: `docs/security/findings/SEC-001-ci-workflow-permissions.md`,
   Opened issue #33 (`needs-human`) covering SEC-003 and the pre-existing
   branch-protection recommendation together (same class of ask). Least-recently-reviewed
   categories A01/A02/A07/A09 re-confirmed unchanged.
+- **2026-09-28 (run 5):** re-verified SEC-001 (`factory-guardrails.yml` still has no
+  `permissions:` block, unchanged, still owner-blocked) and SEC-002 (regex and both
+  regression tests in `tests/ingestion/fetch-snapshots.test.ts` unmodified — confirmed
+  by reading the file directly, not by trusting the prior write-up). SEC-003 unchanged
+  (issue #33 still open, no comments from the owner). Reviewed every PR merged since
+  the last security run (#35 ingestion scripts converted `.mjs`→`.ts`, #37 contributor
+  counts, #38 `subscribers_count` fix, #39 wiring the design lane's screenshot harness
+  into CI) for new attack surface: the `.mjs`→`.ts` conversion carried SEC-002's fixed
+  `GITHUB_SLUG_PATTERN` regex over unmodified (confirmed byte-for-byte in
+  `scripts/ingestion/fetch-snapshots.ts`); the new `fetchContributorCount` function
+  reuses the same validated `github` string interpolated into the same hardcoded-host
+  URL — no new injection/SSRF surface; both `snapshots-db.ts` and `src/lib/snapshots.ts`
+  use parameterised `?`-placeholder queries throughout, no string-built SQL; the new
+  `design-screenshots.yml` workflow already carries a correct least-privilege
+  `permissions: contents: read` block (no finding). New finding: SEC-004 (LOW) — the
+  design lane's new local static-file test server (`scripts/design/static-server.mjs`,
+  introduced by #36/#39) crashed its entire process on a single malformed
+  percent-encoded request (`decodeURIComponent` throwing inside an unawaited `async`
+  request handler → unhandled rejection → fatal). Reproduced directly with `curl`
+  before fixing. Fixed same run: the handler now catches `URIError` (→ 400) and any
+  other unexpected error (→ 500) instead of crashing; wrote a failing regression test
+  first (`tests/scripts/design-static-server.test.ts`, using a raw TCP socket since normal HTTP
+  clients won't send a malformed `%` on their own), confirmed it failed against the
+  pre-fix code, then applied the fix and confirmed it passes. Ran `npm ci` (0
+  vulnerabilities), `npm run lint` (clean), `npm test` (75/75, up from 73 — the 2 new
+  SEC-004 regression tests), `npm audit --audit-level=high` (0 vulnerabilities)
+  locally; `npm run build` left to CI as usual (known sandbox font-fetch gap,
+  ADR-006 — unchanged, reproduced and confirmed still the same failure mode).
+  Least-recently-reviewed categories A01/A02/A07/A09 re-confirmed unchanged (still no
+  auth, no API routes, no PII collection, no logging infra — all still Phase 3+).

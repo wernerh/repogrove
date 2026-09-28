@@ -74,17 +74,41 @@ async function resolveFile(urlPath) {
   return null;
 }
 
+// SEC-004 (docs/security/findings/SEC-004-static-server-malformed-uri-dos.md): the
+// whole handler body is wrapped in try/catch. `decodeURIComponent` throws a `URIError`
+// on a malformed percent-encoding (e.g. a bare "%" — trivially sendable by any raw TCP
+// client, `curl` included; `fetch()`/browsers normalize or reject it before it reaches
+// the wire, which is why this went unnoticed). That throw happened inside an `async`
+// request-handler callback that `http.Server` never awaits, so it became an unhandled
+// promise rejection — fatal by default in Node — and took the whole server down on a
+// single bad request instead of just that one connection. Only ever localhost-only CI
+// test-harness traffic reaches this server, so this was never a remote-exploitable
+// issue, but an uncaught exception silently killing a shared CI process for every other
+// route/test still running behind it is a real availability bug worth the two-line fix.
+// See tests/scripts/design-static-server.test.ts for the regression test (a raw-socket request,
+// since normal HTTP clients don't let you send a malformed "%").
 const server = createServer(async (req, res) => {
-  const file = await resolveFile(decodeURIComponent(req.url ?? "/"));
-  if (!file) {
-    res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
-    res.end("Not found");
-    return;
+  try {
+    const file = await resolveFile(decodeURIComponent(req.url ?? "/"));
+    if (!file) {
+      res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end("Not found");
+      return;
+    }
+    const body = await readFile(file);
+    const contentType = CONTENT_TYPES[extname(file)] ?? "application/octet-stream";
+    res.writeHead(200, { "Content-Type": contentType });
+    res.end(body);
+  } catch (err) {
+    if (err instanceof URIError) {
+      res.writeHead(400, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end("Bad request");
+      return;
+    }
+    console.error(`design static server: unexpected error handling ${req.url}:`, err);
+    res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("Internal server error");
   }
-  const body = await readFile(file);
-  const contentType = CONTENT_TYPES[extname(file)] ?? "application/octet-stream";
-  res.writeHead(200, { "Content-Type": contentType });
-  res.end(body);
 });
 
 server.listen(port, "127.0.0.1", () => {
