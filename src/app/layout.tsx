@@ -1,6 +1,30 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Inter, Source_Serif_4, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+
+// Self-hosted at build time (next/font downloads the font files once during
+// `next build` and serves them from our own static output — no runtime
+// request to Google's CDN, compatible with the static export in
+// next.config.ts). See docs/adr/ADR-006-font-loading.md and
+// docs/design/DESIGN-SYSTEM.md's Typography section, which names these
+// three faces and requires this ADR note per CLAUDE.md rule 7.
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+const sourceSerif4 = Source_Serif_4({
+  subsets: ["latin"],
+  variable: "--font-source-serif-4",
+  display: "swap",
+});
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-ibm-plex-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -15,7 +39,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="h-full">
+    <html
+      lang="en"
+      className={`h-full ${inter.variable} ${sourceSerif4.variable} ${ibmPlexMono.variable}`}
+    >
       <body className="min-h-full flex flex-col bg-bg-default text-text-default">
         <header className="border-b border-border-subtle">
           <div className="mx-auto max-w-3xl px-6 py-4">
