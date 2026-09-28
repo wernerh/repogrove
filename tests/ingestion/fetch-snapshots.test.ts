@@ -207,6 +207,16 @@ describe("fetchContributorCount", () => {
     const fetchImpl = vi.fn().mockResolvedValue(linkResponse({ message: "rate limited" }, null, false, 403));
     await expect(fetchContributorCount("ollama/ollama", { fetchImpl, token: "" })).rejects.toThrow(/403/);
   });
+
+  it('throws rather than silently under-counting when a Link header is present but has no rel="last" (e.g. only rel="next")', async () => {
+    // A response mid-pagination that somehow only carries "next" (no "last") would,
+    // if this fell through to the response body's length, silently record 0 or 1 as
+    // the total for what could be a repo with hundreds of contributors. Must throw
+    // instead, so runIngestion logs it and stores `contributors: null`.
+    const linkHeader = '<https://api.github.com/repositories/1/contributors?per_page=1&anon=true&page=2>; rel="next"';
+    const fetchImpl = vi.fn().mockResolvedValue(linkResponse([{ login: "octocat" }], linkHeader));
+    await expect(fetchContributorCount("ollama/ollama", { fetchImpl, token: "" })).rejects.toThrow(/rel="last"/);
+  });
 });
 
 describe("runIngestion", () => {

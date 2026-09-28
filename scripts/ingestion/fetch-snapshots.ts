@@ -165,6 +165,17 @@ export async function fetchContributorCount(
   if (linkHeader) {
     const match = linkHeader.match(LAST_PAGE_PATTERN);
     if (match) return Number(match[1]);
+    // A Link header is present but doesn't carry a `rel="last"` page number — e.g. a
+    // non-standard proxy, or a response that (unexpectedly) only sent `rel="next"`.
+    // Falling through to the response body's length here would silently record
+    // whatever `per_page=1` returned (0 or 1) as the *total* contributor count for a
+    // repo that could have hundreds — a wrong number with no signal anything went
+    // wrong. Treat this the same as any other unparseable response: throw, so
+    // runIngestion's catch logs it and stores `contributors: null` instead of a
+    // confidently-wrong value.
+    throw new Error(
+      `GitHub API returned a Link header for ${github} contributors with no rel="last" page number: ${linkHeader}`,
+    );
   }
   // No `Link` header at all means the whole result fit on one page — at `per_page=1`,
   // that's 0 or 1 total contributors; the response body (an array) says which.
