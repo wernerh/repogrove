@@ -78,6 +78,18 @@ free-form curatorial copy (spec §25).
 `product`, `category`; body sections `Open source`, `Free`, `Commercial`, `Best fit`
 (spec §4).
 
+`content/comparisons/<a>-vs-<b>.md` — a hand-curated `/compare/:a/:b` page (spec §10,
+§14; issue #62; schema'd 2026-09-29). Frontmatter `repos: [<a-slug>, <b-slug>]`, exactly
+two `content/repos/*.md` slugs, in the order the page renders them (`/compare/a/b` and
+`/compare/b/a` both resolve to this file — see `getComparison`). Body: one required
+`## How they differ` section (free-form prose) — the one thing about a comparison that
+can't be computed from either repo's own data. Every structured fact the page shows
+(stars, license, status/momentum, category, pros/cons) is reused at render time from
+`getRepo`/`getGrowthSummaries`/`computeHeat` and each repo's own `## Pros`/`## Cons`
+body sections, never re-derived or re-typed into the comparison file itself. Deliberately
+not auto-generated for every repo pair (spec §14: "every page must provide unique useful
+information") — one file per pair, PR-reviewed like every other editorial relationship.
+
 ## Database schema (volatile side, spec §15 Option A entities)
 `Repository`, `RepositorySnapshot` (time series for star/fork/issue/contributor counts —
 this is how star-growth charts and "Rising" are computed), `Grove`, `RepositoryGrove`

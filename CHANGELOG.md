@@ -563,3 +563,40 @@ entries.
   run locally; `next build` reproduces the known ADR-006 sandbox font-fetch gap,
   confirmed green on CI's GitHub-hosted runner (6/6 checks) before squash-merging.
   Issue #61 auto-closed by the merge. (dev)
+- 2026-09-29 — Phase 3: `/compare/:a/:b` comparison pages (#62, PR #TBD) — spec §10's
+  "Comparison — how does it differ?" perspective, distinct from `/repo/[slug]`'s
+  `AlternativesTable` and `/alternative/:slug`. New content type
+  `content/comparisons/<a>-vs-<b>.md` (`ARCHITECTURE.md` schema'd this run):
+  frontmatter `repos: [<a>, <b>]`, exactly two `content/repos/*.md` slugs; body has
+  one required `## How they differ` section (hand-written prose — the one thing that
+  can't be computed). New `src/lib/content.ts` support (`parseComparison`/
+  `getAllComparisons`/`getComparison`/`getComparisonsForRepo`, plus
+  `assertComparisonReposExist`/`assertNoDuplicateComparisonPairs` cross-file
+  validators — same fail-loudly convention as every other content type; unlike
+  `/alternative/:slug`'s tolerant resolved-or-plain-text rendering, both repos in a
+  comparison must already have their own page or the build fails). New
+  `src/app/compare/[a]/[b]/page.tsx`: an at-a-glance table (stars, license, status,
+  momentum, category — reused from `getRepo`/`getGrowthSummaries`/`computeHeat`, never
+  re-derived) plus each repo's Pros/Cons extracted straight from its own
+  `content/repos/*.md` body (`extractListItems`, now exported for this reuse) rather
+  than re-authored in the comparison file; `getComparison` resolves both URL orders
+  (`/compare/ollama/vllm` and `/compare/vllm/ollama`) to the same content, always
+  rendered in the file's own canonical order. `src/app/repo/[slug]/page.tsx` gained a
+  small "Compared with" cross-link section (`getComparisonsForRepo`) so a reader lands
+  on a comparison without knowing the route exists. First real comparison:
+  `content/comparisons/ollama-vs-vllm.md` (both already had pages and already listed
+  each other as alternatives). `numberFormatter` (TECH-DEBT.md, 2026-09-29 — duplicated
+  in `AlternativesTable.tsx`/`alternative/[slug]/page.tsx`) extracted to new
+  `src/lib/format.ts` rather than duplicated a third time; both existing call sites
+  switched over. Independent review before push found no MAJOR issues; fixed two
+  MINOR items pre-push — Grove Heat's two-repo lookup called `getSnapshotHistory` once
+  per repo (2 db opens where 1 would do), so added a batched `getSnapshotHistories`
+  to `src/lib/snapshots.ts` (mirroring `getGrowthSummaries`'s existing batching,
+  refactored to share one query helper) and switched the compare page to it; and the
+  `numberFormatter`/ROADMAP.md/CHANGELOG.md close-out updates this entry itself is
+  part of. One POLISH item addressed (the comparison content file's own unrendered
+  leading title got a comment explaining the convention, matching
+  `stripLeadingTitle`'s doc comment for repos/groves). 208/208 tests pass (30 new),
+  lint clean, `tsc --noEmit` clean, `npm audit --audit-level=high` 0 vulnerabilities,
+  all run locally; `next build` reproduces the known ADR-006 sandbox font-fetch gap,
+  left to CI's GitHub-hosted runner. (dev)

@@ -1,6 +1,7 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
-import { getAllRepos, getRepo, splitOutSection } from "@/lib/content";
+import { getAllRepos, getComparisonsForRepo, getRepo, splitOutSection } from "@/lib/content";
 import { getGrowthSummaries, getSnapshotHistory } from "@/lib/snapshots";
 import { computeHeat } from "@/lib/heat";
 import StarGrowthChart from "@/components/StarGrowthChart";
@@ -55,6 +56,22 @@ export default async function RepoPage({ params }: PageProps) {
   // as TECH-DEBT.md's 2026-09-29 homepage row).
   const snapshotHistory = getSnapshotHistory(repo.github);
   const heat = computeHeat(snapshotHistory);
+
+  // /compare/:a/:b (issue #62) — every hand-curated comparison naming this
+  // repo, so a reader lands here without needing to know the compare route
+  // exists. Sorted for a stable render order (comparisons don't have their
+  // own ranking signal), not left in whatever order getAllComparisons's
+  // file-listing happens to produce.
+  // getRepo(otherSlug)! is safe: content.ts's assertComparisonReposExist
+  // already fails the build loudly if a comparison names a repo slug that
+  // doesn't exist, so every comparison reaching this page is guaranteed to
+  // resolve (same guarantee AlternativesTable's resolved rows rely on).
+  const comparisons = getComparisonsForRepo(repo.slug)
+    .map((comparison) => ({
+      comparison,
+      otherRepo: getRepo(comparison.repoSlugs.find((slug) => slug !== repo.slug)!)!,
+    }))
+    .sort((a, b) => a.otherRepo.name.localeCompare(b.otherRepo.name));
 
   const { before: bodyBeforeAlternatives, after: bodyAfterAlternatives } = splitOutSection(
     repo.body,
@@ -131,6 +148,24 @@ export default async function RepoPage({ params }: PageProps) {
             a second, computed one here would just duplicate it. */}
         <Markdown>{bodyAfterAlternatives}</Markdown>
       </div>
+
+      {comparisons.length > 0 && (
+        <section className="mt-6">
+          <h2 className="font-sans text-xl font-semibold text-text-default">Compared with</h2>
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {comparisons.map(({ comparison, otherRepo }) => (
+              <li key={comparison.slug}>
+                <Link
+                  href={`/compare/${repo.slug}/${otherRepo.slug}`}
+                  className="inline-block rounded-sm bg-bg-subtle p-2 font-sans text-sm text-text-link hover:underline"
+                >
+                  vs {otherRepo.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </article>
   );
 }

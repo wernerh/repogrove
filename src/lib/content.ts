@@ -21,6 +21,7 @@ const CONTENT_ROOT = path.join(process.cwd(), "content");
 const REPOS_DIR = path.join(CONTENT_ROOT, "repos");
 const GROVES_DIR = path.join(CONTENT_ROOT, "groves");
 const ALTERNATIVES_DIR = path.join(CONTENT_ROOT, "alternatives");
+const COMPARISONS_DIR = path.join(CONTENT_ROOT, "comparisons");
 
 export class ContentValidationError extends Error {}
 
@@ -84,6 +85,42 @@ export interface Alternative {
   free: string[];
   commercial: string[];
   bestFit: string[];
+}
+
+/**
+ * `content/comparisons/<a>-vs-<b>.md` (spec §10, §14; issue #62) — a
+ * hand-curated `/compare/:a/:b` page, distinct from `/repo/[slug]`'s
+ * `AlternativesTable` ("what else instead of *this* repo") and
+ * `/alternative/:slug` ("what's the best alternative to *this paid
+ * product*"): a comparison page is for two repos that *both* already have
+ * their own `content/repos/*.md` page, answering spec §10's "Comparison —
+ * how does it differ?" perspective directly, side by side.
+ *
+ * Deliberately thin: this module only owns the editorial part no computed
+ * source can supply (`howTheyDiffer`, hand-written prose) plus which two
+ * repos are being compared. Every structured fact a comparison page shows
+ * (stars, license, status, momentum, category, pros/cons) is *reused* from
+ * `getRepo`/`getGrowthSummaries`/`computeHeat` and the repos' own `## Pros`/
+ * `## Cons` body sections (via `extractListItems`, exported for exactly this
+ * reuse) at render time — never re-derived or re-typed into the comparison
+ * content file itself, matching CLAUDE.md rule 4's "no raw scraping" spirit
+ * applied to the factory's own other content, not just GitHub's.
+ */
+export interface Comparison {
+  /** Filename without extension, e.g. "ollama-vs-vllm". Used for
+   * `generateStaticParams`, not the URL directly (`/compare/:a/:b` takes two
+   * separate route segments — see `src/app/compare/[a]/[b]/page.tsx`). */
+  slug: string;
+  /** The two `content/repos/*.md` slugs being compared, in the file's own
+   * authored order — `getComparison` matches either URL order against this
+   * pair, but the page always renders in this canonical order so the same
+   * comparison looks identical regardless of which repo the reader typed
+   * first. */
+  repoSlugs: [string, string];
+  /** Raw Markdown from the required `## How they differ` section — the one
+   * thing about a comparison that can't be computed from either repo's own
+   * data. */
+  howTheyDiffer: string;
 }
 
 export interface RawFile {
@@ -208,8 +245,13 @@ export function splitOutSection(body: string, heading: string): { before: string
  * section to always be non-empty. `parseAlternative` separately requires
  * *at least one* of the three alternative-type sections to be non-empty, so
  * a content file that's entirely blank still fails loudly.
+ *
+ * Exported (not just `parseAlternative`'s private helper) so `/compare/:a/:b`
+ * (issue #62) can reuse it directly on a `Repo.body`'s own `## Pros`/`## Cons`
+ * sections — the same generic "bullet list under a `## ` heading" shape,
+ * reused rather than re-implemented for a second content type.
  */
-function extractListItems(body: string, heading: string): string[] {
+export function extractListItems(body: string, heading: string): string[] {
   const lines = body.split("\n");
   const headingLine = `## ${heading}`.toLowerCase();
   const startIdx = lines.findIndex((line) => line.trim().toLowerCase() === headingLine);
@@ -222,6 +264,33 @@ function extractListItems(body: string, heading: string): string[] {
     if (line.startsWith("- ")) items.push(line.slice(2).trim());
   }
   return items;
+}
+
+/**
+ * Extracts the raw Markdown *content* (not bullet items) under one
+ * `## <heading>` section of a body — `content/comparisons/*.md`'s
+ * `## How they differ` section is hand-written prose, not a list, so
+ * `extractListItems`'s bullet-only extraction doesn't fit here. Same
+ * heading-matching rules as `extractListItems`/`splitOutSection` (exact
+ * `## <heading>` line, case-insensitive, up to the next `## ` heading or end
+ * of body); trimmed, and `""` for a missing heading or one with only
+ * whitespace beneath it — `parseComparison` is what turns that `""` into a
+ * loud failure, this function itself stays a plain extractor.
+ */
+function extractSectionBody(body: string, heading: string): string {
+  const lines = body.split("\n");
+  const headingLine = `## ${heading}`.toLowerCase();
+  const startIdx = lines.findIndex((line) => line.trim().toLowerCase() === headingLine);
+  if (startIdx === -1) return "";
+
+  let endIdx = lines.length;
+  for (let i = startIdx + 1; i < lines.length; i++) {
+    if (lines[i].trim().toLowerCase().startsWith("## ")) {
+      endIdx = i;
+      break;
+    }
+  }
+  return lines.slice(startIdx + 1, endIdx).join("\n").trim();
 }
 
 /** `"AppFlowy"` -> `"appflowy"`, `"LM Studio"` -> `"lm-studio"` — a
@@ -363,6 +432,90 @@ export function parseGrove({ filename, data, body }: RawFile): Grove {
   return { slug, name, description, relatedGroves, body: stripLeadingTitle(body, name) };
 }
 
+/**
+ * `content/comparisons/<a>-vs-<b>.md` — see `Comparison`'s doc comment for
+ * what this content type is and isn't. Same fail-loudly convention as
+ * `parseRepo`/`parseAlternative`: missing/malformed `repos` frontmatter, a
+ * self-comparison, or a missing/empty `## How they differ` section all throw
+ * `ContentValidationError` rather than shipping a broken or half-empty page.
+ * Cross-file checks (both repos actually exist, no duplicate pair across two
+ * different files) are deliberately *not* done here — same split
+ * `assertNoGithubCollisions` uses, since they need the full parsed set, not
+ * just this one file — see `assertComparisonReposExist`/
+ * `assertNoDuplicateComparisonPairs` below, called from `getAllComparisons`.
+ */
+export function parseComparison({ filename, data, body }: RawFile): Comparison {
+  const source = `content/comparisons/${filename}`;
+  const slug = filename.replace(/\.md$/, "");
+  const repoSlugs = requireStringArray(data, "repos", source);
+
+  if (repoSlugs.length !== 2) {
+    throw new ContentValidationError(
+      `${source} has a "repos" frontmatter field with ${repoSlugs.length} entries — expected exactly 2`,
+    );
+  }
+  const [a, b] = repoSlugs;
+  if (a === b) {
+    throw new ContentValidationError(
+      `${source} compares "${a}" against itself — "repos" must name two different content/repos/*.md slugs`,
+    );
+  }
+
+  const howTheyDiffer = extractSectionBody(body, "How they differ");
+  if (howTheyDiffer === "") {
+    throw new ContentValidationError(
+      `${source} is missing a non-empty "## How they differ" section — every comparison page needs the one thing ` +
+        "that can't be computed from either repo's own data",
+    );
+  }
+
+  return { slug, repoSlugs: [a, b], howTheyDiffer };
+}
+
+/**
+ * A comparison content file can only name repos that actually have their
+ * own `content/repos/*.md` page — unlike `/alternative/:slug`'s tolerant
+ * resolved-or-plain-text rendering, a comparison page has nothing to render
+ * (no stars, license, status, pros/cons) for a repo that doesn't exist yet,
+ * so this fails the build loudly instead of shipping a half-populated page
+ * (issue #62's acceptance criteria: "two repos that already have
+ * content/repos/*.md pages").
+ */
+export function assertComparisonReposExist(comparisons: Comparison[], repos: Repo[]): void {
+  const knownSlugs = new Set(repos.map((repo) => repo.slug));
+  for (const comparison of comparisons) {
+    for (const slug of comparison.repoSlugs) {
+      if (!knownSlugs.has(slug)) {
+        throw new ContentValidationError(
+          `content/comparisons/${comparison.slug}.md names "${slug}" under "repos", but no content/repos/${slug}.md exists`,
+        );
+      }
+    }
+  }
+}
+
+/**
+ * Two different comparison files covering the same unordered pair of repos
+ * (`ollama-vs-vllm.md` and a hypothetical `vllm-vs-ollama.md`) would make
+ * `getComparison`'s order-independent lookup ambiguous about which one to
+ * return — fail loudly rather than silently picking whichever file
+ * `readMarkdownFiles`'s alphabetical sort happens to see first.
+ */
+export function assertNoDuplicateComparisonPairs(comparisons: Comparison[]): void {
+  const seen = new Map<string, string>();
+  for (const comparison of comparisons) {
+    const pairKey = [...comparison.repoSlugs].sort().join("|");
+    const existing = seen.get(pairKey);
+    if (existing) {
+      throw new ContentValidationError(
+        `content/comparisons/${existing}.md and content/comparisons/${comparison.slug}.md both compare the same ` +
+          `pair of repos (${comparison.repoSlugs.join(", ")}) — keep only one comparison file per pair`,
+      );
+    }
+    seen.set(pairKey, comparison.slug);
+  }
+}
+
 export function assertNoGithubCollisions(repos: Repo[]): void {
   const seen = new Map<string, string>();
   for (const repo of repos) {
@@ -380,6 +533,7 @@ export function assertNoGithubCollisions(repos: Repo[]): void {
 let cachedRepos: Repo[] | null = null;
 let cachedGroves: Grove[] | null = null;
 let cachedAlternatives: Alternative[] | null = null;
+let cachedComparisons: Comparison[] | null = null;
 
 export function getAllRepos(): Repo[] {
   if (cachedRepos) return cachedRepos;
@@ -416,4 +570,36 @@ export function getAllAlternatives(): Alternative[] {
 
 export function getAlternative(slug: string): Alternative | undefined {
   return getAllAlternatives().find((alternative) => alternative.slug === slug);
+}
+
+export function getAllComparisons(): Comparison[] {
+  if (cachedComparisons) return cachedComparisons;
+  const comparisons = readMarkdownFiles(COMPARISONS_DIR).map(parseComparison);
+  assertComparisonReposExist(comparisons, getAllRepos());
+  assertNoDuplicateComparisonPairs(comparisons);
+  cachedComparisons = comparisons;
+  return comparisons;
+}
+
+/**
+ * Order-independent lookup — `/compare/[a]/[b]/page.tsx` (`src/app/compare`)
+ * resolves both `/compare/ollama/vllm` and `/compare/vllm/ollama` to the same
+ * `content/comparisons/ollama-vs-vllm.md` file, so the page always renders
+ * in that file's own canonical order (`comparison.repoSlugs`) rather than
+ * whichever order the reader happened to type into the URL.
+ */
+export function getComparison(a: string, b: string): Comparison | undefined {
+  return getAllComparisons().find(
+    (comparison) =>
+      (comparison.repoSlugs[0] === a && comparison.repoSlugs[1] === b) ||
+      (comparison.repoSlugs[0] === b && comparison.repoSlugs[1] === a),
+  );
+}
+
+/** Every comparison involving the given repo slug — powers `/repo/[slug]`'s
+ * small "Compared with" cross-link section, so a reader who lands on
+ * Ollama's page can find the Ollama-vs-vLLM comparison without knowing
+ * `/compare/:a/:b` exists. */
+export function getComparisonsForRepo(slug: string): Comparison[] {
+  return getAllComparisons().filter((comparison) => comparison.repoSlugs.includes(slug));
 }
