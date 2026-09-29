@@ -7,14 +7,14 @@ PASS / FINDING / NOT APPLICABLE / NEEDS-VERIFICATION.
 | Category | Status | Notes |
 |---|---|---|
 | A01 Broken Access Control | NOT APPLICABLE | No auth/accounts exist yet (MVP has none) |
-| A02 Cryptographic Failures | NEEDS-VERIFICATION | No user data handled yet; revisit at newsletter-signup (Phase 3), the first feature to collect PII (subscriber emails). Re-confirmed 2026-09-28 (security run 7): still no `/api/*` routes, no signup form, no PII-handling code anywhere in `src/` |
-| A03 Injection | PASS | Reviewed 2026-09-27 (security run 1): repo/Grove body Markdown is rendered via `react-markdown` (`src/app/repo/[slug]/page.tsx`, `src/app/grove/[slug]/page.tsx`) with no `rehype-raw`/`remark-html`/`dangerouslySetInnerHTML` anywhere in `src/` — raw HTML in content is dropped by default, not executed. No API/DB query surface exists yet (SQLite ingestion writer uses parameterised upserts — see `scripts/ingestion/snapshots-db.mjs`); revisit when Phase 3 adds search/API routes with external input. Re-confirmed 2026-09-28: design lane's PR #25 (token/CSS restyle, `globals.css`/4 pages) added no new rendering paths; grepped `src/`/`scripts/` for `dangerouslySetInnerHTML`/`rehype-raw`/`remark-html`/`eval(`/`new Function(` — none found |
+| A02 Cryptographic Failures | NEEDS-VERIFICATION | No user data handled yet; revisit at newsletter-signup (Phase 3), the first feature to collect PII (subscriber emails). Re-confirmed 2026-09-29 (security run 9): still no `/api/*` routes, no signup form, no PII-handling code anywhere in `src/` |
+| A03 Injection | PASS | Reviewed 2026-09-27 (security run 1): repo/Grove body Markdown is rendered via `react-markdown` (`src/app/repo/[slug]/page.tsx`, `src/app/grove/[slug]/page.tsx`) with no `rehype-raw`/`remark-html`/`dangerouslySetInnerHTML` anywhere in `src/` — raw HTML in content is dropped by default, not executed. No API/DB query surface exists yet (SQLite ingestion writer uses parameterised upserts — see `scripts/ingestion/snapshots-db.mjs`); revisit when Phase 3 adds search/API routes with external input. Re-confirmed 2026-09-29 (run 9): no `src/`/`scripts/` changes at all since run 8; grep still empty |
 | A04 Insecure Design | PASS | Hybrid architecture keeps agent output non-authoritative by construction (ADR-003) |
 | A05 Security Misconfiguration | FINDING (LOW) — partially fixed; one new finding fixed+verified in an earlier run | SEC-001: CI workflows ran with the default (unverifiable) `GITHUB_TOKEN` permission set rather than an explicit least-privilege grant. Fixed in `ci.yml` this run; `factory-guardrails.yml` has the identical gap but is locked from all-lane edits by CLAUDE.md rule 7 — stays open, needs the owner. `ingestion.yml` was already correctly scoped (`contents: write`, the one job that needs it). See `docs/security/findings/SEC-001-ci-workflow-permissions.md`. Re-checked 2026-09-28 (run 5): `factory-guardrails.yml` still has no `permissions:` block — unchanged, still owner-blocked; the new `design-screenshots.yml` workflow (PR #39) already carries a correct `permissions: contents: read` block, reviewed and confirmed least-privilege. SEC-004 (LOW, FIXED+VERIFIED): the design lane's new local test-harness server (`scripts/design/static-server.mjs`, PR #36/#39) crashed its whole process on a single malformed-percent-encoding request (unhandled rejection from an uncaught `URIError`) — reproduced, fixed (handler now catches and answers 400/500 instead of crashing), regression-tested. See `docs/security/findings/SEC-004-static-server-malformed-uri-dos.md`. Reviewed 2026-09-28 (run 7): `design-screenshots.yml` gained a `commit-screenshots` job with a job-scoped `contents: write` override (RG-6, applied directly by the owner — commit `517c8e4`, not self-granted by any lane). Confirmed the job is unreachable from the workflow's `pull_request` trigger (its `if` requires `github.event_name == 'push'`), every other job in the file keeps `contents: read`, and `download-artifact@v4` can only pull the current run's own artifact — least-privilege, no finding |
 | A06 Vulnerable Components | PASS (defense-in-depth gap noted — SEC-003) | `npm audit` re-run 2026-09-28 (security run 4): **0 vulnerabilities at any level**, unchanged since run 3. CI's `dependency-audit` job gates on `--audit-level=high`; `dependabot.yml` covers both `npm` and `github-actions` ecosystems weekly (version-update PRs #28/#29/#30 open on `main` today). Run 4 additionally checked the repo's GitHub-side Dependabot **alerts** feature (real-time CVE alerts, separate from `dependabot.yml`'s scheduled version-update PRs) — confirmed disabled via the GitHub API itself; the factory can't enable it — the enabling endpoint is blocked by this sandbox's own egress proxy before it reaches GitHub, so whether the installed GitHub App also lacks admin scope for it was never directly tested. See SEC-003 — LOW, owner-actionable, doesn't downgrade this PASS since existing scheduled/CI coverage already catches the same class of issue, just not immediately on CVE publication. Prior note: `main` briefly failed a clean `npm ci` for an unrelated reason (issue #26, `react`/`react-dom` peer mismatch from PR #11 — a build-breaking bug, not a vulnerability); dev lane's PR #27 fixed it same-run as security run 3 |
-| A07 Auth Failures | NOT APPLICABLE | No auth in MVP. Re-confirmed 2026-09-28 (run 7): still no auth/session code anywhere in `src/` |
+| A07 Auth Failures | NOT APPLICABLE | No auth in MVP. Re-confirmed 2026-09-29 (run 9): still no auth/session code anywhere in `src/`; the one `Authorization` grep hit is the ingestion job's GitHub API token forwarding, not user-facing auth |
 | A08 Data Integrity Failures | PASS (defense-in-depth noted) | Dependabot is configured for both ecosystems (weekly); lockfile (`package-lock.json`) is committed and `npm ci` (not `npm install`) is used in every workflow. GitHub Actions are pinned by major-version tag (`@v4`/`@v7`/`@v8`), not by commit SHA — stricter SHA-pinning would be more defensive but isn't a gap given Dependabot's action-update coverage; noted as informational, not a blocking finding |
-| A09 Logging/Monitoring Failures | NEEDS-VERIFICATION | No logging/observability infra exists yet — nothing to configure until there's a live deployment (ADR-002) or a server-side API surface (Phase 3). Re-confirmed 2026-09-28 (run 7): RG-2/ADR-002 answered (Azure Storage) but still no deploy job enabled (CLAUDE.md rule 6 human gate) |
+| A09 Logging/Monitoring Failures | NEEDS-VERIFICATION | No logging/observability infra exists yet — nothing to configure until there's a live deployment (ADR-002) or a server-side API surface (Phase 3). Re-confirmed 2026-09-29 (run 9): RG-2/ADR-002 answered (Azure Storage) but still no deploy job enabled (CLAUDE.md rule 6 human gate) |
 | A10 SSRF | PASS (fixed a real bypass — SEC-002) | Reviewed 2026-09-27: `scripts/ingestion/fetch-snapshots.mjs` fetches `https://api.github.com/repos/${github}` where `github` is drawn from `/content/repos/*.md` frontmatter. Host is hardcoded (never derived from the value) so this was never a cross-host SSRF vector, but the independent review of this run's own PR (SEC-001) found the `GITHUB_SLUG_PATTERN` allowlist's owner-segment guard was dead code — `../rate_limit` passed validation and resolved (`new URL(...)`) to a same-host path-traversal-shaped request (`/repos/../rate_limit` → `/rate_limit`), letting the ingestion job's token probe arbitrary single-segment `api.github.com` paths. Fixed same run: each segment (owner and name) is now anchored to its own boundary rather than sharing one end-of-string anchor; regression tests added (`tests/ingestion/fetch-snapshots.test.ts`). See SEC-002 for detail. Re-verified 2026-09-28: `GITHUB_SLUG_PATTERN` in `scripts/ingestion/fetch-snapshots.mjs` still carries the fixed pattern, and both regression tests (`rejects a bare-dot-segment OWNER slug`, `still accepts a real owner/name slug that merely contains dots`) are still present in `tests/ingestion/fetch-snapshots.test.ts` |
 
 ## OWASP API Security Top 10
@@ -235,6 +235,49 @@ Full detail: `docs/security/findings/SEC-001-ci-workflow-permissions.md`,
   ADR-006 sandbox font-fetch gap, confirmed green on CI's real GitHub-hosted runner
   instead (all 3 checks — Factory guardrails, Lint/test/build, Dependency vulnerability
   scan — green on `main`'s current head). No new findings — genuinely quiet run.
+- **2026-09-29 (run 9):** no code, workflow, dependency, or content changes landed on
+  `main` since run 8 (`git diff --stat 7f39e3e..HEAD`, excluding
+  `docs/dashboard`/`docs/design/screenshots` churn: only `.factory/state.yaml`,
+  `CHANGELOG.md`, `DECISIONS.md`, `PROJECT_STATE.md` — all from dev run 20's quiet
+  close-out, no `src/`/`scripts/`/`.github/workflows/`/`package.json` diff at all) — the
+  quietest run yet, nothing new to review. Re-verified all 4 findings by reading the code
+  directly rather than trusting the prior write-up: SEC-001 (`ci.yml`/`ingestion.yml`/
+  `design-screenshots.yml` all still carry correct `permissions:` blocks — `ci.yml`
+  `contents: read`, `ingestion.yml` `contents: write`, `design-screenshots.yml`
+  `contents: read` at workflow level with the `commit-screenshots` job's `contents: write`
+  override still scoped to that one job; `factory-guardrails.yml` still has no
+  `permissions:` block at all — unchanged, still owner-blocked); SEC-002
+  (`GITHUB_SLUG_PATTERN` in `scripts/ingestion/fetch-snapshots.ts` and both regression
+  tests in `tests/ingestion/fetch-snapshots.test.ts` present, byte-for-byte unmodified);
+  SEC-004 (`static-server.mjs`'s `URIError`→400/other→500 `try/catch` and its regression
+  test present, unmodified). SEC-003 — re-ran the same three GitHub-side checks:
+  `vulnerability-alerts` and `secret-scanning/alerts` both came back as this sandbox's own
+  egress-proxy rejection again ("Access to this GitHub API path is not permitted through
+  this proxy") — consistent with run 8's noted discrepancy, not GitHub's own
+  disabled-alerts message this time either; `branches/main/protection` still a real GitHub
+  `403` ("Resource not accessible by integration", no admin scope). Status unchanged
+  either way — issue #33 stays open, owner-actionable. Reviewed the two open GitHub
+  Actions dependabot PRs touching the one workflow (`design-screenshots.yml`) with a
+  reviewed write-scoped job — `#46` (`actions/download-artifact` 4→8) and `#47`
+  (`actions/upload-artifact` 4→7): both are outside this lane's merge gate (dependabot-
+  authored, no `factory-security` label) so not actioned, but read their release notes for
+  any change relevant to the job-scoped `contents: write` review from run 7 — none found;
+  if anything, v8's new default (`digest-mismatch: error`, failing the run on a hash
+  mismatch instead of only warning) is a secure-by-default improvement over v4's behavior,
+  not a new risk. Secret-pattern scan of every commit since run 8 (`git log -p
+  7f39e3e..HEAD`) — no hits. Fresh greps for the least-recently-reviewed categories: no
+  `src/app/**/api` or `middleware.ts` (A01/API surface — still none), no
+  `dangerouslySetInnerHTML`/`eval(`/`new Function(` usage (the one hit is still the
+  explanatory comment in `src/lib/content.ts`), and the one real `auth`-pattern grep hit
+  (`Authorization` header in `scripts/ingestion/fetch-snapshots.ts`'s `githubHeaders`) is
+  the pre-reviewed GitHub API token forwarding, not user-facing auth — A01/A02/A07/A09
+  stay NOT APPLICABLE/NEEDS-VERIFICATION on the same grounds as every prior run (no auth,
+  no API routes, no PII collection, no logging infra — all still Phase 3+). Ran `npm ci`
+  (0 vulnerabilities), `npm run lint` (clean), `npm test` (79/79), `npm audit
+  --audit-level=high` (0 vulnerabilities) locally; `npm run build` reproduced the known
+  ADR-006 sandbox font-fetch gap, confirmed green on CI's real GitHub-hosted runner
+  instead (`main`'s current head, all checks green). No new findings — genuinely quiet
+  run per CLAUDE.md rule 8.
 - **2026-09-28 (run 6):** no code or workflow changes landed on `main` since run 5
   (`git log --since` shows only lock-acquire/close-out commits plus PR #42, which is
   docs/decisions-only — confirmed via `git diff --stat` across the full range: 10 files,

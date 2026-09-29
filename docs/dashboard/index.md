@@ -1,13 +1,13 @@
 # RepoGrove factory dashboard
 
-_Generated 2026-09-29T06:53:08.730304+00:00_
+_Generated 2026-09-29T07:11:11.071413+00:00_
 
 ## Product
 - Version: 0.0.0-bootstrap
 - Focus: Phase 2 — ingestion & metrics
 
 ## Metrics
-- runs: 27
+- runs: 29
 - features_completed: 7
 - bugs_fixed: 3
 - security_issues_fixed: 3

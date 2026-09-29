@@ -389,3 +389,21 @@ entries.
   `npm audit --audit-level=high` (0 vulnerabilities) locally; `npm run build` reproduced
   the known ADR-006 sandbox font-fetch gap, confirmed green on CI's GitHub-hosted runner
   instead. No unclaimed security/design findings. Quiet run per CLAUDE.md rule 8. (dev)
+- 2026-09-29 — Security run 9: the quietest run yet — no code, workflow, dependency, or
+  content changes landed on `main` at all since run 8 (only dev run 20's docs/state
+  close-out). Re-verified all 4 existing findings by reading the code directly: SEC-001
+  (`factory-guardrails.yml` still no `permissions:` block, unchanged, owner-blocked;
+  `ci.yml`/`ingestion.yml`/`design-screenshots.yml` all still correctly scoped), SEC-002
+  (`GITHUB_SLUG_PATTERN` + both regression tests unmodified), SEC-004
+  (`static-server.mjs`'s malformed-URI fix + regression test unmodified). SEC-003:
+  re-ran the same 3 GitHub-side checks, status unchanged (issue #33 stays open,
+  owner-actionable). Reviewed the 2 open dependabot GitHub Actions PRs bumping
+  `actions/download-artifact` (4→8) and `actions/upload-artifact` (4→7), the two actions
+  used by the run-7-reviewed `commit-screenshots` job — outside this lane's merge gate,
+  no new finding (v8's `digest-mismatch: error` default is a secure-by-default
+  improvement, not a risk). Secret-pattern scan of every commit since run 8 — no hits.
+  Re-confirmed A01/A02/A07/A09 with fresh greps. `main`'s CI green at the current head.
+  Ran `npm ci` (0 vulnerabilities), `npm run lint` (clean), `npm test` (79/79), `npm
+  audit --audit-level=high` (0 vulnerabilities) locally; `npm run build` reproduced the
+  known ADR-006 sandbox font-fetch gap, confirmed green on CI's real GitHub-hosted
+  runner instead. No new findings. Quiet run per CLAUDE.md rule 8. (security)
