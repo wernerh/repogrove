@@ -195,6 +195,46 @@ Full detail: `docs/security/findings/SEC-001-ci-workflow-permissions.md`,
   instead (GitHub-hosted runner, real fonts). No new findings. Quiet run per CLAUDE.md
   rule 8 — the one new attack surface this run reviewed came out clean, and nothing
   regressed.
+- **2026-09-29 (run 8):** only change since run 7 was the design lane's UX-2026-001 fix
+  (`src/app/layout.tsx`, `src/app/page.tsx`) — removing literal leaf/tree emoji from the
+  header logo and two homepage headings, plus the resulting screenshot refresh
+  (`docs/design/screenshots/*.png`, binary-only diff). Diffed both files directly: pure
+  JSX text-node edits (`🌱 RepoGrove` → `RepoGrove`, `🌳 Groves` → `Groves`, `📦
+  Repositories` → `Repositories`), no new rendering path, no `dangerouslySetInnerHTML`,
+  nothing user-input-derived — no new attack surface, no finding. No `.github/workflows/*`,
+  `scripts/`, or `package.json`/lockfile changes at all since run 7 (confirmed via `git
+  diff --stat 46ba348..HEAD`). Re-verified all 4 findings by reading the code directly
+  rather than trusting the prior write-up: SEC-001 (`ci.yml`/`ingestion.yml`/
+  `design-screenshots.yml` all still carry correct `permissions:` blocks;
+  `factory-guardrails.yml` still has none — unchanged, still owner-blocked, confirmed via
+  `grep -n permissions .github/workflows/factory-guardrails.yml` returning nothing);
+  SEC-002 (`GITHUB_SLUG_PATTERN` in `scripts/ingestion/fetch-snapshots.ts` and both
+  regression tests in `tests/ingestion/fetch-snapshots.test.ts` present, byte-for-byte
+  unmodified); SEC-004 (`static-server.mjs`'s `URIError`→400/other→500 `try/catch` and its
+  regression test present, unmodified). SEC-003 — re-ran the same three GitHub-side
+  checks this run: `GET .../vulnerability-alerts` and `GET .../secret-scanning/alerts`
+  both came back as this sandbox's own egress-proxy rejection this time ("Access to this
+  GitHub API path is not permitted through this proxy"), not GitHub's own disabled-alerts
+  message as in earlier runs; `GET .../branches/main/protection` still a real GitHub `403`
+  ("Resource not accessible by integration", no admin scope). Noting the discrepancy
+  rather than glossing over it: whether the proxy allowlist tightened or the earlier
+  runs' "GitHub's own disabled message" framing was itself an artifact of the same
+  proxy-vs-GitHub ambiguity, this run can't tell which from here — either way the status
+  doesn't change (still can't confirm or enable Dependabot alerts from this sandbox, issue
+  #33 stays open, owner-actionable). Re-confirmed the least-recently-reviewed categories
+  with fresh greps: no `src/app/**/api` or `middleware.ts`, no auth/session/cookie/JWT
+  code anywhere in `src/`/`scripts/`, no `dangerouslySetInnerHTML`/`eval(`/`new Function(`
+  usage (the one `dangerouslySetInnerHTML` hit is still the explanatory comment in
+  `src/lib/content.ts`) — A01/A02/A07/A09 stay NOT APPLICABLE/NEEDS-VERIFICATION, still no
+  auth, no API routes, no PII collection, no logging infra (all Phase 3+). Checked all 5
+  open dependabot PRs (`#29`, `#46`-`#49`) — unchanged since run 7, none touched by any
+  lane. Checked the RG-4 owner-decision Gmail thread (`get_thread`) — still exactly 3
+  messages, no new reply since 2026-09-27T17:32:04Z; not this lane's decision to default.
+  Ran `npm ci` (0 vulnerabilities), `npm run lint` (clean), `npm test` (75/75), `npm audit
+  --audit-level=high` (0 vulnerabilities) locally; `npm run build` reproduced the known
+  ADR-006 sandbox font-fetch gap, confirmed green on CI's real GitHub-hosted runner
+  instead (all 3 checks — Factory guardrails, Lint/test/build, Dependency vulnerability
+  scan — green on `main`'s current head). No new findings — genuinely quiet run.
 - **2026-09-28 (run 6):** no code or workflow changes landed on `main` since run 5
   (`git log --since` shows only lock-acquire/close-out commits plus PR #42, which is
   docs/decisions-only — confirmed via `git diff --stat` across the full range: 10 files,

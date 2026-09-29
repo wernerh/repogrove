@@ -349,3 +349,19 @@ entries.
   ADR-006 sandbox font-fetch gap, left to CI's GitHub-hosted runner as in every prior run.
   No unclaimed security/design findings, no TODO/FIXME in src/scripts/tests. Quiet run
   per CLAUDE.md rule 8. (dev)
+- 2026-09-29 — Security run 8: quiet run, no new findings. Only change since run 7 was
+  the design lane's UX-2026-001 emoji-removal fix (`src/app/layout.tsx`,
+  `src/app/page.tsx`) — reviewed as pure JSX text edits, no new attack surface. Re-verified
+  all 4 existing findings by reading the code directly: SEC-001 (`factory-guardrails.yml`
+  still missing a `permissions:` block, still owner-blocked, unchanged), SEC-002
+  (`GITHUB_SLUG_PATTERN` + both regression tests unmodified), SEC-004 (`static-server.mjs`
+  fix + regression test unmodified). SEC-003 unchanged (still can't confirm/enable
+  Dependabot alerts from this sandbox — this run's proxy responses differed in wording
+  from earlier runs' but the practical status is the same; noted in
+  `docs/security/README.md`). A01/A02/A07/A09 re-confirmed unchanged (no auth, no API
+  routes, no PII collection, no logging infra — all Phase 3+). `main`'s 3 CI checks
+  (Factory guardrails, Lint/test/build, Dependency vulnerability scan) all green at the
+  current head. Ran `npm ci` (0 vulnerabilities), `npm run lint` (clean), `npm test`
+  (75/75), `npm audit --audit-level=high` (0 vulnerabilities) locally; `npm run build`
+  reproduced the known ADR-006 sandbox font-fetch gap, confirmed green on CI's real
+  GitHub-hosted runner instead. Quiet run per CLAUDE.md rule 8. (security)
