@@ -37,6 +37,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `${repoA.name} vs ${repoB.name}`,
     description: `How ${repoA.name} and ${repoB.name} differ, compared side by side on RepoGrove.`,
+    // Both URL orders render identical content (see generateStaticParams
+    // above) and the reversed order is reachable from internal links (e.g.
+    // repoB's own page links back in reversed order) as well as being
+    // pre-rendered, not just theoretically crawlable — a `sitemap.xml`
+    // omission alone doesn't stop it from being indexed as a separate,
+    // duplicate page (issue #64 review finding). Pointing every order at
+    // the file's own canonical order tells crawlers which URL to actually
+    // index, same convention the sitemap already uses.
+    alternates: {
+      canonical: `/compare/${comparison.repoSlugs[0]}/${comparison.repoSlugs[1]}`,
+    },
   };
 }
 

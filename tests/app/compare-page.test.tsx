@@ -1,6 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import ComparePage, { generateStaticParams } from "@/app/compare/[a]/[b]/page";
+import ComparePage, { generateMetadata, generateStaticParams } from "@/app/compare/[a]/[b]/page";
 
 describe("Compare page (/compare/[a]/[b])", () => {
   it("statically generates params for both URL orders of every comparison", async () => {
@@ -61,5 +61,12 @@ describe("Compare page (/compare/[a]/[b])", () => {
     await expect(
       ComparePage({ params: Promise.resolve({ a: "ollama", b: "does-not-exist" }) }),
     ).rejects.toThrow();
+  });
+
+  it("both URL orders point their canonical link at the same, content-file-order URL (issue #64 review finding)", async () => {
+    const forward = await generateMetadata({ params: Promise.resolve({ a: "ollama", b: "vllm" }) });
+    const reverse = await generateMetadata({ params: Promise.resolve({ a: "vllm", b: "ollama" }) });
+    expect(forward.alternates?.canonical).toBe("/compare/ollama/vllm");
+    expect(reverse.alternates?.canonical).toBe("/compare/ollama/vllm");
   });
 });

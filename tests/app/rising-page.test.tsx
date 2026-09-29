@@ -1,6 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import RisingPage from "@/app/rising/page";
+import RisingPage, { metadata } from "@/app/rising/page";
 import { getAllRepos } from "@/lib/content";
 import { getGrowthSummary, getSnapshotHistory } from "@/lib/snapshots";
 
@@ -87,5 +87,12 @@ describe("Rising page (/rising)", () => {
   it("has a heading naming the page", () => {
     render(<RisingPage />);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/rising/i);
+  });
+
+  it("has a real <title>/<meta description>, not the root layout's generic default (issue #64)", () => {
+    expect(metadata.title).toBeTruthy();
+    expect(metadata.title).not.toBe("RepoGrove");
+    expect(typeof metadata.description).toBe("string");
+    expect((metadata.description as string).length).toBeGreaterThan(0);
   });
 });
