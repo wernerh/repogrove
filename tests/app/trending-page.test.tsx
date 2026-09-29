@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import TrendingPage from "@/app/trending/page";
+import TrendingPage, { metadata } from "@/app/trending/page";
 import { getAllRepos } from "@/lib/content";
 import { getGrowthSummary, getSnapshotHistory } from "@/lib/snapshots";
 
@@ -65,5 +65,12 @@ describe("Trending page (/trending)", () => {
   it("has a heading naming the page", () => {
     render(<TrendingPage />);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/hot right now/i);
+  });
+
+  it("has a real <title>/<meta description>, not the root layout's generic default (issue #64)", () => {
+    expect(metadata.title).toBeTruthy();
+    expect(metadata.title).not.toBe("RepoGrove");
+    expect(typeof metadata.description).toBe("string");
+    expect((metadata.description as string).length).toBeGreaterThan(0);
   });
 });

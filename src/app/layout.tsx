@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Inter, Source_Serif_4, IBM_Plex_Mono } from "next/font/google";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 // Self-hosted at build time (next/font downloads the font files once during
@@ -27,6 +28,10 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  // Lets every page's relative `alternates.canonical` (e.g. the compare
+  // page's canonical-order URL, issue #64) resolve to a real absolute URL
+  // without each call site re-importing SITE_URL to build one by hand.
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "RepoGrove",
     template: "%s · RepoGrove",
