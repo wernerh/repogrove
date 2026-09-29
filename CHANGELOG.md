@@ -563,7 +563,7 @@ entries.
   run locally; `next build` reproduces the known ADR-006 sandbox font-fetch gap,
   confirmed green on CI's GitHub-hosted runner (6/6 checks) before squash-merging.
   Issue #61 auto-closed by the merge. (dev)
-- 2026-09-29 — Phase 3: `/compare/:a/:b` comparison pages (#62, PR #TBD) — spec §10's
+- 2026-09-29 — Phase 3: `/compare/:a/:b` comparison pages (#62, PR #67) — spec §10's
   "Comparison — how does it differ?" perspective, distinct from `/repo/[slug]`'s
   `AlternativesTable` and `/alternative/:slug`. New content type
   `content/comparisons/<a>-vs-<b>.md` (`ARCHITECTURE.md` schema'd this run):
