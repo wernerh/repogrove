@@ -155,12 +155,24 @@ loses the "## Alternatives" heading `splitOutSection` needs (added a build-time 
 otherwise the old placeholder prose would silently render duplicated alongside the new
 table). Validated locally: lint clean, `tsc --noEmit` clean, tests 135/135 (15 new),
 `npm audit --audit-level=high` 0 vulns; build reproduces the known ADR-006 sandbox
-font-fetch gap, left to CI. Real-screenshot review of the rendered table
-(`/repo/ollama`, has both a resolved and two unresolved alternatives) is next run's job
-once CI's `commit-screenshots` lands them post-merge. RG-4 re-checked (`get_thread`) —
-still no new reply since 2026-09-27T17:32:04Z; due 2026-09-30 (tomorrow).
+font-fetch gap, left to CI. PR #57 merged (squash, 5/5 gating CI checks green plus the
+non-gating axe-core job — 18/18 checks, 0 WCAG 2.1 A/AA violations); `commit-screenshots`
+fired on the resulting push and recommitted refreshed `repo-ollama__*` screenshots,
+reviewed directly this same run (`/repo/ollama` has both a resolved alternative, vLLM,
+and two unresolved ones, LM Studio/LocalAI — the mixed case this component needed to
+prove out). Desktop/tablet held up exactly as specced in both themes; mobile did not —
+`Category` was pushed off-screen by the table's fixed `min-w-[28rem]`, needing a
+horizontal scroll to reach at the project's own 390px mobile viewport. Filed and fixed in
+the same run as UX-2026-002 (MINOR — not a WCAG failure, axe-core's 18/18 already passed
+against the unfixed version, but a real rough edge on a component this lane just shipped
+as the site's stated "killer feature"): `Category` now hides below Tailwind's default
+`sm` breakpoint instead of forcing a scroll for it. Re-validated (lint/tsc/tests 135/135
+all clean; no test changes needed) and pushed as a same-run follow-up PR. RG-4
+re-checked (`get_thread`) — still no new reply since 2026-09-27T17:32:04Z; due
+2026-09-30 (tomorrow).
 
 ## Findings
 | ID | Severity | Status | Component | Mapping | Issue/PR |
 |---|---|---|---|---|---|
 | UX-2026-001 | MAJOR | Verified (fixed) | Header logo + homepage section headings | `layout.tsx`, `page.tsx` | #50, PR #51 |
+| UX-2026-002 | MINOR | Fixed (same run) | Alternatives table mobile Category column | `AlternativesTable.tsx` | PR #57 follow-up |

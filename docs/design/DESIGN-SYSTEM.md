@@ -345,7 +345,13 @@ premature scale CLAUDE.md §4 asks the design lane to avoid.
     `content/repos/*.md` file yet) render their raw slug in mono (same convention as any
     other slug on this site), unlinked, labeled "Not yet profiled" — never a link to a
     page that 404s. Commercial alternatives (plain product names, not GitHub repos) get
-    a simple unlinked chip list underneath, per spec §4.
+    a simple unlinked chip list underneath, per spec §4. **Mobile fix (same run,
+    UX-2026-002):** the real `repo-ollama__mobile-*.png` screenshot showed the table's
+    `min-w-[28rem]` pushing wider than the 390px mobile viewport, cutting the `Category`
+    column off-screen (requiring a horizontal scroll to reach it, not a WCAG failure but
+    a real rough edge) — `Category` now hides below Tailwind's default `sm` breakpoint
+    (640px) instead, so the three more important columns fit without scrolling at all on
+    mobile; `overflow-x-auto` stays as a defensive fallback, not the primary strategy.
 - **Status chips** (momentum/Heat — see above): icon + label + text-color pairing, never
   a filled color block with no text, `radius-sm` fully-rounded exception noted above,
   `space-1` internal padding.
