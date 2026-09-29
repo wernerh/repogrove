@@ -17,8 +17,14 @@ import { SITE_URL } from "@/lib/site";
  * the file's own canonical order (`repoSlugs[0]`/`repoSlugs[1]`) is listed
  * here — the reversed URL is the same content under a different path, and
  * a sitemap shouldn't advertise two URLs for one page (duplicate-content
- * SEO anti-pattern).
+ * SEO anti-pattern; the compare page's own `alternates.canonical` points
+ * every order at this same URL).
+ *
+ * `output: "export"` needs metadata-route files to opt into `force-static`
+ * explicitly, same as `robots.ts` — see that file's doc comment.
  */
+export const dynamic = "force-static";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: SITE_URL, changeFrequency: "daily", priority: 1 },
