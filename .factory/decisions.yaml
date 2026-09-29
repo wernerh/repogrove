@@ -100,6 +100,10 @@
     task (StatusChip/MomentumChip icon-collision fix, issue #52, PR #60) didn't depend
     on the answer either way; next run should default for real (editorial/
     content-forward) if still unanswered by then.
+    Re-checked again 2026-09-29 (dev run 25, via get_thread) — still exactly 3
+    messages, no new reply since 17:32:04Z. Due date 2026-09-30 is tomorrow; not this
+    lane's decision to default (design lane owns RG-4). This run's task
+    (`/alternative/:slug`, #61/PR #66) didn't depend on the answer either way.
 
 - id: RG-6
   lane: design

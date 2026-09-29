@@ -27,11 +27,11 @@ Technical considerations / Testing / Security / Rollout / Documentation / Depend
   recency, release frequency, external mentions all need new ingestion)
 
 ## Phase 3 — Search, SEO, alternatives, newsletter signup
-- [ ] Alternatives pages (`/alternative/:slug`) — open-source / free / commercial + best fit
-- [ ] Comparison pages (`/compare/:a/:b`)
-- [ ] Full-text search across repos/Groves/alternatives
-- [ ] Sitemap + OpenGraph cards + SEO metadata
-- [ ] Newsletter signup form (storage only, no send automation)
+- [x] Alternatives pages (`/alternative/:slug`) — open-source / free / commercial + best fit (#61, PR #66)
+- [ ] Comparison pages (`/compare/:a/:b`) (#62)
+- [ ] Full-text search across repos/Groves/alternatives (#63)
+- [ ] Sitemap + OpenGraph cards + SEO metadata (#64)
+- [ ] Newsletter signup form (storage only, no send automation) (#65)
 
 ## Phase 4+ — Deferred product roadmap (spec §31–32)
 - [ ] Historical charts, watchlists/alerts (Phase 2 of product)

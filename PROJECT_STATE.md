@@ -11,14 +11,14 @@ migration, or deploy target needed yet.
 
 ## Current phase
 **Phase 3 — Search, SEO, alternatives, newsletter signup**. Phase 2 completed run 24
-(all 6 ROADMAP items checked, see Milestones).
+(all 6 ROADMAP items checked, see Milestones). Phase 3 issues filed run 25 (#61-65,
+mirroring how #5-7/#16-21 mirrored Phase 1/2's ROADMAP rows).
 
 ## Next action (exactly one)
-Run 24 closed out Phase 2 (Heat v1, #21, PR #59). No Phase 3 issues filed yet — next
-run should file them (mirroring how #5-7/#16-21 mirrored Phase 1/2's ROADMAP rows),
-then start with `/alternative/:slug` (spec §4, "paid product → OSS alternative" SEO
-pages — distinct from the already-shipped `/repo/[slug]` AlternativesTable, which
-answers "what else for *this* repo", not "what's the best OSS alternative to Notion").
+Run 25 shipped `/alternative/:slug` (#61, PR #66). Next: #62 (comparison pages) or #64
+(sitemap/SEO) — both unblocked. #63 (search) needs a short ADR first (`output: "export"`
+has no server runtime for DB-backed FTS). #65 (newsletter) is owner-decision-blocked on
+storage/vendor past its form-UI-only first PR.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -40,10 +40,9 @@ Accounts, paid subscriptions, watchlists/alerts, recommendation engine, massive
 crawling infra, admin CMS, live deploy — see spec §30, §33 and ADR-002.
 
 ## Timebox
-Phase 2 complete (run 24, ADR-004/#21/PR #59 — within budget, no split needed). Phase 3
-has no timebox set yet; first task (`/alternative/:slug`) is a new content-schema +
-routing surface — scope small (a handful of hand-authored pages) before committing to
-the full spec §4 feature set.
+Phase 2 complete (run 24, within budget). Phase 3's first item (`/alternative/:slug`,
+#61) shipped run 25, within budget, no split needed. No timebox set on the remaining
+4 Phase 3 items yet.
 
 ## Blockers and attempts
 None blocking (rule 8). Dependabot #29 (eslint) blocked upstream (eslint-plugin-react
@@ -56,4 +55,5 @@ PRs (#29, #46-49) outside this lane's merge gate — owner merges these directly
 - [x] 2026-09-28 — CI red fixed (#26, PR #27); star-growth chart (#18, PR #31); self-hosted fonts (ADR-006, PR #32); ingestion scripts to TS (PR #35); contributor counts (PR #37); watchers/subscribers_count fix (PR #38); typescript-7 CI-red revert (PR #45).
 - [x] 2026-09-29 — `/trending` (#19, PR #55) + `/rising` (#20, PR #56): absolute/relative star-growth rankings.
 - [x] 2026-09-29 — Grove Heat v1 (#21, PR #59): star-growth-rate momentum label — Phase 2 complete.
-- [ ] Phase 3 — search, SEO, alternatives pages, newsletter signup
+- [x] 2026-09-29 — Phase 3 issues filed (#61-65); `/alternative/:slug` shipped (#61, PR #66).
+- [ ] Phase 3 remaining — comparison pages, search, SEO, newsletter signup (#62-65)

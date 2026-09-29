@@ -539,3 +539,27 @@ entries.
   `tests/app/repo-page.test.tsx`), lint clean, `tsc --noEmit` clean, `npm audit
   --audit-level=high` 0 vulnerabilities, all run locally; `next build` reproduces the
   known ADR-006 sandbox font-fetch gap, left to CI. (design)
+- 2026-09-29 — Phase 3 issues filed (#61-65, mirroring how #5-7/#16-21 mirrored Phase
+  1/2's ROADMAP rows): alternatives pages, comparison pages, full-text search,
+  sitemap/OpenGraph/SEO, newsletter signup. (dev)
+- 2026-09-29 — `/alternative/:slug` (#61, PR #66): spec §4's "paid product →
+  free/open-source alternative" pages — distinct from the already-shipped
+  `/repo/[slug]` `AlternativesTable`, which answers "what else instead of *this*
+  repo" for a repo that already has its own page. New `src/lib/content.ts` support
+  (`parseAlternative`/`getAllAlternatives`/`getAlternative`, reading
+  `content/alternatives/*.md`'s frontmatter `product`/`category` and body sections
+  `Open source`/`Free`/`Commercial`/`Best fit` — same fail-loudly-on-malformed-content
+  convention as `parseRepo`/`parseGrove`). New `src/app/alternative/[slug]/page.tsx`
+  resolves each "Open source" display name against `content/repos/*.md` (link + stars
+  when resolved, plain text + "Not yet profiled" otherwise — the same convention
+  `AlternativesTable` already established). `content/alternatives/notion.md`'s
+  bootstrap-era placeholder Free/Commercial sections filled in with real,
+  uncontroversial facts. Independent review before push found no MAJOR issues; fixed
+  two MINOR items (missing test coverage for the resolved-item render path through
+  the actual page component; `assertNoDuplicateListItems` not applied to "Best fit")
+  and two POLISH items (an unrendered process note moved out of the content file; the
+  `-`-only bullet convention documented) pre-push. 178/178 tests pass (17 new), lint
+  clean, `tsc --noEmit` clean, `npm audit --audit-level=high` 0 vulnerabilities, all
+  run locally; `next build` reproduces the known ADR-006 sandbox font-fetch gap,
+  confirmed green on CI's GitHub-hosted runner (6/6 checks) before squash-merging.
+  Issue #61 auto-closed by the merge. (dev)
