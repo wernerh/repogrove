@@ -334,5 +334,5 @@ entries.
   alongside it for heading-to-heading consistency (no spec calls for an icon on either).
   Fixed: both files now rely on typography alone. 2-file, content-only change; no
   token/layout change needed. See
-  `docs/design/findings/UX-2026-001-brand-mark-leaf-emoji.md`, issue #50.
+  `docs/design/findings/UX-2026-001-brand-mark-leaf-emoji.md`, issue #50, PR #51.
   (design)

@@ -105,4 +105,4 @@ since the 2026-09-27T17:32:04Z message; due 2026-09-30, one day off.
 ## Findings
 | ID | Severity | Status | Component | Mapping | Issue/PR |
 |---|---|---|---|---|---|
-| UX-2026-001 | MAJOR | Verified (fixed) | Header logo + homepage section headings | `layout.tsx`, `page.tsx` | #50 |
+| UX-2026-001 | MAJOR | Verified (fixed) | Header logo + homepage section headings | `layout.tsx`, `page.tsx` | #50, PR #51 |
