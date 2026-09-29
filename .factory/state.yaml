@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-29T05:14:08Z"
-  holder: "design"
-  last_run: "2026-09-29T04:52:34Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-29T05:14:08Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,8 +19,8 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 26
-  features_completed: 6
+  runs: 27
+  features_completed: 7
   bugs_fixed: 3
   security_issues_fixed: 3
   deployments: 0
@@ -57,8 +57,8 @@ security:
     A10: "PASS (fixed a bypass — SEC-002)"
 
 design:
-  last_run: "2026-09-29T01:13:29Z"
-  next_action: "Run 7: RG-6's real, correctly-fonted screenshots (committed under docs/design/screenshots/*.png since security run 7) got their first real visual review by this lane — the 'look at screenshots before judging' step, finally possible. Reviewed all 3 routes x 2 themes x 3 viewports (18 images) against DESIGN-SYSTEM.md. Found and fixed UX-2026-001 (MAJOR): the header logo (🌱 RepoGrove) and the homepage's 🌳 Groves heading used literal leaf/tree emoji, directly contradicting this doc's own Brand scale rationale ('a quiet nod to Grove without an illustrated leaf anywhere') — a real, screenshot-verified inconsistency, not a nitpick, since the header appears on every page. The homepage's 📦 Repositories heading isn't foliage but was removed alongside it for heading-to-heading consistency (no spec calls for an icon on either). Fixed as a 2-file, content-only change (src/app/layout.tsx, src/app/page.tsx); no token/layout change needed. Also ruled out a false alarm: Markdown-rendered links inside <article> (Grove page's 'Core projects' list) looked dark/near-black at first glance vs. the homepage's brighter teal links, but checked against the token value directly — text.link is brand-70 (#004c53), a deliberately dark, high-contrast teal (9.47:1), not a bug, just harder to distinguish from black at small serif sizes. Everything else held up: type hierarchy, dark-mode contrast, star-growth chart, momentum status label, and mobile/tablet reflow all match spec. Filed issue #50, independent-reviewed pre-commit, validated locally (lint/tsc/test 75/75/audit clean, build reproduces the known ADR-006 sandbox font gap, left to CI), then opened the PR. RG-4 re-checked again (get_thread) — still no new reply since 2026-09-27T17:32:04Z; due 2026-09-30 (tomorrow) — next run applies the recommended default if still unanswered. PR #51 merged (squash, 6/6 CI checks green including a real next build on CI's GitHub-hosted runner); the commit-screenshots job fired on the resulting push and recommitted refreshed screenshots (376fe6a) — reviewed the refreshed homepage screenshot directly post-merge and confirmed the fix end to end, no layout/spacing artifact. Next major task: extend the component-pattern review (cards, alternatives table, status chips) as each lands, per DESIGN-SYSTEM.md's existing next-steps note; re-check RG-4 each run until answered or defaulted 2026-09-30 (tomorrow)."
+  last_run: "2026-09-29T05:14:08Z"
+  next_action: "Run 8: closed issue #41 (RG-6) — the owner had applied the drafted commit-screenshots job directly to main himself (commit 517c8e4, found by security run 7) and it's been working since, but the needs-human issue was never closed. Built the first real status chip component (src/components/StatusChip.tsx) per DESIGN-SYSTEM.md's Component patterns spec, replacing /repo/[slug]'s plain-text STATUS_LABEL map ('🟢 Active' as one unstyled string, no color token) with a real icon+label pill using success/warning/text.secondary semantic tokens (not momentum-* — see below). Independent review caught one real spec-conformance miss pre-push (py-1 didn't actually equal the claimed space-1/8px padding; fixed to p-2) and a DOM structural inconsistency (Status div had drifted to flex while License/Category siblings stayed inline dt/dd; reverted to match). Flagged a real future risk in DESIGN-SYSTEM.md and issue #52: this status chip and the future Momentum/Heat chip (issue #21/ADR-004, not yet built) share the exact same 🟢/🟡/⚪ icon set for two different concepts (editorial classification vs. computed growth signal) — a repo could show contradictory-looking same-color chips once momentum lands; not blocking now, nothing to compare against yet. Added component test coverage (4 new tests) and updated the repo-page test for the new icon/label DOM split. RG-4 re-checked (get_thread) — still no new reply since 2026-09-27T17:32:04Z; due 2026-09-30 (tomorrow) — next run applies the recommended default if still unanswered. Validated locally (lint clean, tsc clean, tests 79/79, audit 0 vulns; build reproduces the known ADR-006 sandbox font gap, left to CI). PR #53 merged (squash, 6/6 CI checks green including a real next build on CI's GitHub-hosted runner); the commit-screenshots job fired on the resulting push and recommitted refreshed repo-ollama__* screenshots — reviewed all 6 (light/dark x desktop/tablet/mobile) directly and confirmed the chip end to end: clean pill, readable text in both themes, correct mobile reflow, no layout shift. Next major task: the repo/Grove card pattern — homepage still renders a plain <ul> of links instead of the specced card, and there's now enough content (5 repos, 2 Groves) to make a real grid worth reviewing; re-check RG-4 each run until answered or defaulted 2026-09-30 (tomorrow)."
   timebox: null
   failed_attempts: 0
   open_findings:
@@ -71,7 +71,8 @@ design:
     - "2026-09-28 — cascade-layer bug: unlayered `article a`/`body` base CSS was silently overriding `text-*` utility classes on links inside <article> (repo page GitHub link rendered link-teal instead of text-secondary); moved into `@layer base`, re-screenshotted to confirm"
     - "2026-09-28 — repo/Grove `<h1>` used `text-3xl` (39px/hero under the new type scale) where DESIGN-SYSTEM.md's Page headers spec calls for `text-2xl` (31px); fixed on both pages"
     - "2026-09-29 — UX-2026-001: header logo + homepage 'Groves' heading used literal leaf/tree emoji, contradicting DESIGN-SYSTEM.md's documented 'no illustrated leaf' brand rationale (a third heading's non-foliage emoji removed alongside for consistency); removed, relying on typography alone (issue #50)"
+    - "2026-09-29 — status chip component built and verified against real CI screenshots (repo page's status field had no chip/color token at all, just a plain string); issue #52 filed to track a future icon-collision risk with the not-yet-built Momentum/Heat chip"
   pages_reviewed:
     "/": "2026-09-29 — first real (correctly-fonted) screenshot review, light/dark x desktop/tablet/mobile; found + fixed UX-2026-001"
-    "/repo/[slug]": "2026-09-29 — first real screenshot review, light/dark x desktop/tablet/mobile; confirmed status label, star-growth chart, dark-mode link contrast all match spec"
+    "/repo/[slug]": "2026-09-29 — first real screenshot review (run 7), light/dark x desktop/tablet/mobile; confirmed status label, star-growth chart, dark-mode link contrast all match spec. Re-reviewed run 8 post-merge with the new status chip in place — confirmed end to end"
     "/grove/[slug]": "2026-09-29 — first real screenshot review, light/dark x desktop/tablet/mobile; ruled out a false-alarm link-color read (see next_action)"

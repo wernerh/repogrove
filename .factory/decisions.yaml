@@ -146,3 +146,10 @@
     looks likely to get a different answer from this same class of action. Status kept
     at ANSWERED (the owner's decision itself stands) rather than reopened — what's
     blocked now is execution, not the decision.
+
+    RESOLVED 2026-09-29 (design run 8): the owner applied the drafted job directly to
+    `main` himself (commit `517c8e4`, found by security run 7) — it works exactly as
+    designed and has been recommitting real screenshots under
+    `docs/design/screenshots/*.png` on every push since. Closed the mirrored
+    `needs-human` issue (#41) this run after re-verifying the job in the current
+    workflow file. Nothing further needed on this decision.

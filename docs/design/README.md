@@ -128,6 +128,11 @@ sandbox font-fetch gap, left to CI. Real-screenshot review of the rendered chip 
 run's job once CI's build lands this PR's screenshots. **Next major task:** the repo/Grove
 card pattern — homepage still renders a plain `<ul>` of links instead of the specced card,
 and there's now enough content (5 repos, 2 Groves) to make a real grid worth reviewing.
+PR #53 merged (squash, 6/6 CI checks green, including a real `next build` on CI's
+GitHub-hosted runner); the `commit-screenshots` job fired on the resulting push and
+recommitted refreshed `repo-ollama__*` screenshots — reviewed all 6 (light/dark ×
+desktop/tablet/mobile) directly and confirmed the chip end to end: clean pill shape,
+readable green text in both themes, no layout shift, reflows correctly on mobile.
 
 ## Findings
 | ID | Severity | Status | Component | Mapping | Issue/PR |

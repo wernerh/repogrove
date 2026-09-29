@@ -191,6 +191,15 @@ entries.
   light/dark. The 18 real screenshots exist as a workflow artifact but couldn't be
   downloaded into this sandbox (blocked network path to GitHub's artifact-storage
   backend) — visual review is still outstanding. PR #39. (design)
+- 2026-09-29 — `src/components/StatusChip.tsx`: the first real "status chip" component
+  per `DESIGN-SYSTEM.md`'s Component patterns spec, replacing `/repo/[slug]`'s
+  plain-text `STATUS_LABEL` map ("🟢 Active" as one unstyled string) with a real
+  icon+label pill using the `success`/`warning`/`text.secondary` semantic tokens (not
+  the `momentum-*` tokens, reserved for the future computed Momentum/Heat chip —
+  issue #21). Icon `aria-hidden`, text label is what's announced. Verified against real
+  CI screenshots post-merge (light/dark × desktop/tablet/mobile). Flagged a future
+  icon-collision risk with the momentum chip (both use 🟢/🟡/⚪ for different concepts)
+  as issue #52. PR #53. (design)
 
 ### Changed
 - 2026-09-28 — `scripts/ingestion/fetch-snapshots.mjs`/`snapshots-db.mjs` converted to
