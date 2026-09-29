@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import RepoPage, { generateStaticParams } from "@/app/repo/[slug]/page";
 
@@ -15,15 +15,22 @@ describe("Repo page (/repo/[slug])", () => {
   });
 
   it("renders /repo/ollama from content/repos/ollama.md, not a hardcoded string", async () => {
-    const element = await RepoPage({ params: Promise.resolve({ slug: "ollama" }) });
-    render(element);
+    const { container } = render(
+      await RepoPage({ params: Promise.resolve({ slug: "ollama" }) }),
+    );
 
     expect(screen.getByRole("heading", { level: 1, name: "Ollama" })).toBeInTheDocument();
     // Status renders as the StatusChip component (icon + text label as
     // separate nodes, icon marked aria-hidden) — see
     // tests/components/status-chip.test.tsx for its own unit coverage.
-    expect(screen.getByText("Active")).toBeInTheDocument();
-    expect(screen.getByText("🟢")).toBeInTheDocument();
+    // Scoped to the page's own metadata <dl>: ollama's Alternatives table
+    // (see tests/components/alternatives-table.test.tsx) also renders a
+    // StatusChip for its resolved "vllm" row, which is itself Active too —
+    // an unscoped query would find two matches.
+    const metadata = container.querySelector("dl");
+    expect(metadata).not.toBeNull();
+    expect(within(metadata!).getByText("Active")).toBeInTheDocument();
+    expect(within(metadata!).getByText("🟢")).toBeInTheDocument();
     expect(screen.getByText(/📜 MIT/)).toBeInTheDocument();
     expect(screen.getByText(/Ollama packages open-weight LLMs/)).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to the Grove.
@@ -46,5 +53,24 @@ describe("Repo page (/repo/[slug])", () => {
     await expect(
       RepoPage({ params: Promise.resolve({ slug: "does-not-exist" }) }),
     ).rejects.toThrow();
+  });
+
+  it("renders the Alternatives table (spec §3-4), resolving vllm and leaving lm-studio/localai unresolved", async () => {
+    // ollama.md's frontmatter: alternatives.open_source = [lm-studio, localai, vllm].
+    // Only vllm has its own content/repos/vllm.md today — see
+    // tests/components/alternatives-table.test.tsx for the component's own
+    // unit coverage of resolved vs. unresolved rows.
+    const element = await RepoPage({ params: Promise.resolve({ slug: "ollama" }) });
+    render(element);
+
+    expect(screen.getByRole("heading", { level: 2, name: "Alternatives" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "vLLM" })).toHaveAttribute("href", "/repo/vllm");
+    expect(screen.getByText("lm-studio")).toBeInTheDocument();
+    expect(screen.getByText("localai")).toBeInTheDocument();
+    expect(screen.getAllByText("Not yet profiled")).toHaveLength(2);
+    // The hand-authored "## Alternatives" placeholder prose from
+    // content/repos/ollama.md is replaced, not duplicated alongside the
+    // table — see src/lib/content.ts's splitOutSection.
+    expect(screen.queryByText(/placeholder links/)).not.toBeInTheDocument();
   });
 });

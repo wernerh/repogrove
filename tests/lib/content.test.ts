@@ -9,6 +9,7 @@ import {
   getRepo,
   parseGrove,
   parseRepo,
+  splitOutSection,
   type Repo,
 } from "@/lib/content";
 
@@ -135,6 +136,58 @@ describe("parseRepo — malformed frontmatter fails loudly", () => {
     expect(repo.featured).toBe(false);
     expect(repo.alternatives).toEqual({ open_source: [], commercial: [] });
   });
+
+  it("throws when a repo lists itself as its own open-source alternative", () => {
+    expect(() =>
+      parseRepo({
+        filename: "self-ref.md",
+        body: "Body text",
+        data: {
+          github: "acme/self-ref",
+          name: "Self Ref",
+          category: ["ai"],
+          license: "MIT",
+          status: "active",
+          groves: ["ai"],
+          alternatives: { open_source: ["self-ref"], commercial: [] },
+        },
+      }),
+    ).toThrow(/lists itself/);
+  });
+
+  it("throws when the same slug appears twice under alternatives.open_source", () => {
+    expect(() =>
+      parseRepo({
+        ...base,
+        data: {
+          github: "acme/broken",
+          name: "Broken",
+          category: ["ai"],
+          license: "MIT",
+          status: "active",
+          groves: ["ai"],
+          alternatives: { open_source: ["dupe", "dupe"], commercial: [] },
+        },
+      }),
+    ).toThrow(/more than once under "alternatives.open_source"/);
+  });
+
+  it("throws when the same name appears twice under alternatives.commercial", () => {
+    expect(() =>
+      parseRepo({
+        ...base,
+        data: {
+          github: "acme/broken",
+          name: "Broken",
+          category: ["ai"],
+          license: "MIT",
+          status: "active",
+          groves: ["ai"],
+          alternatives: { open_source: [], commercial: ["Firebase", "Firebase"] },
+        },
+      }),
+    ).toThrow(/more than once under "alternatives.commercial"/);
+  });
 });
 
 describe("parseGrove — malformed frontmatter fails loudly", () => {
@@ -173,5 +226,53 @@ describe("assertNoGithubCollisions", () => {
     expect(() =>
       assertNoGithubCollisions([makeRepo("a", "org/dup"), makeRepo("b", "org/dup")]),
     ).toThrow(ContentValidationError);
+  });
+});
+
+describe("splitOutSection", () => {
+  const body = [
+    "Intro paragraph.",
+    "",
+    "## What it does",
+    "Explanation.",
+    "",
+    "## Alternatives",
+    "LM Studio, LocalAI (placeholder prose).",
+    "",
+    "## Related Grove",
+    "[AI](/grove/ai)",
+  ].join("\n");
+
+  it("removes the named section and everything up to the next ## heading", () => {
+    const { before, after } = splitOutSection(body, "Alternatives");
+    expect(before).toContain("## What it does");
+    expect(before).not.toContain("Alternatives");
+    expect(after).toContain("## Related Grove");
+    expect(after).not.toContain("LM Studio");
+  });
+
+  it("matches the heading case-insensitively", () => {
+    const { before } = splitOutSection(body, "alternatives");
+    expect(before).not.toContain("LM Studio");
+  });
+
+  it("removes a trailing section down to the end of the body with no after-content", () => {
+    const { before, after } = splitOutSection(body, "Related Grove");
+    expect(before).toContain("## Alternatives");
+    expect(after).toBe("");
+  });
+
+  it("returns the body unchanged (and an empty after) when the heading isn't present", () => {
+    const { before, after } = splitOutSection(body, "Pricing");
+    expect(before).toBe(body);
+    expect(after).toBe("");
+  });
+
+  it("matches ollama.md's real body: strips its Alternatives placeholder, keeps Related Grove", () => {
+    const ollama = getRepo("ollama");
+    const { before, after } = splitOutSection(ollama!.body, "Alternatives");
+    expect(before).toContain("## What it does");
+    expect(before).not.toContain("placeholder links");
+    expect(after).toContain("## Related Grove");
   });
 });

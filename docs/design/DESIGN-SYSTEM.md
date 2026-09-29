@@ -328,6 +328,24 @@ premature scale CLAUDE.md §4 asks the design lane to avoid.
   activity, hosting) — sort state must be programmatically exposed (`aria-sort`), not
   color-only. Momentum/activity column uses the chip pattern above, never a bare colored
   dot. Row hover: `bg.subtle`, no color shift on text (contrast must hold on hover too).
+  - **Built 2026-09-29 (design run 10), `src/components/AlternativesTable.tsx`, wired
+    into `/repo/[slug]`.** One real, deliberate reduction from the line above, flagged
+    by independent review and recorded here rather than silently dropped: the table is
+    **not interactively sortable** — `language`, `hosting`, and `activity`/momentum
+    aren't in the content model or ingestion pipeline yet (same "omit, don't fabricate"
+    reasoning as the repo card's own omissions above), leaving exactly one real numeric
+    column (`stars`). A single-column table doesn't need a client-side sort widget —
+    rows are pre-sorted server-side (stars descending, unresolved-repo rows last),
+    giving the same end result a sort click would. Revisit real `aria-sort` interactivity
+    once a second sortable column exists (language is the most likely next one, per
+    `TECH-DEBT.md`). Everything else per spec: `StatusChip` for the activity/status
+    column (no bare dot), `bg.subtle` row hover, real `<table>`/`scope="col"`/
+    `scope="row"` semantics, a `sr-only` caption. Unresolved alternatives (most of
+    today's content — `alternatives.open_source` slugs mostly don't have their own
+    `content/repos/*.md` file yet) render their raw slug in mono (same convention as any
+    other slug on this site), unlinked, labeled "Not yet profiled" — never a link to a
+    page that 404s. Commercial alternatives (plain product names, not GitHub repos) get
+    a simple unlinked chip list underneath, per spec §4.
 - **Status chips** (momentum/Heat — see above): icon + label + text-color pairing, never
   a filled color block with no text, `radius-sm` fully-rounded exception noted above,
   `space-1` internal padding.
@@ -449,3 +467,25 @@ earlier in this run failed and are worth recording so the reasoning survives: a 
   section, so this is genuinely new ground, not a restyle. Real screenshot review of this
   run's card (light/dark × desktop/tablet/mobile) is next run's first job, once CI's
   `commit-screenshots` job lands them on `main` post-merge.
+- **Done 2026-09-29 (design run 10):** built the alternatives comparison table from the
+  task above — see the "Component patterns" section's new "Built" note for the full
+  detail (single-sortable-column reduction from the original v1 spec line, unresolved-vs-
+  resolved row handling, commercial-alternatives chip list). Independent review before
+  merge found no BLOCKER/MAJOR bugs but did flag two real silent-failure-mode gaps this
+  run hardened: `content/repos/*.md`'s `alternatives` frontmatter previously had no
+  duplicate-slug or self-reference validation (a bad edit would have degraded silently —
+  a duplicate table row, or a repo quietly listed as its own alternative) — added
+  `assertValidAlternatives` next to the existing `assertNoGithubCollisions` pattern in
+  `src/lib/content.ts`, fail-loud per CLAUDE.md §3.4, not this lane's normal remit but a
+  direct, minimal fix for a bug this same PR introduced the surface for. Also added a
+  build-time throw if a repo declares `alternatives` but its body's "## Alternatives"
+  heading can't be found for `splitOutSection` to remove (heading renamed/drifted) — the
+  old hand-authored placeholder prose would otherwise render duplicated alongside the new
+  computed table instead of being replaced by it. Real screenshot review of the rendered
+  table (light/dark × desktop/tablet/mobile, `/repo/ollama` since it has both resolved
+  and unresolved alternatives) is next run's first job once CI's `commit-screenshots` job
+  lands them post-merge. **Next major task:** TECH-DEBT.md's `/trending`+`/rising` shared
+  row-rendering duplication (a `RankingRow`/`RankedList` extraction) is UI-only refactor
+  work already flagged as this lane's territory — a reasonable next pick if nothing
+  higher-priority (a design finding, a new dev-lane page needing a pattern) has landed by
+  then.
