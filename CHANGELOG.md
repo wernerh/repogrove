@@ -208,7 +208,7 @@ entries.
   `<a>`, concise accessible name, no nested interactives). Momentum chip, `language`,
   and the "why interesting" one-liner are honestly omitted (no fabricated data — see
   `DESIGN-SYSTEM.md`'s built-note for the full reasoning). 10 new component tests. PR
-  TBD. (design)
+  #54. (design)
 
 ### Changed
 - 2026-09-28 — `scripts/ingestion/fetch-snapshots.mjs`/`snapshots-db.mjs` converted to
