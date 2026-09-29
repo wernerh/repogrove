@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-29T17:16:13Z"
-  holder: "design"
-  last_run: "2026-09-29T17:11:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-29T17:16:13Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,9 +19,9 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 34
+  runs: 35
   features_completed: 11
-  bugs_fixed: 3
+  bugs_fixed: 4
   security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
@@ -58,8 +58,8 @@ security:
     A10: "PASS (fixed a bypass — SEC-002)"
 
 design:
-  last_run: "2026-09-29T13:40:33Z"
-  next_action: "Run 10: built the alternatives comparison table (spec §3-4, the site's stated \"killer feature\") — src/components/AlternativesTable.tsx, wired into /repo/[slug] (PR #57). repo.alternatives frontmatter existed since Phase 1 but was never rendered; the repo page's own \"## Alternatives\" Markdown section was explicitly placeholder prose. Resolves each open-source alternative slug against /content/repos (real repos link with live status/stars via the existing batched getGrowthSummaries; unresolved slugs — most of today's data — show their raw slug, unlinked, labeled \"Not yet profiled\", never a link that 404s); commercial alternatives render as a plain unlinked chip list. One deliberate v1 reduction from the original spec line, recorded not dropped: not interactively sortable — language/hosting/activity aren't in the content model yet, leaving one real numeric column (stars), so rows are pre-sorted server-side instead (new TECH-DEBT.md row, design-owned). New src/lib/content.ts helpers: splitOutSection() swaps the placeholder prose for the computed table at render time only (source Markdown untouched), with a build-time throw if the heading can't be found (drift guard); assertValidAlternatives() fails the build loudly on a duplicate/self-referencing alternative slug. Independent review before merge found no BLOCKER/MAJOR bugs but flagged both of those as previously-silent failure modes this same change introduced the surface for — fixed pre-merge. 135/135 tests pass (15 new), lint/tsc clean, 0 audit vulns, all run locally; build reproduces the known ADR-006 sandbox font-fetch gap, left to CI. PR #57 merged (squash, 5/5 gating CI green + non-gating axe-core 18/18, 0 WCAG 2.1 A/AA violations); commit-screenshots recommitted repo-ollama__* screenshots, reviewed directly this same run. Desktop/tablet matched spec in both themes; mobile did not — the table's fixed min-w-[28rem] pushed wider than the 390px mobile viewport, cutting the Category column off-screen (not a WCAG failure, axe-core still passed, but a real rough edge). Found and fixed same-run as UX-2026-002 (MINOR): Category now hides below Tailwind's sm breakpoint instead of requiring a scroll. PR #58 merged (squash, 6/6 CI green); post-merge screenshot re-reviewed, confirmed fixed end to end. RG-4 re-checked (get_thread) — still no new reply since 2026-09-27T17:32:04Z; due 2026-09-30 (tomorrow) — next run applies the recommended default if still unanswered. Next major task: TECH-DEBT.md's /trending+/rising shared row-rendering duplication (a RankingRow/RankedList extraction) is UI-only refactor work already flagged as this lane's territory."
+  last_run: "2026-09-29T17:16:13Z"
+  next_action: "Run 11: fixed UX-2026-003 — StatusChip and MomentumChip (issue #21/ADR-004, PR #59, shipped same day) rendered their 'active' state as an identical green dot + 'Active' text; every one of today's 5 repos is status:active and ollama's real momentum also reads active, so the real repo-ollama__*.png screenshots showed two visually identical pills on /repo/[slug] for two genuinely different claims — exactly the collision issue #52 (design run 8) had pre-flagged before momentum existed to compare against. Fixed StatusChip's icon (not MomentumChip's, whose 🔥/🟢/🟡/⚪ set is spec-locked): a plain square swatch via bg-current. An independent reviewer subagent caught a real bug in the first attempt before merge — rounded-sm (4px) on the swatch's 10px box rendered as a circle at real size (measured with an actual Playwright render, not eyeballed), so the fix would have shipped without solving the collision; revised to rounded-none at a 12px box, re-rendered to confirm the shape is now genuinely distinct, and tightened the regression test to assert the specific class. Issue #52 closed. 161/161 tests pass (5 updated), lint/tsc clean, 0 audit vulns, all run locally; build reproduces the known ADR-006 sandbox font-fetch gap, left to CI. PR #60 merged (squash, 4/4 gating CI green + non-gating axe-core job); commit-screenshots recommitted repo-ollama__* screenshots, all 6 (light/dark x desktop/tablet/mobile) reviewed directly this same run — square reads clearly distinct from the round momentum dot everywhere, no layout regression, AlternativesTable's Status column unaffected. RG-4 re-checked (get_thread) — still no new reply since 2026-09-27T17:32:04Z; due 2026-09-30 (tomorrow) — next run applies the recommended default if still unanswered. Next major task: unchanged from run 10 — TECH-DEBT.md's /trending+/rising shared row-rendering duplication (a RankingRow/RankedList extraction) is UI-only refactor work already flagged as this lane's territory, unless a higher-priority finding turns up first."
   timebox: null
   failed_attempts: 0
   open_findings:
@@ -76,7 +76,8 @@ design:
     - "2026-09-29 — repo/Grove card pattern built for the homepage (PR #54); independent review fixed a conflicting duplicate focus outline pre-merge, and two MINOR findings (list semantics, chip padding) — verified against real CI screenshots post-merge, all 6 (light/dark x desktop/tablet/mobile) reviewed directly"
     - "2026-09-29 — alternatives comparison table built (PR #57, spec §3-4); independent review fixed two silent-failure-mode content-validation gaps pre-merge (duplicate/self-referencing alternative slugs, ## Alternatives heading drift)"
     - "2026-09-29 — UX-2026-002: alternatives table's fixed min-w-[28rem] cut the Category column off-screen on mobile (390px viewport), requiring a horizontal scroll; found via real post-merge screenshot review, fixed same run (PR #58) by hiding Category below Tailwind's sm breakpoint — verified against the refreshed screenshot"
+    - "2026-09-29 — UX-2026-003: StatusChip and MomentumChip rendered identical 'active' pills (icon+color both matched) on /repo/[slug] once Grove Heat v1 shipped (PR #59) — exactly the collision issue #52 pre-flagged. Fixed StatusChip's icon to a plain rounded-none square swatch (not MomentumChip's spec-locked dot set); an independent reviewer subagent caught that a first-pass rounded-sm/10px version still read as a circle at real size, corrected to rounded-none/12px and re-verified by render before merge. Verified against the refreshed post-merge screenshots, all 6 (light/dark x desktop/tablet/mobile) reviewed directly — issue #52 closed"
   pages_reviewed:
     "/": "2026-09-29 — first real (correctly-fonted) screenshot review, light/dark x desktop/tablet/mobile; found + fixed UX-2026-001. Re-reviewed run 9 post-merge with the new repo/Grove cards in place — confirmed end to end (clean grid, correct mobile stacking, no layout shift)"
-    "/repo/[slug]": "2026-09-29 — first real screenshot review (run 7), light/dark x desktop/tablet/mobile; confirmed status label, star-growth chart, dark-mode link contrast all match spec. Re-reviewed run 8 post-merge with the new status chip in place — confirmed end to end. Re-reviewed run 10 post-merge with the new alternatives table (repo-ollama, mixed resolved/unresolved rows) — desktop/tablet matched spec, found + fixed a mobile-only Category-column overflow (UX-2026-002), re-verified against the refreshed screenshot after the fix"
+    "/repo/[slug]": "2026-09-29 — first real screenshot review (run 7), light/dark x desktop/tablet/mobile; confirmed status label, star-growth chart, dark-mode link contrast all match spec. Re-reviewed run 8 post-merge with the new status chip in place — confirmed end to end. Re-reviewed run 10 post-merge with the new alternatives table (repo-ollama, mixed resolved/unresolved rows) — desktop/tablet matched spec, found + fixed a mobile-only Category-column overflow (UX-2026-002), re-verified against the refreshed screenshot after the fix. Re-reviewed run 11 post-merge with StatusChip's new square swatch next to MomentumChip's dot (UX-2026-003) — all 6 (light/dark x desktop/tablet/mobile) confirmed end to end, clearly distinct shapes, no layout regression"
     "/grove/[slug]": "2026-09-29 — first real screenshot review, light/dark x desktop/tablet/mobile; ruled out a false-alarm link-color read (see next_action)"

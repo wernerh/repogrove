@@ -527,8 +527,11 @@ earlier in this run failed and are worth recording so the reasoning survives: a 
   dot, and added a regression test asserting `rounded-none` specifically (not just
   "not `rounded-full`," which the broken first version also passed). Issue #52 closed.
   Both chips' color pairs stay independently correct (`success`/`warning`/
-  `text.secondary` vs. `momentum-*`) — only the icon shape changed. **Next major task:**
-  unchanged from run 10's pick above (`RankingRow`/`RankedList` extraction) unless a
-  higher-priority finding turns up first — this run's fix used its "one major task" slot
-  on the icon-collision defect instead, since a shipped, screenshot-confirmed collision
-  on the site's flagship feature outranked a UI-only refactor.
+  `text.secondary` vs. `momentum-*`) — only the icon shape changed. PR #60 merged; real
+  post-merge `repo-ollama__*.png` screenshots (all 6, light/dark × desktop/tablet/mobile)
+  reviewed directly — the square reads clearly distinct from the round momentum dot in
+  every theme/viewport, no layout regression. **Next major task:** unchanged from run
+  10's pick above (`RankingRow`/`RankedList` extraction) unless a higher-priority finding
+  turns up first — this run's fix used its "one major task" slot on the icon-collision
+  defect instead, since a shipped, screenshot-confirmed collision on the site's flagship
+  feature outranked a UI-only refactor.

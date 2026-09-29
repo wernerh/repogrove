@@ -189,12 +189,17 @@ regression test to assert the specific class rather than only ruling out
 `docs/design/findings/UX-2026-003-status-momentum-chip-icon-collision.md`. Issue #52
 closed. Validated locally: lint clean, `tsc --noEmit` clean, tests 161/161 (5 updated),
 `npm audit --audit-level=high` 0 vulns; build reproduces the known ADR-006 sandbox
-font-fetch gap, left to CI. RG-4 re-checked (`get_thread`) — still no new reply since
-2026-09-27T17:32:04Z; due 2026-09-30 (tomorrow).
+font-fetch gap, left to CI. PR #60 merged (squash, 4/4 gating CI checks green plus the
+non-gating axe-core job); `commit-screenshots` recommitted refreshed `repo-ollama__*.png`
+screenshots, reviewed all 6 (light/dark × desktop/tablet/mobile) directly this same
+run — the square swatch reads clearly distinct from the round momentum dot everywhere,
+no layout regression, `AlternativesTable`'s Status column unaffected. RG-4 re-checked
+(`get_thread`) — still no new reply since 2026-09-27T17:32:04Z; due 2026-09-30
+(tomorrow).
 
 ## Findings
 | ID | Severity | Status | Component | Mapping | Issue/PR |
 |---|---|---|---|---|---|
 | UX-2026-001 | MAJOR | Verified (fixed) | Header logo + homepage section headings | `layout.tsx`, `page.tsx` | #50, PR #51 |
 | UX-2026-002 | MINOR | Fixed (same run) | Alternatives table mobile Category column | `AlternativesTable.tsx` | PR #57 follow-up |
-| UX-2026-003 | MAJOR | Fixed (same run) | StatusChip/MomentumChip icon collision | `StatusChip.tsx` | #52 |
+| UX-2026-003 | MAJOR | Verified (fixed) | StatusChip/MomentumChip icon collision | `StatusChip.tsx` | #52, PR #60 |

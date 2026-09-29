@@ -1,9 +1,12 @@
 # UX-2026-003 — StatusChip and MomentumChip rendered as visually indistinguishable
 
 - **Status: FIXED** (same run it was found in). **Verified: yes** — re-ran
-  `npm run lint` / `npx tsc --noEmit` / `npm test` (161/161) after the fix; real-screenshot
-  re-review is next run's job once this PR's `commit-screenshots` job recommits
-  `repo-ollama__*.png` (same pattern as UX-2026-002's own verification note).
+  `npm run lint` / `npx tsc --noEmit` / `npm test` (161/161) after the fix, and after
+  PR #60 merged and `commit-screenshots` recommitted real `repo-ollama__*.png`
+  screenshots, reviewed all 6 (light/dark × desktop/tablet/mobile) directly — the
+  square swatch reads clearly distinct from `MomentumChip`'s round dot in every
+  theme/viewport, no layout shift, `AlternativesTable`'s Status column (the other
+  `StatusChip` call site) unaffected.
 - **Severity:** MAJOR — not a WCAG failure (axe-core's prior scans already passed; icon
   is decorative and paired with a distinct text label per SC 1.4.1), but this is
   RepoGrove's stated "killer feature" territory going the other way: momentum (spec §7,
@@ -90,10 +93,12 @@ issue #52 closed.
   post-merge screenshot review this time, precisely because that's what let the first
   attempt look fine in isolation.
 - `npm run build` reproduces the known ADR-006 sandbox font-fetch gap, left to CI.
-- Real-screenshot re-review of the actual page (`repo-ollama__*.png` after this fix's PR
-  merges and `commit-screenshots` recommits them, real fonts/chrome/pill styling, not
-  the isolated comparison above) is this lane's next job this same run, once CI produces
-  them — same pattern as UX-2026-001/002's own verification notes.
+- PR #60 merged (squash, all 4 gating checks green plus the non-gating axe-core job);
+  `commit-screenshots` recommitted real `repo-ollama__*.png` screenshots on the
+  resulting push, reviewed all 6 (light/dark × desktop/tablet/mobile) directly this
+  same run — the square is clearly distinct from the round momentum dot in every
+  theme/viewport, no layout regression, `AlternativesTable`'s Status column (the other
+  call site) unaffected.
 
 ## Related
 Issue #52 (filed design run 8, closed by this fix). `docs/adr/ADR-004` (Grove Heat v1,
