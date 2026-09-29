@@ -89,8 +89,15 @@ export default function AlternativesTable({ openSource, commercial }: Alternativ
       <h2 className="font-sans text-xl font-semibold text-text-default">Alternatives</h2>
 
       {openSource.length > 0 && (
+        // overflow-x-auto is a safety net, not the primary mobile strategy: the
+        // least essential column (Category) hides below Tailwind's default `sm`
+        // breakpoint (640px — matches this project's own mobile screenshot
+        // viewport, 390px) so the three columns that answer "what is it, is it
+        // active, how big is it" fit without requiring horizontal scroll at all.
+        // Verified against a real screenshot (docs/design/screenshots/
+        // repo-ollama__mobile-*.png) — see DESIGN-SYSTEM.md's built-note.
         <div className="mt-3 overflow-x-auto">
-          <table className="w-full min-w-[28rem] border-collapse text-left font-sans text-sm">
+          <table className="w-full min-w-[20rem] border-collapse text-left font-sans text-sm sm:min-w-[28rem]">
             <caption className="sr-only">Open-source alternatives</caption>
             <thead>
               <tr className="border-b border-border-default">
@@ -103,7 +110,10 @@ export default function AlternativesTable({ openSource, commercial }: Alternativ
                 <th scope="col" className="py-2 pr-4 text-left font-medium text-text-secondary">
                   Stars
                 </th>
-                <th scope="col" className="py-2 text-left font-medium text-text-secondary">
+                <th
+                  scope="col"
+                  className="hidden py-2 text-left font-medium text-text-secondary sm:table-cell"
+                >
                   Category
                 </th>
               </tr>
@@ -135,8 +145,11 @@ export default function AlternativesTable({ openSource, commercial }: Alternativ
                   </td>
                   {/* Primary category only, same as RepoCard.tsx's card footer —
                       not the repo page header's full comma-joined list, which
-                      has more room; a dense table column doesn't. */}
-                  <td className="py-2 text-text-secondary">
+                      has more room; a dense table column doesn't. Hidden below
+                      sm (see the table's own comment above) — least essential
+                      column, dropped first rather than forcing horizontal
+                      scroll on mobile for it. */}
+                  <td className="hidden py-2 text-text-secondary sm:table-cell">
                     {alt.repo ? alt.repo.category[0] ?? "—" : "—"}
                   </td>
                 </tr>
