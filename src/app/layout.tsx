@@ -45,10 +45,18 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-bg-default text-text-default">
         <header className="border-b border-border-subtle">
-          <div className="mx-auto max-w-3xl px-6 py-4">
+          <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
             <Link href="/" className="text-lg font-semibold tracking-tight">
               RepoGrove
             </Link>
+            <nav>
+              <Link
+                href="/trending"
+                className="font-sans text-sm font-medium text-text-secondary hover:text-text-default hover:underline"
+              >
+                Trending
+              </Link>
+            </nav>
           </div>
         </header>
         <main className="flex-1 mx-auto w-full max-w-3xl px-6 py-10">

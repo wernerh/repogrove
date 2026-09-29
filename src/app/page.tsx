@@ -1,15 +1,17 @@
 import { getAllGroves, getAllRepos, getReposInGrove } from "@/lib/content";
-import { getSnapshotHistory, type SnapshotRow } from "@/lib/snapshots";
+import { getGrowthSummaries } from "@/lib/snapshots";
 import GroveCard from "@/components/GroveCard";
 import RepoCard from "@/components/RepoCard";
-
-function latestStars(history: SnapshotRow[]): number | null {
-  return history.length > 0 ? history[history.length - 1].stars : null;
-}
 
 export default function Home() {
   const groves = getAllGroves();
   const repos = getAllRepos();
+  // Opens data/repogrove.db once for every repo card, rather than the
+  // previous per-card getSnapshotHistory() call (TECH-DEBT.md, 2026-09-29
+  // N+1 row) — getGrowthSummary's currentStars is the same "latest known
+  // star count" the old latestStars() helper computed, so this is a
+  // behavior-preserving swap, not a UI change.
+  const growthByRepo = getGrowthSummaries(repos.map((repo) => repo.github));
 
   return (
     <div className="flex flex-col gap-10">
@@ -47,7 +49,7 @@ export default function Home() {
         <ul className="mt-4 grid grid-cols-1 gap-8 md:grid-cols-2">
           {repos.map((repo) => (
             <li key={repo.slug}>
-              <RepoCard repo={repo} stars={latestStars(getSnapshotHistory(repo.github))} />
+              <RepoCard repo={repo} stars={growthByRepo.get(repo.github)?.currentStars ?? null} />
             </li>
           ))}
         </ul>
