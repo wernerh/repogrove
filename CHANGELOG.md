@@ -490,3 +490,31 @@ entries.
   `next build` reproduces the known ADR-006 sandbox font-fetch gap, left to CI's
   GitHub-hosted runner. Both PRs' CI confirmed green post-merge (18/18 axe-core checks,
   0 WCAG 2.1 A/AA violations). (design)
+- 2026-09-29 — Grove Heat v1 (spec §7/§23, issue #21, `docs/adr/ADR-004-grove-heat-v1.md`,
+  PR #59) — Phase 2's last item, now complete. `data/repogrove.db` only has enough real
+  history for one of issue #21's proposed inputs (star growth rate); commit recency,
+  release frequency, GitHub-trending appearances and external mentions all need new
+  ingestion, explicitly out of scope per the issue's own non-goals, and contributor
+  counts only gained a non-null reading on each repo's *most recent* snapshot so far —
+  no real delta computable yet. New `src/lib/heat.ts`: `computeHeat(history)` labels one
+  of the four states `docs/design/DESIGN-SYSTEM.md` already specified (Rising/Active/
+  Slowing/Dormant) from relative, per-day star growth against provisional thresholds
+  checked against the 5 tracked repos' real growth rates; returns `null` (no chip, never
+  a fabricated label) when there isn't enough history yet, matching the "omit, don't
+  fabricate" convention `AlternativesTable`/`RepoCard` already use. Open-issues and
+  contributor-growth ship as supplementary, non-gating, inspectable signals rather than
+  being folded into the label. New `src/components/MomentumChip.tsx` mirrors
+  `StatusChip`'s pattern using the already-wired `momentum-*` design tokens; wired into
+  `/repo/[slug]` next to `StatusChip`, reusing the page's existing snapshot-history call.
+  Independent review before push caught a real bug: the star-growth rate used
+  `getGrowthSummary`'s 30-day-windowed baseline while the supplementary signals defaulted
+  to the absolute-earliest snapshot ever — invisible today (every repo has ≤3 days of
+  history) but would silently diverge past 30 days. Fixed pre-push by extracting
+  `getGrowthBaseline(history)` out of `src/lib/snapshots.ts` so every signal on the chip
+  shares one baseline row, with a regression test. 160/160 tests pass (25 new/updated),
+  lint clean, `tsc --noEmit` clean, `npm audit --audit-level=high` 0 vulnerabilities, all
+  run locally; `next build` reproduces the known ADR-006 sandbox font-fetch gap, left to
+  CI's GitHub-hosted runner — confirmed green there (`ci.yml`, `factory-guardrails.yml`,
+  and the non-gating `design-screenshots.yml`, real screenshots reviewed post-merge).
+  Issue #21 auto-closed by the merge; ROADMAP.md's Phase 2 checklist is now fully
+  checked. (dev)

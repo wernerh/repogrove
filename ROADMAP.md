@@ -22,7 +22,9 @@ Technical considerations / Testing / Security / Rollout / Documentation / Depend
 - [x] Star-growth chart on repo pages (#18, PR #31)
 - [x] Trending page (`/trending`) (#19, PR #55)
 - [x] Rising page (`/rising`) — fast growth, not just absolute size (#20, PR #56)
-- [ ] Momentum/"Heat" methodology implemented + documented (ADR-004) (#21)
+- [x] Momentum/"Heat" methodology implemented + documented (ADR-004) (#21, PR #59) — v1
+  scope: star-growth-rate-only label (see ADR-004 for the v2 revisit list: commit
+  recency, release frequency, external mentions all need new ingestion)
 
 ## Phase 3 — Search, SEO, alternatives, newsletter signup
 - [ ] Alternatives pages (`/alternative/:slug`) — open-source / free / commercial + best fit

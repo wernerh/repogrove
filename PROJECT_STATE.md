@@ -10,15 +10,15 @@ whether it's active, what else they could use, and why they'd care — no accoun
 migration, or deploy target needed yet.
 
 ## Current phase
-**Phase 2 — Ingestion & metrics**. Phase 1 landed in PR #10.
+**Phase 3 — Search, SEO, alternatives, newsletter signup**. Phase 2 completed run 24
+(all 6 ROADMAP items checked, see Milestones).
 
 ## Next action (exactly one)
-Run 23: shipped `/rising` (#20, PR #56, relative/percent star growth). Both data-gated
-Phase 2 pages are done; only Phase 2 item left is ADR-004 (Heat, #21) — its own inputs
-list includes signals not yet ingested (commit recency, release frequency). Next run:
-scope v1 to what's already in `data/repogrove.db` (star/contributor growth, open
-issues), document the rest as a v2 extension (rule 4 — list provisional decisions
-before >1 day of effort), and timebox if still too large for one run.
+Run 24 closed out Phase 2 (Heat v1, #21, PR #59). No Phase 3 issues filed yet — next
+run should file them (mirroring how #5-7/#16-21 mirrored Phase 1/2's ROADMAP rows),
+then start with `/alternative/:slug` (spec §4, "paid product → OSS alternative" SEO
+pages — distinct from the already-shipped `/repo/[slug]` AlternativesTable, which
+answers "what else for *this* repo", not "what's the best OSS alternative to Notion").
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -27,7 +27,7 @@ before >1 day of effort), and timebox if still too large for one run.
 | 2026-09-27 | Hosting: Azure Storage static-website hosting (owner answered RG-2); app built with `output: "export"` from Phase 1 on | Owner reply + ADR-002 | ANSWERED | expensive |
 | 2026-09-27 | Repo visibility: public | Owner confirmed ("happy with public") | ANSWERED | cheap |
 | 2026-09-27 | RepositorySnapshot: committed SQLite (`data/repogrove.db`), not build-time regen | ADR-005 | LOCKED | cheap |
-| 2026-09-28 | RG-6: grant `design-screenshots.yml` a scoped `contents:write` job to commit real screenshots | Design lane's sandbox can't reach GitHub artifact storage to review them any other way | ANSWERED ("go ahead") — see decisions.yaml | expensive |
+| 2026-09-29 | Grove Heat v1: star-growth-rate-only label, thresholds provisional | ADR-004 — other issue #21 inputs need new ingestion | PROVISIONAL | cheap |
 
 ## Assumptions
 - A1: "Grove"/repo pages are hand-authored/agent-drafted Markdown reviewed via PR, not
@@ -40,11 +40,10 @@ Accounts, paid subscriptions, watchlists/alerts, recommendation engine, massive
 crawling infra, admin CMS, live deploy — see spec §30, §33 and ADR-002.
 
 ## Timebox
-Phase 2: run 1 ingestion+schema (PR #22); run 2 star-growth chart (PR #31); runs 3-6, 16
-did unblocked tech debt/pipeline/CI work (PRs #32, #35, #37, #38, #45) since #19-21
-stayed data-gated — a calendar-time blocker, not a failed attempt. Run 22: `/trending`
-(PR #55). Run 23: `/rising` (PR #56). ADR-004 (#21) is the last Phase 2 item — split
-ADR+v1-signals from a v2/new-ingestion follow-up if it exceeds ~2x a normal run.
+Phase 2 complete (run 24, ADR-004/#21/PR #59 — within budget, no split needed). Phase 3
+has no timebox set yet; first task (`/alternative/:slug`) is a new content-schema +
+routing surface — scope small (a handful of hand-authored pages) before committing to
+the full spec §4 feature set.
 
 ## Blockers and attempts
 None blocking (rule 8). Dependabot #29 (eslint) blocked upstream (eslint-plugin-react
@@ -56,4 +55,5 @@ PRs (#29, #46-49) outside this lane's merge gate — owner merges these directly
 - [x] 2026-09-27 — Phase 2 ingestion job + schema (ADR-005) — #16/17, PR #22; repos 2→5
 - [x] 2026-09-28 — CI red fixed (#26, PR #27); star-growth chart (#18, PR #31); self-hosted fonts (ADR-006, PR #32); ingestion scripts to TS (PR #35); contributor counts (PR #37); watchers/subscribers_count fix (PR #38); typescript-7 CI-red revert (PR #45).
 - [x] 2026-09-29 — `/trending` (#19, PR #55) + `/rising` (#20, PR #56): absolute/relative star-growth rankings.
-- [ ] Phase 3 — search, SEO, newsletter signup
+- [x] 2026-09-29 — Grove Heat v1 (#21, PR #59): star-growth-rate momentum label — Phase 2 complete.
+- [ ] Phase 3 — search, SEO, alternatives pages, newsletter signup
