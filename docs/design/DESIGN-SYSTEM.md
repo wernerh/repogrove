@@ -352,3 +352,18 @@ earlier in this run failed and are worth recording so the reasoning survives: a 
 - Component patterns (repo/Grove card, alternatives table, status chips, dates,
   loading/empty/error states) are still specs only — no page yet needs them. Wire them in
   as each dev-lane page lands, not speculatively ahead of it.
+- **Done 2026-09-29 (design run 7):** the real, correctly-fonted screenshots landed by
+  RG-6 got their first actual visual review by this lane — see
+  `docs/design/findings/UX-2026-001-brand-mark-leaf-emoji.md`. The header logo (`🌱
+  RepoGrove`) and the homepage's `🌳 Groves` heading used literal leaf/tree emoji,
+  directly contradicting this doc's own Brand scale rationale ("a quiet nod to 'Grove'
+  without an illustrated leaf anywhere"); the homepage's `📦 Repositories` heading isn't
+  foliage and doesn't contradict that rationale directly, but was removed alongside it
+  for heading-to-heading consistency, since no spec here calls for a decorative icon on
+  either one. Fixed — the wordmark and both headings now rely on typography alone.
+  Flagging for whoever builds the Phase 3 homepage sections the spec mockup (`PRODUCT.md`
+  §8) names with emoji prefixes (🔥 Hot Right Now, 🌱 Rising, 🌳 Popular Groves, 💰 Replace
+  Paid Software): don't carry those literally — any section-icon treatment needs a
+  deliberate pass against this doc's brand rationale first (the momentum chip icons —
+  🔥/🟢/🟡/⚪ — are the one place emoji-as-icon is already spec'd and stays as-is, since
+  none of those read as foliage).

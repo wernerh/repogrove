@@ -47,7 +47,7 @@ export default function RootLayout({
         <header className="border-b border-border-subtle">
           <div className="mx-auto max-w-3xl px-6 py-4">
             <Link href="/" className="text-lg font-semibold tracking-tight">
-              🌱 RepoGrove
+              RepoGrove
             </Link>
           </div>
         </header>
