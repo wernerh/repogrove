@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-29T07:11:11.071413+00:00",
+  "generated_at": "2026-09-29T08:52:33.732650+00:00",
   "product": {
     "current_version": "0.0.0-bootstrap",
     "current_focus": "Phase 2 \u2014 ingestion & metrics"
   },
   "metrics": {
-    "runs": 29,
+    "runs": 30,
     "features_completed": 7,
     "bugs_fixed": 3,
     "security_issues_fixed": 3,
