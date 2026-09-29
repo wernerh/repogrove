@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-29T13:18:30Z"
-  holder: "design"
-  last_run: "2026-09-29T13:11:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-29T13:40:33Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,8 +19,8 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 32
-  features_completed: 9
+  runs: 33
+  features_completed: 10
   bugs_fixed: 3
   security_issues_fixed: 3
   deployments: 0
@@ -58,8 +58,8 @@ security:
     A10: "PASS (fixed a bypass — SEC-002)"
 
 design:
-  last_run: "2026-09-29T09:14:02Z"
-  next_action: "Run 9: built the repo/Grove card pattern (src/components/RepoCard.tsx, GroveCard.tsx) per DESIGN-SYSTEM.md's Component patterns spec, replacing the homepage's plain <ul> of text links. bg.elevated/radius-md/elevation-1 cards, single-focus-stop via the 'stretched link' pattern (Link wraps only the name; after:absolute after:inset-0 stretches the click/hover target to the full card — one <a>, concise accessible name, no nested interactives). Description is the repo body's own first paragraph (no new frontmatter field); footer shows latest star count (getSnapshotHistory, null-safe) and primary category tag; Grove card footer uses getReposInGrove (previously unused — TECH-DEBT.md row resolved). Momentum chip, language, and 'why interesting' one-liner honestly omitted (not fabricated) — none have real data/content-model fields yet. Independent review before push caught and fixed: MAJOR — conflicting duplicate focus outline (Link needed focus:outline-none so only the card-level has-[a:focus-visible]:outline ring shows); MINOR — an earlier <div> grid lost <ul>/<li> list semantics (fixed); MINOR — category-tag chip used off-scale px-2 py-1 instead of StatusChip's own p-2/space-1 convention (fixed to match). Filed the homepage's per-repo SQLite N+1 read (getSnapshotHistory called once per repo) as dev-lane tech debt rather than fixing (data-layer, outside UI-only remit). RG-4 re-checked (get_thread) — still no new reply since 2026-09-27T17:32:04Z; due 2026-09-30 (tomorrow) — next run applies the recommended default if still unanswered. Validated locally (lint clean, tsc clean, tests 89/89, audit 0 vulns; build reproduces the known ADR-006 sandbox font gap, left to CI). PR #54 merged (squash, 5/5 CI checks green including axe-core: 0 WCAG 2.1 A/AA violations on the real build); commit-screenshots fired on the resulting push and recommitted refreshed home__* screenshots — reviewed all 6 (light/dark x desktop/tablet/mobile) directly: clean grid, correct mobile stacking to 1-column, no layout shift, category tags/star counts legible in both themes. Next major task: the alternatives comparison table (spec §3-4) — no page renders repo.alternatives at all yet outside the repo page's own hand-authored Markdown, so this is new ground, not a restyle. Re-check RG-4 each run until answered or defaulted 2026-09-30 (tomorrow)."
+  last_run: "2026-09-29T13:40:33Z"
+  next_action: "Run 10: built the alternatives comparison table (spec §3-4, the site's stated \"killer feature\") — src/components/AlternativesTable.tsx, wired into /repo/[slug] (PR #57). repo.alternatives frontmatter existed since Phase 1 but was never rendered; the repo page's own \"## Alternatives\" Markdown section was explicitly placeholder prose. Resolves each open-source alternative slug against /content/repos (real repos link with live status/stars via the existing batched getGrowthSummaries; unresolved slugs — most of today's data — show their raw slug, unlinked, labeled \"Not yet profiled\", never a link that 404s); commercial alternatives render as a plain unlinked chip list. One deliberate v1 reduction from the original spec line, recorded not dropped: not interactively sortable — language/hosting/activity aren't in the content model yet, leaving one real numeric column (stars), so rows are pre-sorted server-side instead (new TECH-DEBT.md row, design-owned). New src/lib/content.ts helpers: splitOutSection() swaps the placeholder prose for the computed table at render time only (source Markdown untouched), with a build-time throw if the heading can't be found (drift guard); assertValidAlternatives() fails the build loudly on a duplicate/self-referencing alternative slug. Independent review before merge found no BLOCKER/MAJOR bugs but flagged both of those as previously-silent failure modes this same change introduced the surface for — fixed pre-merge. 135/135 tests pass (15 new), lint/tsc clean, 0 audit vulns, all run locally; build reproduces the known ADR-006 sandbox font-fetch gap, left to CI. PR #57 merged (squash, 5/5 gating CI green + non-gating axe-core 18/18, 0 WCAG 2.1 A/AA violations); commit-screenshots recommitted repo-ollama__* screenshots, reviewed directly this same run. Desktop/tablet matched spec in both themes; mobile did not — the table's fixed min-w-[28rem] pushed wider than the 390px mobile viewport, cutting the Category column off-screen (not a WCAG failure, axe-core still passed, but a real rough edge). Found and fixed same-run as UX-2026-002 (MINOR): Category now hides below Tailwind's sm breakpoint instead of requiring a scroll. PR #58 merged (squash, 6/6 CI green); post-merge screenshot re-reviewed, confirmed fixed end to end. RG-4 re-checked (get_thread) — still no new reply since 2026-09-27T17:32:04Z; due 2026-09-30 (tomorrow) — next run applies the recommended default if still unanswered. Next major task: TECH-DEBT.md's /trending+/rising shared row-rendering duplication (a RankingRow/RankedList extraction) is UI-only refactor work already flagged as this lane's territory."
   timebox: null
   failed_attempts: 0
   open_findings:
@@ -74,7 +74,9 @@ design:
     - "2026-09-29 — UX-2026-001: header logo + homepage 'Groves' heading used literal leaf/tree emoji, contradicting DESIGN-SYSTEM.md's documented 'no illustrated leaf' brand rationale (a third heading's non-foliage emoji removed alongside for consistency); removed, relying on typography alone (issue #50)"
     - "2026-09-29 — status chip component built and verified against real CI screenshots (repo page's status field had no chip/color token at all, just a plain string); issue #52 filed to track a future icon-collision risk with the not-yet-built Momentum/Heat chip"
     - "2026-09-29 — repo/Grove card pattern built for the homepage (PR #54); independent review fixed a conflicting duplicate focus outline pre-merge, and two MINOR findings (list semantics, chip padding) — verified against real CI screenshots post-merge, all 6 (light/dark x desktop/tablet/mobile) reviewed directly"
+    - "2026-09-29 — alternatives comparison table built (PR #57, spec §3-4); independent review fixed two silent-failure-mode content-validation gaps pre-merge (duplicate/self-referencing alternative slugs, ## Alternatives heading drift)"
+    - "2026-09-29 — UX-2026-002: alternatives table's fixed min-w-[28rem] cut the Category column off-screen on mobile (390px viewport), requiring a horizontal scroll; found via real post-merge screenshot review, fixed same run (PR #58) by hiding Category below Tailwind's sm breakpoint — verified against the refreshed screenshot"
   pages_reviewed:
     "/": "2026-09-29 — first real (correctly-fonted) screenshot review, light/dark x desktop/tablet/mobile; found + fixed UX-2026-001. Re-reviewed run 9 post-merge with the new repo/Grove cards in place — confirmed end to end (clean grid, correct mobile stacking, no layout shift)"
-    "/repo/[slug]": "2026-09-29 — first real screenshot review (run 7), light/dark x desktop/tablet/mobile; confirmed status label, star-growth chart, dark-mode link contrast all match spec. Re-reviewed run 8 post-merge with the new status chip in place — confirmed end to end"
+    "/repo/[slug]": "2026-09-29 — first real screenshot review (run 7), light/dark x desktop/tablet/mobile; confirmed status label, star-growth chart, dark-mode link contrast all match spec. Re-reviewed run 8 post-merge with the new status chip in place — confirmed end to end. Re-reviewed run 10 post-merge with the new alternatives table (repo-ollama, mixed resolved/unresolved rows) — desktop/tablet matched spec, found + fixed a mobile-only Category-column overflow (UX-2026-002), re-verified against the refreshed screenshot after the fix"
     "/grove/[slug]": "2026-09-29 — first real screenshot review, light/dark x desktop/tablet/mobile; ruled out a false-alarm link-color read (see next_action)"

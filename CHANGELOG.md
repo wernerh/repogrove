@@ -459,3 +459,34 @@ entries.
   clean, `npm audit --audit-level=high` 0 vulnerabilities, all run locally; `next build`
   reproduces the known ADR-006 sandbox font-fetch gap, left to CI's GitHub-hosted runner
   as in every prior run. (dev)
+- 2026-09-29 — Design run 10: the alternatives comparison table (spec §3-4, the site's
+  stated "killer feature"), `src/components/AlternativesTable.tsx`, wired into
+  `/repo/[slug]` (PR #57). `repo.alternatives` frontmatter (open-source/commercial slugs)
+  had existed since Phase 1 but was never rendered — repo pages only had a hand-authored,
+  explicitly-placeholder "## Alternatives" Markdown sentence. Resolves each open-source
+  alternative slug against `/content/repos`: a repo with its own content file links with
+  live status (`StatusChip`) and stars (batched via the existing `getGrowthSummaries`,
+  no N+1); a slug with no content file yet (most of today's data) renders honestly as
+  its raw slug, unlinked, labeled "Not yet profiled" rather than linking to a 404 or
+  fabricating a display name. Commercial alternatives render as a plain unlinked chip
+  list. One deliberate v1 reduction from the original spec line, recorded rather than
+  dropped: not interactively sortable (`aria-sort`) — `language`/`hosting`/activity
+  aren't in the content model yet, leaving one real numeric column (`stars`), so rows
+  are pre-sorted server-side instead of needing a client component (new `TECH-DEBT.md`
+  row, design-owned, to revisit once a second sortable column exists). New
+  `src/lib/content.ts` helpers: `splitOutSection()` swaps the old placeholder prose for
+  the computed table at render time without touching the source Markdown; a build-time
+  throw catches "## Alternatives" heading drift so the two can't silently duplicate;
+  `assertValidAlternatives()` fails the build loudly on a duplicate or self-referencing
+  alternative slug (both flagged by independent review as previously-silent failure
+  modes this same change introduced the surface for). Real post-merge screenshot review
+  (`/repo/ollama`, has both a resolved and two unresolved alternatives) caught one more
+  rough edge same-run: the table's fixed `min-w-[28rem]` pushed wider than the 390px
+  mobile viewport, cutting the `Category` column off-screen — not a WCAG failure
+  (axe-core's 18/18 passed either way) but a real gap, fixed in a same-run follow-up
+  (PR #58, `UX-2026-002`) by hiding `Category` below Tailwind's default `sm` breakpoint
+  instead of forcing a scroll for it. 135/135 tests pass (15 new), lint clean, `tsc
+  --noEmit` clean, `npm audit --audit-level=high` 0 vulnerabilities, all run locally;
+  `next build` reproduces the known ADR-006 sandbox font-fetch gap, left to CI's
+  GitHub-hosted runner. Both PRs' CI confirmed green post-merge (18/18 axe-core checks,
+  0 WCAG 2.1 A/AA violations). (design)

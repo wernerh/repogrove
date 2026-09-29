@@ -90,6 +90,11 @@
     task (repo/Grove card pattern, PR #54) proceeded on the recommended default
     (editorial/content-forward) as established; next run should default for real if
     still unanswered by then.
+    Re-checked again 2026-09-29 (design run 10, via get_thread) — still exactly 3
+    messages, no new reply since 17:32:04Z. Due date 2026-09-30 is tomorrow — this run's
+    task (alternatives comparison table, PRs #57/#58) proceeded on the recommended
+    default (editorial/content-forward) as established; next run should default for
+    real if still unanswered by then.
 
 - id: RG-6
   lane: design

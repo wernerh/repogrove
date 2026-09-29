@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-09-29T13:13:41.819162+00:00",
+  "generated_at": "2026-09-29T13:42:37.420620+00:00",
   "product": {
     "current_version": "0.0.0-bootstrap",
     "current_focus": "Phase 2 \u2014 ingestion & metrics"
   },
   "metrics": {
-    "runs": 32,
-    "features_completed": 9,
+    "runs": 33,
+    "features_completed": 10,
     "bugs_fixed": 3,
     "security_issues_fixed": 3,
     "deployments": 0,
@@ -26,9 +26,9 @@
     "verified": 3
   },
   "design_findings": {
-    "total": 1,
+    "total": 2,
     "open": 0,
-    "fixed": 1,
-    "verified": 1
+    "fixed": 2,
+    "verified": 2
   }
 }
