@@ -367,3 +367,27 @@ earlier in this run failed and are worth recording so the reasoning survives: a 
   deliberate pass against this doc's brand rationale first (the momentum chip icons —
   🔥/🟢/🟡/⚪ — are the one place emoji-as-icon is already spec'd and stays as-is, since
   none of those read as foliage).
+- **Done 2026-09-29 (design run 8):** built the first real **status chip** component
+  (`src/components/StatusChip.tsx`) against this doc's Component patterns spec — icon +
+  text label (icon `aria-hidden`, label is what's announced), the documented fully-rounded
+  pill exception to the no-pill-shapes rule, `space-1` gap/padding — and wired it into
+  `/repo/[slug]` in place of the plain-text `STATUS_LABEL` map that rendered "🟢 Active" as
+  one unstyled string with no color token at all. Deliberately used the generic
+  `success`/`warning`/`text.secondary` tokens, not the `momentum-*` ones, even though
+  `repo.status` (active/maintained/inactive, hand-authored editorial classification) and
+  the future Momentum/Heat chip (rising/active/slowing/dormant, computed — spec §7/§23,
+  issue #21/ADR-004, not yet built) share the exact same 🟢/🟡/⚪ icon set for different
+  meanings. **Flagging for whoever builds the momentum chip next to this one on the same
+  repo page:** a repo could be `status: active` (still receiving PRs) while its momentum
+  reads `dormant` (star growth flatlined) — showing both chips with the same green/gray
+  dot for two different claims risks reading as contradictory or redundant. Worth a
+  deliberate pass then (distinct icon shapes, or grouping/labeling that makes the two
+  concepts visually distinct) rather than shipping them side by side unreviewed; not
+  blocking now since momentum doesn't exist yet and there's nothing to visually compare
+  against. Verified via component test (`tests/components/status-chip.test.tsx`) and the
+  updated repo-page test; real-screenshot review of the rendered chip is next run's job
+  once CI's build (with real fonts) lands this PR's screenshots. **Next major task:** the
+  repo/Grove card pattern (homepage still renders `getAllRepos()`/`getAllGroves()` as a
+  plain `<ul>` of links, not the specced card) and the alternatives comparison table are
+  still the two largest unbuilt component patterns — pick up the card next, now that 5
+  repos and 2 Groves exist to actually show a grid of.

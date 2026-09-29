@@ -3,17 +3,12 @@ import Markdown from "react-markdown";
 import { getAllRepos, getRepo } from "@/lib/content";
 import { getSnapshotHistory } from "@/lib/snapshots";
 import StarGrowthChart from "@/components/StarGrowthChart";
+import StatusChip from "@/components/StatusChip";
 import type { Metadata } from "next";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
-
-const STATUS_LABEL: Record<string, string> = {
-  active: "🟢 Active",
-  maintained: "🟡 Maintained",
-  inactive: "⚪ Inactive",
-};
 
 export function generateStaticParams() {
   return getAllRepos().map((repo) => ({ slug: repo.slug }));
@@ -49,7 +44,9 @@ export default async function RepoPage({ params }: PageProps) {
       <dl className="mt-4 flex flex-wrap gap-x-6 gap-y-1 font-sans text-sm text-text-secondary">
         <div>
           <dt className="inline font-medium text-text-default">Status: </dt>
-          <dd className="inline">{STATUS_LABEL[repo.status] ?? repo.status}</dd>
+          <dd className="inline">
+            <StatusChip status={repo.status} />
+          </dd>
         </div>
         <div>
           <dt className="inline font-medium text-text-default">License: </dt>
