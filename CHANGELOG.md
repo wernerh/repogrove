@@ -609,3 +609,27 @@ entries.
   lint clean, `tsc --noEmit` clean, `npm audit --audit-level=high` 0 vulnerabilities,
   all run locally; `next build` reproduces the known ADR-006 sandbox font-fetch gap,
   left to CI's GitHub-hosted runner. (dev)
+- 2026-09-29 — Phase 3: `sitemap.xml` + `robots.txt` (issue #64, PR #69), spec §14's
+  SEO strategy. New `src/app/sitemap.ts`/`src/app/robots.ts` (Next's static
+  `MetadataRoute` convention, compatible with `output: "export"`), enumerating every
+  repo/Grove/alternative/comparison route from the same content-loader functions
+  every page already calls — no second source of truth for "what pages exist." New
+  `src/lib/site.ts` (`SITE_URL` constant). `/trending`/`/rising` already had real
+  per-page metadata since #19/#20 shipped — issue #64's problem statement was stale
+  on that point; added a regression test instead of redoing done work. Independent
+  review before push found a real MAJOR: omitting the reversed `/compare/:b/:a` URL
+  from the sitemap doesn't stop it being indexed separately, since it's still
+  pre-rendered and internally linked — fixed with `alternates.canonical` on the
+  compare page (both URL orders now point at the file's own canonical order) plus
+  `metadataBase` on the root layout. One MINOR (content.ts has no slug-format
+  validation) filed as a TECH-DEBT.md row rather than fixed, to keep the PR scoped.
+  CI caught a real build error this sandbox's own local build can't reach (blocked
+  earlier by the known ADR-006 font-fetch gap): Next 16's `output: "export"` needs
+  metadata-route files to declare `export const dynamic = "force-static"` explicitly,
+  without which `next build` fails page-data collection for `/robots.txt` outright —
+  fixed and re-pushed, confirmed green on CI's real runner before squash-merging.
+  226/226 tests pass (18 new/updated), lint clean, `tsc --noEmit` clean, `npm audit
+  --audit-level=high` 0 vulnerabilities, all run locally; all 6 CI checks green on
+  PR #69 (including a real `next build`); post-merge CI on `main` also green. Issue
+  #64 auto-closed by the merge. OG image generation and JSON-LD structured data stay
+  out per the issue's own non-goals. (dev)

@@ -15,10 +15,9 @@ migration, or deploy target needed yet.
 mirroring how #5-7/#16-21 mirrored Phase 1/2's ROADMAP rows).
 
 ## Next action (exactly one)
-Run 26 shipped `/compare/:a/:b` (#62, PR #67). Next: #64 (sitemap/SEO) is unblocked.
-#63 (search) needs a short ADR first (`output: "export"` has no server runtime for
-DB-backed FTS). #65 (newsletter) is owner-decision-blocked on storage/vendor past its
-form-UI-only first PR.
+Run 27 shipped sitemap.xml/robots.txt (#64, PR #69). Next: #63 (search) needs a short
+ADR first (`output: "export"` has no server runtime for DB-backed FTS). #65
+(newsletter) is owner-decision-blocked on storage/vendor past its form-UI-only first PR.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -57,4 +56,5 @@ PRs (#29, #46-49) outside this lane's merge gate — owner merges these directly
 - [x] 2026-09-29 — Grove Heat v1 (#21, PR #59): star-growth-rate momentum label — Phase 2 complete.
 - [x] 2026-09-29 — Phase 3 issues filed (#61-65); `/alternative/:slug` shipped (#61, PR #66).
 - [x] 2026-09-29 — `/compare/:a/:b` shipped (#62, PR #67): comparison pages.
-- [ ] Phase 3 remaining — search, SEO, newsletter signup (#63-65)
+- [x] 2026-09-29 — sitemap.xml + robots.txt shipped (#64, PR #69); SEO baseline done.
+- [ ] Phase 3 remaining — search, newsletter signup (#63, #65)
