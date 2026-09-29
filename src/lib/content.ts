@@ -20,6 +20,7 @@ import matter from "gray-matter";
 const CONTENT_ROOT = path.join(process.cwd(), "content");
 const REPOS_DIR = path.join(CONTENT_ROOT, "repos");
 const GROVES_DIR = path.join(CONTENT_ROOT, "groves");
+const ALTERNATIVES_DIR = path.join(CONTENT_ROOT, "alternatives");
 
 export class ContentValidationError extends Error {}
 
@@ -56,6 +57,33 @@ export interface Grove {
   description: string;
   relatedGroves: string[];
   body: string;
+}
+
+/**
+ * `content/alternatives/<slug>.md` — a paid-product page (spec §4, e.g.
+ * `notion.md`), answering "what's the best open-source/free/commercial
+ * alternative to <product>". Distinct from `Repo.alternatives`
+ * (`/repo/[slug]`'s "what else instead of *this* repo" table): a product
+ * here (Notion) has no `content/repos/*.md` page of its own.
+ *
+ * Body sections (`## Open source`, `## Free`, `## Commercial`, `## Best
+ * fit`) are plain Markdown bullet lists of display names, not slugs — see
+ * `ARCHITECTURE.md`'s content schema. `openSource` items are resolved
+ * against `content/repos/*.md` by the *page*, the same
+ * resolved-or-plain-text convention `AlternativesTable` already uses for
+ * `Repo.alternatives.open_source` (this module only parses; it doesn't look
+ * repos up here, keeping content-loading and cross-referencing separate).
+ */
+export interface Alternative {
+  /** Filename without extension, e.g. "notion". Used for the
+   * `/alternative/:slug` route. */
+  slug: string;
+  product: string;
+  category: string;
+  openSource: string[];
+  free: string[];
+  commercial: string[];
+  bestFit: string[];
 }
 
 export interface RawFile {
@@ -161,6 +189,66 @@ export function splitOutSection(body: string, heading: string): { before: string
 }
 
 /**
+ * Extracts the bullet-list items (`- Item`) under one `## <heading>` section
+ * of a Markdown body — `content/alternatives/*.md`'s "Open source" / "Free"
+ * / "Commercial" / "Best fit" sections are plain bullet lists (spec §4,
+ * `ARCHITECTURE.md`), not YAML frontmatter arrays like `Repo.alternatives`.
+ *
+ * Only matches the `- ` bullet marker (this project's content convention,
+ * followed consistently by every existing `content/*.md` file — see e.g.
+ * `content/repos/ollama.md`'s "## Pros"/"## Cons" lists) — not CommonMark's
+ * `*`/`+` alternatives. A file using one of those would silently produce an
+ * empty section rather than failing loudly; editors should stick to `-`.
+ *
+ * A missing heading, or a heading with no bullet lines under it (e.g. a
+ * hand-authored placeholder like `_(to be filled in — Phase 3)_`), both
+ * return `[]` rather than throwing — these sections are optional (a product
+ * might genuinely have no known commercial alternative), matching the
+ * codebase's "omit, don't fabricate" convention rather than requiring every
+ * section to always be non-empty. `parseAlternative` separately requires
+ * *at least one* of the three alternative-type sections to be non-empty, so
+ * a content file that's entirely blank still fails loudly.
+ */
+function extractListItems(body: string, heading: string): string[] {
+  const lines = body.split("\n");
+  const headingLine = `## ${heading}`.toLowerCase();
+  const startIdx = lines.findIndex((line) => line.trim().toLowerCase() === headingLine);
+  if (startIdx === -1) return [];
+
+  const items: string[] = [];
+  for (let i = startIdx + 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line.toLowerCase().startsWith("## ")) break;
+    if (line.startsWith("- ")) items.push(line.slice(2).trim());
+  }
+  return items;
+}
+
+/** `"AppFlowy"` -> `"appflowy"`, `"LM Studio"` -> `"lm-studio"` — a
+ * candidate `content/repos/*.md` slug to try resolving a plain display name
+ * against (see `Alternative`'s doc comment). Purely a best-effort guess: the
+ * caller falls back to unresolved/plain-text rendering when `getRepo` of
+ * this candidate returns nothing, same as `AlternativesTable`'s explicit-slug
+ * resolution already does for genuinely unmatched entries.
+ */
+export function slugifyAlternativeName(name: string): string {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function assertNoDuplicateListItems(items: string[], sectionLabel: string, source: string): void {
+  const dupe = findDuplicate(items);
+  if (dupe) {
+    throw new ContentValidationError(
+      `${source} lists "${dupe}" more than once under "${sectionLabel}"`,
+    );
+  }
+}
+
+/**
  * Validates `alternatives` frontmatter the way `assertNoGithubCollisions`
  * validates cross-file `github:` fields — fail the build loudly rather than
  * let a bad edit ship silently (CLAUDE.md §3.4). Independent review of the
@@ -241,6 +329,30 @@ export function parseRepo({ filename, data, body }: RawFile): Repo {
   };
 }
 
+export function parseAlternative({ filename, data, body }: RawFile): Alternative {
+  const source = `content/alternatives/${filename}`;
+  const slug = filename.replace(/\.md$/, "");
+  const product = requireString(data, "product", source);
+  const category = requireString(data, "category", source);
+
+  const openSource = extractListItems(body, "Open source");
+  const free = extractListItems(body, "Free");
+  const commercial = extractListItems(body, "Commercial");
+  const bestFit = extractListItems(body, "Best fit");
+
+  if (openSource.length === 0 && free.length === 0 && commercial.length === 0) {
+    throw new ContentValidationError(
+      `${source} must list at least one alternative under "## Open source", "## Free", or "## Commercial"`,
+    );
+  }
+  assertNoDuplicateListItems(openSource, "Open source", source);
+  assertNoDuplicateListItems(free, "Free", source);
+  assertNoDuplicateListItems(commercial, "Commercial", source);
+  assertNoDuplicateListItems(bestFit, "Best fit", source);
+
+  return { slug, product, category, openSource, free, commercial, bestFit };
+}
+
 export function parseGrove({ filename, data, body }: RawFile): Grove {
   const source = `content/groves/${filename}`;
   const slug = filename.replace(/\.md$/, "");
@@ -267,6 +379,7 @@ export function assertNoGithubCollisions(repos: Repo[]): void {
 
 let cachedRepos: Repo[] | null = null;
 let cachedGroves: Grove[] | null = null;
+let cachedAlternatives: Alternative[] | null = null;
 
 export function getAllRepos(): Repo[] {
   if (cachedRepos) return cachedRepos;
@@ -293,4 +406,14 @@ export function getGrove(slug: string): Grove | undefined {
 /** Repos whose frontmatter `groves` array includes the given Grove slug. */
 export function getReposInGrove(groveSlug: string): Repo[] {
   return getAllRepos().filter((repo) => repo.groves.includes(groveSlug));
+}
+
+export function getAllAlternatives(): Alternative[] {
+  if (cachedAlternatives) return cachedAlternatives;
+  cachedAlternatives = readMarkdownFiles(ALTERNATIVES_DIR).map(parseAlternative);
+  return cachedAlternatives;
+}
+
+export function getAlternative(slug: string): Alternative | undefined {
+  return getAllAlternatives().find((alternative) => alternative.slug === slug);
 }

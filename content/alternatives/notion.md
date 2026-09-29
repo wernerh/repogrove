@@ -12,10 +12,14 @@ category: knowledge-management
 - Anytype
 
 ## Free
-_(to be filled in — Phase 3)_
+- Notion (free personal plan)
+- Google Docs
+- Craft (free personal plan)
 
 ## Commercial
-_(to be filled in — Phase 3)_
+- Confluence
+- Coda
+- ClickUp
 
 ## Best fit
 - Personal knowledge management
@@ -23,7 +27,3 @@ _(to be filled in — Phase 3)_
 - Enterprise wiki
 - Offline-first
 - Self-hosting
-
-This is a placeholder fixture created during bootstrap to prove the `/alternatives`
-content shape (spec §4); the real comparison table (stars, language, activity, hosting)
-is a Phase 3 feature once ingestion exists.

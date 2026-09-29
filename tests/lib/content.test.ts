@@ -2,13 +2,17 @@ import { describe, expect, it } from "vitest";
 import {
   ContentValidationError,
   assertNoGithubCollisions,
+  getAllAlternatives,
   getAllGroves,
   getAllRepos,
+  getAlternative,
   getGrove,
   getReposInGrove,
   getRepo,
+  parseAlternative,
   parseGrove,
   parseRepo,
+  slugifyAlternativeName,
   splitOutSection,
   type Repo,
 } from "@/lib/content";
@@ -274,5 +278,128 @@ describe("splitOutSection", () => {
     expect(before).toContain("## What it does");
     expect(before).not.toContain("placeholder links");
     expect(after).toContain("## Related Grove");
+  });
+});
+
+describe("getAllAlternatives (real /content fixtures)", () => {
+  it("loads every alternatives content file", () => {
+    const alternatives = getAllAlternatives();
+    expect(alternatives.map((a) => a.slug).sort()).toEqual(["notion"]);
+  });
+
+  it("parses Notion's frontmatter and body sections correctly", () => {
+    const notion = getAlternative("notion");
+    expect(notion).toBeDefined();
+    expect(notion?.product).toBe("Notion");
+    expect(notion?.category).toBe("knowledge-management");
+    expect(notion?.openSource).toEqual(["AppFlowy", "Outline", "AFFiNE", "Anytype"]);
+    expect(notion?.bestFit).toContain("Personal knowledge management");
+  });
+
+  it("returns undefined for an alternative that doesn't exist", () => {
+    expect(getAlternative("does-not-exist")).toBeUndefined();
+  });
+});
+
+describe("parseAlternative — malformed content fails loudly", () => {
+  const validBody = [
+    "## Open source",
+    "- AppFlowy",
+    "",
+    "## Free",
+    "- Craft",
+    "",
+    "## Commercial",
+    "- Confluence",
+    "",
+    "## Best fit",
+    "- Team documentation",
+  ].join("\n");
+
+  it("throws when product is missing", () => {
+    expect(() =>
+      parseAlternative({
+        filename: "broken.md",
+        body: validBody,
+        data: { category: "productivity" },
+      }),
+    ).toThrow(ContentValidationError);
+  });
+
+  it("names the missing field and the file in the error message", () => {
+    expect(() =>
+      parseAlternative({
+        filename: "broken.md",
+        body: validBody,
+        data: { category: "productivity" },
+      }),
+    ).toThrow(/content\/alternatives\/broken\.md.*"product"/);
+  });
+
+  it("throws when category is missing", () => {
+    expect(() =>
+      parseAlternative({
+        filename: "broken.md",
+        body: validBody,
+        data: { product: "Broken" },
+      }),
+    ).toThrow(ContentValidationError);
+  });
+
+  it("throws when every section (open source, free, commercial) is empty", () => {
+    expect(() =>
+      parseAlternative({
+        filename: "empty.md",
+        body: "## Best fit\n- Something",
+        data: { product: "Empty", category: "productivity" },
+      }),
+    ).toThrow(/must list at least one alternative/);
+  });
+
+  it("throws when the same item appears twice under the same section", () => {
+    expect(() =>
+      parseAlternative({
+        filename: "dupe.md",
+        body: "## Open source\n- AppFlowy\n- AppFlowy",
+        data: { product: "Dupe", category: "productivity" },
+      }),
+    ).toThrow(/more than once under "Open source"/);
+  });
+
+  it("throws when the same item appears twice under Best fit", () => {
+    expect(() =>
+      parseAlternative({
+        filename: "dupe-best-fit.md",
+        body: "## Open source\n- AppFlowy\n\n## Best fit\n- Team wikis\n- Team wikis",
+        data: { product: "Dupe", category: "productivity" },
+      }),
+    ).toThrow(/more than once under "Best fit"/);
+  });
+
+  it("treats a missing section as an empty list rather than throwing", () => {
+    const alt = parseAlternative({
+      filename: "minimal.md",
+      body: "## Open source\n- Solo Item",
+      data: { product: "Minimal", category: "productivity" },
+    });
+    expect(alt.free).toEqual([]);
+    expect(alt.commercial).toEqual([]);
+    expect(alt.bestFit).toEqual([]);
+  });
+
+  it("treats a placeholder line with no bullet items as an empty list", () => {
+    const alt = parseAlternative({
+      filename: "placeholder.md",
+      body: "## Open source\n- Solo Item\n\n## Free\n_(to be filled in)_",
+      data: { product: "Placeholder", category: "productivity" },
+    });
+    expect(alt.free).toEqual([]);
+  });
+});
+
+describe("slugifyAlternativeName", () => {
+  it("lowercases and hyphenates a display name into a candidate repo slug", () => {
+    expect(slugifyAlternativeName("AppFlowy")).toBe("appflowy");
+    expect(slugifyAlternativeName("LM Studio")).toBe("lm-studio");
   });
 });
