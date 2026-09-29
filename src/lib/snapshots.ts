@@ -102,6 +102,48 @@ export function getSnapshotHistory(github: string, dbPath: string = DEFAULT_DB_P
 }
 
 /**
+ * Shared batching step: opens `dbPath` exactly once and returns every
+ * requested repo's full snapshot history (oldest first), grouped by
+ * `github` slug — every requested slug is present as a key, `[]` for a repo
+ * that isn't tracked or when the database can't be opened at all (never a
+ * missing key a caller might mistake for "still loading"). Both
+ * `getGrowthSummaries` and `getSnapshotHistories` below build on this one
+ * query rather than duplicating the "open once, `WHERE github IN (...)`,
+ * group by repo" logic twice.
+ */
+function fetchHistoriesByGithub(
+  githubSlugs: string[],
+  dbPath: string,
+): Map<string, SnapshotRow[]> {
+  const result = new Map<string, SnapshotRow[]>();
+  if (githubSlugs.length === 0) return result;
+  for (const slug of githubSlugs) result.set(slug, []);
+
+  const db = openReadOnly(dbPath);
+  if (!db) return result;
+
+  try {
+    const placeholders = githubSlugs.map(() => "?").join(", ");
+    const stmt = db.prepare(`
+      SELECT ${SELECT_COLUMNS}
+      FROM repository_snapshots
+      WHERE github IN (${placeholders})
+      ORDER BY captured_on ASC
+    `);
+    const rows = stmt.all(...githubSlugs) as unknown as SnapshotRow[];
+    for (const row of rows) {
+      result.get(row.github)?.push(row);
+    }
+    return result;
+  } catch {
+    for (const slug of githubSlugs) result.set(slug, []);
+    return result;
+  } finally {
+    db.close();
+  }
+}
+
+/**
  * Batched counterpart to calling `getGrowthSummary(getSnapshotHistory(github))`
  * once per repo — opens `dbPath` exactly once for however many `githubSlugs`
  * are requested, rather than once per repo. `src/app/page.tsx`'s homepage
@@ -119,42 +161,32 @@ export function getGrowthSummaries(
   githubSlugs: string[],
   dbPath: string = DEFAULT_DB_PATH,
 ): Map<string, GrowthSummary | null> {
+  const byRepo = fetchHistoriesByGithub(githubSlugs, dbPath);
   const result = new Map<string, GrowthSummary | null>();
-  if (githubSlugs.length === 0) return result;
-
-  const db = openReadOnly(dbPath);
-  if (!db) {
-    for (const slug of githubSlugs) result.set(slug, null);
-    return result;
+  for (const slug of githubSlugs) {
+    result.set(slug, getGrowthSummary(byRepo.get(slug) ?? []));
   }
+  return result;
+}
 
-  try {
-    const placeholders = githubSlugs.map(() => "?").join(", ");
-    const stmt = db.prepare(`
-      SELECT ${SELECT_COLUMNS}
-      FROM repository_snapshots
-      WHERE github IN (${placeholders})
-      ORDER BY captured_on ASC
-    `);
-    const rows = stmt.all(...githubSlugs) as unknown as SnapshotRow[];
-
-    const byRepo = new Map<string, SnapshotRow[]>();
-    for (const row of rows) {
-      const existing = byRepo.get(row.github);
-      if (existing) existing.push(row);
-      else byRepo.set(row.github, [row]);
-    }
-
-    for (const slug of githubSlugs) {
-      result.set(slug, getGrowthSummary(byRepo.get(slug) ?? []));
-    }
-    return result;
-  } catch {
-    for (const slug of githubSlugs) result.set(slug, null);
-    return result;
-  } finally {
-    db.close();
-  }
+/**
+ * Batched counterpart to calling `getSnapshotHistory(github)` once per repo
+ * — same "open the db once" reasoning as `getGrowthSummaries` above, for a
+ * caller that needs each repo's *full* history (e.g. `computeHeat`, which
+ * `getGrowthSummaries`'s growth-summary-only result can't feed), not just
+ * the growth summary. `/compare/:a/:b` (issue #62) is the first caller: it
+ * needs Grove Heat for two different repos on one page, and calling
+ * `getSnapshotHistory` once per repo would reopen the database a second
+ * time for no reason — independent review flagged this as the same N+1
+ * pattern TECH-DEBT.md already recorded for looping a single-repo read over
+ * a list, even though here the list is always exactly 2 (see
+ * `ComparePage`'s own doc comment on why 2 stays fixed).
+ */
+export function getSnapshotHistories(
+  githubSlugs: string[],
+  dbPath: string = DEFAULT_DB_PATH,
+): Map<string, SnapshotRow[]> {
+  return fetchHistoriesByGithub(githubSlugs, dbPath);
 }
 
 export interface GrowthSummary {

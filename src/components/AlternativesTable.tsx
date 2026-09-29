@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Repo } from "@/lib/content";
+import { numberFormatter } from "@/lib/format";
 import StatusChip from "@/components/StatusChip";
 
 /** One open-source alternative, resolved against `/content/repos` by the caller
@@ -27,8 +28,6 @@ interface AlternativesTableProps {
    * page to point at yet (PROJECT_STATE.md "Not doing yet"). */
   commercial: string[];
 }
-
-const numberFormatter = new Intl.NumberFormat("en-US");
 
 /**
  * Alternatives comparison section — docs/design/DESIGN-SYSTEM.md's

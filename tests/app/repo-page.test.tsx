@@ -96,4 +96,23 @@ describe("Repo page (/repo/[slug])", () => {
     // table — see src/lib/content.ts's splitOutSection.
     expect(screen.queryByText(/placeholder links/)).not.toBeInTheDocument();
   });
+
+  it("renders a 'Compared with' cross-link for a repo named in a /compare/:a/:b content file (issue #62)", async () => {
+    // content/comparisons/ollama-vs-vllm.md names both ollama and vllm.
+    const element = await RepoPage({ params: Promise.resolve({ slug: "ollama" }) });
+    render(element);
+
+    expect(screen.getByRole("heading", { level: 2, name: "Compared with" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "vs vLLM" })).toHaveAttribute(
+      "href",
+      "/compare/ollama/vllm",
+    );
+  });
+
+  it("omits the 'Compared with' section for a repo with no comparison content file", async () => {
+    const element = await RepoPage({ params: Promise.resolve({ slug: "supabase" }) });
+    render(element);
+
+    expect(screen.queryByRole("heading", { level: 2, name: "Compared with" })).not.toBeInTheDocument();
+  });
 });

@@ -1,19 +1,27 @@
 import { describe, expect, it } from "vitest";
 import {
   ContentValidationError,
+  assertComparisonReposExist,
+  assertNoDuplicateComparisonPairs,
   assertNoGithubCollisions,
+  extractListItems,
   getAllAlternatives,
+  getAllComparisons,
   getAllGroves,
   getAllRepos,
   getAlternative,
+  getComparison,
+  getComparisonsForRepo,
   getGrove,
   getReposInGrove,
   getRepo,
   parseAlternative,
+  parseComparison,
   parseGrove,
   parseRepo,
   slugifyAlternativeName,
   splitOutSection,
+  type Comparison,
   type Repo,
 } from "@/lib/content";
 
@@ -401,5 +409,158 @@ describe("slugifyAlternativeName", () => {
   it("lowercases and hyphenates a display name into a candidate repo slug", () => {
     expect(slugifyAlternativeName("AppFlowy")).toBe("appflowy");
     expect(slugifyAlternativeName("LM Studio")).toBe("lm-studio");
+  });
+});
+
+describe("getAllComparisons (real /content fixtures)", () => {
+  it("loads the one comparison content file", () => {
+    const comparisons = getAllComparisons();
+    expect(comparisons.map((c) => c.slug)).toEqual(["ollama-vs-vllm"]);
+  });
+
+  it("parses the ollama-vs-vllm frontmatter and 'How they differ' section", () => {
+    const comparison = getComparison("ollama", "vllm");
+    expect(comparison).toBeDefined();
+    expect(comparison?.repoSlugs).toEqual(["ollama", "vllm"]);
+    expect(comparison?.howTheyDiffer).toContain("Ollama is built for running models locally");
+  });
+});
+
+describe("getComparison (order-independent lookup)", () => {
+  it("resolves both URL orders to the same comparison", () => {
+    const forward = getComparison("ollama", "vllm");
+    const reverse = getComparison("vllm", "ollama");
+    expect(forward).toBeDefined();
+    // Same content file either way — repoSlugs stays in the file's own
+    // canonical order regardless of which order the caller asked in.
+    expect(reverse).toEqual(forward);
+  });
+
+  it("returns undefined for a pair with no comparison content file", () => {
+    expect(getComparison("ollama", "supabase")).toBeUndefined();
+  });
+});
+
+describe("getComparisonsForRepo", () => {
+  it("finds the comparison for a repo named on either side of a pair", () => {
+    expect(getComparisonsForRepo("ollama").map((c) => c.slug)).toEqual(["ollama-vs-vllm"]);
+    expect(getComparisonsForRepo("vllm").map((c) => c.slug)).toEqual(["ollama-vs-vllm"]);
+  });
+
+  it("returns an empty array for a repo with no comparisons", () => {
+    expect(getComparisonsForRepo("supabase")).toEqual([]);
+  });
+});
+
+describe("parseComparison — malformed content fails loudly", () => {
+  const validBody = "## How they differ\nThey differ in a couple of meaningful ways.";
+
+  it("throws when 'repos' is missing", () => {
+    expect(() =>
+      parseComparison({ filename: "broken.md", body: validBody, data: {} }),
+    ).toThrow(ContentValidationError);
+  });
+
+  it("throws when 'repos' has only one entry", () => {
+    expect(() =>
+      parseComparison({
+        filename: "broken.md",
+        body: validBody,
+        data: { repos: ["ollama"] },
+      }),
+    ).toThrow(/expected exactly 2/);
+  });
+
+  it("throws when 'repos' has three entries", () => {
+    expect(() =>
+      parseComparison({
+        filename: "broken.md",
+        body: validBody,
+        data: { repos: ["ollama", "vllm", "supabase"] },
+      }),
+    ).toThrow(/expected exactly 2/);
+  });
+
+  it("throws when a repo is compared against itself", () => {
+    expect(() =>
+      parseComparison({
+        filename: "self.md",
+        body: validBody,
+        data: { repos: ["ollama", "ollama"] },
+      }),
+    ).toThrow(/compares "ollama" against itself/);
+  });
+
+  it("throws when 'How they differ' is missing", () => {
+    expect(() =>
+      parseComparison({
+        filename: "no-diff.md",
+        body: "## Some other heading\nirrelevant",
+        data: { repos: ["ollama", "vllm"] },
+      }),
+    ).toThrow(/missing a non-empty "## How they differ" section/);
+  });
+
+  it("throws when 'How they differ' has a heading but no content beneath it", () => {
+    expect(() =>
+      parseComparison({
+        filename: "empty-diff.md",
+        body: "## How they differ\n\n## Some other heading\ntext",
+        data: { repos: ["ollama", "vllm"] },
+      }),
+    ).toThrow(/missing a non-empty "## How they differ" section/);
+  });
+
+  it("parses a valid file, preserving the frontmatter's repo order", () => {
+    const comparison = parseComparison({
+      filename: "vllm-vs-ollama.md",
+      body: validBody,
+      data: { repos: ["vllm", "ollama"] },
+    });
+    expect(comparison.repoSlugs).toEqual(["vllm", "ollama"]);
+    expect(comparison.howTheyDiffer).toBe("They differ in a couple of meaningful ways.");
+  });
+});
+
+describe("assertComparisonReposExist", () => {
+  const repos = getAllRepos();
+
+  it("does not throw when every comparison names two real repo slugs", () => {
+    expect(() => assertComparisonReposExist(getAllComparisons(), repos)).not.toThrow();
+  });
+
+  it("throws when a comparison names a repo slug with no content/repos/*.md file", () => {
+    const fake: Comparison = {
+      slug: "ollama-vs-ghost",
+      repoSlugs: ["ollama", "does-not-exist"],
+      howTheyDiffer: "n/a",
+    };
+    expect(() => assertComparisonReposExist([fake], repos)).toThrow(
+      /names "does-not-exist" under "repos", but no content\/repos\/does-not-exist\.md exists/,
+    );
+  });
+});
+
+describe("assertNoDuplicateComparisonPairs", () => {
+  it("does not throw for the real comparison fixtures", () => {
+    expect(() => assertNoDuplicateComparisonPairs(getAllComparisons())).not.toThrow();
+  });
+
+  it("throws when two files compare the same unordered pair", () => {
+    const a: Comparison = { slug: "ollama-vs-vllm", repoSlugs: ["ollama", "vllm"], howTheyDiffer: "x" };
+    const b: Comparison = { slug: "vllm-vs-ollama", repoSlugs: ["vllm", "ollama"], howTheyDiffer: "y" };
+    expect(() => assertNoDuplicateComparisonPairs([a, b])).toThrow(
+      /both compare the same pair of repos/,
+    );
+  });
+});
+
+describe("extractListItems reused on a Repo body's Pros/Cons sections", () => {
+  it("extracts Ollama's real Pros/Cons bullet lists from its content body", () => {
+    const ollama = getRepo("ollama")!;
+    const pros = extractListItems(ollama.body, "Pros");
+    const cons = extractListItems(ollama.body, "Cons");
+    expect(pros.length).toBeGreaterThan(0);
+    expect(cons.length).toBeGreaterThan(0);
   });
 });

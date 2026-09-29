@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAllAlternatives, getAlternative, getRepo, slugifyAlternativeName, type Repo } from "@/lib/content";
 import { getGrowthSummaries } from "@/lib/snapshots";
+import { numberFormatter } from "@/lib/format";
 import type { Metadata } from "next";
 
 interface PageProps {
@@ -46,8 +47,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export function resolveOpenSourceAlternatives(names: string[]): ResolvedOpenSourceAlternative[] {
   return names.map((name) => ({ name, repo: getRepo(slugifyAlternativeName(name)) ?? null }));
 }
-
-const numberFormatter = new Intl.NumberFormat("en-US");
 
 /** A plain bullet-list section (Free / Commercial / Best fit) — rendered
  * only when non-empty, matching the "omit, don't fabricate an empty

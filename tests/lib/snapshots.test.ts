@@ -11,7 +11,14 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { openDb, upsertSnapshot } from "../../scripts/ingestion/snapshots-db.ts";
-import { getGrowthBaseline, getGrowthSummaries, getGrowthSummary, getSnapshotHistory, type SnapshotRow } from "@/lib/snapshots";
+import {
+  getGrowthBaseline,
+  getGrowthSummaries,
+  getGrowthSummary,
+  getSnapshotHistories,
+  getSnapshotHistory,
+  type SnapshotRow,
+} from "@/lib/snapshots";
 
 const tempDirs: string[] = [];
 
@@ -208,6 +215,59 @@ describe("getGrowthSummaries", () => {
     for (const github of slugs) {
       const expected = getGrowthSummary(getSnapshotHistory(github, dbPath));
       expect(batched.get(github)).toEqual(expected);
+    }
+  });
+});
+
+describe("getSnapshotHistories", () => {
+  // Batched counterpart to calling getSnapshotHistory(github) once per repo
+  // — /compare/:a/:b (issue #62) needs full history for two different repos
+  // on one page (computeHeat needs the full history, not just the
+  // getGrowthSummaries growth-summary shortcut). Same batching contract as
+  // getGrowthSummaries: every requested slug is a key in the result, opens
+  // the db exactly once.
+
+  it("returns full history per requested repo, keyed by its github slug", () => {
+    const dbPath = fixtureDb([
+      { github: "ollama/ollama", capturedOn: "2026-09-25", stars: 90 },
+      { github: "ollama/ollama", capturedOn: "2026-09-27", stars: 100 },
+      { github: "vllm-project/vllm", capturedOn: "2026-09-27", stars: 50 },
+    ]);
+    const histories = getSnapshotHistories(["ollama/ollama", "vllm-project/vllm"], dbPath);
+    expect(histories.get("ollama/ollama")).toHaveLength(2);
+    expect(histories.get("vllm-project/vllm")).toHaveLength(1);
+  });
+
+  it("maps an untracked repo slug to an empty array rather than omitting the key", () => {
+    const dbPath = fixtureDb([{ github: "ollama/ollama", capturedOn: "2026-09-27", stars: 100 }]);
+    const histories = getSnapshotHistories(["ollama/ollama", "vllm-project/vllm"], dbPath);
+    expect(histories.has("vllm-project/vllm")).toBe(true);
+    expect(histories.get("vllm-project/vllm")).toEqual([]);
+  });
+
+  it("returns an empty map for an empty slug list without opening the database", () => {
+    expect(getSnapshotHistories([], "/nonexistent/path/repogrove.db")).toEqual(new Map());
+  });
+
+  it("maps every slug to an empty array when the database file doesn't exist yet", () => {
+    const histories = getSnapshotHistories(
+      ["ollama/ollama", "vllm-project/vllm"],
+      "/nonexistent/path/repogrove.db",
+    );
+    expect(histories.get("ollama/ollama")).toEqual([]);
+    expect(histories.get("vllm-project/vllm")).toEqual([]);
+  });
+
+  it("matches calling getSnapshotHistory(github) one repo at a time", () => {
+    const dbPath = fixtureDb([
+      { github: "ollama/ollama", capturedOn: "2026-08-01", stars: 10 },
+      { github: "ollama/ollama", capturedOn: "2026-09-27", stars: 100 },
+      { github: "vllm-project/vllm", capturedOn: "2026-09-27", stars: 50 },
+    ]);
+    const slugs = ["ollama/ollama", "vllm-project/vllm"];
+    const batched = getSnapshotHistories(slugs, dbPath);
+    for (const github of slugs) {
+      expect(batched.get(github)).toEqual(getSnapshotHistory(github, dbPath));
     }
   });
 });
