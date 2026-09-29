@@ -1,5 +1,11 @@
-import Link from "next/link";
-import { getAllGroves, getAllRepos } from "@/lib/content";
+import { getAllGroves, getAllRepos, getReposInGrove } from "@/lib/content";
+import { getSnapshotHistory, type SnapshotRow } from "@/lib/snapshots";
+import GroveCard from "@/components/GroveCard";
+import RepoCard from "@/components/RepoCard";
+
+function latestStars(history: SnapshotRow[]): number | null {
+  return history.length > 0 ? history[history.length - 1].stars : null;
+}
 
 export default function Home() {
   const groves = getAllGroves();
@@ -23,16 +29,10 @@ export default function Home() {
         <p className="text-sm text-text-secondary">
           Curated collections of repositories around a problem or ecosystem.
         </p>
-        <ul className="mt-3 flex flex-col gap-2">
+        <ul className="mt-4 grid grid-cols-1 gap-8 md:grid-cols-2">
           {groves.map((grove) => (
             <li key={grove.slug}>
-              <Link
-                href={`/grove/${grove.slug}`}
-                className="font-medium text-text-link hover:underline"
-              >
-                {grove.name}
-              </Link>
-              <span className="text-text-secondary"> — {grove.description}</span>
+              <GroveCard grove={grove} repoCount={getReposInGrove(grove.slug).length} />
             </li>
           ))}
         </ul>
@@ -44,19 +44,10 @@ export default function Home() {
           Repository intelligence pages — what it is, why people use it, and
           what to use instead.
         </p>
-        <ul className="mt-3 flex flex-col gap-2">
+        <ul className="mt-4 grid grid-cols-1 gap-8 md:grid-cols-2">
           {repos.map((repo) => (
             <li key={repo.slug}>
-              <Link
-                href={`/repo/${repo.slug}`}
-                className="font-medium text-text-link hover:underline"
-              >
-                {repo.name}
-              </Link>
-              <span className="text-text-secondary">
-                {" "}
-                — <span className="font-mono text-sm">{repo.github}</span>
-              </span>
+              <RepoCard repo={repo} stars={latestStars(getSnapshotHistory(repo.github))} />
             </li>
           ))}
         </ul>

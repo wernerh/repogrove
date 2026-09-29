@@ -10,12 +10,11 @@ four Phase 1 pages (`layout.tsx`, `page.tsx`, `repo/[slug]/page.tsx`,
 (`zinc-*`, `emerald-700`). Screenshotted light + dark, desktop/tablet/mobile with
 Playwright (at the time, globally installed, not yet a project dependency — as of
 2026-09-28 this is now a reusable, checked-in harness, see "Open questions" below and
-`docs/adr/ADR-007-design-screenshot-a11y-harness.md`) before merging. **Not yet wired:**
-the actual Inter/Source Serif 4/IBM Plex Mono
-font *files* — `next/font` loading is explicitly dev-lane work per this doc's Typography
-section (needs an ADR note); the fallback stacks (system sans/serif/mono) are live now
-and already produce the correct visual hierarchy (sans UI chrome, serif prose, mono
-slugs/stats), so this is a swap-in-place upgrade, not a blocker.
+`docs/adr/ADR-007-design-screenshot-a11y-harness.md`) before merging. The actual
+Inter/Source Serif 4/IBM Plex Mono font files are wired in as of 2026-09-28 (PR #32,
+ADR-006 — self-hosted via `next/font/google`, no CDN request) — this line stayed stale
+("not yet wired") for several runs after that landed; corrected 2026-09-29 (design
+run 9).
 
 Working assumption while no UI exists to test against: values here are derived from
 documented design method (`design-superpowers:creative` — Palette Architect, Typography
@@ -278,15 +277,53 @@ premature scale CLAUDE.md §4 asks the design lane to avoid.
   `prefers-reduced-motion` — disable non-essential transitions (fine for hover-color, must
   disable for anything that moves position/size) when set.
 
-## Component patterns (specs — not yet built; dev lane implements against these when
-Phase 1/2 pages land)
+## Component patterns (specs — dev/design lanes implement against these as pages land;
+**built** notes below mark which ones have real code)
 
-- **Repo/Grove card** (spec §8, §25): `bg.elevated`, `radius-md`, `elevation-1`, `space-3`
-  interior padding. Header row: repo/Grove name (Inter, `text-lg`, `text.default`) +
-  momentum chip (top-right). Body: one-line plain-English description (serif, `text-sm`,
+- **Repo/Grove card** (spec §8, §25) — **built 2026-09-29 (design run, homepage):**
+  `bg.elevated`, `radius-md`, `elevation-1`, `space-3` interior padding. Header row:
+  repo/Grove name (Inter, `text-lg`, `text.default`) + momentum chip (top-right — **not
+  yet wired in**, see below). Body: one-line plain-English description (serif, `text-sm`,
   `text.secondary`, clamped to 2 lines). Footer row: stars (mono, `text-sm`) · language ·
   category tag · "why interesting" one-liner. Entire card is a single link (one focus
   stop, not nested interactive elements) — a11y requirement, not a style one.
+  `src/components/RepoCard.tsx`/`GroveCard.tsx`, used by the homepage
+  (`src/app/page.tsx`). Implementation notes/deviations from the spec above:
+  - **Single-focus-stop mechanics:** the visible `<Link>` wraps only the name; an
+    `after:absolute after:inset-0` pseudo-element (the "stretched link" pattern)
+    extends the actual click/hover target to the full card via the card's own
+    `relative` positioning. One `<a>` in the DOM, a concise accessible name (just the
+    name — proven by the existing `getByRole("link", { name: "Ollama" })`-style
+    assertions still passing unmodified). The `<Link>` also sets `focus:outline-none`
+    so only the card-level `has-[a:focus-visible]:outline` ring shows — without it, the
+    browser draws its own default outline around the anchor's small text box *as well
+    as* the intended full-card ring, two mismatched nested indicators (caught by this
+    run's independent review before merge).
+  - **Momentum chip (header, top-right): not built.** That signal is computed, not
+    hand-authored, and doesn't exist yet (issue #21/ADR-004, data-gated per
+    `PROJECT_STATE.md`) — no placeholder chip was added to avoid shipping a fake one.
+    Wire it in once #21 lands; re-read issue #52's icon-collision note (vs. the repo
+    page's `StatusChip`) at that point.
+  - **`language`: omitted**, not fabricated — ingestion doesn't capture it yet (see
+    `TECH-DEBT.md`); this lane doesn't add data-model/ingestion fields to get one.
+  - **"why interesting" one-liner: omitted**, not fabricated — no content-model field
+    holds one (`content/repos/*.md`'s "Why people use it" is a bullet list, not a
+    single line); same reasoning as `language`.
+  - **Description source:** the body's own first paragraph
+    (`content/repos/*.md` conventionally opens with a one-sentence plain-English
+    description before its "## What it does" section) — read directly off `repo.body`
+    in the card component, not a new frontmatter field.
+  - **Grove card footer** (no stars/language/category apply to a Grove): repo count via
+    `getReposInGrove`, e.g. "3 repos" — previously an unused helper (see `TECH-DEBT.md`).
+  - **Hover/focus feedback uses `elevation-2`**, not spec'd above (which reserves it for
+    "popovers/modals only") — a deliberate small extension: the card's rest state is
+    `elevation-1`, and hover/keyboard-focus (`has-[a:hover]`/`has-[a:focus-visible]`)
+    raises it to `elevation-2` as the interactive-affordance cue, alongside the
+    focus-visible outline. Two elevation levels stays a true statement; this just names
+    the second one's other use.
+  - **Grid/list semantics:** the homepage wraps each card grid in a real `<ul>`/`<li>`
+    (not a bare `<div>` grid) so screen readers still announce "list, N items" — lost
+    when an earlier draft of this change used plain `<div>`s, caught in review.
 - **Alternatives comparison table** (spec §3–4): sortable columns (stars, language,
   activity, hosting) — sort state must be programmatically exposed (`aria-sort`), not
   color-only. Momentum/activity column uses the chip pattern above, never a bare colored
@@ -391,3 +428,24 @@ earlier in this run failed and are worth recording so the reasoning survives: a 
   plain `<ul>` of links, not the specced card) and the alternatives comparison table are
   still the two largest unbuilt component patterns — pick up the card next, now that 5
   repos and 2 Groves exist to actually show a grid of.
+- **Done 2026-09-29 (design run 9):** built the repo/Grove card pattern from the task
+  above — see the "Component patterns" section's new "built" note for the full detail
+  (single-focus-stop "stretched link" mechanics, the momentum-chip/`language`/
+  "why interesting" omissions, `elevation-2` hover extension). Independent review before
+  merge caught and fixed a real bug (a conflicting duplicate focus outline — the `<Link>`
+  needed `focus:outline-none` so only the card-level ring shows) and a real a11y
+  regression (an earlier draft's plain `<div>` grid lost `<ul>`/`<li>` list semantics —
+  fixed before merge, not shipped and fixed later). Flagged two more findings as
+  follow-up rather than blocking this PR on them: `RepoCard.tsx`'s category-tag chip used
+  `px-2 py-1` (an undocumented, off-scale padding) instead of matching `StatusChip.tsx`'s
+  own `p-2` (space-1) convention — fixed to match before merge; and `src/app/page.tsx`
+  opens a fresh SQLite connection per repo card via `getSnapshotHistory` (N+1, vs.
+  `repo/[slug]/page.tsx`'s single-open-per-page pattern) — harmless at 5 repos, filed as
+  dev-lane tech debt (`TECH-DEBT.md`) rather than fixed here, since a batched read helper
+  in `src/lib/snapshots.ts` is data-layer code outside this lane's UI-only remit.
+  **Next major task:** the alternatives comparison table (spec §3–4) is now the largest
+  unbuilt component pattern — no page renders `repo.alternatives` yet at all (not even as
+  plain text) outside the repo page's own hand-authored Markdown "## Alternatives"
+  section, so this is genuinely new ground, not a restyle. Real screenshot review of this
+  run's card (light/dark × desktop/tablet/mobile) is next run's first job, once CI's
+  `commit-screenshots` job lands them on `main` post-merge.
