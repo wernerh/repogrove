@@ -134,6 +134,32 @@ recommitted refreshed `repo-ollama__*` screenshots — reviewed all 6 (light/dar
 desktop/tablet/mobile) directly and confirmed the chip end to end: clean pill shape,
 readable green text in both themes, no layout shift, reflows correctly on mobile.
 
+Run 10 (2026-09-29) built the alternatives comparison table — the site's stated "killer
+feature" (spec §3-4) and this lane's own next-major-task pick from run 9 —
+`src/components/AlternativesTable.tsx`, wired into `/repo/[slug]`. `repo.alternatives`
+(frontmatter, already structured) had never been rendered anywhere before; the repo
+page's own "## Alternatives" Markdown section was explicitly placeholder prose ("until
+Phase 3 builds alternative pages"). Resolves each open-source alternative slug against
+`/content/repos` (most don't have a page yet — real repos link with live status/stars,
+unresolved ones show their raw slug in mono, unlinked, labeled "Not yet profiled" —
+never a link that 404s); commercial alternatives render as a plain unlinked chip list.
+One deliberate, recorded v1 reduction from the original spec line: not interactively
+sortable (`aria-sort`) — `language`/`hosting`/activity aren't in the content model yet,
+leaving one real sortable column (`stars`), so rows are pre-sorted server-side instead of
+needing a client component. Independent review before merge found no BLOCKER/MAJOR bugs
+but flagged two real silent-failure-mode gaps in `src/lib/content.ts`, both fixed this
+run: no validation against a duplicate or self-referencing `alternatives` slug (added
+`assertValidAlternatives`, fails the build loudly like the existing
+`assertNoGithubCollisions`), and no signal if a repo declares `alternatives` but its body
+loses the "## Alternatives" heading `splitOutSection` needs (added a build-time throw —
+otherwise the old placeholder prose would silently render duplicated alongside the new
+table). Validated locally: lint clean, `tsc --noEmit` clean, tests 135/135 (15 new),
+`npm audit --audit-level=high` 0 vulns; build reproduces the known ADR-006 sandbox
+font-fetch gap, left to CI. Real-screenshot review of the rendered table
+(`/repo/ollama`, has both a resolved and two unresolved alternatives) is next run's job
+once CI's `commit-screenshots` lands them post-merge. RG-4 re-checked (`get_thread`) —
+still no new reply since 2026-09-27T17:32:04Z; due 2026-09-30 (tomorrow).
+
 ## Findings
 | ID | Severity | Status | Component | Mapping | Issue/PR |
 |---|---|---|---|---|---|

@@ -123,6 +123,82 @@ function stripLeadingTitle(body: string, name: string): string {
   return body;
 }
 
+/**
+ * Splits a repo's raw Markdown body around one `## <heading>` section
+ * (removing it entirely), returning what comes before and after. Used by
+ * `/repo/[slug]` to swap `content/repos/*.md`'s hand-authored "## Alternatives"
+ * prose — explicitly a placeholder, see its own text, "until Phase 3 builds
+ * alternative pages" — for the real, computed AlternativesTable
+ * (`repo.alternatives`, already structured data) instead of rendering both
+ * and duplicating the same names twice on one page. Purely a rendering-layer
+ * split, same category as `stripLeadingTitle` above: the source Markdown
+ * file itself is untouched, so anyone reading the raw content still sees the
+ * hand-authored prose in full.
+ *
+ * Matches an exact `## <heading>` line (case-insensitive) and removes every
+ * line up to (not including) the next `## ` heading or the end of the body.
+ * Returns `{ before: body, after: "" }` unchanged if the heading isn't found
+ * — every repo today has one, but a future body that omits it must still
+ * render safely rather than silently dropping content.
+ */
+export function splitOutSection(body: string, heading: string): { before: string; after: string } {
+  const lines = body.split("\n");
+  const headingLine = `## ${heading}`.toLowerCase();
+  const startIdx = lines.findIndex((line) => line.trim().toLowerCase() === headingLine);
+  if (startIdx === -1) return { before: body, after: "" };
+
+  let endIdx = lines.length;
+  for (let i = startIdx + 1; i < lines.length; i++) {
+    if (lines[i].trim().toLowerCase().startsWith("## ")) {
+      endIdx = i;
+      break;
+    }
+  }
+
+  const before = lines.slice(0, startIdx).join("\n").trimEnd();
+  const after = lines.slice(endIdx).join("\n").trimStart();
+  return { before, after };
+}
+
+/**
+ * Validates `alternatives` frontmatter the way `assertNoGithubCollisions`
+ * validates cross-file `github:` fields — fail the build loudly rather than
+ * let a bad edit ship silently (CLAUDE.md §3.4). Independent review of the
+ * AlternativesTable component (2026-09-29) flagged that neither of these was
+ * previously checked, so a duplicate or self-referencing slug would have
+ * degraded silently (a duplicate React key on the rendered row, or a repo
+ * quietly listed as its own alternative) instead of failing here where an
+ * editor would actually see it.
+ */
+function assertValidAlternatives(alternatives: RepoAlternatives, slug: string, source: string): void {
+  if (alternatives.open_source.includes(slug)) {
+    throw new ContentValidationError(
+      `${source} lists itself ("${slug}") as its own open-source alternative — remove it from "alternatives.open_source"`,
+    );
+  }
+  const dupeOpenSource = findDuplicate(alternatives.open_source);
+  if (dupeOpenSource) {
+    throw new ContentValidationError(
+      `${source} lists "${dupeOpenSource}" more than once under "alternatives.open_source"`,
+    );
+  }
+  const dupeCommercial = findDuplicate(alternatives.commercial);
+  if (dupeCommercial) {
+    throw new ContentValidationError(
+      `${source} lists "${dupeCommercial}" more than once under "alternatives.commercial"`,
+    );
+  }
+}
+
+function findDuplicate(values: string[]): string | undefined {
+  const seen = new Set<string>();
+  for (const value of values) {
+    if (seen.has(value)) return value;
+    seen.add(value);
+  }
+  return undefined;
+}
+
 export function parseRepo({ filename, data, body }: RawFile): Repo {
   const source = `content/repos/${filename}`;
   const slug = filename.replace(/\.md$/, "");
@@ -149,6 +225,7 @@ export function parseRepo({ filename, data, body }: RawFile): Repo {
     open_source: optionalStringArray(altRaw, "open_source"),
     commercial: optionalStringArray(altRaw, "commercial"),
   };
+  assertValidAlternatives(alternatives, slug, source);
 
   return {
     slug,
