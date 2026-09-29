@@ -101,6 +101,62 @@ export function getSnapshotHistory(github: string, dbPath: string = DEFAULT_DB_P
   }
 }
 
+/**
+ * Batched counterpart to calling `getGrowthSummary(getSnapshotHistory(github))`
+ * once per repo — opens `dbPath` exactly once for however many `githubSlugs`
+ * are requested, rather than once per repo. `src/app/page.tsx`'s homepage
+ * cards and `/trending` (issue #19) both need a growth figure for every
+ * tracked repo at once; the original per-repo pattern was flagged as
+ * dev-lane tech debt (TECH-DEBT.md, 2026-09-29) once a real caller (the
+ * repo/Grove card pattern) started looping it.
+ *
+ * Every requested slug is present as a key in the result — `null` for a
+ * repo that isn't tracked (or when the database can't be opened at all),
+ * matching `getGrowthSummary`'s own "no history" contract, never a missing
+ * key a caller might mistake for "still loading".
+ */
+export function getGrowthSummaries(
+  githubSlugs: string[],
+  dbPath: string = DEFAULT_DB_PATH,
+): Map<string, GrowthSummary | null> {
+  const result = new Map<string, GrowthSummary | null>();
+  if (githubSlugs.length === 0) return result;
+
+  const db = openReadOnly(dbPath);
+  if (!db) {
+    for (const slug of githubSlugs) result.set(slug, null);
+    return result;
+  }
+
+  try {
+    const placeholders = githubSlugs.map(() => "?").join(", ");
+    const stmt = db.prepare(`
+      SELECT ${SELECT_COLUMNS}
+      FROM repository_snapshots
+      WHERE github IN (${placeholders})
+      ORDER BY captured_on ASC
+    `);
+    const rows = stmt.all(...githubSlugs) as unknown as SnapshotRow[];
+
+    const byRepo = new Map<string, SnapshotRow[]>();
+    for (const row of rows) {
+      const existing = byRepo.get(row.github);
+      if (existing) existing.push(row);
+      else byRepo.set(row.github, [row]);
+    }
+
+    for (const slug of githubSlugs) {
+      result.set(slug, getGrowthSummary(byRepo.get(slug) ?? []));
+    }
+    return result;
+  } catch {
+    for (const slug of githubSlugs) result.set(slug, null);
+    return result;
+  } finally {
+    db.close();
+  }
+}
+
 export interface GrowthSummary {
   currentStars: number;
   /** stars(latest) - stars(baseline); can be negative. */

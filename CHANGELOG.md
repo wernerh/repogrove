@@ -416,3 +416,21 @@ entries.
   audit --audit-level=high` (0 vulnerabilities) locally; `npm run build` reproduced the
   known ADR-006 sandbox font-fetch gap, confirmed green on CI's real GitHub-hosted
   runner instead. No new findings. Quiet run per CLAUDE.md rule 8. (security)
+- 2026-09-29 — Dev run 22: `/trending` (issue #19), the Phase 2 gate met for the first time
+  (5 real repos, 3+ calendar days of snapshot history in `data/repogrove.db`). New page ranks
+  tracked repos by absolute star growth (spec §8 "Hot Right Now"), with a real, computed
+  "+N stars in the last M days" reason line rather than a fabricated one — no Grove Heat/
+  momentum score exists yet (issue #21/ADR-004, separately data-gated). New
+  `getGrowthSummaries(githubSlugs, dbPath?)` in `src/lib/snapshots.ts` batches the read (opens
+  `data/repogrove.db` once, parameterized `WHERE github IN (...)`) rather than looping the
+  existing single-repo helper — also resolves the 2026-09-29 homepage-card N+1 tech-debt row
+  (`src/app/page.tsx` now uses the same batched call). New pure `rankByAbsoluteGrowth` in
+  `src/lib/trending.ts` (filters out repos with no history or only one snapshot; keeps a repo
+  with negative growth, sorted last, rather than hiding a real decline). Trending rows reuse
+  RepoCard/GroveCard's "stretched link" single-focus-stop pattern. Header nav gained a
+  "Trending" link. Independent review before push found no MAJOR issues; fixed the 4 MINOR/
+  POLISH items it raised (this TECH-DEBT.md row, a test assertion that didn't mirror
+  `formatDelta`'s exact three-way branching, a missing empty-state test, a stale doc comment).
+  105/105 tests pass (14 new/updated), lint clean, `tsc --noEmit` clean, `npm audit
+  --audit-level=high` 0 vulnerabilities, all run locally; `next build` reproduces the known
+  ADR-006 sandbox font-fetch gap, left to CI's GitHub-hosted runner as in every prior run. (dev)

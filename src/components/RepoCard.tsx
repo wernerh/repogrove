@@ -5,10 +5,10 @@ interface RepoCardProps {
   repo: Repo;
   /**
    * Latest known star count (from `data/repogrove.db`, computed by the
-   * caller via `getSnapshotHistory`), or `null` if no snapshot history
-   * exists yet for this repo. The card omits the stat rather than showing
-   * a fabricated "0 stars" — same "no data yet" convention StarGrowthChart
-   * already uses on the repo page.
+   * caller via `getGrowthSummaries`' `currentStars`), or `null` if no
+   * snapshot history exists yet for this repo. The card omits the stat
+   * rather than showing a fabricated "0 stars" — same "no data yet"
+   * convention StarGrowthChart already uses on the repo page.
    */
   stars: number | null;
 }

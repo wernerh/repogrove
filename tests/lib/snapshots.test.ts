@@ -11,7 +11,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { openDb, upsertSnapshot } from "../../scripts/ingestion/snapshots-db.ts";
-import { getGrowthSummary, getSnapshotHistory, type SnapshotRow } from "@/lib/snapshots";
+import { getGrowthSummaries, getGrowthSummary, getSnapshotHistory, type SnapshotRow } from "@/lib/snapshots";
 
 const tempDirs: string[] = [];
 
@@ -133,5 +133,59 @@ describe("getGrowthSummary", () => {
   it("can report a negative delta (star count dropped)", () => {
     const history = [row({ capturedOn: "2026-09-25", stars: 100 }), row({ capturedOn: "2026-09-27", stars: 95 })];
     expect(getGrowthSummary(history)).toMatchObject({ currentStars: 95, deltaStars: -5 });
+  });
+});
+
+describe("getGrowthSummaries", () => {
+  // The batched counterpart to getSnapshotHistory + getGrowthSummary — opens
+  // `dbPath` exactly once for however many repos are asked for, rather than
+  // once per repo (see TECH-DEBT.md's 2026-09-29 N+1 row, which this
+  // function resolves). Correctness must match calling getGrowthSummary
+  // per-repo one at a time; these tests assert that equivalence plus the
+  // batch-specific edge cases (unknown slug, empty input, missing db).
+
+  it("returns a summary per requested repo, keyed by its github slug", () => {
+    const dbPath = fixtureDb([
+      { github: "ollama/ollama", capturedOn: "2026-09-25", stars: 90 },
+      { github: "ollama/ollama", capturedOn: "2026-09-27", stars: 100 },
+      { github: "supabase/supabase", capturedOn: "2026-09-25", stars: 200 },
+      { github: "supabase/supabase", capturedOn: "2026-09-27", stars: 220 },
+    ]);
+    const summaries = getGrowthSummaries(["ollama/ollama", "supabase/supabase"], dbPath);
+    expect(summaries.get("ollama/ollama")).toMatchObject({ currentStars: 100, deltaStars: 10, days: 2 });
+    expect(summaries.get("supabase/supabase")).toMatchObject({ currentStars: 220, deltaStars: 20, days: 2 });
+  });
+
+  it("maps an untracked repo slug to null rather than omitting the key", () => {
+    const dbPath = fixtureDb([{ github: "ollama/ollama", capturedOn: "2026-09-27", stars: 100 }]);
+    const summaries = getGrowthSummaries(["ollama/ollama", "vllm-project/vllm"], dbPath);
+    expect(summaries.get("ollama/ollama")).not.toBeNull();
+    expect(summaries.has("vllm-project/vllm")).toBe(true);
+    expect(summaries.get("vllm-project/vllm")).toBeNull();
+  });
+
+  it("returns an empty map for an empty slug list without opening the database", () => {
+    expect(getGrowthSummaries([], "/nonexistent/path/repogrove.db")).toEqual(new Map());
+  });
+
+  it("maps every slug to null when the database file doesn't exist yet", () => {
+    const summaries = getGrowthSummaries(["ollama/ollama", "supabase/supabase"], "/nonexistent/path/repogrove.db");
+    expect(summaries.get("ollama/ollama")).toBeNull();
+    expect(summaries.get("supabase/supabase")).toBeNull();
+  });
+
+  it("matches calling getGrowthSummary(getSnapshotHistory(github)) one repo at a time", () => {
+    const dbPath = fixtureDb([
+      { github: "ollama/ollama", capturedOn: "2026-08-01", stars: 10 },
+      { github: "ollama/ollama", capturedOn: "2026-09-01", stars: 50 },
+      { github: "ollama/ollama", capturedOn: "2026-09-27", stars: 100 },
+      { github: "supabase/supabase", capturedOn: "2026-09-27", stars: 220 },
+    ]);
+    const slugs = ["ollama/ollama", "supabase/supabase"];
+    const batched = getGrowthSummaries(slugs, dbPath);
+    for (const github of slugs) {
+      const expected = getGrowthSummary(getSnapshotHistory(github, dbPath));
+      expect(batched.get(github)).toEqual(expected);
+    }
   });
 });
