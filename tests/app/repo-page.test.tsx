@@ -23,26 +23,46 @@ describe("Repo page (/repo/[slug])", () => {
     // Status renders as the StatusChip component (icon + text label as
     // separate nodes, icon marked aria-hidden) — see
     // tests/components/status-chip.test.tsx for its own unit coverage.
-    // Scoped to the page's own metadata <dl>: ollama's Alternatives table
-    // (see tests/components/alternatives-table.test.tsx) also renders a
-    // StatusChip for its resolved "vllm" row, which is itself Active too —
-    // an unscoped query would find two matches.
+    // Scoped to the page's own metadata <dl>, and further scoped to the
+    // "Status:" row specifically: ollama's Alternatives table (see
+    // tests/components/alternatives-table.test.tsx) also renders a
+    // StatusChip for its resolved "vllm" row, and this page's own new
+    // MomentumChip (issue #21/ADR-004) happens to also read "Active"/🟢 for
+    // ollama today (real data/repogrove.db growth rate) — an unscoped query
+    // would find multiple matches for both reasons.
     const metadata = container.querySelector("dl");
     expect(metadata).not.toBeNull();
-    expect(within(metadata!).getByText("Active")).toBeInTheDocument();
-    expect(within(metadata!).getByText("🟢")).toBeInTheDocument();
+    const statusRow = within(metadata!).getByText("Status:").closest("div")!;
+    expect(within(statusRow).getByText("Active")).toBeInTheDocument();
+    expect(within(statusRow).getByText("🟢")).toBeInTheDocument();
     expect(screen.getByText(/📜 MIT/)).toBeInTheDocument();
     expect(screen.getByText(/Ollama packages open-weight LLMs/)).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to the Grove.
     expect(screen.getByRole("link", { name: "AI" })).toHaveAttribute("href", "/grove/ai");
   });
 
+  it("renders the Momentum/Heat chip from real snapshot history (issue #21/ADR-004)", async () => {
+    // data/repogrove.db now holds 3 calendar days of history for ollama
+    // (2026-09-27 through 2026-09-29) — enough for computeHeat to produce
+    // a real label rather than omitting the chip. See docs/adr/ADR-004's
+    // worked example: ollama's real growth rate (~0.024%/day) lands in the
+    // "Active" bucket, same label ollama's editorial `status` happens to
+    // read today — a coincidence for this one repo, not the same signal
+    // (see this file's earlier scoped-query comment).
+    const { container } = render(
+      await RepoPage({ params: Promise.resolve({ slug: "ollama" }) }),
+    );
+    const metadata = container.querySelector("dl");
+    const momentumRow = within(metadata!).getByText("Momentum:").closest("div")!;
+    expect(within(momentumRow).getByText("Active")).toBeInTheDocument();
+    expect(within(momentumRow).getByText("🟢")).toBeInTheDocument();
+  });
+
   it("renders the star-growth chart from the committed snapshot database (issue #18)", async () => {
-    // data/repogrove.db currently holds exactly one day of history per repo
-    // (2026-09-27) — see PROJECT_STATE.md — so this exercises the
-    // single-snapshot graceful-degradation state, not the full chart. Once
-    // the daily ingestion job accumulates a second day, this should start
-    // seeing a real delta instead; either way the page must not crash.
+    // data/repogrove.db now holds several days of real history per repo
+    // (see docs/adr/ADR-004 for the exact count as of this PR) — this
+    // exercises the real-delta rendering path, not the single-snapshot
+    // graceful-degradation state; either way the page must not crash.
     const element = await RepoPage({ params: Promise.resolve({ slug: "ollama" }) });
     render(element);
 

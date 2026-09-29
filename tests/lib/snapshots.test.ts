@@ -11,7 +11,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { openDb, upsertSnapshot } from "../../scripts/ingestion/snapshots-db.ts";
-import { getGrowthSummaries, getGrowthSummary, getSnapshotHistory, type SnapshotRow } from "@/lib/snapshots";
+import { getGrowthBaseline, getGrowthSummaries, getGrowthSummary, getSnapshotHistory, type SnapshotRow } from "@/lib/snapshots";
 
 const tempDirs: string[] = [];
 
@@ -93,6 +93,28 @@ describe("getSnapshotHistory", () => {
     ]);
     const history = getSnapshotHistory("ollama/ollama", dbPath);
     expect(history.map((r) => r.contributors)).toEqual([12, null]);
+  });
+});
+
+describe("getGrowthBaseline", () => {
+  // Extracted out of getGrowthSummary (src/lib/heat.ts's computeHeat needs
+  // the actual baseline *row* — openIssues/contributors, not just
+  // stars/deltaStars — so it can compute its own signals against the same
+  // 30-day-windowed baseline the star-growth rate uses, rather than
+  // silently picking a different "oldest" row). The windowing behavior
+  // itself is already covered by getGrowthSummary's tests below, since
+  // getGrowthSummary now calls this function internally.
+  it("returns null for no history", () => {
+    expect(getGrowthBaseline([])).toBeNull();
+  });
+
+  it("returns the same row getGrowthSummary derives its baseline from", () => {
+    const history = [
+      row({ capturedOn: "2026-08-01", stars: 10 }),
+      row({ capturedOn: "2026-09-01", stars: 50 }),
+      row({ capturedOn: "2026-09-27", stars: 100 }),
+    ];
+    expect(getGrowthBaseline(history)?.capturedOn).toBe("2026-09-01");
   });
 });
 

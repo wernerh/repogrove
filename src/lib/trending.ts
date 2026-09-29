@@ -8,9 +8,10 @@
  * by raw stars gained, as opposed to `/rising` (#20, shipped — see
  * `src/lib/rising.ts`'s `rankByRelativeGrowth`), which ranks by growth
  * *relative to a repo's size* instead. This module does not compute the
- * Grove Heat/momentum score (issue #21/ADR-004, separately data-gated) — a
- * simpler absolute-growth sort is this page's explicit non-goal-free
- * starting point per the issue body.
+ * Grove Heat/momentum label (issue #21/ADR-004, see `src/lib/heat.ts` — now
+ * shipped, computed separately from this page's own ranking) — a simpler
+ * absolute-growth sort is this page's explicit non-goal-free starting
+ * point per the issue body.
  */
 import type { Repo } from "@/lib/content";
 import type { GrowthSummary } from "@/lib/snapshots";
