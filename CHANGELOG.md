@@ -374,3 +374,18 @@ entries.
   (75/75), `npm audit --audit-level=high` (0 vulnerabilities) locally; `npm run build`
   reproduced the known ADR-006 sandbox font-fetch gap, confirmed green on CI's real
   GitHub-hosted runner instead. Quiet run per CLAUDE.md rule 8. (security)
+- 2026-09-29 — Dev run 20: quiet run, no code/content changed. `/trending` (#19) still
+  data-gated (2/3 calendar days, re-verified against a freshly git-fetched `main` via
+  `node:sqlite`; today's 04:17 UTC ingestion cron still hadn't fired as of run start
+  ~06:50 UTC, ~2h33m late — within past lateness range, e.g. run 10's 6h37m delay).
+  Re-read issue #21's own body this run: it explicitly lists "needs several days of real
+  `RepositorySnapshot` history to validate against" as a dependency, so drafting ADR-004
+  (Grove Heat methodology) ahead of data isn't a safe substitute task either. Confirmed
+  `main` CI green (at head `7f39e3e` before this run's lock commit, and `fa7c915` after),
+  0 open dev-lane PRs, 0 new dependabot PRs since run 19. Checked the RG-4 owner-decision
+  Gmail thread — still exactly 3 messages, no new reply since 2026-09-27T17:32:04Z, due
+  2026-09-30 (design lane's call to default); nothing else RepoGrove-related in recent
+  mail. Ran `npm ci` (0 vulnerabilities), `npm run lint` (clean), `npm test` (79/79),
+  `npm audit --audit-level=high` (0 vulnerabilities) locally; `npm run build` reproduced
+  the known ADR-006 sandbox font-fetch gap, confirmed green on CI's GitHub-hosted runner
+  instead. No unclaimed security/design findings. Quiet run per CLAUDE.md rule 8. (dev)
