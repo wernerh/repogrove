@@ -81,7 +81,28 @@ directly — this no longer looks like something a future unattended factory run
 complete on its own. RG-4 re-checked again this run (`get_thread` on the same thread)
 — still no new reply since 2026-09-27T17:32:04Z; due 2026-09-30, ~2 days off.
 
+Run 7 (2026-09-29): RG-6's real, correctly-fonted screenshots (committed under
+`docs/design/screenshots/*.png` since security run 7) got their first actual visual
+review — this lane's stated "look at screenshots before judging" step, finally possible
+for real. Reviewed all three routes × both themes × all three viewports (18 images).
+Found one real, screenshot-verified defect: the header logo (`🌱 RepoGrove`) and the
+homepage's `🌳 Groves` heading used literal leaf/tree emoji, directly contradicting
+`DESIGN-SYSTEM.md`'s own documented brand rationale ("a quiet nod to 'Grove' without an
+illustrated leaf anywhere"); the homepage's `📦 Repositories` heading isn't foliage but
+was removed alongside it for heading-to-heading consistency — see
+`docs/design/findings/UX-2026-001-brand-mark-leaf-emoji.md`. Everything else held up:
+type hierarchy (sans chrome / serif prose / mono stats/dates/slugs) renders correctly
+with real fonts, dark-mode brand-teal contrast reads as intended (not a bug —
+`text.link`'s brand-70 is a deliberately dark, high-contrast teal, easy to mistake for
+near-black at small serif sizes, checked against the token value directly), the
+star-growth chart and momentum status label (🟢 Active) match their specs, and
+mobile/tablet layouts reflow cleanly with no overflow. Fixed the emoji finding (2-file,
+content-only change, issue #50), independent-reviewed pre-commit, verified locally
+(lint/tsc/test 75/75/audit clean; build reproduces the known ADR-006 sandbox font-fetch
+gap, left to CI). RG-4 re-checked again this run (`get_thread`) — still no new reply
+since the 2026-09-27T17:32:04Z message; due 2026-09-30, one day off.
+
 ## Findings
 | ID | Severity | Status | Component | Mapping | Issue/PR |
 |---|---|---|---|---|---|
-| — | — | — | — | — | — |
+| UX-2026-001 | MAJOR | Verified (fixed) | Header logo + homepage section headings | `layout.tsx`, `page.tsx` | #50, PR #51 |

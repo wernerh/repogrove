@@ -19,7 +19,7 @@ export default function Home() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold">🌳 Groves</h2>
+        <h2 className="text-xl font-semibold">Groves</h2>
         <p className="text-sm text-text-secondary">
           Curated collections of repositories around a problem or ecosystem.
         </p>
@@ -39,7 +39,7 @@ export default function Home() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold">📦 Repositories</h2>
+        <h2 className="text-xl font-semibold">Repositories</h2>
         <p className="text-sm text-text-secondary">
           Repository intelligence pages — what it is, why people use it, and
           what to use instead.

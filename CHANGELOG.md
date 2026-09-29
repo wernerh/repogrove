@@ -326,3 +326,13 @@ entries.
   locally; `npm run build` reproduced the known ADR-006 sandbox font-fetch gap, confirmed
   green on CI's GitHub-hosted runner instead. No unclaimed security/design findings, no
   TODO/FIXME in src/scripts/tests. Quiet run per CLAUDE.md rule 8. (dev)
+- 2026-09-29 — UX-2026-001: the header logo (`🌱 RepoGrove`) and the homepage's `🌳
+  Groves` heading used literal leaf/tree emoji, contradicting `DESIGN-SYSTEM.md`'s own
+  Brand scale rationale ("a quiet nod to 'Grove' without an illustrated leaf anywhere") —
+  found during this lane's first real review of the correctly-fonted screenshots RG-6
+  landed. The homepage's `📦 Repositories` heading isn't foliage but was removed
+  alongside it for heading-to-heading consistency (no spec calls for an icon on either).
+  Fixed: both files now rely on typography alone. 2-file, content-only change; no
+  token/layout change needed. See
+  `docs/design/findings/UX-2026-001-brand-mark-leaf-emoji.md`, issue #50, PR #51.
+  (design)

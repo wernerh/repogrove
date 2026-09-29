@@ -78,6 +78,10 @@
     Re-checked again 2026-09-28 (dev run 14 and dev run 15) — still no new reply since
     the 17:32:04Z message (run 15 confirmed via get_thread, exactly 3 messages in the
     thread). Due date 2026-09-30 unchanged, ~2 days off.
+    Re-checked again 2026-09-29 (design run 7, via get_thread) — still exactly 3
+    messages, no new reply since 17:32:04Z. Due date 2026-09-30 is now tomorrow; the
+    next run to touch this thread should apply the recommended default
+    (editorial/content-forward) if still unanswered.
 
 - id: RG-6
   lane: design
