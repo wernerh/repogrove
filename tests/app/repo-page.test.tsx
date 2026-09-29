@@ -19,7 +19,11 @@ describe("Repo page (/repo/[slug])", () => {
     render(element);
 
     expect(screen.getByRole("heading", { level: 1, name: "Ollama" })).toBeInTheDocument();
-    expect(screen.getByText("🟢 Active")).toBeInTheDocument();
+    // Status renders as the StatusChip component (icon + text label as
+    // separate nodes, icon marked aria-hidden) — see
+    // tests/components/status-chip.test.tsx for its own unit coverage.
+    expect(screen.getByText("Active")).toBeInTheDocument();
+    expect(screen.getByText("🟢")).toBeInTheDocument();
     expect(screen.getByText(/📜 MIT/)).toBeInTheDocument();
     expect(screen.getByText(/Ollama packages open-weight LLMs/)).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to the Grove.

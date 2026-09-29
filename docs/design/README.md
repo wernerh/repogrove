@@ -106,6 +106,29 @@ and recommitted refreshed screenshots (`376fe6a`) — reviewed the refreshed hom
 screenshot directly and confirmed the fix end to end, no layout/spacing artifact from the
 emoji removal.
 
+Run 8 (2026-09-29): closed out issue #41 (RG-6) — it had been left open as `needs-human`
+even though the owner applied the drafted `commit-screenshots` job directly to `main`
+himself (commit `517c8e4`) and it's been working since (confirmed again this run).
+Then built the first real **status chip** component (`src/components/StatusChip.tsx`)
+against `DESIGN-SYSTEM.md`'s Component patterns spec, replacing `/repo/[slug]`'s
+plain-text `STATUS_LABEL` map ("🟢 Active" as one unstyled string, no color token) with a
+real icon+label pill using the `success`/`warning`/`text.secondary` semantic tokens.
+Flagged (in `DESIGN-SYSTEM.md`'s Open questions) a real icon-collision risk for whoever
+builds the future Momentum/Heat chip (issue #21/ADR-004): it shares the exact 🟢/🟡/⚪
+icon set with this status chip for a different concept (computed growth signal vs.
+hand-authored editorial classification), so a repo could show contradictory-looking
+same-color chips once momentum lands — not blocking now since momentum doesn't exist yet
+to compare against, but worth a deliberate pass when it does. Added component test
+coverage (`tests/components/status-chip.test.tsx`) and updated the repo-page test for the
+new icon/label DOM split. RG-4 re-checked (`get_thread`) — still no new reply since
+2026-09-27T17:32:04Z; due 2026-09-30 (tomorrow) — next run applies the recommended default
+if still unanswered. Validated locally: lint clean, `tsc --noEmit` clean, tests 79/79
+(4 new), `npm audit --audit-level=high` 0 vulns; build reproduces the known ADR-006
+sandbox font-fetch gap, left to CI. Real-screenshot review of the rendered chip is next
+run's job once CI's build lands this PR's screenshots. **Next major task:** the repo/Grove
+card pattern — homepage still renders a plain `<ul>` of links instead of the specced card,
+and there's now enough content (5 repos, 2 Groves) to make a real grid worth reviewing.
+
 ## Findings
 | ID | Severity | Status | Component | Mapping | Issue/PR |
 |---|---|---|---|---|---|
