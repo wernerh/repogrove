@@ -65,10 +65,13 @@ files.
   change) — left to CI's GitHub-hosted runner, which has real font access.
 - Grepped `src/`, `content/`, and `docs/design/` for the three emoji plus a general
   leaf/tree/plant emoji sweep — none remain in application code after the fix.
-- `design-screenshots.yml`'s `commit-screenshots` job will recommit fresh screenshots to
-  `docs/design/screenshots/` on the next push to `main` after this PR merges; a future run
-  should do one more visual pass on the refreshed header once that lands, but the fix
-  itself is a direct text removal with no room for a rendering surprise.
+- PR #51 merged (squash, all 6 CI checks green, including the real `next build` on
+  CI's GitHub-hosted runner). `design-screenshots.yml`'s `commit-screenshots` job fired
+  on the resulting push to `main` (commit `376fe6a`) and recommitted refreshed
+  screenshots. Reviewed `home__desktop-light.png` directly post-merge: the header and
+  both homepage headings now render as plain typography (Inter, `font-semibold`), no
+  layout/spacing artifact from the removal — confirmed fixed end to end, not just in the
+  source diff.
 
 ## Related
 Issue [#50](https://github.com/wernerh/repogrove/issues/50). Follow-up note left in

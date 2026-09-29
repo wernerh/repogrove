@@ -1,6 +1,6 @@
 # RepoGrove factory dashboard
 
-_Generated 2026-09-29T00:54:43.877200+00:00_
+_Generated 2026-09-29T01:29:11.084510+00:00_
 
 ## Product
 - Version: 0.0.0-bootstrap
@@ -24,4 +24,4 @@ _Generated 2026-09-29T00:54:43.877200+00:00_
 
 ## Findings
 - Security: {'total': 4, 'open': 1, 'fixed': 2, 'verified': 3}
-- Design: {'total': 0, 'open': 0, 'fixed': 0, 'verified': 0}
+- Design: {'total': 1, 'open': 0, 'fixed': 1, 'verified': 1}

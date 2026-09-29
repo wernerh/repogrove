@@ -100,7 +100,11 @@ mobile/tablet layouts reflow cleanly with no overflow. Fixed the emoji finding (
 content-only change, issue #50), independent-reviewed pre-commit, verified locally
 (lint/tsc/test 75/75/audit clean; build reproduces the known ADR-006 sandbox font-fetch
 gap, left to CI). RG-4 re-checked again this run (`get_thread`) — still no new reply
-since the 2026-09-27T17:32:04Z message; due 2026-09-30, one day off.
+since the 2026-09-27T17:32:04Z message; due 2026-09-30, one day off. PR #51 merged
+(squash, 6/6 CI checks green); the `commit-screenshots` job fired on the resulting push
+and recommitted refreshed screenshots (`376fe6a`) — reviewed the refreshed homepage
+screenshot directly and confirmed the fix end to end, no layout/spacing artifact from the
+emoji removal.
 
 ## Findings
 | ID | Severity | Status | Component | Mapping | Issue/PR |
