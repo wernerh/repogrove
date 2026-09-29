@@ -246,6 +246,15 @@ entries.
   already-known value). Independent review caught and fixed a real bug pre-merge: the
   single-page fallback could silently under-count when a `Link` header lacked
   `rel="last"`. See ADR-005's addendum. PR #37. (dev)
+- 2026-09-29 — `/trending` and `/rising`'s previously near-duplicated ~40-line
+  list-row block extracted into a shared `src/components/RankedList.tsx`
+  (`RankedList` + an internal `RankingRow`) — markup-for-markup identical to what
+  both pages inlined before, so no visible or behavioral change; each page still
+  computes its own ranking math and `reason()` string, passing only pre-formatted
+  entries. Flagged as this lane's carried-over "next major task" since design run 10
+  (see `TECH-DEBT.md`, `docs/design/DESIGN-SYSTEM.md`). New
+  `tests/components/ranked-list.test.tsx`; both pages' existing tests pass
+  unmodified. Independent reviewer subagent: no findings. (design)
 
 ### Fixed
 - 2026-09-28 — Ingestion's `watchers` metric now captures the real, distinct GitHub

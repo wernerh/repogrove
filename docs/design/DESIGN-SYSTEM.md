@@ -382,6 +382,16 @@ premature scale CLAUDE.md §4 asks the design lane to avoid.
 - **Page headers:** title (Inter, `text-2xl`) + one-line context/breadcrumb (mono for a
   slug like `owner/name`, sans for everything else) + primary action (if any) right-
   aligned on desktop, stacked on mobile.
+- **Ranked list row** (`/trending` #19, `/rising` #20) — **built 2026-09-29 (design run
+  12):** `src/components/RankedList.tsx` — a shared `RankedList` (the `<ol>`/empty-state
+  wrapper) plus an internal `RankingRow` (rank span with `aria-label="Rank N"`,
+  stretched-link `<h2>` to `/repo/:slug` per the Repo/Grove card's single-focus-stop
+  pattern above, a mono reason line, an optional primary-category tag), replacing what
+  `/trending` and `/rising` had each inlined near-identically. The component takes only
+  a pre-formatted `reason` string per entry and a page-owned `emptyMessage` — ranking
+  math and reason formatting (absolute-delta vs. relative-percent) stay page-owned, not
+  pulled into the shared component, since that's real content, not shared chrome. See
+  "Open questions" below for the full run note.
 
 ## WCAG 2.1 AA — floor, not aspiration
 
@@ -407,6 +417,12 @@ earlier in this run failed and are worth recording so the reasoning survives: a 
   "happy with public and suggestions" already recorded); proceeding on the recommended
   default (editorial/content-forward) per `.factory/decisions.yaml`, defaults
   2026-09-30 if still unanswered — two days away, next run should check again.
+  Re-checked again 2026-09-29 (design run 12, via get_thread) — still exactly 3
+  messages, no new reply since the 17:32:04Z message. Due date 2026-09-30 is tomorrow;
+  full re-check history is in `.factory/decisions.yaml`'s RG-4 entry, the source of
+  truth for this decision. This run's task (`RankingRow`/`RankedList` extraction)
+  didn't depend on the answer either way. Next run should apply the recommended
+  default for real if the due date has passed and still no reply.
 - Density modes, additional radius/elevation tiers, and a compact table mode are
   deliberately deferred until a real page exists to test them against (see Spacing &
   layout above).
@@ -535,3 +551,32 @@ earlier in this run failed and are worth recording so the reasoning survives: a 
   turns up first — this run's fix used its "one major task" slot on the icon-collision
   defect instead, since a shipped, screenshot-confirmed collision on the site's flagship
   feature outranked a UI-only refactor.
+- **Done 2026-09-29 (design run 12):** no higher-priority finding surfaced this run
+  (RG-4's email thread re-checked, no new reply — see below; no new UX finding landed
+  since run 11), so this run picked up the carried-over task: extracted
+  `src/components/RankedList.tsx` (`RankedList` + an internal `RankingRow`) out of
+  `/trending` and `/rising`'s previously-duplicated ~40-line row block. The extraction is
+  markup-for-markup identical to what both pages inlined before (same `<li>` classes
+  including the full `has-[a:hover]`/`has-[a:focus-visible]` chain, same
+  `aria-label="Rank N"`, same stretched-link `<h2><Link
+  className="after:absolute after:inset-0 focus:outline-none">` pattern, same
+  category-tag conditional, same empty-state `<p>`) — a pure DRY move, not a redesign,
+  so every existing `/trending`/`/rising` test kept passing unmodified. Each page still
+  owns its own ranking math (`src/lib/trending.ts`/`rising.ts`) and its own `reason()`
+  formatting (trending's absolute-delta vs. rising's rounded-percent-with-sign-handling
+  — real content, not chrome); `RankedList` only takes a pre-formatted `reason` string
+  per entry plus a page-owned `emptyMessage`. New `tests/components/ranked-list.test.tsx`
+  covers the empty state (no list/listitem rendered), row order/hrefs, the 1-indexed
+  `aria-label`, verbatim reason rendering, category-tag presence/omission, and real
+  `<ol>`/`listitem` semantics (the same list-semantics regression class flagged for
+  RepoCard above). Independent reviewer subagent before merge: no BLOCKER/MAJOR/MINOR/NIT
+  findings — markup fidelity, separation of concerns, and test coverage all confirmed
+  independently, `npm test`/`npm run lint`/`npx tsc --noEmit` all reverified clean.
+  `npm run build` still hits the known ADR-006 sandbox font-fetch gap (unrelated to this
+  change, unchanged since run 3) — left to CI. TECH-DEBT.md's row appended (not
+  rewritten; the original row is dev-owned) marking the item resolved. **Next major
+  task:** no carried-over pick remains from this line of work; the next run should treat
+  `TECH-DEBT.md`'s open `design`-owned rows (MomentumChip's tooltip-only signal
+  exposure, AlternativesTable's non-interactive sort) as the standing backlog, in that
+  order, unless a higher-priority finding or a new dev-lane page needing a pattern
+  lands first.
