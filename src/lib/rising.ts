@@ -10,9 +10,10 @@
  * spec's own distinction (§6/§8): a "Hot Right Now"-style absolute sort
  * favors already-large repos, while a relative sort is what surfaces a
  * smaller repo growing unusually fast before it's mainstream. This module
- * does not compute the Grove Heat/momentum score (issue #21/ADR-004,
- * separately data-gated, and this issue's own explicit non-goal) — a
- * simpler relative-growth-rate sort is this page's starting point.
+ * does not compute the Grove Heat/momentum label (issue #21/ADR-004, see
+ * `src/lib/heat.ts` — now shipped, computed separately from this page's own
+ * ranking, and this issue's own explicit non-goal for `/rising` itself) —
+ * a simpler relative-growth-rate sort is this page's starting point.
  */
 import type { Repo } from "@/lib/content";
 import type { GrowthSummary } from "@/lib/snapshots";

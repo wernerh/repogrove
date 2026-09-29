@@ -172,20 +172,22 @@ export interface GrowthSummary {
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 /**
- * Growth summary ("+1,240 stars / 30 days", spec §6), computed from
- * whatever history exists rather than requiring a fixed minimum: the
- * baseline is the oldest snapshot within the last 30 days, or the very
- * first snapshot if tracking hasn't run that long yet. Returns `null` for
- * no history at all; callers should treat `days === 0` (only one snapshot
- * so far) as "not enough history for a delta yet", not "+0 stars".
+ * The baseline snapshot `getGrowthSummary` compares against: the oldest
+ * snapshot within the last 30 days of the latest one, or the very first
+ * snapshot if tracking hasn't run that long yet. Exported (not just an
+ * implementation detail of `getGrowthSummary`) so a caller that needs more
+ * than the star-count delta — `src/lib/heat.ts`'s `computeHeat`, which also
+ * reads `openIssues`/`contributors` off the *same* baseline row — can reuse
+ * the identical windowing logic rather than picking its own "oldest" (e.g.
+ * `history[0]`, the absolute earliest snapshot ever) and silently comparing
+ * two different time windows on what looks like one figure once a repo
+ * accumulates more than 30 days of history.
  *
  * Sorts defensively (oldest-first by `capturedOn`) rather than trusting the
- * caller: `getSnapshotHistory` always returns rows in that order today, but
- * this module's own doc comment promises `/trending` (#19) and `/rising`
- * (#20) will reuse these helpers later, and a future caller silently
- * passing unsorted rows should not get silently wrong growth numbers.
+ * caller — same reasoning as `getGrowthSummary` below. Returns `null` for
+ * no history at all.
  */
-export function getGrowthSummary(unsortedHistory: SnapshotRow[]): GrowthSummary | null {
+export function getGrowthBaseline(unsortedHistory: SnapshotRow[]): SnapshotRow | null {
   if (unsortedHistory.length === 0) return null;
   const history = [...unsortedHistory].sort((a, b) => a.capturedOn.localeCompare(b.capturedOn));
   const latest = history[history.length - 1];
@@ -204,7 +206,30 @@ export function getGrowthSummary(unsortedHistory: SnapshotRow[]): GrowthSummary 
       break;
     }
   }
+  return baseline;
+}
 
+/**
+ * Growth summary ("+1,240 stars / 30 days", spec §6), computed from
+ * whatever history exists rather than requiring a fixed minimum — see
+ * `getGrowthBaseline` for how the baseline snapshot is chosen. Returns
+ * `null` for no history at all; callers should treat `days === 0` (only
+ * one snapshot so far) as "not enough history for a delta yet", not "+0
+ * stars".
+ *
+ * Sorts defensively (oldest-first by `capturedOn`) rather than trusting the
+ * caller: `getSnapshotHistory` always returns rows in that order today, but
+ * this module's own doc comment promises `/trending` (#19) and `/rising`
+ * (#20) will reuse these helpers later, and a future caller silently
+ * passing unsorted rows should not get silently wrong growth numbers.
+ */
+export function getGrowthSummary(unsortedHistory: SnapshotRow[]): GrowthSummary | null {
+  if (unsortedHistory.length === 0) return null;
+  const history = [...unsortedHistory].sort((a, b) => a.capturedOn.localeCompare(b.capturedOn));
+  const latest = history[history.length - 1];
+  const baseline = getGrowthBaseline(unsortedHistory)!;
+
+  const latestMs = Date.parse(`${latest.capturedOn}T00:00:00Z`);
   const baselineMs = Date.parse(`${baseline.capturedOn}T00:00:00Z`);
   const days = Math.round((latestMs - baselineMs) / MS_PER_DAY);
 

@@ -2,8 +2,10 @@ import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
 import { getAllRepos, getRepo, splitOutSection } from "@/lib/content";
 import { getGrowthSummaries, getSnapshotHistory } from "@/lib/snapshots";
+import { computeHeat } from "@/lib/heat";
 import StarGrowthChart from "@/components/StarGrowthChart";
 import StatusChip from "@/components/StatusChip";
+import MomentumChip from "@/components/MomentumChip";
 import AlternativesTable, { type ResolvedAlternative } from "@/components/AlternativesTable";
 import type { Metadata } from "next";
 
@@ -48,6 +50,12 @@ export default async function RepoPage({ params }: PageProps) {
     stars: altRepo ? starsByGithub.get(altRepo.github)?.currentStars ?? null : null,
   }));
 
+  // Reused for both the star-growth chart and the Momentum/Heat chip below
+  // — one getSnapshotHistory call per repo page, not two (same N+1 lesson
+  // as TECH-DEBT.md's 2026-09-29 homepage row).
+  const snapshotHistory = getSnapshotHistory(repo.github);
+  const heat = computeHeat(snapshotHistory);
+
   const { before: bodyBeforeAlternatives, after: bodyAfterAlternatives } = splitOutSection(
     repo.body,
     "Alternatives",
@@ -91,6 +99,14 @@ export default async function RepoPage({ params }: PageProps) {
             <StatusChip status={repo.status} />
           </dd>
         </div>
+        {heat && (
+          <div>
+            <dt className="inline font-medium text-text-default">Momentum: </dt>
+            <dd className="inline">
+              <MomentumChip heat={heat} />
+            </dd>
+          </div>
+        )}
         <div>
           <dt className="inline font-medium text-text-default">License: </dt>
           <dd className="inline">📜 {repo.license}</dd>
@@ -101,7 +117,7 @@ export default async function RepoPage({ params }: PageProps) {
         </div>
       </dl>
 
-      <StarGrowthChart history={getSnapshotHistory(repo.github)} />
+      <StarGrowthChart history={snapshotHistory} />
 
       <div className="mt-6">
         <Markdown>{bodyBeforeAlternatives}</Markdown>
