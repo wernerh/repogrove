@@ -21,7 +21,7 @@ Technical considerations / Testing / Security / Rollout / Documentation / Depend
 - [x] `RepositorySnapshot` schema + SQLite storage (ADR-005) (#17, PR #22)
 - [x] Star-growth chart on repo pages (#18, PR #31)
 - [x] Trending page (`/trending`) (#19, PR #55)
-- [ ] Rising page (`/rising`) — fast growth, not just absolute size (#20)
+- [x] Rising page (`/rising`) — fast growth, not just absolute size (#20, PR #56)
 - [ ] Momentum/"Heat" methodology implemented + documented (ADR-004) (#21)
 
 ## Phase 3 — Search, SEO, alternatives, newsletter signup
