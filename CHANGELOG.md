@@ -434,3 +434,28 @@ entries.
   105/105 tests pass (14 new/updated), lint clean, `tsc --noEmit` clean, `npm audit
   --audit-level=high` 0 vulnerabilities, all run locally; `next build` reproduces the known
   ADR-006 sandbox font-fetch gap, left to CI's GitHub-hosted runner as in every prior run. (dev)
+- 2026-09-29 — Dev run 23: `/rising` (issue #20), sharing the same Phase 2 data-maturity
+  gate `/trending` already met. New page ranks tracked repos by *relative* star growth
+  (percent change against each repo's own baseline, not raw stars gained — spec §6/§8
+  "Rising Repositories," surfacing a smaller repo growing unusually fast rather than
+  favoring already-large repos) with a real, computed "+N.N% star growth in the last M
+  days" reason line — no Grove Heat/momentum score exists yet (issue #21/ADR-004,
+  separately data-gated), matching `/trending`'s own non-goal. New pure
+  `rankByRelativeGrowth` in `src/lib/rising.ts` (`percentGrowth = deltaStars /
+  (currentStars - deltaStars) * 100`; excludes a repo with no history, only one snapshot,
+  or a zero/negative baseline star count — dividing by that would produce
+  Infinity/NaN, not a real percentage; keeps a repo with negative growth, sorted last,
+  same convention as `/trending`). Rising rows reuse the same "stretched link"
+  single-focus-stop pattern. Header nav gained a "Rising" link. Independent review
+  before push found no MAJOR issues; fixed the MINOR items it raised: `formatPercent`
+  now signs off the *rounded* value so a genuinely tiny but nonzero percentage (e.g.
+  0.02%) displays as "±0.0%" rather than a stray-looking "+0.0%"/"-0.0%" (float
+  percentages can hit this in a way `/trending`'s integer star deltas never do); the
+  reason line reads "star growth", not bare "stars" (a percentage in front of "stars"
+  read as a fraction of one star); `/trending`'s own doc comment, which called `/rising`
+  "not yet built," updated; a new TECH-DEBT.md row for the ~40-line row-rendering block
+  now duplicated between the two pages; an added negative-baseline test case alongside
+  the existing zero-baseline one. 120/120 tests pass (15 new), lint clean, `tsc --noEmit`
+  clean, `npm audit --audit-level=high` 0 vulnerabilities, all run locally; `next build`
+  reproduces the known ADR-006 sandbox font-fetch gap, left to CI's GitHub-hosted runner
+  as in every prior run. (dev)

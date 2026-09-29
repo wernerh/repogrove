@@ -5,11 +5,12 @@
  * without either a database or `/content` fixtures.
  *
  * "Absolute" here is the spec's own word for this page (issue #19): ranked
- * by raw stars gained, as opposed to `/rising` (#20, not yet built), which
- * will rank by growth *relative to a repo's size* instead. This module does
- * not compute the Grove Heat/momentum score (issue #21/ADR-004, separately
- * data-gated) — a simpler absolute-growth sort is this page's explicit
- * non-goal-free starting point per the issue body.
+ * by raw stars gained, as opposed to `/rising` (#20, shipped — see
+ * `src/lib/rising.ts`'s `rankByRelativeGrowth`), which ranks by growth
+ * *relative to a repo's size* instead. This module does not compute the
+ * Grove Heat/momentum score (issue #21/ADR-004, separately data-gated) — a
+ * simpler absolute-growth sort is this page's explicit non-goal-free
+ * starting point per the issue body.
  */
 import type { Repo } from "@/lib/content";
 import type { GrowthSummary } from "@/lib/snapshots";
