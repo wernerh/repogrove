@@ -13,11 +13,11 @@ migration, or deploy target needed yet.
 **Phase 2 — Ingestion & metrics**. Phase 1 landed in PR #10.
 
 ## Next action (exactly one)
-`/trending` (#19) still data-gated (2/3 calendar days; today's 04:17 UTC ingestion
-hadn't fired yet as of this run). Run 17: quiet — `main` CI green, 0 dev PRs open, 4 new
-dependabot PRs (#46-49, all green, owner merges these not this lane), RG-4 re-checked
-(no reply, due 2026-09-30), RG-6 confirmed resolved (owner applied the job directly,
-`517c8e4`). Next: check for day 3, then start `/trending`.
+`/trending` (#19) still data-gated (2/3 calendar days; today's 04:17 UTC ingestion still
+~1.5h away as of this run start ~02:50 UTC). Run 18: quiet — `main` CI green, 0 dev PRs
+open, 0 new dependabot PRs since #49, RG-4 re-checked (no reply since 2026-09-27
+17:32:04Z, due 2026-09-30 — design lane's call). Next: check for day 3, then start
+`/trending`.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -47,8 +47,8 @@ stayed data-gated — a calendar-time blocker, not a failed attempt. Start `/tre
 ## Blockers and attempts
 None blocking (rule 8). `ingestion.yml`'s cron works; 2nd calendar day captured, no new
 snapshot day yet. Dependabot #29 (eslint) blocked upstream (eslint-plugin-react gap);
-#28 (typescript) resolved via revert (PR #45) + ignore rule. Design: RG-6 fully
-resolved — owner applied the `commit-screenshots` job directly (`517c8e4`).
+#28 (typescript) resolved via revert (PR #45) + ignore rule. 5 open dependabot PRs
+(#29, #46-49) all outside this lane's merge gate — owner merges these directly.
 
 ## Milestones
 - [x] 2026-09-27 — Repo bootstrapped; Phase 1 walking skeleton — #5, #6, #7
