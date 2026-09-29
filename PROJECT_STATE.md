@@ -13,12 +13,11 @@ migration, or deploy target needed yet.
 **Phase 2 — Ingestion & metrics**. Phase 1 landed in PR #10.
 
 ## Next action (exactly one)
-`/trending` (#19) still data-gated (2/3 calendar days; today's 04:17 UTC ingestion still
-hadn't fired as of this run's checks ~08:48-08:50 UTC, ~4h31-33m late — within past
-lateness range, e.g. run 10's 6h37m delay). Run 21: quiet — `main` CI green, 0 dev PRs
-open, 0 new dependabot PRs since #49, RG-4 re-checked (no reply since 2026-09-27
-17:32:04Z, due 2026-09-30 — design lane's call). Next: check for day 3, then start
-`/trending`.
+Run 22: the data-maturity gate (5 repos, 3+ calendar days of snapshot history) was met
+for the first time this run — shipped `/trending` (#19, PR #55): ranks repos by
+absolute star growth, batched `getGrowthSummaries` read (also fixed the homepage's N+1
+tech debt row). `/rising` (#20) shares the identical gate and is now equally
+actionable — start it next.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -42,19 +41,20 @@ crawling infra, admin CMS, live deploy — see spec §30, §33 and ADR-002.
 ## Timebox
 Phase 2: run 1 ingestion+schema (PR #22); run 2 star-growth chart (PR #31); runs 3-6, 16
 did unblocked tech debt/pipeline/CI work (PRs #32, #35, #37, #38, #45) since #19-21
-stayed data-gated — a calendar-time blocker, not a failed attempt. #21 (ADR-004 Heat
-methodology) explicitly needs real history to validate thresholds against too (per its
-own issue body), so it's not separately actionable ahead of #19/#20. Start `/trending`
-(#19) once 3+ days of history exists.
+stayed data-gated — a calendar-time blocker, not a failed attempt. Run 22: gate met,
+`/trending` shipped (PR #55). `/rising` (#20) and ADR-004 (#21, Heat methodology — needs
+the same real history to validate thresholds against) are both now actionable too.
 
 ## Blockers and attempts
-None blocking (rule 8). `ingestion.yml`'s cron works; 2nd calendar day captured, no new
-snapshot day yet. Dependabot #29 (eslint) blocked upstream (eslint-plugin-react gap);
-#28 (typescript) resolved via revert (PR #45) + ignore rule. 5 open dependabot PRs
-(#29, #46-49) all outside this lane's merge gate — owner merges these directly.
+None blocking (rule 8). `ingestion.yml`'s cron reached 3 calendar days of history this
+run, meeting the Phase 2 data gate. Dependabot #29 (eslint) blocked upstream
+(eslint-plugin-react gap); #28 (typescript) resolved via revert (PR #45) + ignore rule.
+5 open dependabot PRs (#29, #46-49) all outside this lane's merge gate — owner merges
+these directly.
 
 ## Milestones
 - [x] 2026-09-27 — Repo bootstrapped; Phase 1 walking skeleton — #5, #6, #7
 - [x] 2026-09-27 — Phase 2 ingestion job + schema (ADR-005) — #16/17, PR #22; repos 2→5
 - [x] 2026-09-28 — CI red fixed (#26, PR #27); star-growth chart (#18, PR #31); self-hosted fonts (ADR-006, PR #32); ingestion scripts to TS (PR #35); contributor counts (PR #37); watchers/subscribers_count fix (PR #38); typescript-7 CI-red revert (PR #45).
+- [x] 2026-09-29 — `/trending` (#19, PR #55): data-maturity gate met, batched snapshot reads.
 - [ ] Phase 3 — search, SEO, newsletter signup
