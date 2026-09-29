@@ -82,6 +82,9 @@
     messages, no new reply since 17:32:04Z. Due date 2026-09-30 is now tomorrow; the
     next run to touch this thread should apply the recommended default
     (editorial/content-forward) if still unanswered.
+    Re-checked again 2026-09-29 (dev run 19, via get_thread) — still exactly 3 messages,
+    no new reply since 17:32:04Z. Due date 2026-09-30 is tomorrow; not this lane's
+    decision to default (design lane owns RG-4).
 
 - id: RG-6
   lane: design

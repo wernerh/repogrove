@@ -14,10 +14,10 @@ migration, or deploy target needed yet.
 
 ## Next action (exactly one)
 `/trending` (#19) still data-gated (2/3 calendar days; today's 04:17 UTC ingestion still
-~1.5h away as of this run start ~02:50 UTC). Run 18: quiet — `main` CI green, 0 dev PRs
-open, 0 new dependabot PRs since #49, RG-4 re-checked (no reply since 2026-09-27
-17:32:04Z, due 2026-09-30 — design lane's call). Next: check for day 3, then start
-`/trending`.
+hadn't fired as of this run start ~04:49 UTC, ~32min late — within past lateness range).
+Run 19: quiet — `main` CI green, 0 dev PRs open, 0 new dependabot PRs since #49, RG-4
+re-checked (no reply since 2026-09-27 17:32:04Z, due 2026-09-30 — design lane's call).
+Next: check for day 3, then start `/trending`.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
