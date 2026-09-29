@@ -518,3 +518,24 @@ entries.
   and the non-gating `design-screenshots.yml`, real screenshots reviewed post-merge).
   Issue #21 auto-closed by the merge; ROADMAP.md's Phase 2 checklist is now fully
   checked. (dev)
+- 2026-09-29 — UX-2026-003: `StatusChip` and `MomentumChip` (issue #21/ADR-004, PR #59,
+  shipped same day) rendered their "active" state as an identical 🟢 dot + "Active" text
+  — every one of today's 5 repos is `status: active`, and ollama's real momentum reads
+  `active` too, so the real `repo-ollama__*.png` screenshots showed two visually
+  identical pills next to each other for two genuinely different claims (editorial
+  maintenance vs. computed growth signal), exactly the collision issue #52 (design run
+  8) had pre-flagged before momentum existed to compare against. Fixed by giving
+  `StatusChip` a distinct icon shape — a plain, hard-edged square swatch via
+  `bg-current`, not a dot — rather than touching `MomentumChip`, whose 🔥/🟢/🟡/⚪ icon
+  set is spec-locked in `DESIGN-SYSTEM.md`. An independent reviewer subagent caught a
+  real bug before merge: the first attempt used `rounded-sm` (4px) on the swatch's
+  10px box, which a real Playwright render showed reads as a circle, not a square, at
+  that size — the fix would have shipped, tests green, without solving the collision.
+  Revised to `rounded-none` at a 12px box and re-rendered to confirm the shapes are now
+  genuinely distinct; tightened the regression test to assert the specific class.
+  Issue #52 closed. See
+  `docs/design/findings/UX-2026-003-status-momentum-chip-icon-collision.md`. 161/161
+  tests pass (5 updated: `tests/components/status-chip.test.tsx`,
+  `tests/app/repo-page.test.tsx`), lint clean, `tsc --noEmit` clean, `npm audit
+  --audit-level=high` 0 vulnerabilities, all run locally; `next build` reproduces the
+  known ADR-006 sandbox font-fetch gap, left to CI. (design)

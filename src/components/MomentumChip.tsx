@@ -5,8 +5,13 @@ import type { HeatLabel, HeatResult } from "@/lib/heat";
  * docs/design/DESIGN-SYSTEM.md's Momentum/Heat component contract
  * specifies: icon + label + text-color pairing using the reserved
  * `momentum-*` tokens (never the generic `success`/`warning` tokens
- * StatusChip uses for the unrelated editorial `status` field — see that
- * component's doc comment on the icon-collision note, issue #52).
+ * StatusChip uses for the unrelated editorial `status` field). The
+ * 🔥/🟢/🟡/⚪ icon set here is spec-locked (DESIGN-SYSTEM.md's Open
+ * questions: "the one place emoji-as-icon is already spec'd and stays
+ * as-is") — issue #52's icon-collision with StatusChip was resolved by
+ * changing StatusChip's icon shape instead (a square swatch, not a dot),
+ * not this component. See
+ * docs/design/findings/UX-2026-003-status-momentum-chip-icon-collision.md.
  *
  * The underlying signals (star growth, open issues, contributor growth)
  * are exposed via the native `title` tooltip for now — a real

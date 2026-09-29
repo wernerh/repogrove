@@ -354,7 +354,19 @@ premature scale CLAUDE.md §4 asks the design lane to avoid.
     mobile; `overflow-x-auto` stays as a defensive fallback, not the primary strategy.
 - **Status chips** (momentum/Heat — see above): icon + label + text-color pairing, never
   a filled color block with no text, `radius-sm` fully-rounded exception noted above,
-  `space-1` internal padding.
+  `space-1` internal padding. **`StatusChip` (editorial `repo.status`) and
+  `MomentumChip` (computed Grove Heat) must never share an icon shape**, only ever a
+  color — the two can legitimately disagree about the same repo (issue #52; resolved as
+  UX-2026-003), and did render identically for the common case before the fix.
+  `MomentumChip`'s 🔥/🟢/🟡/⚪ circular-dot icon set is spec-locked (see Open questions
+  below); `StatusChip` instead uses a plain, unrounded (`rounded-none`) square swatch
+  (`bg-current`, no separate color prop) — built 2026-09-29 (design run 11),
+  `src/components/StatusChip.tsx`. Not `radius-sm` (4px): an independent review before
+  merge rendered that first-pass version against real chip chrome and found 4px
+  rounding on the swatch's small box reads as a circle at a glance (4px is 40% of a
+  10px box, close to `rounded-full`'s 50%) — the fix would have shipped without
+  actually solving the collision. Revised to a hard-edged square at a slightly larger
+  12px box instead.
 - **Dates:** always render as an explicit, unambiguous string with a native
   `<time datetime>` attribute (e.g. "3 days ago" with a `title` tooltip showing the exact
   ISO date) — relative dates alone are an a11y/clarity failure for anyone using a screen
@@ -495,3 +507,28 @@ earlier in this run failed and are worth recording so the reasoning survives: a 
   work already flagged as this lane's territory — a reasonable next pick if nothing
   higher-priority (a design finding, a new dev-lane page needing a pattern) has landed by
   then.
+- **Done 2026-09-29 (design run 11):** the higher-priority thing landed — dev run 24
+  shipped Grove Heat v1 (`MomentumChip`, issue #21/ADR-004, PR #59), reusing
+  `StatusChip`'s exact 🟢/🟡/⚪ icon set exactly as run 8's note above warned it would if
+  nobody gave the two chips "a deliberate pass together" first. The real, committed
+  `repo-ollama__*.png` screenshots confirmed it: ollama reads `status: active` and
+  `momentum: active` today, so `/repo/ollama` showed two identical green-dot "Active"
+  pills side by side — see
+  `docs/design/findings/UX-2026-003-status-momentum-chip-icon-collision.md` for the full
+  writeup. Fixed by changing `StatusChip`'s icon shape (a plain, hard-edged square
+  swatch, not a dot) rather than `MomentumChip`'s, since the latter's 🔥/🟢/🟡/⚪ set is
+  the one already spec-locked by the note two entries up. An independent reviewer
+  subagent before merge caught a real problem with the first attempt: it used
+  `rounded-sm` (4px) on the swatch's 10px box, and a real render (not just eyeballing
+  the Tailwind class name) showed that much rounding on that small a box reads as a
+  circle, not a square — the fix would have shipped, tests green, without actually
+  solving the collision it was for. Revised to `rounded-none` at a 12px box, re-rendered
+  to confirm the shape difference is now actually perceptible next to MomentumChip's
+  dot, and added a regression test asserting `rounded-none` specifically (not just
+  "not `rounded-full`," which the broken first version also passed). Issue #52 closed.
+  Both chips' color pairs stay independently correct (`success`/`warning`/
+  `text.secondary` vs. `momentum-*`) — only the icon shape changed. **Next major task:**
+  unchanged from run 10's pick above (`RankingRow`/`RankedList` extraction) unless a
+  higher-priority finding turns up first — this run's fix used its "one major task" slot
+  on the icon-collision defect instead, since a shipped, screenshot-confirmed collision
+  on the site's flagship feature outranked a UI-only refactor.
