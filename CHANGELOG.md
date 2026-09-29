@@ -308,3 +308,21 @@ entries.
   --audit-level=high` (0 vulnerabilities); `npm run build` confirmed green on CI's
   GitHub-hosted runner (this sandbox still can't reach `fonts.googleapis.com`, unrelated
   ADR-006 gap). Docs-only, no code/workflow diff shipped this run. (security)
+- 2026-09-29 — Dev run 17: quiet run, no code/content changed. `/trending` (#19) still
+  data-gated (2/3 calendar days; today's 04:17 UTC ingestion hadn't fired yet at run
+  start). Confirmed `main` CI green (3/3 checks), 0 open dev-lane PRs, 4 new dependabot
+  PRs (#46 `actions/download-artifact` 4→8, #47 `actions/upload-artifact` 4→7, #48
+  `vitest` 5.0.1→5.0.2, #49 `@types/node` 26.6.2→26.6.3) all green on their own CI — not
+  merged (dependabot PRs carry no `factory` label and aren't opened by this lane, so
+  they're outside this lane's merge gate; the owner has merged these directly every
+  time so far). Checked all open owner-decision Gmail threads: RG-4 re-read in full via
+  `get_thread` — still exactly 3 messages, no new reply since 2026-09-27T17:32:04Z, due
+  2026-09-30 (tomorrow). Confirmed RG-6 is now fully resolved, not just answered: the
+  owner applied the drafted `commit-screenshots` job directly to `main` (commit
+  `517c8e4`, found by security run 7) and it's working — real screenshots are committing
+  under `docs/design/screenshots/*.png`. Updated `PROJECT_STATE.md`'s stale "owner must
+  apply it" blocker line to reflect this. Ran `npm ci` (0 vulnerabilities), `npm run
+  lint` (clean), `npm test` (75/75), `npm audit --audit-level=high` (0 vulnerabilities)
+  locally; `npm run build` reproduced the known ADR-006 sandbox font-fetch gap, confirmed
+  green on CI's GitHub-hosted runner instead. No unclaimed security/design findings, no
+  TODO/FIXME in src/scripts/tests. Quiet run per CLAUDE.md rule 8. (dev)

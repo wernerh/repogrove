@@ -13,12 +13,11 @@ migration, or deploy target needed yet.
 **Phase 2 — Ingestion & metrics**. Phase 1 landed in PR #10.
 
 ## Next action (exactly one)
-`/trending` (#19) still data-gated (2/3 calendar days; tomorrow adds day 3). Run 16:
-found `main` CI RED — owner merged dependabot PR #28 (`typescript` →7.0.2) directly,
-hitting the already-diagnosed `typescript-eslint`-vs-TS-7.0 incompatibility. Fixed as
-this run's major task: reverted to `^5` + dependabot ignore rule (PR #45, reviewed,
-green, merged). RG-4 re-checked: no new reply, due 2026-09-30. Next: check for day 3,
-then start `/trending`.
+`/trending` (#19) still data-gated (2/3 calendar days; today's 04:17 UTC ingestion
+hadn't fired yet as of this run). Run 17: quiet — `main` CI green, 0 dev PRs open, 4 new
+dependabot PRs (#46-49, all green, owner merges these not this lane), RG-4 re-checked
+(no reply, due 2026-09-30), RG-6 confirmed resolved (owner applied the job directly,
+`517c8e4`). Next: check for day 3, then start `/trending`.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -46,12 +45,10 @@ stayed data-gated — a calendar-time blocker, not a failed attempt. Start `/tre
 (#19) once 3+ days of history exists.
 
 ## Blockers and attempts
-None blocking (rule 8). `ingestion.yml`'s cron works; today's 2nd calendar day is
-captured, no new snapshot day yet. Dependabot #29 (eslint) blocked upstream
-(eslint-plugin-react gap); #28 (typescript) resolved — reverted after the owner merged
-it directly and broke CI (PR #45), with a dependabot ignore rule so it won't recur.
-Design: RG-6 answered but this factory can't self-grant the CI write permission it
-needs (structural block); owner must apply it.
+None blocking (rule 8). `ingestion.yml`'s cron works; 2nd calendar day captured, no new
+snapshot day yet. Dependabot #29 (eslint) blocked upstream (eslint-plugin-react gap);
+#28 (typescript) resolved via revert (PR #45) + ignore rule. Design: RG-6 fully
+resolved — owner applied the `commit-screenshots` job directly (`517c8e4`).
 
 ## Milestones
 - [x] 2026-09-27 — Repo bootstrapped; Phase 1 walking skeleton — #5, #6, #7
