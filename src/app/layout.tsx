@@ -49,12 +49,18 @@ export default function RootLayout({
             <Link href="/" className="text-lg font-semibold tracking-tight">
               RepoGrove
             </Link>
-            <nav>
+            <nav className="flex items-center gap-4">
               <Link
                 href="/trending"
                 className="font-sans text-sm font-medium text-text-secondary hover:text-text-default hover:underline"
               >
                 Trending
+              </Link>
+              <Link
+                href="/rising"
+                className="font-sans text-sm font-medium text-text-secondary hover:text-text-default hover:underline"
+              >
+                Rising
               </Link>
             </nav>
           </div>
