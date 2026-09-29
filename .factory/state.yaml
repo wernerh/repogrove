@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-29T21:15:00Z"
-  holder: "design"
-  last_run: "2026-09-29T21:10:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-29T21:21:00Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -10,7 +10,7 @@ product:
 execution:
   active_tasks: []
   blocked_tasks: []
-  open_prs: []
+  open_prs: ["#68 (design/ranking-row-extraction) - CI in progress at close-out, watched via PR-activity subscription"]
 
 health:
   ci: green
@@ -19,7 +19,7 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 37
+  runs: 38
   features_completed: 13
   bugs_fixed: 4
   security_issues_fixed: 3
@@ -59,8 +59,8 @@ security:
     A10: "PASS (fixed a bypass — SEC-002)"
 
 design:
-  last_run: "2026-09-29T17:16:13Z"
-  next_action: "Run 11: fixed UX-2026-003 — StatusChip and MomentumChip (issue #21/ADR-004, PR #59, shipped same day) rendered their 'active' state as an identical green dot + 'Active' text; every one of today's 5 repos is status:active and ollama's real momentum also reads active, so the real repo-ollama__*.png screenshots showed two visually identical pills on /repo/[slug] for two genuinely different claims — exactly the collision issue #52 (design run 8) had pre-flagged before momentum existed to compare against. Fixed StatusChip's icon (not MomentumChip's, whose 🔥/🟢/🟡/⚪ set is spec-locked): a plain square swatch via bg-current. An independent reviewer subagent caught a real bug in the first attempt before merge — rounded-sm (4px) on the swatch's 10px box rendered as a circle at real size (measured with an actual Playwright render, not eyeballed), so the fix would have shipped without solving the collision; revised to rounded-none at a 12px box, re-rendered to confirm the shape is now genuinely distinct, and tightened the regression test to assert the specific class. Issue #52 closed. 161/161 tests pass (5 updated), lint/tsc clean, 0 audit vulns, all run locally; build reproduces the known ADR-006 sandbox font-fetch gap, left to CI. PR #60 merged (squash, 4/4 gating CI green + non-gating axe-core job); commit-screenshots recommitted repo-ollama__* screenshots, all 6 (light/dark x desktop/tablet/mobile) reviewed directly this same run — square reads clearly distinct from the round momentum dot everywhere, no layout regression, AlternativesTable's Status column unaffected. RG-4 re-checked (get_thread) — still no new reply since 2026-09-27T17:32:04Z; due 2026-09-30 (tomorrow) — next run applies the recommended default if still unanswered. Next major task: unchanged from run 10 — TECH-DEBT.md's /trending+/rising shared row-rendering duplication (a RankingRow/RankedList extraction) is UI-only refactor work already flagged as this lane's territory, unless a higher-priority finding turns up first."
+  last_run: "2026-09-29T21:21:00Z"
+  next_action: "Run 12: no higher-priority finding surfaced (RG-4 re-checked, no new reply; no new UX finding). Picked up the carried-over task from runs 10/11: extracted src/components/RankedList.tsx (RankedList + internal RankingRow) out of /trending and /rising's previously-duplicated ~40-line row block, markup-for-markup identical to what both pages inlined before (same classes, aria-label, stretched-link pattern, empty-state handling) — a pure DRY move, no visible change. Each page still owns its own ranking math and reason() formatting. New tests/components/ranked-list.test.tsx (empty state, row order/hrefs, 1-indexed aria-label, reason text, category-tag presence/omission, real <ol>/listitem semantics); both pages' existing tests pass unmodified (214/214 total). Lint clean, tsc --noEmit clean, all run locally; build reproduces the known ADR-006 sandbox font-fetch gap, left to CI. Independent reviewer subagent: no BLOCKER/MAJOR/MINOR/NIT findings. PR #68 opened (factory-design label), CI triggered but still in progress at close-out (lock timebox) — left for the next PR-activity event or run to merge once green, per this session's PR-ownership rules. TECH-DEBT.md row appended (not rewritten — original row is dev-owned). RG-4 re-checked (get_thread) — still no new reply since 2026-09-27T17:32:04Z; due 2026-09-30 (tomorrow) — next run applies the recommended default if still unanswered. Next major task: TECH-DEBT.md's open design-owned rows — MomentumChip's tooltip-only signal exposure (not reliably reachable by screen reader/keyboard/touch) first, then AlternativesTable's non-interactive sort — unless a higher-priority finding or a new dev-lane page needing a pattern lands first."
   timebox: null
   failed_attempts: 0
   open_findings:
