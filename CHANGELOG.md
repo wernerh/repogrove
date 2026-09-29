@@ -200,6 +200,15 @@ entries.
   CI screenshots post-merge (light/dark × desktop/tablet/mobile). Flagged a future
   icon-collision risk with the momentum chip (both use 🟢/🟡/⚪ for different concepts)
   as issue #52. PR #53. (design)
+- 2026-09-29 — `src/components/RepoCard.tsx`/`GroveCard.tsx`: the first real "Repo/Grove
+  card" component per `DESIGN-SYSTEM.md`'s Component patterns spec, replacing the
+  homepage's plain `<ul>` of text links with `bg.elevated`/`radius-md`/`elevation-1`
+  cards (name, one-line description, stars/category footer for repos; repo count for
+  Groves). Entire card is a single focus stop via the "stretched link" pattern (one
+  `<a>`, concise accessible name, no nested interactives). Momentum chip, `language`,
+  and the "why interesting" one-liner are honestly omitted (no fabricated data — see
+  `DESIGN-SYSTEM.md`'s built-note for the full reasoning). 10 new component tests. PR
+  TBD. (design)
 
 ### Changed
 - 2026-09-28 — `scripts/ingestion/fetch-snapshots.mjs`/`snapshots-db.mjs` converted to

@@ -48,9 +48,12 @@ function firstParagraph(body: string): string {
  * top-right slot) — that signal is computed, not hand-authored, and isn't
  * built yet (issue #21/ADR-004, data-gated per PROJECT_STATE.md). Wire it
  * into this header row once it exists, rather than a placeholder now — see
- * issue #52 for the icon-collision note to review at that point. `language`
- * is likewise omitted: it isn't captured by ingestion yet (see TECH-DEBT.md)
- * and this lane doesn't add data-model fields to get one.
+ * issue #52 for the icon-collision note to review at that point. Two more
+ * footer fields the spec lists are likewise omitted, not fabricated:
+ * "language" isn't captured by ingestion yet (see TECH-DEBT.md), and the
+ * "why interesting" one-liner has no content-model field to draw from —
+ * `content/repos/*.md`'s "Why people use it" is a bullet list, not a single
+ * line, and this lane doesn't add data-model fields to invent one.
  */
 export default function RepoCard({ repo, stars }: RepoCardProps) {
   const description = firstParagraph(repo.body);
@@ -61,7 +64,10 @@ export default function RepoCard({ repo, stars }: RepoCardProps) {
       className="relative flex flex-col gap-2 rounded-md border border-border-subtle bg-bg-elevated p-6 shadow-elevation-1 transition-shadow duration-[var(--duration-fast)] has-[a:hover]:shadow-elevation-2 has-[a:focus-visible]:shadow-elevation-2 has-[a:focus-visible]:outline has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2 has-[a:focus-visible]:outline-cta-fill"
     >
       <h3 className="font-sans text-lg font-semibold text-text-default">
-        <Link href={`/repo/${repo.slug}`} className="after:absolute after:inset-0">
+        <Link
+          href={`/repo/${repo.slug}`}
+          className="after:absolute after:inset-0 focus:outline-none"
+        >
           {repo.name}
         </Link>
       </h3>
@@ -71,7 +77,7 @@ export default function RepoCard({ repo, stars }: RepoCardProps) {
       <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 pt-2 font-mono text-sm text-text-secondary">
         {stars !== null && <span>⭐ {numberFormatter.format(stars)}</span>}
         {primaryCategory && (
-          <span className="inline-flex items-center rounded-sm bg-bg-subtle px-2 py-1 font-sans text-text-secondary">
+          <span className="inline-flex items-center rounded-sm bg-bg-subtle p-2 font-sans text-text-secondary">
             {primaryCategory}
           </span>
         )}

@@ -29,15 +29,13 @@ export default function Home() {
         <p className="text-sm text-text-secondary">
           Curated collections of repositories around a problem or ecosystem.
         </p>
-        <div className="mt-4 grid grid-cols-1 gap-8 md:grid-cols-2">
+        <ul className="mt-4 grid grid-cols-1 gap-8 md:grid-cols-2">
           {groves.map((grove) => (
-            <GroveCard
-              key={grove.slug}
-              grove={grove}
-              repoCount={getReposInGrove(grove.slug).length}
-            />
+            <li key={grove.slug}>
+              <GroveCard grove={grove} repoCount={getReposInGrove(grove.slug).length} />
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
       <section>
@@ -46,15 +44,13 @@ export default function Home() {
           Repository intelligence pages — what it is, why people use it, and
           what to use instead.
         </p>
-        <div className="mt-4 grid grid-cols-1 gap-8 md:grid-cols-2">
+        <ul className="mt-4 grid grid-cols-1 gap-8 md:grid-cols-2">
           {repos.map((repo) => (
-            <RepoCard
-              key={repo.slug}
-              repo={repo}
-              stars={latestStars(getSnapshotHistory(repo.github))}
-            />
+            <li key={repo.slug}>
+              <RepoCard repo={repo} stars={latestStars(getSnapshotHistory(repo.github))} />
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
     </div>
   );

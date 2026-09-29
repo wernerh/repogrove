@@ -24,7 +24,10 @@ export default function GroveCard({ grove, repoCount }: GroveCardProps) {
       className="relative flex flex-col gap-2 rounded-md border border-border-subtle bg-bg-elevated p-6 shadow-elevation-1 transition-shadow duration-[var(--duration-fast)] has-[a:hover]:shadow-elevation-2 has-[a:focus-visible]:shadow-elevation-2 has-[a:focus-visible]:outline has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2 has-[a:focus-visible]:outline-cta-fill"
     >
       <h3 className="font-sans text-lg font-semibold text-text-default">
-        <Link href={`/grove/${grove.slug}`} className="after:absolute after:inset-0">
+        <Link
+          href={`/grove/${grove.slug}`}
+          className="after:absolute after:inset-0 focus:outline-none"
+        >
           {grove.name}
         </Link>
       </h3>
