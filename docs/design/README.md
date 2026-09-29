@@ -171,8 +171,30 @@ all clean; no test changes needed) and pushed as a same-run follow-up PR. RG-4
 re-checked (`get_thread`) — still no new reply since 2026-09-27T17:32:04Z; due
 2026-09-30 (tomorrow).
 
+Run 11 (2026-09-29) fixed a real, screenshot-confirmed defect: dev run 24's new
+`MomentumChip` (Grove Heat v1, PR #59) reused `StatusChip`'s exact 🟢/🟡/⚪ icon set,
+exactly the collision issue #52 (design run 8) had flagged in advance — the real
+`repo-ollama__*.png` screenshots showed "Status: 🟢 Active" and "Momentum: 🟢 Active"
+rendering as visually identical pills. Fixed by giving `StatusChip` a distinct icon
+shape (a plain, hard-edged square swatch via `bg-current`, not a dot) rather than
+touching `MomentumChip`, whose 🔥/🟢/🟡/⚪ set is spec-locked in `DESIGN-SYSTEM.md`. An
+independent reviewer subagent caught a real problem with the first attempt before
+merge: `rounded-sm` (4px) on the swatch's small 10px box rendered as a circle, not a
+square, at a real size — verified by actually rendering both versions side by side with
+Playwright, not just reading the diff — so the fix would have shipped without solving
+the collision it was for. Revised to `rounded-none` at a 12px box, re-rendered to
+confirm the shape is now genuinely distinct from MomentumChip's dot, and tightened the
+regression test to assert the specific class rather than only ruling out
+`rounded-full`. See
+`docs/design/findings/UX-2026-003-status-momentum-chip-icon-collision.md`. Issue #52
+closed. Validated locally: lint clean, `tsc --noEmit` clean, tests 161/161 (5 updated),
+`npm audit --audit-level=high` 0 vulns; build reproduces the known ADR-006 sandbox
+font-fetch gap, left to CI. RG-4 re-checked (`get_thread`) — still no new reply since
+2026-09-27T17:32:04Z; due 2026-09-30 (tomorrow).
+
 ## Findings
 | ID | Severity | Status | Component | Mapping | Issue/PR |
 |---|---|---|---|---|---|
 | UX-2026-001 | MAJOR | Verified (fixed) | Header logo + homepage section headings | `layout.tsx`, `page.tsx` | #50, PR #51 |
 | UX-2026-002 | MINOR | Fixed (same run) | Alternatives table mobile Category column | `AlternativesTable.tsx` | PR #57 follow-up |
+| UX-2026-003 | MAJOR | Fixed (same run) | StatusChip/MomentumChip icon collision | `StatusChip.tsx` | #52 |

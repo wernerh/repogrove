@@ -20,21 +20,24 @@ describe("Repo page (/repo/[slug])", () => {
     );
 
     expect(screen.getByRole("heading", { level: 1, name: "Ollama" })).toBeInTheDocument();
-    // Status renders as the StatusChip component (icon + text label as
-    // separate nodes, icon marked aria-hidden) — see
+    // Status renders as the StatusChip component (swatch + text label as
+    // separate nodes, swatch marked aria-hidden) — see
     // tests/components/status-chip.test.tsx for its own unit coverage.
     // Scoped to the page's own metadata <dl>, and further scoped to the
     // "Status:" row specifically: ollama's Alternatives table (see
     // tests/components/alternatives-table.test.tsx) also renders a
-    // StatusChip for its resolved "vllm" row, and this page's own new
-    // MomentumChip (issue #21/ADR-004) happens to also read "Active"/🟢 for
+    // StatusChip for its resolved "vllm" row, and this page's own
+    // MomentumChip (issue #21/ADR-004) happens to also read "Active" for
     // ollama today (real data/repogrove.db growth rate) — an unscoped query
-    // would find multiple matches for both reasons.
+    // would find multiple "Active" matches for both reasons. StatusChip and
+    // MomentumChip no longer share an icon (issue #52 — StatusChip uses a
+    // square swatch, MomentumChip keeps the spec-locked circular dot), so
+    // this scoping is about the shared "Active" text label, not an icon.
     const metadata = container.querySelector("dl");
     expect(metadata).not.toBeNull();
     const statusRow = within(metadata!).getByText("Status:").closest("div")!;
     expect(within(statusRow).getByText("Active")).toBeInTheDocument();
-    expect(within(statusRow).getByText("🟢")).toBeInTheDocument();
+    expect(within(statusRow).getByTestId("status-chip-swatch")).toBeInTheDocument();
     expect(screen.getByText(/📜 MIT/)).toBeInTheDocument();
     expect(screen.getByText(/Ollama packages open-weight LLMs/)).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to the Grove.
