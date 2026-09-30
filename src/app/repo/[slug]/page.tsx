@@ -3,7 +3,9 @@ import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
 import { getAllRepos, getComparisonsForRepo, getRepo, splitOutSection } from "@/lib/content";
 import { getGrowthSummaries, getSnapshotHistory } from "@/lib/snapshots";
+import { getRecentReleases } from "@/lib/releases";
 import { computeHeat } from "@/lib/heat";
+import { dateFormatter } from "@/lib/format";
 import StarGrowthChart from "@/components/StarGrowthChart";
 import StatusChip from "@/components/StatusChip";
 import MomentumChip from "@/components/MomentumChip";
@@ -56,6 +58,13 @@ export default async function RepoPage({ params }: PageProps) {
   // as TECH-DEBT.md's 2026-09-29 homepage row).
   const snapshotHistory = getSnapshotHistory(repo.github);
   const heat = computeHeat(snapshotHistory);
+
+  // Issue #72 (basic news widget, v1: GitHub Releases only) — recent releases for
+  // this repo, ingested into data/repogrove.db (never fetched live: output: "export"
+  // has no server runtime, same reasoning as every other data-fetching section on
+  // this page). Empty (no releases ingested yet, or the repo genuinely has none) gets
+  // an explicit "No recent releases" message below, never a fabricated one.
+  const releases = getRecentReleases(repo.github);
 
   // /compare/:a/:b (issue #62) — every hand-curated comparison naming this
   // repo, so a reader lands here without needing to know the compare route
@@ -135,6 +144,34 @@ export default async function RepoPage({ params }: PageProps) {
       </dl>
 
       <StarGrowthChart history={snapshotHistory} />
+
+      <section className="mt-6">
+        <h2 className="font-sans text-xl font-semibold text-text-default">Latest</h2>
+        {releases.length > 0 ? (
+          <ul className="mt-3 flex flex-col gap-2">
+            {releases.map((release) => (
+              <li
+                key={release.tagName}
+                className="flex flex-wrap items-baseline gap-x-2 font-sans text-sm"
+              >
+                <a
+                  href={release.htmlUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-text-link hover:underline"
+                >
+                  {release.name ?? release.tagName}
+                </a>
+                <span className="font-mono text-xs text-text-secondary">
+                  {dateFormatter.format(new Date(release.publishedAt))}
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-3 font-sans text-sm text-text-secondary">No recent releases.</p>
+        )}
+      </section>
 
       <div className="mt-6">
         <Markdown>{bodyBeforeAlternatives}</Markdown>

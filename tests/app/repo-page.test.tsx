@@ -115,4 +115,15 @@ describe("Repo page (/repo/[slug])", () => {
 
     expect(screen.queryByRole("heading", { level: 2, name: "Compared with" })).not.toBeInTheDocument();
   });
+
+  it("shows an explicit empty state for the 'Latest' releases section when none have been ingested yet (issue #72)", async () => {
+    // data/repogrove.db has no repository_releases rows yet — this is the real state
+    // today, not a mocked one. See tests/app/repo-page-releases.test.tsx (isolated,
+    // mocked @/lib/releases) for the populated-state render.
+    const element = await RepoPage({ params: Promise.resolve({ slug: "ollama" }) });
+    render(element);
+
+    expect(screen.getByRole("heading", { level: 2, name: "Latest" })).toBeInTheDocument();
+    expect(screen.getByText("No recent releases.")).toBeInTheDocument();
+  });
 });

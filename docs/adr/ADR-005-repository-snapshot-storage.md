@@ -160,3 +160,44 @@ already existed; only the value written to it changes going forward). Existing r
 whatever `watchers_count`-mirrors-stars value they were captured with on their day; this
 isn't backfilled (volatile, ingestion-owned data — the next daily snapshot naturally
 records the correct figure).
+
+## Addendum (2026-09-30): basic news widget (issue #72) — repository_releases table
+
+Issue #72 (Phase 3's "basic news widget," spec §11, scoped to v1: GitHub Releases only
+— see its own Problem/Proposed solution for why other spec §11 sources are out of
+scope for now) needed somewhere to store each repo's recent releases for `/repo/[slug]`'s
+new "Latest" section. This is a schema evolution of the same committed
+`data/repogrove.db` this ADR already governs, not a new storage decision (same file,
+same "populated by ingestion, never hand-edited" rule, no new dependency).
+
+- New table, `repository_releases` (`scripts/ingestion/snapshots-db.ts`'s `SCHEMA`
+  constant, created via `CREATE TABLE IF NOT EXISTS` like `repository_snapshots`) —
+  `UNIQUE(github, tag_name)`, not `UNIQUE(github, captured_on)`. This is a deliberate
+  shape difference from `repository_snapshots`: a release doesn't recur once a day the
+  way a metrics snapshot does, and (unlike stars/forks, which only ever go up or down)
+  a release can be edited after publishing (its name/body), so re-ingesting the same
+  tag should update the existing row, not accumulate one row per ingestion run for a
+  release that never changed.
+- Fetched via a fourth GitHub API call per repo (after metrics, contributors — issue
+  #72 doesn't need a fifth for anything else), `GET
+  /repos/{owner}/{repo}/releases?per_page=5` — same token, same rate-limit budget
+  already reviewed for this workflow (ADR-005's own "Consequences" section; no new
+  secret, no new vendor). Parsed by `parseReleases`/`fetchRepoReleases`
+  (`scripts/ingestion/fetch-snapshots.ts`), excluding drafts (never publicly visible on
+  GitHub either) and keeping prereleases (real, publicly linkable releases spec §11
+  has no reason to hide).
+- Failure isolation follows the same pattern as the contributor-count addendum above: a
+  releases fetch failing for one repo never throws away that repo's star/fork/issue
+  snapshot, and (since there's no single "unknown" value to write, unlike
+  `contributors: null`) simply leaves that repo's existing `repository_releases` rows
+  as they were from a previous successful run.
+- **Not pruned**: if a repo's top-5-by-recency releases change (an older release drops
+  out of the last 5 fetched), its row from a previous run stays in the table — the
+  read side (`src/lib/releases.ts`'s `getRecentReleases`) only ever reads the top N by
+  `published_at DESC`, so a stale row past that cutoff is harmless (never surfaced),
+  just not actively cleaned up. Acceptable at today's release cadence/repo count;
+  revisit (a `DELETE ... WHERE github = ? AND tag_name NOT IN (...)` per ingestion run)
+  if the table's size ever becomes worth caring about — tracked in `TECH-DEBT.md`.
+- Read at build time by `src/lib/releases.ts`'s `getRecentReleases`, mirroring
+  `src/lib/snapshots.ts`'s own `process.getBuiltinModule` pattern (same jsdom-bundling
+  reasoning — see that file's doc comment) rather than importing it directly.

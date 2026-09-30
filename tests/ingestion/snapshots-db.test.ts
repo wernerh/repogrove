@@ -6,7 +6,15 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { openDb, upsertSnapshot, getLatestSnapshot, getSnapshotHistory, getTrackedRepos } from "../../scripts/ingestion/snapshots-db.ts";
+import {
+  openDb,
+  upsertSnapshot,
+  getLatestSnapshot,
+  getSnapshotHistory,
+  getTrackedRepos,
+  upsertRelease,
+  getReleases,
+} from "../../scripts/ingestion/snapshots-db.ts";
 
 interface SnapshotRow {
   github: string;
@@ -162,5 +170,89 @@ describe("snapshots-db", () => {
     } finally {
       fs.rmSync(path.dirname(dbPath), { recursive: true, force: true });
     }
+  });
+
+  describe("releases (issue #72)", () => {
+    function makeRelease(overrides: Partial<Record<string, unknown>> = {}) {
+      return {
+        github: "ollama/ollama",
+        tagName: "v1.8.0",
+        name: "v1.8.0",
+        htmlUrl: "https://github.com/ollama/ollama/releases/tag/v1.8.0",
+        publishedAt: "2026-09-20T12:00:00.000Z",
+        fetchedAt: "2026-09-27T12:00:00.000Z",
+        ...overrides,
+      };
+    }
+
+    it("starts empty", () => {
+      const db = openDb(":memory:");
+      expect(getReleases(db, "ollama/ollama")).toEqual([]);
+      db.close();
+    });
+
+    it("round-trips a release", () => {
+      const db = openDb(":memory:");
+      upsertRelease(db, makeRelease());
+      expect(getReleases(db, "ollama/ollama")).toEqual([
+        {
+          github: "ollama/ollama",
+          tagName: "v1.8.0",
+          name: "v1.8.0",
+          htmlUrl: "https://github.com/ollama/ollama/releases/tag/v1.8.0",
+          publishedAt: "2026-09-20T12:00:00.000Z",
+          fetchedAt: "2026-09-27T12:00:00.000Z",
+        },
+      ]);
+      db.close();
+    });
+
+    it("stores a null name when GitHub's release has none", () => {
+      const db = openDb(":memory:");
+      upsertRelease(db, makeRelease({ name: null }));
+      expect(getReleases(db, "ollama/ollama")[0].name).toBeNull();
+      db.close();
+    });
+
+    it("is idempotent — upserting the same (github, tagName) twice updates, not duplicates", () => {
+      const db = openDb(":memory:");
+      upsertRelease(db, makeRelease({ name: "v1.8.0" }));
+      upsertRelease(db, makeRelease({ name: "v1.8.0 (edited)", fetchedAt: "2026-09-28T12:00:00.000Z" }));
+
+      const releases = getReleases(db, "ollama/ollama");
+      expect(releases).toHaveLength(1);
+      expect(releases[0].name).toBe("v1.8.0 (edited)");
+      expect(releases[0].fetchedAt).toBe("2026-09-28T12:00:00.000Z");
+      db.close();
+    });
+
+    it("orders multiple releases most-recently-published first", () => {
+      const db = openDb(":memory:");
+      upsertRelease(db, makeRelease({ tagName: "v1.7.0", publishedAt: "2026-09-01T00:00:00.000Z" }));
+      upsertRelease(db, makeRelease({ tagName: "v1.8.0", publishedAt: "2026-09-20T00:00:00.000Z" }));
+      upsertRelease(db, makeRelease({ tagName: "v1.6.0", publishedAt: "2026-08-15T00:00:00.000Z" }));
+
+      expect(getReleases(db, "ollama/ollama").map((r) => r.tagName)).toEqual(["v1.8.0", "v1.7.0", "v1.6.0"]);
+      db.close();
+    });
+
+    it("keeps different repos' releases independent", () => {
+      const db = openDb(":memory:");
+      upsertRelease(db, makeRelease({ github: "ollama/ollama", tagName: "v1.8.0" }));
+      upsertRelease(db, makeRelease({ github: "supabase/supabase", tagName: "v2.0.0" }));
+
+      expect(getReleases(db, "ollama/ollama").map((r) => r.tagName)).toEqual(["v1.8.0"]);
+      expect(getReleases(db, "supabase/supabase").map((r) => r.tagName)).toEqual(["v2.0.0"]);
+      db.close();
+    });
+
+    it("rejects a release missing a required field rather than silently writing partial data", () => {
+      const db = openDb(":memory:");
+      expect(() => upsertRelease(db, makeRelease({ htmlUrl: undefined }))).toThrow(
+        /missing required field "htmlUrl"/,
+      );
+      expect(getReleases(db, "ollama/ollama")).toEqual([]);
+      db.close();
+    });
   });
 });

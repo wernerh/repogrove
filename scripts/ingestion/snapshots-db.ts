@@ -41,6 +41,27 @@ CREATE TABLE IF NOT EXISTS repository_snapshots (
 );
 CREATE INDEX IF NOT EXISTS idx_repository_snapshots_github
   ON repository_snapshots (github, captured_on);
+
+-- Issue #72 (basic news widget, v1: GitHub Releases only) — a repo's current list of
+-- recent releases, not a per-day historical series like repository_snapshots above.
+-- Unlike a snapshot (one row per (github, captured_on), meant to accumulate forever),
+-- a release row is upserted by (github, tag_name): a release doesn't change once
+-- published except for edits GitHub itself allows (name/body), which the next
+-- ingestion run's upsert simply overwrites. See docs/adr/ADR-005-repository-snapshot-storage.md's
+-- 2026-09-30 addendum for why this lives in the same committed data/repogrove.db
+-- rather than a new storage decision.
+CREATE TABLE IF NOT EXISTS repository_releases (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  github TEXT NOT NULL,
+  tag_name TEXT NOT NULL,
+  name TEXT,
+  html_url TEXT NOT NULL,
+  published_at TEXT NOT NULL,
+  fetched_at TEXT NOT NULL,
+  UNIQUE(github, tag_name)
+);
+CREATE INDEX IF NOT EXISTS idx_repository_releases_github
+  ON repository_releases (github, published_at);
 `;
 
 /**
@@ -192,4 +213,75 @@ export function getSnapshotHistory(db: DatabaseSync, github: string): SnapshotRo
 export function getTrackedRepos(db: DatabaseSync): string[] {
   const stmt = db.prepare(`SELECT DISTINCT github FROM repository_snapshots ORDER BY github ASC`);
   return (stmt.all() as unknown as { github: string }[]).map((row) => row.github);
+}
+
+// --- repository_releases (issue #72, basic news widget v1) -----------------------
+
+export interface ReleaseInput {
+  github: string;
+  tagName: string;
+  /** Release title, or `null`/omitted for a release GitHub itself has no name for
+   * (some repos only ever set a tag) — the reader falls back to `tagName` for display,
+   * this table just stores what GitHub actually returned. */
+  name?: string | null;
+  htmlUrl: string;
+  /** ISO 8601 timestamp — GitHub's own `published_at` field. */
+  publishedAt: string;
+  fetchedAt: string;
+}
+
+export interface ReleaseRow {
+  github: string;
+  tagName: string;
+  name: string | null;
+  htmlUrl: string;
+  publishedAt: string;
+  fetchedAt: string;
+}
+
+const RELEASE_REQUIRED_FIELDS = ["github", "tagName", "htmlUrl", "publishedAt", "fetchedAt"] as const;
+
+/**
+ * Idempotently writes one release row. Calling this twice for the same
+ * (github, tagName) pair updates the existing row rather than creating a duplicate —
+ * a release can be edited (name/body) after publishing, and re-ingesting it should
+ * reflect that, not accumulate stale copies.
+ */
+export function upsertRelease(db: DatabaseSync, release: ReleaseInput): void {
+  for (const field of RELEASE_REQUIRED_FIELDS) {
+    if (release[field] === undefined || release[field] === null) {
+      throw new Error(`upsertRelease: missing required field "${field}"`);
+    }
+  }
+  const { github, tagName, name = null, htmlUrl, publishedAt, fetchedAt } = release;
+
+  const stmt = db.prepare(`
+    INSERT INTO repository_releases
+      (github, tag_name, name, html_url, published_at, fetched_at)
+    VALUES (?, ?, ?, ?, ?, ?)
+    ON CONFLICT(github, tag_name) DO UPDATE SET
+      name = excluded.name,
+      html_url = excluded.html_url,
+      published_at = excluded.published_at,
+      fetched_at = excluded.fetched_at
+  `);
+  stmt.run(github, tagName, name, htmlUrl, publishedAt, fetchedAt);
+}
+
+const RELEASE_SELECT_COLUMNS = `
+  github, tag_name AS tagName, name, html_url AS htmlUrl,
+  published_at AS publishedAt, fetched_at AS fetchedAt
+`;
+
+/** All releases on record for a repo, most recently published first. Mostly a test/
+ * inspection helper on the write side — `src/lib/releases.ts`'s `getRecentReleases`
+ * is the real read path Next.js pages use at build time. */
+export function getReleases(db: DatabaseSync, github: string): ReleaseRow[] {
+  const stmt = db.prepare(`
+    SELECT ${RELEASE_SELECT_COLUMNS}
+    FROM repository_releases
+    WHERE github = ?
+    ORDER BY published_at DESC
+  `);
+  return stmt.all(github) as unknown as ReleaseRow[];
 }
