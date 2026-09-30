@@ -1,14 +1,14 @@
 # RepoGrove factory dashboard
 
-_Generated 2026-09-30T09:26:04.014486+00:00_
+_Generated 2026-09-30T11:17:59.288220+00:00_
 
 ## Product
 - Version: 0.0.0-bootstrap
-- Focus: Phase 3 — search, SEO, alternatives, newsletter signup
+- Focus: Phase 3 MVP gate complete — Phase 4+ not yet scoped (owner-gated items pending)
 
 ## Metrics
-- runs: 42
-- features_completed: 16
+- runs: 43
+- features_completed: 17
 - bugs_fixed: 4
 - security_issues_fixed: 3
 - deployments: 0

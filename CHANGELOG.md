@@ -688,3 +688,21 @@ entries.
   routes × 6 viewport/color-scheme projects; all 48 real screenshots committed under
   `docs/design/screenshots/`. Reviewed a representative sample directly — no new UX
   findings, everything consistent with `DESIGN-SYSTEM.md`. (design)
+- 2026-09-30 — Basic news widget (#72, PR #74) — Phase 3's last MVP-gate item.
+  `/repo/[slug]` gained a "Latest" section listing a repo's recent GitHub releases
+  (name/tag, publish date, link to GitHub), or an explicit "No recent releases" empty
+  state. New `repository_releases` table in the already-committed `data/repogrove.db`
+  (ADR-005 addendum), populated by a third, independently-failable per-repo API call
+  in `scripts/ingestion/fetch-snapshots.ts`'s `runIngestion` (`GET
+  /repos/{owner}/{repo}/releases?per_page=5`) — a releases-fetch failure never throws
+  away that repo's star/fork/issue snapshot. New `src/lib/releases.ts` (read side).
+  Independent review before push found one MAJOR (an earlier `parseReleases` coerced
+  missing fields with `String(...)`, so a malformed entry became the literal text
+  `"undefined"` rather than being skipped — that could reach `dateFormatter.format`
+  and throw on an Invalid Date, breaking that repo's whole page render) and one MINOR
+  (an ingested `html_url` rendered as a link `href` with no host check); both fixed
+  pre-push. 287/287 tests pass (34 new/updated), lint clean, `tsc --noEmit` clean,
+  `npm audit --audit-level=high` 0 vulnerabilities, all run locally; all CI checks
+  green on PR #74 before squash-merging; post-merge CI on `main` also green. Issue
+  #72 auto-closed by the merge. `docs/WORKPLAN.md`'s Phase 3 gate (the 17-item MVP
+  list) is now fully complete. (dev)

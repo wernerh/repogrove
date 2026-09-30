@@ -1,11 +1,11 @@
 factory:
-  current_run: "2026-09-30T10:49:58Z"
-  holder: "dev"
-  last_run: "2026-09-30T09:26:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-30T11:19:00Z"
 
 product:
   current_version: "0.0.0-bootstrap"
-  current_focus: "Phase 3 — search, SEO, alternatives, newsletter signup"
+  current_focus: "Phase 3 MVP gate complete — Phase 4+ not yet scoped (owner-gated items pending)"
 
 execution:
   active_tasks: []
@@ -19,14 +19,57 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 42
-  features_completed: 16
+  runs: 43
+  features_completed: 17
   bugs_fixed: 4
   security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
 
 next_actions:
+  - "2026-09-30 (run 30): shipped the basic news widget (#72), PR #74 — the last item on
+    docs/WORKPLAN.md's Phase 3 gate (the 17-item MVP list, spec §30/PRODUCT.md), which is
+    now fully complete. v1 scope exactly as #72 specified: a 'Latest' section on
+    /repo/[slug] listing a repo's recent GitHub releases (name/tag, publish date, link
+    to the real GitHub release), or an explicit 'No recent releases' empty state — never
+    a fabricated one. Storage: new repository_releases table in the already-committed
+    data/repogrove.db (docs/adr/ADR-005's 2026-09-30 addendum) — UNIQUE(github,
+    tag_name), not UNIQUE(github, captured_on), since a release doesn't recur daily like
+    a metrics snapshot and can be edited after publishing. Ingestion:
+    scripts/ingestion/fetch-snapshots.ts's runIngestion gained a third,
+    independently-failable per-repo API call (GET /repos/{owner}/{repo}/releases?
+    per_page=5) — same failure-isolation pattern as the existing contributor-count
+    fetch, so a releases-fetch failure never throws away that repo's star/fork/issue
+    snapshot. New src/lib/releases.ts (read side, mirrors src/lib/snapshots.ts's
+    process.getBuiltinModule pattern for node:sqlite under jsdom tests). Independent
+    review before push found one MAJOR: an earlier parseReleases coerced every field
+    with String(...), so a genuinely malformed release entry (missing tag_name/
+    html_url/a resolvable date) became the literal text \"undefined\" rather than being
+    skipped — that string could reach dateFormatter.format(new Date(...)) on the page
+    and throw RangeError: Invalid time value on an Invalid Date, breaking that repo's
+    whole page render/static build for one bad release. Fixed pre-push: parseReleases
+    now requires a real tag_name, an https://github.com/... html_url, and a parseable
+    date, skipping the entry otherwise (with regression tests) — this also fixed the
+    same review's MINOR finding (the unvalidated html_url rendered as a link href with
+    no host check). A third MINOR (per_page=5 applied before the draft filter, so a
+    draft among a repo's 5 most-recently-created releases could push a real one out of
+    the window) filed as a TECH-DEBT.md row rather than fixed, to keep the PR scoped.
+    287/287 tests pass (34 new/updated: repository_releases round-trip/idempotency,
+    parseReleases/fetchRepoReleases/runIngestion release coverage including the
+    malformed-entry regressions above, the read-side module, and both the real-db
+    empty-state render and an isolated populated-state render for the page), lint
+    clean, tsc --noEmit clean, npm audit --audit-level=high 0 vulnerabilities, all run
+    locally; next build reproduces the known ADR-006 sandbox font-fetch gap (confirmed
+    it compiles past this change first), left to CI's GitHub-hosted runner — all 6
+    checks green on PR #74 before squash-merging it myself; post-merge CI on main also
+    confirmed green. Issue #72 auto-closed by the merge. ROADMAP.md/PROJECT_STATE.md/
+    CHANGELOG.md/DECISIONS.md updated — Phase 3 marked complete; Phase 4+ deliberately
+    left unfiled (several items — newsletter automation, public API, RepoGrove Pro —
+    are their own owner-gated territory per CLAUDE.md rule 6; next run should raise
+    those as owner decisions before filing issues, not default them). No open dev-lane
+    owner decisions this run (RG-4 was DEFAULTED for real last run, design run 13 — its
+    own note says no further re-checks are needed unless the owner replies). Next: scope
+    what, if anything, Phase 4 needs before its first roadmap issue can be filed."
   - "2026-09-30 (run 29): took over a stale lock (design, set 01:14 UTC by a run that
     died right after acquiring it — no branch/PR, nothing to recover, >5h30m old,
     CLAUDE.md's 50-minute rule). Shipped the newsletter signup form UI (#65), PR #71 —

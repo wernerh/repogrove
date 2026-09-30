@@ -36,10 +36,11 @@ Technical considerations / Testing / Security / Rollout / Documentation / Depend
 - [x] Newsletter signup form (storage only, no send automation) (#65, PR #71) — form UI
   only per the issue's own acceptance criteria; no working submit path until the
   storage/vendor owner decision is made
-- [ ] Basic news widget (#72) — spec §11/PRODUCT.md's MVP scope item 11, missed by every
-  Phase 3 issue filed so far (found dev run 29 while checking `docs/WORKPLAN.md`'s own
-  Phase 3 gate before declaring the phase complete); v1 scope recommended: GitHub
-  Releases only, per-repo, no new vendor/licensing risk
+- [x] Basic news widget (#72, PR #74) — v1 scope: per-repo "Latest" section on
+  `/repo/[slug]` listing recent GitHub releases (name/tag, publish date, link),
+  ingested into `data/repogrove.db` via a third per-repo API call (ADR-005's
+  2026-09-30 addendum). Phase 3's 17-item MVP gate (`docs/WORKPLAN.md`) is now
+  complete.
 
 ## Phase 4+ — Deferred product roadmap (spec §31–32)
 - [ ] Historical charts, watchlists/alerts (Phase 2 of product)
