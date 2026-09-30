@@ -55,9 +55,16 @@
   asked_at: "2026-09-27T00:00:00Z"
   email_thread_id: "1a0e3c35fae4b534"
   default_due_at: "2026-09-30T00:00:00Z"
-  status: OPEN
-  answer: null
-  answered_at: null
+  status: DEFAULTED
+  answer: >
+    No reply since the 2026-09-27T17:32:04Z "happy with public and suggestions" message
+    (checked via get_thread this run, thread 1a0e3c35fae4b534 still exactly 3 messages).
+    default_due_at (2026-09-30T00:00:00Z) has passed — applying the recommended default,
+    "Editorial/content-forward", per docs/DECISION-PROTOCOL.md's auto-default rule for
+    cheap-to-reverse questions. This formalizes what every run since design run 1 has
+    already been building against in practice (DESIGN-SYSTEM.md's tokens and every
+    shipped component/page). Reversible later at any time if the owner weighs in.
+  answered_at: "2026-09-30T09:15:00Z"
   note: >
     Same thread, 2026-09-27T17:32:04Z reply reads in full "happy with public and
     suggestions" — the "public" part clearly answers RG-3; "and suggestions" is too
@@ -125,6 +132,10 @@
     no new reply since 17:32:04Z. Due date 2026-09-30 is today; not this lane's decision
     to default (design lane owns RG-4). This run's task (newsletter signup form UI,
     #65/PR #71) didn't depend on the answer either way.
+    DEFAULTED 2026-09-30 (design run 13, via get_thread) — still exactly 3 messages, no
+    new reply since 17:32:04Z. Due date has passed (2026-09-30T00:00:00Z) — status moved
+    OPEN -> DEFAULTED, recommended default applied for real (see `answer` above). No
+    further re-checks needed unless the owner replies on the thread later.
 
 - id: RG-6
   lane: design
