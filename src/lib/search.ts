@@ -1,25 +1,17 @@
 /**
- * Search v1 (issue #63, ADR-008) — a static, build-time index matched
- * entirely client-side. See ADR-008 for the full architecture reasoning;
- * this module is deliberately split into two pure, independently-testable
- * halves: `buildSearchIndex` (what's searchable) and `searchEntries` (how a
- * query ranks against it) — no component, no React, no DOM.
+ * Search v1 (issue #63, ADR-008) — the index-building half, which needs
+ * `content.ts` (and therefore `node:fs`) and so is server-only. The pure
+ * matching half (`searchEntries`, the `SearchEntry`/`SearchEntryType`
+ * types) lives in `./search-match` instead — see that file's doc comment
+ * for why the split exists (a real Turbopack client-bundling failure this
+ * PR hit on its first CI run). Re-exported here so server code and tests
+ * can import everything from one place; `SearchBox.tsx` (Client Component)
+ * must import from `./search-match` directly, never from here.
  */
 import { firstParagraph, getAllAlternatives, getAllGroves, getAllRepos, type Alternative } from "./content";
+import { type SearchEntry } from "./search-match";
 
-export type SearchEntryType = "repo" | "grove" | "alternative";
-
-export interface SearchEntry {
-  type: SearchEntryType;
-  slug: string;
-  title: string;
-  /** Short, already-public description — never a second, hand-written copy
-   * of editorial content; see ADR-008's "Index" section for where each
-   * type's description comes from. */
-  description: string;
-  categories: string[];
-  url: string;
-}
+export { searchEntries, type SearchEntry, type SearchEntryType } from "./search-match";
 
 /**
  * Reads the same content-loader functions every page already calls
@@ -75,43 +67,4 @@ export function buildSearchIndex(): SearchEntry[] {
  */
 export function alternativeDescription(alternative: Pick<Alternative, "product" | "bestFit">): string {
   return alternative.bestFit.length > 0 ? `Best for: ${alternative.bestFit.join(", ")}` : "";
-}
-
-/** Lower is better — the tier an entry matched on, used only to sort. */
-enum MatchTier {
-  ExactTitle = 0,
-  TitleStartsWith = 1,
-  TitleContains = 2,
-  CategoryContains = 3,
-  DescriptionContains = 4,
-}
-
-function matchTier(entry: SearchEntry, normalizedQuery: string): MatchTier | null {
-  const title = entry.title.toLowerCase();
-  if (title === normalizedQuery) return MatchTier.ExactTitle;
-  if (title.startsWith(normalizedQuery)) return MatchTier.TitleStartsWith;
-  if (title.includes(normalizedQuery)) return MatchTier.TitleContains;
-  if (entry.categories.some((category) => category.toLowerCase().includes(normalizedQuery))) {
-    return MatchTier.CategoryContains;
-  }
-  if (entry.description.toLowerCase().includes(normalizedQuery)) return MatchTier.DescriptionContains;
-  return null;
-}
-
-/**
- * Pure substring ranking (ADR-008's "Matching" section) — no fuzzy/typo
- * tolerance, no external library, matching issue #63's own non-goal
- * ("semantic/AI-ranked search" is explicitly out). An empty/whitespace-only
- * query returns no results, so an untouched search box doesn't render every
- * piece of content unranked.
- */
-export function searchEntries(index: SearchEntry[], query: string): SearchEntry[] {
-  const normalizedQuery = query.trim().toLowerCase();
-  if (normalizedQuery === "") return [];
-
-  return index
-    .map((entry) => ({ entry, tier: matchTier(entry, normalizedQuery) }))
-    .filter((result): result is { entry: SearchEntry; tier: MatchTier } => result.tier !== null)
-    .sort((a, b) => a.tier - b.tier || a.entry.title.localeCompare(b.entry.title))
-    .map((result) => result.entry);
 }

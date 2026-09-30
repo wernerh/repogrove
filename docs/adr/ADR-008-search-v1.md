@@ -85,6 +85,24 @@ search" is explicitly out) and keeping v1 to what a plain substring match can
 honestly deliver: real name and category matches, which is the acceptance
 criterion.
 
+**A real build failure this PR hit, found by CI, not this sandbox:** the module
+holding `searchEntries` originally also held `buildSearchIndex` (and therefore
+imported `content.ts`, which imports `node:fs`). `SearchBox.tsx` (a Client
+Component) importing `searchEntries` from that same module pulled `node:fs`
+into the client-bundle import graph too — even though `searchEntries` itself
+never calls it — and Turbopack's static-export build fails outright rather
+than tree-shaking it away ("the chunking context (unknown) does not support
+external modules (request: node:fs)"). Fixed by splitting the pure matching
+half into its own module, `src/lib/search-match.ts` (`searchEntries`, the
+`SearchEntry`/`SearchEntryType` types — zero import from `content.ts`), which
+`SearchBox.tsx` imports directly; `src/lib/search.ts` keeps `buildSearchIndex`
+(server-only, needs `content.ts`) and re-exports the matching half for
+server-side/test convenience. This is the same category of static-export-only
+failure mode `robots.ts`/`sitemap.ts` already hit with `force-static` (see
+those files' doc comments) — a build-time constraint this sandbox's own
+`next build` can't reproduce locally (it never gets past the ADR-006
+font-fetch gap), so CI is genuinely the only place this class of bug surfaces.
+
 ### Where it's wired
 
 New `/search` route (`src/app/search/page.tsx` + `src/components/SearchBox.tsx`,

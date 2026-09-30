@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { searchEntries, type SearchEntry, type SearchEntryType } from "@/lib/search";
+import { searchEntries, type SearchEntry, type SearchEntryType } from "@/lib/search-match";
 
 /**
  * `/search` (issue #63, ADR-008) — the client half of the static-index
