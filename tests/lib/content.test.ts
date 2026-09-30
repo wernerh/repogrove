@@ -510,9 +510,14 @@ describe("slugifyAlternativeName", () => {
 });
 
 describe("getAllComparisons (real /content fixtures)", () => {
-  it("loads the one comparison content file", () => {
+  it("loads every real comparison content file", () => {
     const comparisons = getAllComparisons();
-    expect(comparisons.map((c) => c.slug)).toEqual(["ollama-vs-vllm"]);
+    expect(comparisons.map((c) => c.slug).sort()).toEqual([
+      "appwrite-vs-pocketbase",
+      "appwrite-vs-supabase",
+      "ollama-vs-vllm",
+      "pocketbase-vs-supabase",
+    ]);
   });
 
   it("parses the ollama-vs-vllm frontmatter and 'How they differ' section", () => {
@@ -545,7 +550,22 @@ describe("getComparisonsForRepo", () => {
   });
 
   it("returns an empty array for a repo with no comparisons", () => {
-    expect(getComparisonsForRepo("supabase")).toEqual([]);
+    // supabase now has two comparisons of its own (appwrite-vs-supabase,
+    // pocketbase-vs-supabase) — coolify has none, so it's the real fixture
+    // for this "no comparisons at all" case.
+    expect(getComparisonsForRepo("coolify")).toEqual([]);
+  });
+
+  it("sorts multiple comparisons for the same repo by the other repo's name", () => {
+    // supabase is compared against both appwrite and pocketbase — the page
+    // (src/app/repo/[slug]/page.tsx) sorts these by the other repo's name
+    // for a stable render order, not file-listing order; this locks in the
+    // data getComparisonsForRepo itself returns (order-independent here —
+    // the page does its own localeCompare sort on top).
+    const slugs = getComparisonsForRepo("supabase")
+      .map((c) => c.slug)
+      .sort();
+    expect(slugs).toEqual(["appwrite-vs-supabase", "pocketbase-vs-supabase"]);
   });
 });
 

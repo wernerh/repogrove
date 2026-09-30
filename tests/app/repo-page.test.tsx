@@ -161,7 +161,10 @@ describe("Repo page (/repo/[slug])", () => {
   });
 
   it("omits the 'Compared with' section for a repo with no comparison content file", async () => {
-    const element = await RepoPage({ params: Promise.resolve({ slug: "supabase" }) });
+    // supabase now has two comparisons of its own (appwrite-vs-supabase,
+    // pocketbase-vs-supabase) — coolify has none, so it's the real fixture
+    // for this "no comparisons at all" case.
+    const element = await RepoPage({ params: Promise.resolve({ slug: "coolify" }) });
     render(element);
 
     expect(screen.queryByRole("heading", { level: 2, name: "Compared with" })).not.toBeInTheDocument();
