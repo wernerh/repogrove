@@ -382,6 +382,30 @@ function assertValidAlternatives(alternatives: RepoAlternatives, slug: string, s
       `${source} lists "${dupeCommercial}" more than once under "alternatives.commercial"`,
     );
   }
+  // Unlike `open_source` (a `content/repos/*.md` slug, resolved and possibly
+  // linked), `commercial` entries are plain product names rendered verbatim
+  // by AlternativesTable.tsx — no capitalization, no lookup. Every real
+  // content/repos/*.md file had a raw slug here instead (`firebase`,
+  // `aws-amplify`, `gitkraken`, ...) until this was caught and fixed by hand
+  // (2026-09-30): the page was quietly showing "firebase" instead of
+  // "Firebase" on every affected repo since bootstrap. A name that's already
+  // in `slugifyAlternativeName`'s output shape — all-lowercase, no spaces —
+  // is almost certainly a slug an editor pasted by habit, not a real display
+  // name (virtually every real product name carries at least one capital
+  // letter or a space), so this fails the build the same way the other
+  // alternatives checks above do rather than let it degrade silently again.
+  // Trade-off (independent review, 2026-09-30): a genuinely all-lowercase,
+  // one-word brand (e.g. "back4app") would false-positive here and need
+  // this check loosened, not a content workaround — no current entry does.
+  for (const name of alternatives.commercial) {
+    if (name === name.toLowerCase() && !name.includes(" ")) {
+      throw new ContentValidationError(
+        `${source} lists "${name}" under "alternatives.commercial" — that looks like a slug, not a display ` +
+          `name. Commercial alternatives render verbatim (AlternativesTable.tsx), so write the product's real ` +
+          `name instead (e.g. "Firebase", not "firebase"; "AWS Amplify", not "aws-amplify")`,
+      );
+    }
+  }
 }
 
 function findDuplicate(values: string[]): string | undefined {

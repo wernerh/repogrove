@@ -65,8 +65,11 @@ status: active        # active | maintained | inactive
 featured: false
 groves: [ai, developer-tools]
 alternatives:
-  open_source: [lm-studio, localai, vllm]
-  commercial: []
+  open_source: [localai, vllm]     # real GitHub repos, resolved by slug
+  commercial: [LM Studio]          # plain display names, rendered verbatim —
+                                    # closed-source/proprietary products (e.g. LM
+                                    # Studio) belong here, not in open_source, even
+                                    # before they have their own content/repos/*.md
 ```
 Body: `## What it does`, `## Why people use it`, `## Pros`, `## Cons`. This is exactly
 the shape described in spec §5 and §16.

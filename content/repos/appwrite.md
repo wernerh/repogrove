@@ -8,7 +8,7 @@ featured: false
 groves: [self-hosted]
 alternatives:
   open_source: [supabase, pocketbase]
-  commercial: [firebase, aws-amplify]
+  commercial: [Firebase, AWS Amplify]
 ---
 
 # Appwrite

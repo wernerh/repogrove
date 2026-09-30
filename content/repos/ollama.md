@@ -7,8 +7,8 @@ status: active
 featured: true
 groves: [ai]
 alternatives:
-  open_source: [lm-studio, localai, vllm]
-  commercial: []
+  open_source: [localai, vllm]
+  commercial: [LM Studio]
 ---
 
 # Ollama

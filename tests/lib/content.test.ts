@@ -50,7 +50,10 @@ describe("getAllRepos (real /content fixtures)", () => {
     expect(ollama?.name).toBe("Ollama");
     expect(ollama?.status).toBe("active");
     expect(ollama?.groves).toContain("ai");
-    expect(ollama?.alternatives.open_source).toEqual(["lm-studio", "localai", "vllm"]);
+    expect(ollama?.alternatives.open_source).toEqual(["localai", "vllm"]);
+    // LM Studio is closed-source/proprietary freeware, not an open-source
+    // project — it belongs under `commercial` (2026-09-30 content-accuracy fix).
+    expect(ollama?.alternatives.commercial).toEqual(["LM Studio"]);
   });
 
   it("returns undefined for a repo that doesn't exist", () => {
@@ -220,6 +223,39 @@ describe("parseRepo — malformed frontmatter fails loudly", () => {
         },
       }),
     ).toThrow(/more than once under "alternatives.commercial"/);
+  });
+
+  it("throws when a commercial alternative looks like a raw slug instead of a display name", () => {
+    expect(() =>
+      parseRepo({
+        ...base,
+        data: {
+          github: "acme/broken",
+          name: "Broken",
+          category: ["ai"],
+          license: "MIT",
+          status: "active",
+          groves: ["ai"],
+          alternatives: { open_source: [], commercial: ["aws-amplify"] },
+        },
+      }),
+    ).toThrow(/looks like a slug, not a display name/);
+  });
+
+  it("accepts commercial alternatives written as proper display names", () => {
+    const repo = parseRepo({
+      ...base,
+      data: {
+        github: "acme/fine",
+        name: "Fine",
+        category: ["ai"],
+        license: "MIT",
+        status: "active",
+        groves: ["ai"],
+        alternatives: { open_source: [], commercial: ["Firebase", "AWS Amplify"] },
+      },
+    });
+    expect(repo.alternatives.commercial).toEqual(["Firebase", "AWS Amplify"]);
   });
 });
 

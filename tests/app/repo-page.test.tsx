@@ -125,19 +125,23 @@ describe("Repo page (/repo/[slug])", () => {
     ).rejects.toThrow();
   });
 
-  it("renders the Alternatives table (spec §3-4), resolving vllm and leaving lm-studio/localai unresolved", async () => {
-    // ollama.md's frontmatter: alternatives.open_source = [lm-studio, localai, vllm].
-    // Only vllm has its own content/repos/vllm.md today — see
-    // tests/components/alternatives-table.test.tsx for the component's own
-    // unit coverage of resolved vs. unresolved rows.
+  it("renders the Alternatives table (spec §3-4), resolving vllm, leaving localai unresolved, and listing LM Studio as commercial", async () => {
+    // ollama.md's frontmatter: alternatives.open_source = [localai, vllm],
+    // alternatives.commercial = [LM Studio] — LM Studio is closed-source/
+    // proprietary freeware, not an open-source project (2026-09-30 content-
+    // accuracy fix), so it renders as a plain commercial chip, not an
+    // unresolved open-source row. Only vllm has its own content/repos/vllm.md
+    // today — see tests/components/alternatives-table.test.tsx for the
+    // component's own unit coverage of resolved vs. unresolved rows.
     const element = await RepoPage({ params: Promise.resolve({ slug: "ollama" }) });
     render(element);
 
     expect(screen.getByRole("heading", { level: 2, name: "Alternatives" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "vLLM" })).toHaveAttribute("href", "/repo/vllm");
-    expect(screen.getByText("lm-studio")).toBeInTheDocument();
     expect(screen.getByText("localai")).toBeInTheDocument();
-    expect(screen.getAllByText("Not yet profiled")).toHaveLength(2);
+    expect(screen.getAllByText("Not yet profiled")).toHaveLength(1);
+    expect(screen.getByText("Commercial alternatives")).toBeInTheDocument();
+    expect(screen.getByText("LM Studio")).toBeInTheDocument();
     // The hand-authored "## Alternatives" placeholder prose from
     // content/repos/ollama.md is replaced, not duplicated alongside the
     // table — see src/lib/content.ts's splitOutSection.

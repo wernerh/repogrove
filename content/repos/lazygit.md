@@ -8,7 +8,7 @@ featured: false
 groves: [developer-tools]
 alternatives:
   open_source: [tig, gitui]
-  commercial: [gitkraken, sourcetree]
+  commercial: [GitKraken, Sourcetree]
 ---
 
 # LazyGit

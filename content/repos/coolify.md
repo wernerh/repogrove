@@ -8,7 +8,7 @@ featured: false
 groves: [self-hosted]
 alternatives:
   open_source: [dokploy]
-  commercial: [vercel, heroku, netlify]
+  commercial: [Vercel, Heroku, Netlify]
 ---
 
 # Coolify

@@ -8,7 +8,7 @@ featured: false
 groves: [self-hosted]
 alternatives:
   open_source: [supabase, appwrite]
-  commercial: [firebase]
+  commercial: [Firebase]
 ---
 
 # PocketBase
