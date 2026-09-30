@@ -117,6 +117,10 @@
     no new reply since 17:32:04Z. Due date 2026-09-30 is tomorrow; not this lane's
     decision to default (design lane owns RG-4). This run's task (sitemap.xml/robots.txt,
     #64/PR #69) didn't depend on the answer either way.
+    Re-checked again 2026-09-30 (dev run 28, via get_thread) — still exactly 3 messages,
+    no new reply since 17:32:04Z. Due date 2026-09-30 is today; not this lane's decision
+    to default (design lane owns RG-4). This run's task (`/search`, #63/PR #70, ADR-008)
+    didn't depend on the answer either way.
 
 - id: RG-6
   lane: design

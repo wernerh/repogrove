@@ -29,7 +29,8 @@ Technical considerations / Testing / Security / Rollout / Documentation / Depend
 ## Phase 3 — Search, SEO, alternatives, newsletter signup
 - [x] Alternatives pages (`/alternative/:slug`) — open-source / free / commercial + best fit (#61, PR #66)
 - [x] Comparison pages (`/compare/:a/:b`) (#62, PR #67)
-- [ ] Full-text search across repos/Groves/alternatives (#63)
+- [x] Full-text search across repos/Groves/alternatives (#63, PR #70) — v1 scope: static
+  build-time index, client-side substring matching (ADR-008)
 - [x] Sitemap + robots.txt + SEO metadata baseline (#64, PR #69) — OG image generation
   and JSON-LD stay out per the issue's own non-goals
 - [ ] Newsletter signup form (storage only, no send automation) (#65)

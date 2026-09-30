@@ -15,9 +15,9 @@ migration, or deploy target needed yet.
 mirroring how #5-7/#16-21 mirrored Phase 1/2's ROADMAP rows).
 
 ## Next action (exactly one)
-Run 27 shipped sitemap.xml/robots.txt (#64, PR #69). Next: #63 (search) needs a short
-ADR first (`output: "export"` has no server runtime for DB-backed FTS). #65
-(newsletter) is owner-decision-blocked on storage/vendor past its form-UI-only first PR.
+Run 28 shipped `/search` (#63, PR #70, ADR-008: static build-time index, client-side
+matching). Only #65 (newsletter) remains in Phase 3 — owner-decision-blocked on
+storage/vendor past its form-UI-only first PR (see issue #65's own scope note).
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -39,9 +39,8 @@ Accounts, paid subscriptions, watchlists/alerts, recommendation engine, massive
 crawling infra, admin CMS, live deploy — see spec §30, §33 and ADR-002.
 
 ## Timebox
-Phase 2 complete (run 24, within budget). Phase 3's first item (`/alternative/:slug`,
-#61) shipped run 25, within budget, no split needed. No timebox set on the remaining
-4 Phase 3 items yet.
+Phase 2 complete (run 24, within budget). Every shipped Phase 3 item (#61/#62/#64/#63)
+landed within budget, no split needed. No timebox set on #65 (newsletter) yet.
 
 ## Blockers and attempts
 None blocking (rule 8). Dependabot #29 (eslint) blocked upstream (eslint-plugin-react
@@ -57,4 +56,5 @@ PRs (#29, #46-49) outside this lane's merge gate — owner merges these directly
 - [x] 2026-09-29 — Phase 3 issues filed (#61-65); `/alternative/:slug` shipped (#61, PR #66).
 - [x] 2026-09-29 — `/compare/:a/:b` shipped (#62, PR #67): comparison pages.
 - [x] 2026-09-29 — sitemap.xml + robots.txt shipped (#64, PR #69); SEO baseline done.
-- [ ] Phase 3 remaining — search, newsletter signup (#63, #65)
+- [x] 2026-09-30 — `/search` shipped (#63, PR #70, ADR-008): static build-time index.
+- [ ] Phase 3 remaining — newsletter signup form UI (#65)

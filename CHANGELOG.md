@@ -633,3 +633,29 @@ entries.
   PR #69 (including a real `next build`); post-merge CI on `main` also green. Issue
   #64 auto-closed by the merge. OG image generation and JSON-LD structured data stay
   out per the issue's own non-goals. (dev)
+- 2026-09-30 — `/search` (#63, PR #70): static, build-time-generated search index
+  matched entirely client-side — no server runtime, compatible with `output: "export"`
+  (ADR-008, the short architecture note the issue asked for before landing). New
+  `src/lib/search.ts` (`buildSearchIndex()`, server-only, reads `getAllRepos`/
+  `getAllGroves`/`getAllAlternatives` — the same public `/content` every page already
+  renders) and `src/lib/search-match.ts` (`searchEntries()`, pure tiered
+  case-insensitive substring ranking: exact title > starts-with > contains > category
+  > description). New `/search` route (Server Component builds the index once, passes
+  it to a Client Component for the interactive input); header nav and sitemap both
+  gained the new route. `src/lib/content.ts` gained an exported `firstParagraph`
+  helper (moved out of `RepoCard.tsx`, its second real call site — pure refactor, no
+  behavior change). Independent review before push found a real MAJOR (an alternative
+  with no `bestFit` items got a fabricated description sentence, contradicting this
+  codebase's "omit, don't fabricate" convention) — fixed pre-push by extracting
+  `alternativeDescription()` as its own directly-tested pure function returning `""`
+  instead. CI then caught a real Turbopack build failure this sandbox's own local
+  build can't reach (blocked by the known ADR-006 font-fetch gap): `SearchBox.tsx` (a
+  Client Component) importing `searchEntries` from the same module that also held
+  `buildSearchIndex` pulled `content.ts`'s `node:fs` import into the client bundle
+  graph, which Turbopack's static-export build can't chunk ("the chunking context
+  (unknown) does not support external modules (request: node:fs)") — fixed by
+  splitting the pure matching half into its own module with zero dependency on
+  `content.ts`, re-pushed, confirmed green. 247/247 tests pass (21 new/updated), lint
+  clean, `tsc --noEmit` clean, `npm audit --audit-level=high` 0 vulnerabilities, all
+  run locally; all 3 CI checks green on PR #70's final commit before squash-merging;
+  post-merge CI on `main` also green. Issue #63 auto-closed by the merge. (dev)
