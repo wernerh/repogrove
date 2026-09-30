@@ -6,11 +6,13 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
-import { openDb, getLatestSnapshot, getTrackedRepos } from "../../scripts/ingestion/snapshots-db.ts";
+import { openDb, getLatestSnapshot, getTrackedRepos, getReleases } from "../../scripts/ingestion/snapshots-db.ts";
 import {
   readGithubSlugsFromContent,
   fetchRepoMetrics,
   fetchContributorCount,
+  parseReleases,
+  fetchRepoReleases,
   runIngestion,
 } from "../../scripts/ingestion/fetch-snapshots.ts";
 
@@ -227,17 +229,200 @@ describe("fetchContributorCount", () => {
   });
 });
 
+describe("parseReleases", () => {
+  it("maps a GitHub releases API response to our release fields", () => {
+    const releases = parseReleases([
+      {
+        tag_name: "v1.8.0",
+        name: "v1.8.0",
+        html_url: "https://github.com/ollama/ollama/releases/tag/v1.8.0",
+        published_at: "2026-09-20T12:00:00Z",
+        draft: false,
+        prerelease: false,
+      },
+    ]);
+    expect(releases).toEqual([
+      {
+        tagName: "v1.8.0",
+        name: "v1.8.0",
+        htmlUrl: "https://github.com/ollama/ollama/releases/tag/v1.8.0",
+        publishedAt: "2026-09-20T12:00:00Z",
+      },
+    ]);
+  });
+
+  it("excludes draft releases — they aren't publicly visible on GitHub either", () => {
+    const releases = parseReleases([
+      {
+        tag_name: "v1.9.0-draft",
+        name: "WIP",
+        html_url: "https://github.com/ollama/ollama/releases/tag/v1.9.0-draft",
+        published_at: null,
+        draft: true,
+      },
+      {
+        tag_name: "v1.8.0",
+        name: "v1.8.0",
+        html_url: "https://github.com/ollama/ollama/releases/tag/v1.8.0",
+        published_at: "2026-09-20T12:00:00Z",
+        draft: false,
+      },
+    ]);
+    expect(releases.map((r) => r.tagName)).toEqual(["v1.8.0"]);
+  });
+
+  it("keeps prereleases — they're real, publicly linkable releases", () => {
+    const releases = parseReleases([
+      {
+        tag_name: "v2.0.0-rc1",
+        name: "v2.0.0 RC1",
+        html_url: "https://github.com/ollama/ollama/releases/tag/v2.0.0-rc1",
+        published_at: "2026-09-20T12:00:00Z",
+        draft: false,
+        prerelease: true,
+      },
+    ]);
+    expect(releases.map((r) => r.tagName)).toEqual(["v2.0.0-rc1"]);
+  });
+
+  it("falls back to null when a release has no name — never fabricates one", () => {
+    const releases = parseReleases([
+      {
+        tag_name: "v1.0.0",
+        name: null,
+        html_url: "https://github.com/ollama/ollama/releases/tag/v1.0.0",
+        published_at: "2026-09-20T12:00:00Z",
+        draft: false,
+      },
+    ]);
+    expect(releases[0].name).toBeNull();
+  });
+
+  it("falls back to created_at when published_at is missing (e.g. a draft-turned-live edge case)", () => {
+    const releases = parseReleases([
+      {
+        tag_name: "v1.0.0",
+        name: "v1.0.0",
+        html_url: "https://github.com/ollama/ollama/releases/tag/v1.0.0",
+        created_at: "2026-09-19T00:00:00Z",
+        draft: false,
+      },
+    ]);
+    expect(releases[0].publishedAt).toBe("2026-09-19T00:00:00Z");
+  });
+
+  it("returns an empty list for a non-array body", () => {
+    expect(parseReleases({ message: "not found" })).toEqual([]);
+    expect(parseReleases(null)).toEqual([]);
+  });
+
+  it("skips a malformed (non-object) entry rather than throwing", () => {
+    expect(parseReleases(["not an object"])).toEqual([]);
+  });
+
+  // Independent review flagged this before push: an earlier version of parseReleases
+  // coerced every field with String(...), so a genuinely missing field became the
+  // literal text "undefined" rather than being skipped — that string then reached
+  // `new Date(...)` on /repo/[slug] (dateFormatter.format), which throws on an
+  // Invalid Date and would have broken that repo's whole page render for one
+  // malformed release. These entries must be skipped, not stored with a placeholder.
+  it("skips an entry missing tag_name, rather than storing the string \"undefined\"", () => {
+    const releases = parseReleases([
+      { name: "v1.0.0", html_url: "https://github.com/ollama/ollama/releases/tag/v1.0.0", published_at: "2026-09-20T12:00:00Z", draft: false },
+    ]);
+    expect(releases).toEqual([]);
+  });
+
+  it("skips an entry missing both published_at and created_at (no resolvable date)", () => {
+    const releases = parseReleases([
+      { tag_name: "v1.0.0", name: "v1.0.0", html_url: "https://github.com/ollama/ollama/releases/tag/v1.0.0", draft: false },
+    ]);
+    expect(releases).toEqual([]);
+  });
+
+  it("skips an entry whose published_at/created_at doesn't parse as a date", () => {
+    const releases = parseReleases([
+      {
+        tag_name: "v1.0.0",
+        name: "v1.0.0",
+        html_url: "https://github.com/ollama/ollama/releases/tag/v1.0.0",
+        published_at: "not-a-date",
+        draft: false,
+      },
+    ]);
+    expect(releases).toEqual([]);
+  });
+
+  it("skips an entry whose html_url isn't a real https://github.com/... link", () => {
+    const releases = parseReleases([
+      {
+        tag_name: "v1.0.0",
+        name: "v1.0.0",
+        html_url: "javascript:alert(1)",
+        published_at: "2026-09-20T12:00:00Z",
+        draft: false,
+      },
+    ]);
+    expect(releases).toEqual([]);
+  });
+});
+
+describe("fetchRepoReleases", () => {
+  it("fetches per_page=5 recent releases and parses them", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(
+      jsonResponse([
+        {
+          tag_name: "v1.8.0",
+          name: "v1.8.0",
+          html_url: "https://github.com/ollama/ollama/releases/tag/v1.8.0",
+          published_at: "2026-09-20T00:00:00Z",
+          draft: false,
+        },
+      ]),
+    );
+    const releases = await fetchRepoReleases("ollama/ollama", { fetchImpl, token: "" });
+    expect(releases).toEqual([
+      {
+        tagName: "v1.8.0",
+        name: "v1.8.0",
+        htmlUrl: "https://github.com/ollama/ollama/releases/tag/v1.8.0",
+        publishedAt: "2026-09-20T00:00:00Z",
+      },
+    ]);
+    expect(fetchImpl).toHaveBeenCalledWith(
+      "https://api.github.com/repos/ollama/ollama/releases?per_page=5",
+      expect.objectContaining({ headers: expect.not.objectContaining({ Authorization: expect.anything() }) }),
+    );
+  });
+
+  it("sends a bearer token when one is available", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(jsonResponse([]));
+    await fetchRepoReleases("ollama/ollama", { fetchImpl, token: "test-token" });
+    expect(fetchImpl).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ headers: expect.objectContaining({ Authorization: "Bearer test-token" }) }),
+    );
+  });
+
+  it("throws on a non-2xx response, like fetchRepoMetrics/fetchContributorCount", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(jsonResponse({ message: "rate limited" }, false, 403));
+    await expect(fetchRepoReleases("ollama/ollama", { fetchImpl, token: "" })).rejects.toThrow(/403/);
+  });
+});
+
 describe("runIngestion", () => {
   it("upserts a snapshot (including contributors) for every repo that fetches successfully", async () => {
     const db = openDb(":memory:");
     const fetchMetrics = vi.fn().mockResolvedValue({ stars: 10, forks: 1, openIssues: 0, watchers: 10 });
     const fetchContributors = vi.fn().mockResolvedValue(7);
+    const fetchReleases = vi.fn().mockResolvedValue([]);
 
     const results = await runIngestion({
       db,
       githubSlugs: ["ollama/ollama", "supabase/supabase"],
       fetchMetrics,
       fetchContributors,
+      fetchReleases,
       now: () => new Date("2026-09-27T08:00:00.000Z"),
     });
 
@@ -255,12 +440,14 @@ describe("runIngestion", () => {
       return { stars: 5, forks: 0, openIssues: 0, watchers: 5 };
     });
     const fetchContributors = vi.fn().mockResolvedValue(3);
+    const fetchReleases = vi.fn().mockResolvedValue([]);
 
     const results = await runIngestion({
       db,
       githubSlugs: ["flaky/repo", "ollama/ollama"],
       fetchMetrics,
       fetchContributors,
+      fetchReleases,
       now: () => new Date("2026-09-27T08:00:00.000Z"),
     });
 
@@ -279,10 +466,11 @@ describe("runIngestion", () => {
       .mockResolvedValueOnce({ stars: 10, forks: 1, openIssues: 0, watchers: 10 })
       .mockResolvedValueOnce({ stars: 15, forks: 1, openIssues: 0, watchers: 15 });
     const fetchContributors = vi.fn().mockResolvedValue(4);
+    const fetchReleases = vi.fn().mockResolvedValue([]);
     const now = () => new Date("2026-09-27T08:00:00.000Z");
 
-    await runIngestion({ db, githubSlugs: ["ollama/ollama"], fetchMetrics, fetchContributors, now });
-    await runIngestion({ db, githubSlugs: ["ollama/ollama"], fetchMetrics, fetchContributors, now });
+    await runIngestion({ db, githubSlugs: ["ollama/ollama"], fetchMetrics, fetchContributors, fetchReleases, now });
+    await runIngestion({ db, githubSlugs: ["ollama/ollama"], fetchMetrics, fetchContributors, fetchReleases, now });
 
     expect(getTrackedRepos(db)).toEqual(["ollama/ollama"]);
     expect(getLatestSnapshot(db, "ollama/ollama")).toMatchObject({ stars: 15, contributors: 4 });
@@ -294,12 +482,14 @@ describe("runIngestion", () => {
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
     const fetchMetrics = vi.fn().mockResolvedValue({ stars: 20, forks: 2, openIssues: 1, watchers: 20 });
     const fetchContributors = vi.fn().mockRejectedValue(new Error("GitHub API returned 403 rate limited"));
+    const fetchReleases = vi.fn().mockResolvedValue([]);
 
     const results = await runIngestion({
       db,
       githubSlugs: ["ollama/ollama"],
       fetchMetrics,
       fetchContributors,
+      fetchReleases,
       now: () => new Date("2026-09-27T08:00:00.000Z"),
     });
 
@@ -321,6 +511,7 @@ describe("runIngestion", () => {
       githubSlugs: ["ollama/ollama"],
       fetchMetrics,
       fetchContributors: vi.fn().mockResolvedValue(9),
+      fetchReleases: vi.fn().mockResolvedValue([]),
       now,
     });
     await runIngestion({
@@ -328,6 +519,7 @@ describe("runIngestion", () => {
       githubSlugs: ["ollama/ollama"],
       fetchMetrics,
       fetchContributors: vi.fn().mockRejectedValue(new Error("timed out")),
+      fetchReleases: vi.fn().mockResolvedValue([]),
       now,
     });
 
@@ -355,5 +547,118 @@ describe("runIngestion", () => {
     expect(results).toEqual({ ok: [], failed: ["ollama/ollama"] });
     warnSpy.mockRestore();
     db.close();
+  });
+
+  describe("releases (issue #72)", () => {
+    it("upserts every release fetchReleases returns for a repo", async () => {
+      const db = openDb(":memory:");
+      const fetchMetrics = vi.fn().mockResolvedValue({ stars: 10, forks: 1, openIssues: 0, watchers: 10 });
+      const fetchContributors = vi.fn().mockResolvedValue(7);
+      const fetchReleases = vi.fn().mockResolvedValue([
+        { tagName: "v1.8.0", name: "v1.8.0", htmlUrl: "https://x/v1.8.0", publishedAt: "2026-09-20T00:00:00Z" },
+        { tagName: "v1.7.0", name: null, htmlUrl: "https://x/v1.7.0", publishedAt: "2026-09-01T00:00:00Z" },
+      ]);
+
+      await runIngestion({
+        db,
+        githubSlugs: ["ollama/ollama"],
+        fetchMetrics,
+        fetchContributors,
+        fetchReleases,
+        now: () => new Date("2026-09-27T08:00:00.000Z"),
+      });
+
+      const releases = getReleases(db, "ollama/ollama");
+      expect(releases.map((r) => r.tagName)).toEqual(["v1.8.0", "v1.7.0"]);
+      expect(releases[1].name).toBeNull();
+      db.close();
+    });
+
+    it("keeps the star/fork/issue snapshot and any previously known releases when the releases fetch fails", async () => {
+      const db = openDb(":memory:");
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+      const fetchMetrics = vi.fn().mockResolvedValue({ stars: 20, forks: 2, openIssues: 1, watchers: 20 });
+      const fetchContributors = vi.fn().mockResolvedValue(3);
+
+      // First run captures a real release...
+      await runIngestion({
+        db,
+        githubSlugs: ["ollama/ollama"],
+        fetchMetrics,
+        fetchContributors,
+        fetchReleases: vi.fn().mockResolvedValue([
+          { tagName: "v1.8.0", name: "v1.8.0", htmlUrl: "https://x/v1.8.0", publishedAt: "2026-09-20T00:00:00Z" },
+        ]),
+        now: () => new Date("2026-09-27T08:00:00.000Z"),
+      });
+
+      // ...a later run's releases fetch fails, but the snapshot and the earlier
+      // release must both survive — never wiped by an unrelated third-call failure.
+      const results = await runIngestion({
+        db,
+        githubSlugs: ["ollama/ollama"],
+        fetchMetrics,
+        fetchContributors,
+        fetchReleases: vi.fn().mockRejectedValue(new Error("GitHub API returned 403 rate limited")),
+        now: () => new Date("2026-09-28T08:00:00.000Z"),
+      });
+
+      expect(results).toEqual({ ok: ["ollama/ollama"], failed: [] });
+      expect(getLatestSnapshot(db, "ollama/ollama")).toMatchObject({ stars: 20 });
+      expect(getReleases(db, "ollama/ollama").map((r) => r.tagName)).toEqual(["v1.8.0"]);
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("releases unavailable"));
+      warnSpy.mockRestore();
+      db.close();
+    });
+
+    it("is idempotent — re-ingesting the same release updates it in place, not duplicated", async () => {
+      const db = openDb(":memory:");
+      const fetchMetrics = vi.fn().mockResolvedValue({ stars: 10, forks: 1, openIssues: 0, watchers: 10 });
+      const fetchContributors = vi.fn().mockResolvedValue(7);
+      const now = () => new Date("2026-09-27T08:00:00.000Z");
+      const release = { tagName: "v1.8.0", name: "v1.8.0", htmlUrl: "https://x/v1.8.0", publishedAt: "2026-09-20T00:00:00Z" };
+
+      await runIngestion({
+        db,
+        githubSlugs: ["ollama/ollama"],
+        fetchMetrics,
+        fetchContributors,
+        fetchReleases: vi.fn().mockResolvedValue([release]),
+        now,
+      });
+      await runIngestion({
+        db,
+        githubSlugs: ["ollama/ollama"],
+        fetchMetrics,
+        fetchContributors,
+        fetchReleases: vi.fn().mockResolvedValue([{ ...release, name: "v1.8.0 (edited)" }]),
+        now,
+      });
+
+      const releases = getReleases(db, "ollama/ollama");
+      expect(releases).toHaveLength(1);
+      expect(releases[0].name).toBe("v1.8.0 (edited)");
+      db.close();
+    });
+
+    it("defaults to the real fetchRepoReleases when none is injected (production wiring)", async () => {
+      // Same reasoning as the equivalent fetchContributorCount test above: fetchMetrics
+      // fails first, so runIngestion never reaches the releases fetch at all — this
+      // only asserts the default parameter wiring compiles/behaves.
+      const db = openDb(":memory:");
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+      const fetchMetrics = vi.fn().mockRejectedValue(new Error("network unreachable"));
+
+      const results = await runIngestion({
+        db,
+        githubSlugs: ["ollama/ollama"],
+        fetchMetrics,
+        now: () => new Date("2026-09-27T08:00:00.000Z"),
+      });
+
+      expect(results).toEqual({ ok: [], failed: ["ollama/ollama"] });
+      warnSpy.mockRestore();
+      db.close();
+    });
   });
 });

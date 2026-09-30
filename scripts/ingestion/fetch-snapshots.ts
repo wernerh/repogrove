@@ -26,7 +26,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import { openDb, upsertSnapshot } from "./snapshots-db.ts";
+import { openDb, upsertSnapshot, upsertRelease, type ReleaseInput } from "./snapshots-db.ts";
 
 const CONTENT_REPOS_DIR = path.join(process.cwd(), "content", "repos");
 
@@ -186,6 +186,95 @@ export async function fetchContributorCount(
   return Array.isArray(body) ? body.length : 0;
 }
 
+/** One release, parsed off the GitHub API into the fields `upsertRelease` stores
+ * (minus `github`/`fetchedAt`, which the caller adds — see `runIngestion`). */
+export interface ReleaseMetric {
+  tagName: string;
+  name: string | null;
+  htmlUrl: string;
+  publishedAt: string;
+}
+
+/**
+ * Parses a `GET /repos/{owner}/{repo}/releases` response body into the rows this
+ * ingestion job stores (issue #72, "Latest" section). Pure and exported so
+ * tests/ingestion/fetch-snapshots.test.ts can exercise it against a fixture response
+ * without a network call, mirroring how `fetchRepoMetrics`'s own shape is tested.
+ *
+ * Drafts are excluded — a draft release isn't visible on a repo's public GitHub
+ * releases page either, so surfacing one here would show a reader something GitHub
+ * itself wouldn't. Prereleases are kept: they're real, publicly linkable releases,
+ * and spec §11 gives no reason to hide them.
+ *
+ * An entry that isn't a plain object, or is missing `tag_name`, a real
+ * `https://github.com/...` `html_url`, or a parseable `published_at`/`created_at`, is
+ * skipped rather than stored with a fabricated/placeholder value — the same
+ * fail-soft-per-entry, never-fabricate convention this codebase already applies
+ * elsewhere (e.g. `RepoCard`, `getGrowthSummary`). This matters beyond data hygiene:
+ * an earlier version of this function coerced every field with `String(...)`, which
+ * turns a genuinely missing field into the literal text `"undefined"` rather than
+ * skipping the entry — that string then reached `new Date(...)` on `/repo/[slug]`
+ * (`dateFormatter.format`), which throws `RangeError: Invalid time value` on an
+ * Invalid Date and would have broken that repo's entire page render/static build for
+ * one malformed release. The `html_url` host check also guards against rendering an
+ * untrusted ingested string as a link `href` for anything other than a real GitHub
+ * release page (independent review flagged this — everywhere else this page links
+ * out, the URL is either hardcoded or built from PR-reviewed content, not raw
+ * external API data).
+ */
+export function parseReleases(body: unknown): ReleaseMetric[] {
+  if (!Array.isArray(body)) return [];
+  return body
+    .filter(
+      (entry): entry is Record<string, unknown> =>
+        typeof entry === "object" && entry !== null && entry.draft !== true,
+    )
+    .flatMap((entry) => {
+      const tagName = entry.tag_name;
+      const htmlUrl = entry.html_url;
+      const publishedAt = entry.published_at ?? entry.created_at;
+      if (typeof tagName !== "string" || tagName.length === 0) return [];
+      if (typeof htmlUrl !== "string" || !htmlUrl.startsWith("https://github.com/")) return [];
+      if (typeof publishedAt !== "string" || Number.isNaN(Date.parse(publishedAt))) return [];
+      return [
+        {
+          tagName,
+          name: typeof entry.name === "string" && entry.name.length > 0 ? entry.name : null,
+          htmlUrl,
+          publishedAt,
+        },
+      ];
+    });
+}
+
+// A repo page only ever shows a handful of recent releases (issue #72's "Latest"
+// section) — no need to fetch or store more than this many per repo.
+const RELEASES_PER_REPO = 5;
+
+/**
+ * Fetches a repo's most recent releases — a separate, independently-failable API call
+ * from `fetchRepoMetrics`, same pattern as `fetchContributorCount`: `per_page=5` keeps
+ * the payload small, and GitHub already orders `/releases` newest-created-first, so
+ * no client-side sort is needed before this reads off the top.
+ */
+export async function fetchRepoReleases(
+  github: string,
+  { fetchImpl = fetch, token = process.env.GITHUB_TOKEN }: { fetchImpl?: typeof fetch; token?: string } = {},
+): Promise<ReleaseMetric[]> {
+  const response = await fetchImpl(
+    `https://api.github.com/repos/${github}/releases?per_page=${RELEASES_PER_REPO}`,
+    {
+      headers: githubHeaders(token),
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+    },
+  );
+  if (!response.ok) {
+    throw new Error(`GitHub API returned ${response.status} ${response.statusText} for ${github} releases`);
+  }
+  const body = await response.json();
+  return parseReleases(body);
+}
+
 export interface IngestionResults {
   ok: string[];
   failed: string[];
@@ -206,12 +295,14 @@ export async function runIngestion({
   githubSlugs,
   fetchMetrics = fetchRepoMetrics,
   fetchContributors = fetchContributorCount,
+  fetchReleases = fetchRepoReleases,
   now = () => new Date(),
 }: {
   db: ReturnType<typeof openDb>;
   githubSlugs: string[];
   fetchMetrics?: (github: string) => Promise<RepoMetrics>;
   fetchContributors?: (github: string) => Promise<number>;
+  fetchReleases?: (github: string) => Promise<ReleaseMetric[]>;
   now?: () => Date;
 }): Promise<IngestionResults> {
   const timestamp = now();
@@ -245,6 +336,23 @@ export async function runIngestion({
         fetchedAt: timestamp.toISOString(),
         contributors,
       });
+
+      // Releases are a third, independent API call — its failure must not throw away
+      // the snapshot above either, same reasoning as the contributor count. Unlike
+      // contributors, there's no single "unknown" value to fall back to per repo: on
+      // failure, this repo's existing release rows (if any) are simply left as they
+      // were from a previous successful run, rather than overwritten with nothing.
+      try {
+        const releases = await fetchReleases(github);
+        for (const release of releases) {
+          upsertRelease(db, { github, fetchedAt: timestamp.toISOString(), ...release } satisfies ReleaseInput);
+        }
+      } catch (err) {
+        console.warn(
+          `[ingestion] ${github}: releases unavailable (${err instanceof Error ? err.message : String(err)}) — keeping previously known releases, if any`,
+        );
+      }
+
       results.ok.push(github);
     } catch (err) {
       console.warn(`[ingestion] skipping ${github}: ${err instanceof Error ? err.message : String(err)}`);
