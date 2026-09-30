@@ -2,8 +2,10 @@
 
 - **Status: FIXED** (same run it was found in). **Verified: yes** — `npm run lint` /
   `npx tsc --noEmit` / `npm test` (295/295) all pass locally against the reordered page;
-  `npm run build` reproduces the known ADR-006 sandbox font-fetch gap (confirmed it
-  compiles past this change first), real build left to CI.
+  PR #79's real `next build` and Playwright/axe-core run were green on CI (6/6 checks),
+  and the refreshed `repo-ollama__*.png` screenshots (desktop-light, mobile-dark
+  reviewed directly post-merge) confirm the fix renders correctly in both themes and
+  viewports.
 - **Severity:** MINOR — not a WCAG failure (both headings/text are still present and
   correctly structured for a screen reader; DOM order now also matches visual order,
   which is an accessibility improvement, not a regression) and no task is blocked, but
@@ -68,11 +70,14 @@ fix.
   changes, DOM order now matches visual order), and confirmed no other design-system
   inconsistency in the touched file.
 - `npm run build` reproduces the known ADR-006 sandbox font-fetch gap (confirmed it
-  compiles past this change first); the real build, and a refreshed
-  `repo-ollama__*.png` screenshot set via `commit-screenshots`, are left to CI —
-  post-merge screenshot review is this finding's last verification step (to be
-  confirmed by this run's close-out once the PR is merged, or the next design run if
-  the lock closes first).
+  compiles past this change first); the real build ran clean on CI's GitHub-hosted
+  runner (PR #79, all 6 checks green — 5 success + 1 skipped push-only job).
+- PR #79 merged (squash); `commit-screenshots` fired on the resulting push and
+  recommitted real `repo-ollama__*.png` screenshots. Reviewed `desktop-light` and
+  `mobile-dark` directly post-merge, same run: the tagline ("Run large language models
+  locally.") now reads immediately after the chart with nothing above it, "Latest"
+  sits cleanly at the bottom below "Compared with," `mt-6` spacing rhythm holds in both
+  themes/viewports — confirmed fixed.
 
 ## Related
 Issue #72 / PR #74 (basic news widget — the change that introduced this placement).

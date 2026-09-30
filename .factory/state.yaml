@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-30T13:16:13Z"
-  holder: "design"
-  last_run: "2026-09-30T13:15:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-30T13:31:05Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,9 +19,9 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 44
+  runs: 45
   features_completed: 17
-  bugs_fixed: 5
+  bugs_fixed: 6
   security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
@@ -176,8 +176,8 @@ security:
     A10: "PASS (fixed a bypass — SEC-002)"
 
 design:
-  last_run: "2026-09-30T09:15:00Z"
-  next_action: "Run 13: RG-4 re-checked (get_thread) — still no new reply since 2026-09-27T17:32:04Z; default_due_at had passed, so this run applied the recommended default for real — OPEN -> DEFAULTED, 'Editorial/content-forward' recorded, issue #8 closed. Major task: the screenshot+a11y harness (tests/design/screenshots.spec.ts) hadn't been touched since run 9 and only covered the 3 Phase 1 routes — 6 shipped pages (/trending #19, /rising #20, /alternative/[slug] #61, /compare/[a]/[b] #62, /search #63, homepage newsletter section #71) had never been screenshotted or WCAG-scanned. Extended ROUTES with /trending, /rising, /alternative/notion, /compare/ollama/vllm, /search (5 new entries; home re-captures the newsletter section under its existing entry). Independent reviewer subagent: no findings (verified every route/slug real, no missed route family, no filename collisions). 253/253 tests unchanged, lint/tsc clean, npm audit 0 vulns, all local; build reproduces the known ADR-006 sandbox font-fetch gap. PR #73 merged (squash, 6/6 CI green — real Playwright run: 48/48 checks passed, 0 axe-core WCAG 2.1 A/AA violations across 8 routes x 6 projects); commit-screenshots committed all 48 real PNGs. Reviewed a representative sample directly post-merge (home light/dark desktop+mobile, trending, rising, search, alternative-notion, compare-ollama-vllm desktop+mobile) — no new findings, everything consistent with DESIGN-SYSTEM.md; compare page's table reflows cleanly on mobile (unlike AlternativesTable's original UX-2026-002 bug — different component, didn't inherit it). Next major task: TECH-DEBT.md's open design-owned rows — MomentumChip's tooltip-only signal exposure (not reliably reachable by screen reader/keyboard/touch) first, then AlternativesTable's non-interactive sort — unless a higher-priority finding or a new dev-lane page needing a pattern lands first."
+  last_run: "2026-09-30T13:31:05Z"
+  next_action: "Run 14: reviewed the real, CI-committed docs/design/screenshots/ refreshed since run 13 — dev runs 30/31 shipped the basic news widget (#72, PR #74) and two TECH-DEBT.md fixes (PR #75) in between, so this was the first design look at the news widget's real rendering. Found UX-2026-004 (MINOR): the 'Latest' section, inserted directly after the star-growth chart, buried the repo page's one-sentence tagline under its own 'No recent releases.' empty state with no visual separation. Fixed same run: pure JSX reorder (no content/data/API changes) moving 'Latest' to the very end of the page, after 'Compared with' — matching PRODUCT.md §10's documented Overview -> Alternatives -> Comparison -> Momentum -> News order. Independent reviewer subagent confirmed the new placement and no accessibility regression, caught a dangling doc reference in the fix's own first-draft comment before it shipped. Documented the repo page's canonical section order in DESIGN-SYSTEM.md (a gap that let this ship unnoticed). 295/295 tests pass, lint/tsc clean; PR #79 merged (6/6 CI green); post-merge screenshots (repo-ollama desktop-light, mobile-dark) reviewed directly — tagline now reads immediately after the chart, 'Latest' sits cleanly at the bottom, no layout regression in either theme/viewport. No open design-lane owner decisions (RG-4 DEFAULTED for real at run 13, no further re-checks needed). Next major task (unchanged from run 13, still not started): TECH-DEBT.md's two open design-owned rows — MomentumChip's tooltip-only signal exposure (not reliably reachable by screen reader/keyboard/touch) first, then AlternativesTable's non-interactive sort."
   timebox: null
   failed_attempts: 0
   open_findings:
@@ -195,9 +195,10 @@ design:
     - "2026-09-29 — alternatives comparison table built (PR #57, spec §3-4); independent review fixed two silent-failure-mode content-validation gaps pre-merge (duplicate/self-referencing alternative slugs, ## Alternatives heading drift)"
     - "2026-09-29 — UX-2026-002: alternatives table's fixed min-w-[28rem] cut the Category column off-screen on mobile (390px viewport), requiring a horizontal scroll; found via real post-merge screenshot review, fixed same run (PR #58) by hiding Category below Tailwind's sm breakpoint — verified against the refreshed screenshot"
     - "2026-09-29 — UX-2026-003: StatusChip and MomentumChip rendered identical 'active' pills (icon+color both matched) on /repo/[slug] once Grove Heat v1 shipped (PR #59) — exactly the collision issue #52 pre-flagged. Fixed StatusChip's icon to a plain rounded-none square swatch (not MomentumChip's spec-locked dot set); an independent reviewer subagent caught that a first-pass rounded-sm/10px version still read as a circle at real size, corrected to rounded-none/12px and re-verified by render before merge. Verified against the refreshed post-merge screenshots, all 6 (light/dark x desktop/tablet/mobile) reviewed directly — issue #52 closed"
+    - "2026-09-30 — UX-2026-004: the basic news widget's 'Latest' section (#72, PR #74) landed directly after the star-growth chart, ahead of the repo's own one-sentence tagline, burying it under a 'No recent releases.' empty state with no visual separation. Fixed by moving 'Latest' to the very end of the page (pure JSX reorder), matching PRODUCT.md §10's documented page order; documented the canonical section order in DESIGN-SYSTEM.md. Verified against the refreshed post-merge screenshots (repo-ollama desktop-light, mobile-dark) — tagline reads cleanly right after the chart, no layout regression"
   pages_reviewed:
     "/": "2026-09-29 — first real (correctly-fonted) screenshot review, light/dark x desktop/tablet/mobile; found + fixed UX-2026-001. Re-reviewed run 9 post-merge with the new repo/Grove cards in place — confirmed end to end (clean grid, correct mobile stacking, no layout shift). Re-reviewed run 13 (2026-09-30) with the newsletter signup section (#71) now live — teal button/input match existing tokens, clean in both themes, reflows correctly on mobile"
-    "/repo/[slug]": "2026-09-29 — first real screenshot review (run 7), light/dark x desktop/tablet/mobile; confirmed status label, star-growth chart, dark-mode link contrast all match spec. Re-reviewed run 8 post-merge with the new status chip in place — confirmed end to end. Re-reviewed run 10 post-merge with the new alternatives table (repo-ollama, mixed resolved/unresolved rows) — desktop/tablet matched spec, found + fixed a mobile-only Category-column overflow (UX-2026-002), re-verified against the refreshed screenshot after the fix. Re-reviewed run 11 post-merge with StatusChip's new square swatch next to MomentumChip's dot (UX-2026-003) — all 6 (light/dark x desktop/tablet/mobile) confirmed end to end, clearly distinct shapes, no layout regression"
+    "/repo/[slug]": "2026-09-29 — first real screenshot review (run 7), light/dark x desktop/tablet/mobile; confirmed status label, star-growth chart, dark-mode link contrast all match spec. Re-reviewed run 8 post-merge with the new status chip in place — confirmed end to end. Re-reviewed run 10 post-merge with the new alternatives table (repo-ollama, mixed resolved/unresolved rows) — desktop/tablet matched spec, found + fixed a mobile-only Category-column overflow (UX-2026-002), re-verified against the refreshed screenshot after the fix. Re-reviewed run 11 post-merge with StatusChip's new square swatch next to MomentumChip's dot (UX-2026-003) — all 6 (light/dark x desktop/tablet/mobile) confirmed end to end, clearly distinct shapes, no layout regression. Re-reviewed run 14 (2026-09-30) after the basic news widget shipped (#72, PR #74) — found + fixed UX-2026-004 (Latest section buried the page's lede tagline); re-verified against refreshed desktop-light/mobile-dark screenshots after the fix, tagline reads cleanly, no layout regression"
     "/grove/[slug]": "2026-09-29 — first real screenshot review, light/dark x desktop/tablet/mobile; ruled out a false-alarm link-color read (see next_action)"
     "/trending": "2026-09-30 (run 13) — first screenshot+a11y coverage (harness never covered this route before); RankedList rows render cleanly, 0 axe violations"
     "/rising": "2026-09-30 (run 13) — first screenshot+a11y coverage; shares RankedList with /trending, renders identically, 0 axe violations"

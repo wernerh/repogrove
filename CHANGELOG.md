@@ -728,3 +728,14 @@ entries.
   unscoped until there's real demand?). All recommend holding/deferring given the
   site has no live traffic yet. Emailed the owner, mirrored as issues #76/#77/#78.
   (dev)
+- 2026-09-30 — Fixed UX-2026-004: `/repo/[slug]`'s "Latest" (recent GitHub releases)
+  section, added by the basic news widget (#72, PR #74), had landed directly after
+  the star-growth chart and ahead of the repo's own one-sentence tagline — with no
+  distinct lede styling, the tagline visually read as a trailing continuation of
+  "Latest"'s "No recent releases." empty state rather than the page's lead sentence.
+  Pure JSX reorder (no content/data/API changes): moved "Latest" to the very end of
+  the page, after "Compared with," matching PRODUCT.md §10's documented page order
+  (Overview → Alternatives → Comparison → Momentum → News). Documented the page's
+  canonical section order in `DESIGN-SYSTEM.md` so a future addition is placed
+  deliberately. 295/295 tests pass, lint/`tsc --noEmit` clean; PR #79 merged (6/6 CI
+  green), post-merge screenshots confirm the fix in both themes/viewports. (design)

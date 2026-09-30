@@ -255,12 +255,17 @@ first-draft code comment before it shipped (fixed — this finding doc is that r
 295/295 tests pass (no test changes needed — existing tests assert headings/text by
 role and content, not DOM order), lint clean, `tsc --noEmit` clean; `npm run build`
 reproduces the known ADR-006 sandbox font-fetch gap, confirmed it compiles past this
-change first, real build and a refreshed `repo-ollama__*.png` screenshot set left to CI.
-No open design-lane owner decisions this run (RG-4 was DEFAULTED for real at design run
-13; no further re-checks needed per its own note). **Next major task (unchanged from
-run 13, still not started):** TECH-DEBT.md's two open design-owned rows —
-`MomentumChip`'s tooltip-only signal exposure first, then `AlternativesTable`'s
-non-interactive sort.
+change first. PR #79 merged (squash, 6/6 CI checks green — 5 success + 1 skipped
+push-only job, including a real, correctly-fonted Playwright/axe-core run); post-merge
+CI on `main` also green, and `commit-screenshots` recommitted real
+`repo-ollama__*.png` screenshots on the resulting push — reviewed `desktop-light` and
+`mobile-dark` directly this same run: the tagline now reads immediately after the
+chart with nothing above it, "Latest" sits cleanly at the bottom below "Compared with,"
+`mt-6` spacing rhythm holds in both themes/viewports — fix confirmed. No open
+design-lane owner decisions this run (RG-4 was DEFAULTED for real at design run 13; no
+further re-checks needed per its own note). **Next major task (unchanged from run 13,
+still not started):** TECH-DEBT.md's two open design-owned rows — `MomentumChip`'s
+tooltip-only signal exposure first, then `AlternativesTable`'s non-interactive sort.
 
 ## Findings
 | ID | Severity | Status | Component | Mapping | Issue/PR |
@@ -268,4 +273,4 @@ non-interactive sort.
 | UX-2026-001 | MAJOR | Verified (fixed) | Header logo + homepage section headings | `layout.tsx`, `page.tsx` | #50, PR #51 |
 | UX-2026-002 | MINOR | Fixed (same run) | Alternatives table mobile Category column | `AlternativesTable.tsx` | PR #57 follow-up |
 | UX-2026-003 | MAJOR | Verified (fixed) | StatusChip/MomentumChip icon collision | `StatusChip.tsx` | #52, PR #60 |
-| UX-2026-004 | MINOR | Fixed (same run) | Repo page "Latest" section placement | `src/app/repo/[slug]/page.tsx` | PR TBD (this run) |
+| UX-2026-004 | MINOR | Verified (fixed) | Repo page "Latest" section placement | `src/app/repo/[slug]/page.tsx` | PR #79 |

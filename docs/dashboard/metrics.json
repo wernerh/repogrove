@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-09-30T13:05:53.198804+00:00",
+  "generated_at": "2026-09-30T13:32:18.571413+00:00",
   "product": {
     "current_version": "0.0.0-bootstrap",
-    "current_focus": "Phase 3 MVP gate complete \u2014 Phase 4+ not yet scoped (owner-gated items pending)"
+    "current_focus": "Phase 3 MVP gate complete \u2014 Phase 4 owner decisions raised (RG-7/8/9), awaiting owner"
   },
   "metrics": {
-    "runs": 43,
+    "runs": 45,
     "features_completed": 17,
-    "bugs_fixed": 4,
+    "bugs_fixed": 6,
     "security_issues_fixed": 3,
     "deployments": 0,
     "failed_runs": 0
@@ -26,9 +26,9 @@
     "verified": 3
   },
   "design_findings": {
-    "total": 3,
+    "total": 4,
     "open": 0,
-    "fixed": 3,
-    "verified": 3
+    "fixed": 4,
+    "verified": 4
   }
 }
