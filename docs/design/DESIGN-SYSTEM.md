@@ -136,6 +136,13 @@ a UX requirement, not just a color one; file as a dev-lane dependency when repo 
 built (methodology itself is dev/data-lane work, this doc only owns the chip's visual
 contract).
 
+**Mechanism decided 2026-09-30 (design run 15):** a real WAI-ARIA "disclosure
+(show/hide)" button (`aria-expanded`/`aria-controls`, native keyboard/touch activation),
+not a `title` tooltip — see the Component patterns section's Status chips entry below and
+`docs/design/findings/UX-2026-005-momentum-chip-tooltip-accessibility.md` for the full
+writeup of why the original tooltip-only version didn't satisfy "inspectable," not just
+"visible on hover."
+
 ### Borders (semantic, not a neutral-scale alias)
 
 `border.default` needs to clear WCAG's 3:1 **UI component** contrast minimum against
@@ -367,6 +374,17 @@ premature scale CLAUDE.md §4 asks the design lane to avoid.
   10px box, close to `rounded-full`'s 50%) — the fix would have shipped without
   actually solving the collision. Revised to a hard-edged square at a slightly larger
   12px box instead.
+  **`MomentumChip`'s signal panel (built 2026-09-30, design run 15 — see
+  UX-2026-005):** the chip itself is now a real `<button>` (WAI-ARIA disclosure
+  pattern — `aria-expanded`/`aria-controls`, native keyboard/touch activation),
+  replacing a `title`-tooltip-only version that excluded keyboard, touch, and (often)
+  screen-reader users from ever reaching the underlying signals. The controlled panel
+  (a `<dl>` of signal label/detail pairs, including "not enough data yet" for
+  unavailable ones) stays in the DOM at all times, toggled via the native `hidden`
+  attribute rather than being added/removed, so `aria-controls`'s target id always
+  resolves. Any future chip needing the same "inspectable, not just the badge alone"
+  contract (this doc's Momentum/Heat section above) should reuse this pattern, not
+  reintroduce a tooltip.
 - **Dates:** always render as an explicit, unambiguous string with a native
   `<time datetime>` attribute (e.g. "3 days ago" with a `title` tooltip showing the exact
   ISO date) — relative dates alone are an a11y/clarity failure for anyone using a screen
@@ -589,9 +607,39 @@ earlier in this run failed and are worth recording so the reasoning survives: a 
   independently, `npm test`/`npm run lint`/`npx tsc --noEmit` all reverified clean.
   `npm run build` still hits the known ADR-006 sandbox font-fetch gap (unrelated to this
   change, unchanged since run 3) — left to CI. TECH-DEBT.md's row appended (not
-  rewritten; the original row is dev-owned) marking the item resolved. **Next major
-  task:** no carried-over pick remains from this line of work; the next run should treat
-  `TECH-DEBT.md`'s open `design`-owned rows (MomentumChip's tooltip-only signal
-  exposure, AlternativesTable's non-interactive sort) as the standing backlog, in that
-  order, unless a higher-priority finding or a new dev-lane page needing a pattern
-  lands first.
+  rewritten; the original row is dev-owned) marking the item resolved.
+- **Done 2026-09-30 (design run 14):** no higher-priority finding was pre-existing, but
+  this run's own screenshot review of the basic news widget (#72, PR #74) surfaced one —
+  UX-2026-004 (MINOR): the new "Latest" section landed directly after the star-growth
+  chart, burying the repo page's lede tagline under a "No recent releases." empty state.
+  Fixed same run (pure JSX reorder, "Latest" moved to the very end) — see the Repo page
+  section order entry above. **Next major task:** carried over unchanged from run 13 —
+  `TECH-DEBT.md`'s two open `design`-owned rows (MomentumChip's tooltip-only signal
+  exposure, then AlternativesTable's non-interactive sort), in that order.
+- **Done 2026-09-30 (design run 15):** picked up the carried-over first item —
+  `MomentumChip`'s tooltip-only signal exposure (UX-2026-005). Converted the chip to a
+  real WAI-ARIA disclosure button; see the Status chips entry above and
+  `docs/design/findings/UX-2026-005-momentum-chip-tooltip-accessibility.md` for the full
+  writeup. Independent reviewer subagent (skeptical senior product designer + front-end
+  engineer) found one real MAJOR pre-merge: `/compare/[a]/[b]` renders two `MomentumChip`
+  instances in the same table row (one per compared repo) with fully independent expand
+  state, and `FactRow`'s table cells had no `vertical-align`, so expanding only one side
+  would visibly misalign that row against its sibling — fixed with `align-top` on every
+  cell `FactRow` renders, plus a new test expanding one side and asserting the row stays
+  aligned and the sibling chip is unaffected. Two lower-severity findings from the same
+  review (a pre-existing, not-introduced-here dark-mode `ring-offset-color` gap shared by
+  every `focus:ring-offset-2` button in the codebase; an unreachable-today empty-
+  `heat.signals` fallback gap) filed as their own new TECH-DEBT.md rows rather than fixed
+  in this PR, to keep it scoped to the accessibility fix itself. 304/304 tests pass (9
+  new/updated: `tests/components/momentum-chip.test.tsx` rewritten off the old
+  title-tooltip assertion, `tests/app/compare-page.test.tsx` gained the two-instance
+  alignment/independence test), lint clean, `tsc --noEmit` clean, `npm audit
+  --audit-level=high` 0 vulnerabilities, all run locally; `npm run build` reproduces the
+  known ADR-006 sandbox font-fetch gap (confirmed it compiles past this change first),
+  left to CI's GitHub-hosted runner. Real, correctly-fonted post-merge screenshots still
+  need a direct look once `commit-screenshots` recommits them (collapsed-state chrome is
+  visually unchanged, so no regression is expected, but that's unverified until seen —
+  tracked as next run's first step, not blocking this merge). **Next major task:**
+  `TECH-DEBT.md`'s remaining open `design`-owned row — `AlternativesTable`'s
+  non-interactive sort — unless a higher-priority finding (from the pending screenshot
+  review above, or a new dev-lane page needing a pattern) lands first.

@@ -66,11 +66,18 @@ function FactRow({
 }) {
   return (
     <tr className="border-b border-border-subtle last:border-b-0">
-      <th scope="row" className="py-2 pr-4 text-left font-normal text-text-secondary">
+      {/* `align-top` on every cell: most facts are a single line and don't
+          need it, but MomentumChip's row can grow taller than its sibling
+          when only one side's signal panel is expanded (it's independent,
+          uncoordinated `useState` per chip — see MomentumChip.tsx) — without
+          `align-top`, the browser's default cell vertical-centering would
+          make that column's label/value drift out of alignment with the
+          still-short sibling column for exactly as long as it's expanded. */}
+      <th scope="row" className="py-2 pr-4 text-left align-top font-normal text-text-secondary">
         {label}
       </th>
       {repos.map((repo) => (
-        <td key={repo.slug} className="py-2 pr-4">
+        <td key={repo.slug} className="py-2 pr-4 align-top">
           {render(repo)}
         </td>
       ))}
