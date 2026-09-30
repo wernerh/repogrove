@@ -15,11 +15,11 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 31 raised Phase 4's owner-gated items as decisions instead of guessing (RG-7 hold
-until deployed?, RG-8 auth provider?, RG-9 scope a public API now?) — emailed, mirrored
-as issues #76-78. Also shipped two small TECH-DEBT.md fixes (PR #75, merged, CI green).
-Next action: wait for replies (RG-7 defaults 2026-10-03; RG-8/9 have no default); pick
-up decision-free Phase 4 items (community submissions, agent roles, spec §19) meanwhile.
+Run 32: RG-7/8/9 still no owner reply (RG-7 defaults 2026-10-03). Held off Phase 4
+feature work — starting now would preempt RG-7's still-open question. Instead validated
+#72 end-to-end (triggered `ingestion.yml`; fixed a real-db-coupled test it broke, PR
+#80). Next: re-check RG-7/8/9 each run; once RG-7 resolves, hold or pick up
+decision-free Phase 4 items (community submissions, agent roles, spec §19) per its answer.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |

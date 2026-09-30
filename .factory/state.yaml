@@ -1,11 +1,11 @@
 factory:
-  current_run: "2026-09-30T14:51:00Z"
-  holder: "dev"
-  last_run: "2026-09-30T13:31:05Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-30T15:10:00Z"
 
 product:
   current_version: "0.0.0-bootstrap"
-  current_focus: "Phase 3 MVP gate complete — Phase 4 owner decisions raised (RG-7/8/9), awaiting owner"
+  current_focus: "Phase 3 MVP gate complete — Phase 4 owner decisions raised (RG-7/8/9), awaiting owner; Phase 4 feature work deliberately held while RG-7 is open"
 
 execution:
   active_tasks: []
@@ -19,14 +19,64 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 45
+  runs: 46
   features_completed: 17
-  bugs_fixed: 6
+  bugs_fixed: 7
   security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
 
 next_actions:
+  - "2026-09-30 (run 32): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed; RG-8/RG-9 have no default (expensive-to-reverse) and
+    stay open regardless. Priority order (CLAUDE.md/prompt): CI green on main, no
+    open PRs, security open_findings all 0 except 2 pre-existing LOW (owner-blocked,
+    unchanged), design open_findings all 0 (no BLOCKER/MAJOR ux) — nothing ahead of
+    PROJECT_STATE.md's own next action in the priority list. That next action itself
+    was ambiguous between two readings (wait quietly, or pick up decision-free Phase 4
+    items) — given RG-7 explicitly asks the owner whether to hold Phase 4 feature work
+    until deployed and is still open (not yet defaulted), starting Phase 4 feature work
+    now would preempt the very question just asked, so deliberately did not start any
+    Phase 4 item this run (community submissions / agent roles stay available once
+    RG-7 resolves either way). Instead used the run for verification/maintenance
+    (still 'safe work', not idle — CLAUDE.md rule 8's 'quiet run' bar is 'no safe work
+    to do', not 'no owner-gated work to do'): manually triggered `ingestion.yml`
+    (`workflow_dispatch`) to validate #72's basic-news-widget release-ingestion path
+    end-to-end for the first time since PR #74/#75 merged — the committed
+    `data/repogrove.db` had never actually gained a `repository_releases` table (no
+    ingestion run had fired a release-fetch since the schema/code shipped). The run
+    succeeded: populated 5 real releases for all 5 tracked repos, confirming the
+    schema migration and release-fetch code both work for real, not just against
+    mocks/fixtures. This immediately broke `tests/app/repo-page.test.tsx`'s
+    empty-state test for that section, which had (by its own doc comment) only ever
+    asserted against the real committed db on the premise it had no releases yet —
+    true by accident, not by design. Major task: fixed the test coupling. Moved the
+    empty-state assertion into a new isolated file,
+    `tests/app/repo-page-releases-empty.test.tsx`, mocking `@/lib/releases` to `[]` —
+    same isolation pattern its populated-state sibling
+    `tests/app/repo-page-releases.test.tsx` already used; removed the real-db-coupled
+    version; corrected a stale doc comment in the populated-state sibling that made
+    the same now-false claim. Independent review (subagent) found one MAJOR: this
+    left no test exercising the real, unmocked `getRecentReleases` path (real SQL/
+    schema/date formatting) against actual ingested rows — fixed pre-push by adding a
+    structural smoke test back to `repo-page.test.tsx`, scoped via `within()` to the
+    'Latest' `<section>` alone, asserting only that it renders either the empty state
+    or at least one release link (never specific content, so it survives future
+    ingestion refreshes); manually verified the smoke test actually fails if the
+    section breaks (mutated the heading text, confirmed failure, reverted). Small
+    related task: corrected a stale 2026-09-27 TECH-DEBT.md row claiming Phase 3's
+    search/newsletter both still needed a server API — stale now that #63 shipped a
+    client-side-only search (ADR-008) and #65 shipped form-UI-only with no working
+    submit path. 296/296 tests pass (1 new, 1 removed), lint clean, tsc --noEmit
+    clean, npm audit --audit-level=high 0 vulnerabilities, all run locally; next
+    build reproduces the known ADR-006 sandbox font-fetch gap (confirmed it compiles
+    past this change first), left to CI's GitHub-hosted runner — all 4 checks green
+    on PR #80 before squash-merging it myself; post-merge CI on main also confirmed
+    green (2 duplicate-triggered runs, both success). TECH-DEBT.md/CHANGELOG.md/
+    PROJECT_STATE.md updated. Next: re-check RG-7/8/9 each run; once RG-7 resolves
+    (owner reply, or its 2026-10-03 default), hold or pick up decision-free Phase 4
+    items (community submissions, agent roles, spec §19) per whichever answer stands."
   - "2026-09-30 (run 31): Phase 3's MVP gate stayed complete this run (no new Phase 3/4
     roadmap items to pick up per PROJECT_STATE.md's own prior next-action) — confirmed
     main CI green, no open issues besides the standing SEC-003 needs-human, no open PRs

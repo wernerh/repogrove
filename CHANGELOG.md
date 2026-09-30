@@ -739,3 +739,14 @@ entries.
   canonical section order in `DESIGN-SYSTEM.md` so a future addition is placed
   deliberately. 295/295 tests pass, lint/`tsc --noEmit` clean; PR #79 merged (6/6 CI
   green), post-merge screenshots confirm the fix in both themes/viewports. (design)
+- 2026-09-30 — `tests/app/repo-page.test.tsx`'s empty-state test for the "Latest"
+  releases section (#72) asserted "No recent releases." against the real committed
+  `data/repogrove.db`, on the premise no ingestion run had fetched releases yet. This
+  run manually triggered `ingestion.yml` to validate #72's schema/data path end to end
+  for the first time since it merged — `repository_releases` had never actually been
+  created in the committed db before — which populated real releases for all 5 tracked
+  repos and broke that premise. Moved the empty-state assertion into its own isolated,
+  mocked test file (mirroring the existing populated-state sibling); independent review
+  added back a structural (non-content-specific) smoke test confirming the real,
+  unmocked render path still works. 296/296 tests pass, lint/`tsc --noEmit` clean; PR
+  #80 merged (4/4 CI checks green). (dev)
