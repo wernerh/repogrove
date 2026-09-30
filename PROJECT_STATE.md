@@ -15,11 +15,10 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 33: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03). Held off Phase 4 feature
-work again; shipped decision-free content instead (Developer Tools grove, PR #81).
-Next: re-check RG-7/8/9 each run; once RG-7 resolves, hold or pick up decision-free
-Phase 4 items (community submissions, agent roles) per its answer — more content
-coverage stays available meanwhile.
+Run 34: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03). Held off Phase 4 again;
+shipped decision-free content instead (PocketBase + Appwrite, PR #83). Next: re-check
+RG-7/8/9 each run; once RG-7 resolves, hold or pick up decision-free Phase 4 items
+(community submissions, agent roles) — more content coverage stays available meanwhile.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -56,5 +55,6 @@ None blocking (rule 8). RG-7/8/9 open (see Next action) — Phase 4 stays stubbe
 - [x] 2026-09-29/30 — `/alternative/:slug` (#61), `/compare/:a/:b` (#62),
   sitemap/robots (#64), `/search` (#63, ADR-008), newsletter form UI (#65, PR #71),
   basic news widget (#72, PR #74) — Phase 3 MVP gate complete.
-- [x] 2026-09-30 — Developer Tools grove: LazyGit, Neovim (#81, decision-free content)
+- [x] 2026-09-30 — Decision-free content: Developer Tools grove (LazyGit, Neovim, #81);
+  Self-Hosted grove +PocketBase/Appwrite (#83).
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (issues #76-78), awaiting owner

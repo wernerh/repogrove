@@ -243,6 +243,12 @@
     question; used the run instead for decision-free editorial content work (Developer
     Tools grove, PR #81) — not Phase 4 groundwork, so doesn't preempt either answer.
 
+    Re-checked 2026-09-30 (dev run 34, via get_thread) — thread 1a0f26990ebc1e9c still
+    exactly the one original message, no owner reply. default_due_at (2026-10-03) hasn't
+    passed. Held off Phase 4 feature work again this run; used the run instead for
+    decision-free editorial content work (PocketBase/Appwrite added to the Self-Hosted
+    grove, PR #83) — not Phase 4 groundwork, so doesn't preempt either answer.
+
 - id: RG-8
   lane: dev
   question: >
@@ -279,6 +285,8 @@
 
     Re-checked 2026-09-30 (dev run 33) — no owner reply; stays open, no default applies.
 
+    Re-checked 2026-09-30 (dev run 34) — no owner reply; stays open, no default applies.
+
 - id: RG-9
   lane: dev
   question: >
@@ -309,3 +317,5 @@
     docs/DECISION-PROTOCOL.md. Mirrored as needs-human issue.
 
     Re-checked 2026-09-30 (dev run 33) — no owner reply; stays open, no default applies.
+
+    Re-checked 2026-09-30 (dev run 34) — no owner reply; stays open, no default applies.

@@ -19,6 +19,13 @@ entries.
   (design)
 
 ### Added
+- 2026-09-30 — PocketBase and Appwrite (`content/repos/pocketbase.md`, `appwrite.md`)
+  added to the Self-Hosted grove — routine editorial content work done while Phase 4
+  feature work stays held pending RG-7 (no owner reply yet, defaults 2026-10-03).
+  Closes a latent gap: `content/repos/supabase.md`'s `alternatives.open_source` has
+  named both since bootstrap, but neither had its own content file, so both rendered
+  as "Not yet profiled" on Supabase's Alternatives table. `content/groves/self-hosted.md`'s
+  "Core projects" list extended to include both. PR #83. (dev)
 - 2026-09-30 — Developer Tools grove (`content/groves/developer-tools.md`), backed by
   two new real repos, LazyGit and Neovim (`content/repos/lazygit.md`, `neovim.md`) —
   routine editorial content work done while Phase 4 feature work stays held pending

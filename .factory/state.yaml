@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-30T18:51:38Z"
-  holder: "dev"
-  last_run: "2026-09-30T17:39:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-30T19:05:00Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,14 +19,55 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 47
-  features_completed: 17
+  runs: 48
+  features_completed: 18
   bugs_fixed: 7
   security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
 
 next_actions:
+  - "2026-09-30 (run 34): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
+    Held off Phase 4 feature work again this run for the same reason as run 33 —
+    starting it now would preempt RG-7's still-open sequencing question. Found, while
+    scoping decision-free content work, that content/repos/supabase.md's frontmatter
+    has listed alternatives.open_source: [appwrite, pocketbase] since bootstrap, but
+    neither had its own content/repos/*.md file — both rendered as 'Not yet profiled'
+    on Supabase's Alternatives table, the same kind of latent content gap run 33's
+    developer-tools grove closed for related_groves (just not caught by a fail-loudly
+    validator this time, since alternatives.open_source is deliberately allowed to
+    reference not-yet-profiled slugs — see AlternativesTable's own doc comment).
+    Major task: added content/repos/pocketbase.md and appwrite.md (both real,
+    well-known repos — pocketbase/pocketbase MIT, appwrite/appwrite BSD-3-Clause),
+    groves: [self-hosted], with original 'What it does'/'Why people use it'/Pros/Cons
+    interpretation matching house style (not a raw GitHub-description scrape, per rule
+    4), cross-referencing each other and Supabase under alternatives.open_source. Both
+    pick up real GitHub ingestion automatically on the next ingestion.yml run. Small
+    related task: extended content/groves/self-hosted.md's 'Core projects' list to
+    include both. Independent review (subagent, skeptical-senior-engineer pass) found
+    two MINOR issues, both fixed pre-push: (1) the working branch was named
+    content/self-hosted-backends-pocketbase-appwrite, not a CLAUDE.md §6-allowed
+    prefix — renamed to feat/self-hosted-backends-pocketbase-appwrite, matching the
+    directly comparable prior PR (#81, feat/developer-tools-grove); (2) no test
+    rendered /repo/pocketbase or /repo/appwrite through the actual page component,
+    only through generateStaticParams/getReposInGrove — fixed by adding a
+    /repo/pocketbase render test mirroring the existing /repo/neovim one, including
+    asserting its alternatives.open_source cross-references now resolve to real links
+    instead of 'Not yet profiled'. 305/305 tests pass (8 new/updated: slug-list
+    updates in tests/{lib/content,app/home,app/repo-page}.test.tsx for the +2 repos,
+    plus the new /repo/pocketbase render test), lint clean, tsc --noEmit clean, npm
+    audit --audit-level=high 0 vulnerabilities, all run locally; next build reproduces
+    the known ADR-006 sandbox font-fetch gap (confirmed it compiles past this change
+    first), left to CI's GitHub-hosted runner — all 5 gating checks + 1 skipped
+    push-only job green on PR #83 before squash-merging it myself; post-merge CI on
+    main also confirmed green. TECH-DEBT.md needed no changes (no new debt
+    introduced/resolved). CHANGELOG.md/DECISIONS.md/PROJECT_STATE.md updated. Next:
+    re-check RG-7/8/9 each run; once RG-7 resolves, hold or pick up decision-free
+    Phase 4 items (community submissions, agent roles, spec §19) per its answer — more
+    content coverage (additional repos/Groves/alternatives/comparisons) stays
+    available as decision-free work meanwhile."
   - "2026-09-30 (run 33): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
