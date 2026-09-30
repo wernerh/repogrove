@@ -6,11 +6,13 @@ describe("Repo page (/repo/[slug])", () => {
   it("statically generates params for every repo in /content", async () => {
     const params = generateStaticParams();
     expect(params.map((p) => p.slug).sort()).toEqual([
+      "appwrite",
       "coolify",
       "langchain",
       "lazygit",
       "neovim",
       "ollama",
+      "pocketbase",
       "supabase",
       "vllm",
     ]);
@@ -59,6 +61,34 @@ describe("Repo page (/repo/[slug])", () => {
       "href",
       "/grove/developer-tools",
     );
+  });
+
+  it("renders /repo/pocketbase from content/repos/pocketbase.md, not a hardcoded string", async () => {
+    render(await RepoPage({ params: Promise.resolve({ slug: "pocketbase" }) }));
+
+    expect(screen.getByRole("heading", { level: 1, name: "PocketBase" })).toBeInTheDocument();
+    expect(screen.getByText(/📜 MIT/)).toBeInTheDocument();
+    expect(screen.getByText(/PocketBase ships as one small Go binary/)).toBeInTheDocument();
+    // The body's own "## Related Grove" section links to Self-Hosted — proves
+    // the new content/repos/*.md file actually renders through the real
+    // page, not just through generateStaticParams.
+    expect(screen.getByRole("link", { name: "Self-Hosted" })).toHaveAttribute(
+      "href",
+      "/grove/self-hosted",
+    );
+    // Its `alternatives.open_source` frontmatter (supabase, appwrite) now
+    // resolves against real content/repos/*.md files (this PR's own point —
+    // supabase.md already listed both slugs before either existed) rather
+    // than rendering "Not yet profiled".
+    expect(screen.getByRole("link", { name: "Supabase" })).toHaveAttribute(
+      "href",
+      "/repo/supabase",
+    );
+    expect(screen.getByRole("link", { name: "Appwrite" })).toHaveAttribute(
+      "href",
+      "/repo/appwrite",
+    );
+    expect(screen.queryByText("Not yet profiled")).not.toBeInTheDocument();
   });
 
   it("renders the Momentum/Heat chip from real snapshot history (issue #21/ADR-004)", async () => {
