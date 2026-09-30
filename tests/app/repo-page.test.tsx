@@ -116,14 +116,33 @@ describe("Repo page (/repo/[slug])", () => {
     expect(screen.queryByRole("heading", { level: 2, name: "Compared with" })).not.toBeInTheDocument();
   });
 
-  it("shows an explicit empty state for the 'Latest' releases section when none have been ingested yet (issue #72)", async () => {
-    // data/repogrove.db has no repository_releases rows yet — this is the real state
-    // today, not a mocked one. See tests/app/repo-page-releases.test.tsx (isolated,
-    // mocked @/lib/releases) for the populated-state render.
+  it("renders the 'Latest' releases section against the real committed database without crashing (issue #72)", async () => {
+    // Deliberately a structural smoke test, not a specific-content assertion: the real
+    // data/repogrove.db is refreshed by the daily ingestion job (scripts/ingestion/
+    // fetch-snapshots.ts), so its exact release count/titles/dates change over time —
+    // asserting specific content here would be exactly the real-db coupling that broke
+    // tests/app/repo-page.test.tsx's previous empty-state test the moment ingestion
+    // actually ran (see TECH-DEBT.md's 2026-09-30 row). The empty and populated render
+    // branches themselves are covered, isolated and mocked, by
+    // tests/app/repo-page-releases-empty.test.tsx and tests/app/repo-page-releases.test.tsx —
+    // this test's only job is confirming the real, unmocked path (real SQL query against
+    // the real schema, real getRecentReleases call, real date formatting) doesn't throw
+    // for a repo with real releases on record.
     const element = await RepoPage({ params: Promise.resolve({ slug: "ollama" }) });
     render(element);
 
-    expect(screen.getByRole("heading", { level: 2, name: "Latest" })).toBeInTheDocument();
-    expect(screen.getByText("No recent releases.")).toBeInTheDocument();
+    const heading = screen.getByRole("heading", { level: 2, name: "Latest" });
+    const section = heading.closest("section");
+    expect(section).not.toBeNull();
+    // Either a real release list or the empty state is fine — both are valid,
+    // non-fabricated renders; the assertion just requires the section rendered
+    // *something* sensible, not that the db is in a particular state. Scoped to this
+    // section specifically (via `within`) so links elsewhere on the page (GitHub link,
+    // Alternatives table, "Compared with") can't make this assertion pass regardless of
+    // what "Latest" itself rendered.
+    const withinSection = within(section!);
+    const emptyState = withinSection.queryByText("No recent releases.");
+    const releaseLinks = withinSection.queryAllByRole("link");
+    expect(emptyState !== null || releaseLinks.length > 0).toBe(true);
   });
 });
