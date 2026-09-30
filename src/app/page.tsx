@@ -2,6 +2,7 @@ import { getAllGroves, getAllRepos, getReposInGrove } from "@/lib/content";
 import { getGrowthSummaries } from "@/lib/snapshots";
 import GroveCard from "@/components/GroveCard";
 import RepoCard from "@/components/RepoCard";
+import NewsletterSignupForm from "@/components/NewsletterSignupForm";
 
 export default function Home() {
   const groves = getAllGroves();
@@ -53,6 +54,11 @@ export default function Home() {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section>
+        <h2 className="text-xl font-semibold">RepoGrove Weekly</h2>
+        <NewsletterSignupForm />
       </section>
     </div>
   );
