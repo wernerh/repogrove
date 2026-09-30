@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   ContentValidationError,
   assertComparisonReposExist,
+  assertGrovesExist,
   assertNoDuplicateComparisonPairs,
   assertNoGithubCollisions,
   extractListItems,
@@ -29,7 +30,15 @@ describe("getAllRepos (real /content fixtures)", () => {
   it("loads every repo content file", () => {
     const repos = getAllRepos();
     const slugs = repos.map((r) => r.slug).sort();
-    expect(slugs).toEqual(["coolify", "langchain", "ollama", "supabase", "vllm"]);
+    expect(slugs).toEqual([
+      "coolify",
+      "langchain",
+      "lazygit",
+      "neovim",
+      "ollama",
+      "supabase",
+      "vllm",
+    ]);
   });
 
   it("parses Ollama's frontmatter correctly", () => {
@@ -54,10 +63,10 @@ describe("getAllRepos (real /content fixtures)", () => {
 });
 
 describe("getAllGroves (real /content fixtures)", () => {
-  it("loads both example groves", () => {
+  it("loads every example grove", () => {
     const groves = getAllGroves();
     const slugs = groves.map((g) => g.slug).sort();
-    expect(slugs).toEqual(["ai", "self-hosted"]);
+    expect(slugs).toEqual(["ai", "developer-tools", "self-hosted"]);
   });
 
   it("parses the AI grove's frontmatter correctly", () => {
@@ -76,6 +85,11 @@ describe("getReposInGrove (derived from repo frontmatter, per ADR-003)", () => {
   it("finds every self-hosted-grove repo under the self-hosted grove", () => {
     const reposInSelfHosted = getReposInGrove("self-hosted");
     expect(reposInSelfHosted.map((r) => r.slug).sort()).toEqual(["coolify", "supabase"]);
+  });
+
+  it("finds every developer-tools-grove repo under the developer-tools grove", () => {
+    const reposInDevTools = getReposInGrove("developer-tools");
+    expect(reposInDevTools.map((r) => r.slug).sort()).toEqual(["lazygit", "neovim"]);
   });
 
   it("returns an empty array for a grove with no member repos", () => {
@@ -577,6 +591,32 @@ describe("assertComparisonReposExist", () => {
     };
     expect(() => assertComparisonReposExist([fake], repos)).toThrow(
       /names "does-not-exist" under "repos", but no content\/repos\/does-not-exist\.md exists/,
+    );
+  });
+});
+
+describe("assertGrovesExist", () => {
+  const groves = getAllGroves();
+
+  it("does not throw when every repo's groves field names a real Grove slug", () => {
+    expect(() => assertGrovesExist(getAllRepos(), groves)).not.toThrow();
+  });
+
+  it("throws when a repo names a Grove slug with no content/groves/*.md file", () => {
+    const fake: Repo = {
+      slug: "ghost-repo",
+      github: "ghost/ghost-repo",
+      name: "Ghost",
+      category: ["misc"],
+      license: "MIT",
+      status: "active",
+      featured: false,
+      groves: ["does-not-exist"],
+      alternatives: { open_source: [], commercial: [] },
+      body: "n/a",
+    };
+    expect(() => assertGrovesExist([fake], groves)).toThrow(
+      /lists "does-not-exist" under "groves", but no content\/groves\/does-not-exist\.md exists/,
     );
   });
 });

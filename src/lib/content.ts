@@ -557,6 +557,30 @@ export function assertNoDuplicateComparisonPairs(comparisons: Comparison[]): voi
   }
 }
 
+/**
+ * A repo's `groves:` frontmatter field is what `getReposInGrove` (and the
+ * homepage's per-Grove repo count) actually filters on — unlike
+ * `related_groves` on a Grove file, which is decorative and never rendered
+ * as a link. Nothing previously checked that a repo's `groves` entry names
+ * a Grove that actually has a `content/groves/*.md` file: a typo there
+ * wouldn't fail the build, it would just silently under-count that Grove
+ * (the repo drops out of `getReposInGrove` for every real Grove, with
+ * nothing pointing at why). Same fail-loudly convention as
+ * `assertComparisonReposExist`/`assertNoGithubCollisions`.
+ */
+export function assertGrovesExist(repos: Repo[], groves: Grove[]): void {
+  const knownSlugs = new Set(groves.map((grove) => grove.slug));
+  for (const repo of repos) {
+    for (const groveSlug of repo.groves) {
+      if (!knownSlugs.has(groveSlug)) {
+        throw new ContentValidationError(
+          `content/repos/${repo.slug}.md lists "${groveSlug}" under "groves", but no content/groves/${groveSlug}.md exists`,
+        );
+      }
+    }
+  }
+}
+
 export function assertNoGithubCollisions(repos: Repo[]): void {
   const seen = new Map<string, string>();
   for (const repo of repos) {
@@ -580,6 +604,7 @@ export function getAllRepos(): Repo[] {
   if (cachedRepos) return cachedRepos;
   const repos = readMarkdownFiles(REPOS_DIR).map(parseRepo);
   assertNoGithubCollisions(repos);
+  assertGrovesExist(repos, getAllGroves());
   cachedRepos = repos;
   return repos;
 }

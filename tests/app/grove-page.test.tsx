@@ -5,7 +5,7 @@ import GrovePage, { generateStaticParams } from "@/app/grove/[slug]/page";
 describe("Grove page (/grove/[slug])", () => {
   it("statically generates params for every Grove in /content", async () => {
     const params = generateStaticParams();
-    expect(params.map((p) => p.slug).sort()).toEqual(["ai", "self-hosted"]);
+    expect(params.map((p) => p.slug).sort()).toEqual(["ai", "developer-tools", "self-hosted"]);
   });
 
   it("renders /grove/ai from content/groves/ai.md, not a hardcoded string", async () => {

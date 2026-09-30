@@ -8,6 +8,8 @@ describe("Repo page (/repo/[slug])", () => {
     expect(params.map((p) => p.slug).sort()).toEqual([
       "coolify",
       "langchain",
+      "lazygit",
+      "neovim",
       "ollama",
       "supabase",
       "vllm",
@@ -42,6 +44,21 @@ describe("Repo page (/repo/[slug])", () => {
     expect(screen.getByText(/Ollama packages open-weight LLMs/)).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to the Grove.
     expect(screen.getByRole("link", { name: "AI" })).toHaveAttribute("href", "/grove/ai");
+  });
+
+  it("renders /repo/neovim from content/repos/neovim.md, not a hardcoded string", async () => {
+    render(await RepoPage({ params: Promise.resolve({ slug: "neovim" }) }));
+
+    expect(screen.getByRole("heading", { level: 1, name: "Neovim" })).toBeInTheDocument();
+    expect(screen.getByText(/📜 Apache-2\.0/)).toBeInTheDocument();
+    expect(screen.getByText(/Neovim keeps Vim's modal editing model/)).toBeInTheDocument();
+    // The body's own "## Related Grove" section links to the new Developer
+    // Tools grove — proves the new content/repos/*.md file actually renders
+    // through the real page, not just through generateStaticParams.
+    expect(screen.getByRole("link", { name: "Developer Tools" })).toHaveAttribute(
+      "href",
+      "/grove/developer-tools",
+    );
   });
 
   it("renders the Momentum/Heat chip from real snapshot history (issue #21/ADR-004)", async () => {
