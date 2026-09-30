@@ -46,4 +46,11 @@ describe("Homepage", () => {
     // wordmark link isn't part of this render (Home doesn't mount RootLayout).
     expect(screen.getAllByRole("link")).toHaveLength(7);
   });
+
+  it("renders the RepoGrove Weekly newsletter signup section (issue #65, form UI only)", () => {
+    render(<Home />);
+    expect(screen.getByRole("heading", { name: "RepoGrove Weekly" })).toBeInTheDocument();
+    expect(screen.getByRole("form", { name: /newsletter/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/email/i)).toHaveAttribute("type", "email");
+  });
 });
