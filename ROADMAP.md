@@ -33,7 +33,13 @@ Technical considerations / Testing / Security / Rollout / Documentation / Depend
   build-time index, client-side substring matching (ADR-008)
 - [x] Sitemap + robots.txt + SEO metadata baseline (#64, PR #69) — OG image generation
   and JSON-LD stay out per the issue's own non-goals
-- [ ] Newsletter signup form (storage only, no send automation) (#65)
+- [x] Newsletter signup form (storage only, no send automation) (#65, PR #71) — form UI
+  only per the issue's own acceptance criteria; no working submit path until the
+  storage/vendor owner decision is made
+- [ ] Basic news widget (#72) — spec §11/PRODUCT.md's MVP scope item 11, missed by every
+  Phase 3 issue filed so far (found dev run 29 while checking `docs/WORKPLAN.md`'s own
+  Phase 3 gate before declaring the phase complete); v1 scope recommended: GitHub
+  Releases only, per-repo, no new vendor/licensing risk
 
 ## Phase 4+ — Deferred product roadmap (spec §31–32)
 - [ ] Historical charts, watchlists/alerts (Phase 2 of product)

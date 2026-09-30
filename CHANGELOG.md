@@ -659,3 +659,20 @@ entries.
   clean, `tsc --noEmit` clean, `npm audit --audit-level=high` 0 vulnerabilities, all
   run locally; all 3 CI checks green on PR #70's final commit before squash-merging;
   post-merge CI on `main` also green. Issue #63 auto-closed by the merge. (dev)
+- 2026-09-30 — Newsletter signup form UI (#65, PR #71): "RepoGrove Weekly" section on
+  the homepage, scoped to form UI only per the issue's own acceptance criteria — real
+  client-side email validation (empty/malformed both get an inline error), clearly
+  labeled "Coming soon", no working submission path (no `fetch`, no form
+  `action`/`method`) since storing a subscriber email needs an owner decision (vendor +
+  PII storage, `CLAUDE.md` rule 6) that hasn't been made. New
+  `src/components/NewsletterSignupForm.tsx`. Independent review before push found no
+  BLOCKER/MAJOR findings; one MINOR fixed pre-push (editing the email after a
+  successful fake submission left a stale confirmation message on screen). 253/253
+  tests pass (5 new + 1 updated), lint clean, `tsc --noEmit` clean, `npm audit
+  --audit-level=high` 0 vulnerabilities, all run locally; all CI checks green on PR
+  #71 before squash-merging; post-merge CI on `main` also green. Issue #65 auto-closed
+  by the merge. While closing out, found `docs/WORKPLAN.md`'s Phase 3 gate (the
+  17-item MVP list, spec §30/`PRODUCT.md`) includes a "basic news" item (spec §11)
+  never filed as a roadmap issue across 28 prior runs — filed #72 (v1 scope: GitHub
+  Releases only, no new vendor/licensing risk) so Phase 3 isn't mistakenly marked
+  complete. (dev)

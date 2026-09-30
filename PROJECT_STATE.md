@@ -10,14 +10,14 @@ whether it's active, what else they could use, and why they'd care — no accoun
 migration, or deploy target needed yet.
 
 ## Current phase
-**Phase 3 — Search, SEO, alternatives, newsletter signup**. Phase 2 completed run 24
-(all 6 ROADMAP items checked, see Milestones). Phase 3 issues filed run 25 (#61-65,
-mirroring how #5-7/#16-21 mirrored Phase 1/2's ROADMAP rows).
+**Phase 3 — Search, SEO, alternatives, newsletter signup**. Phase 2 completed run 24.
+NOT gate-complete yet: `docs/WORKPLAN.md`'s Phase 3 gate is the 17-item MVP list (spec
+§30/PRODUCT.md), and item 11 ("basic news") was never filed until #72 (run 29).
 
 ## Next action (exactly one)
-Run 28 shipped `/search` (#63, PR #70, ADR-008: static build-time index, client-side
-matching). Only #65 (newsletter) remains in Phase 3 — owner-decision-blocked on
-storage/vendor past its form-UI-only first PR (see issue #65's own scope note).
+Run 29 shipped the newsletter signup form UI (#65, PR #71). While closing out, found
+MVP-list item 11 ("basic news", spec §11) was never scoped into an issue across 28 runs
+— filed #72 (v1: GitHub Releases only, no new vendor/licensing risk). Next action: #72.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -39,8 +39,8 @@ Accounts, paid subscriptions, watchlists/alerts, recommendation engine, massive
 crawling infra, admin CMS, live deploy — see spec §30, §33 and ADR-002.
 
 ## Timebox
-Phase 2 complete (run 24, within budget). Every shipped Phase 3 item (#61/#62/#64/#63)
-landed within budget, no split needed. No timebox set on #65 (newsletter) yet.
+Phase 2 complete (run 24, within budget). Every shipped Phase 3 item (#61/#62/#64/#63/#65)
+landed within budget, no split needed. No timebox set on #72 (basic news) yet.
 
 ## Blockers and attempts
 None blocking (rule 8). Dependabot #29 (eslint) blocked upstream (eslint-plugin-react
@@ -49,12 +49,11 @@ PRs (#29, #46-49) outside this lane's merge gate — owner merges these directly
 
 ## Milestones
 - [x] 2026-09-27 — Repo bootstrapped; Phase 1 walking skeleton — #5, #6, #7
-- [x] 2026-09-27 — Phase 2 ingestion job + schema (ADR-005) — #16/17, PR #22; repos 2→5
-- [x] 2026-09-28 — CI red fixed (#26, PR #27); star-growth chart (#18, PR #31); self-hosted fonts (ADR-006, PR #32); ingestion scripts to TS (PR #35); contributor counts (PR #37); watchers/subscribers_count fix (PR #38); typescript-7 CI-red revert (PR #45).
-- [x] 2026-09-29 — `/trending` (#19, PR #55) + `/rising` (#20, PR #56): absolute/relative star-growth rankings.
-- [x] 2026-09-29 — Grove Heat v1 (#21, PR #59): star-growth-rate momentum label — Phase 2 complete.
-- [x] 2026-09-29 — Phase 3 issues filed (#61-65); `/alternative/:slug` shipped (#61, PR #66).
-- [x] 2026-09-29 — `/compare/:a/:b` shipped (#62, PR #67): comparison pages.
-- [x] 2026-09-29 — sitemap.xml + robots.txt shipped (#64, PR #69); SEO baseline done.
-- [x] 2026-09-30 — `/search` shipped (#63, PR #70, ADR-008): static build-time index.
-- [ ] Phase 3 remaining — newsletter signup form UI (#65)
+- [x] 2026-09-27/28 — Phase 2 ingestion (ADR-005, #16/17); CI fixes; star-growth chart
+  (#18); self-hosted fonts (ADR-006); contributor counts; watchers fix.
+- [x] 2026-09-29 — `/trending` (#19) + `/rising` (#20); Grove Heat v1 (#21, ADR-004) —
+  Phase 2 complete. Phase 3 issues filed (#61-65).
+- [x] 2026-09-29 — `/alternative/:slug` (#61); `/compare/:a/:b` (#62); sitemap/robots
+  (#64).
+- [x] 2026-09-30 — `/search` (#63, ADR-008); newsletter signup form UI (#65, PR #71).
+- [ ] Phase 3 remaining — basic news widget, v1 GitHub-Releases-only (#72)
