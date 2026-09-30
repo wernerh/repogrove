@@ -676,3 +676,15 @@ entries.
   never filed as a roadmap issue across 28 prior runs — filed #72 (v1 scope: GitHub
   Releases only, no new vendor/licensing risk) so Phase 3 isn't mistakenly marked
   complete. (dev)
+- 2026-09-30 — RG-4 (visual direction) defaulted: no owner reply since the ambiguous
+  2026-09-27T17:32:04Z message; `default_due_at` passed, so "Editorial/content-forward"
+  is now the recorded answer in `.factory/decisions.yaml` (bookkeeping only — every
+  design-lane run has already been building against this default since run 1). Issue
+  #8 (RG-2/3/4) closed, all three resolved. (design)
+- 2026-09-30 — Extended the screenshot + axe-core harness (PR #73) from 3 routes to 8:
+  added `/trending`, `/rising`, `/alternative/notion`, `/compare/ollama/vllm`, `/search`
+  — every shipped Phase 2/3 page family the harness had never covered since design run
+  9. Real CI run: 48/48 checks passed, 0 axe-core WCAG 2.1 A/AA violations across all 8
+  routes × 6 viewport/color-scheme projects; all 48 real screenshots committed under
+  `docs/design/screenshots/`. Reviewed a representative sample directly — no new UX
+  findings, everything consistent with `DESIGN-SYSTEM.md`. (design)

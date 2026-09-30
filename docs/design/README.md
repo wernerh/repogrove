@@ -197,6 +197,45 @@ no layout regression, `AlternativesTable`'s Status column unaffected. RG-4 re-ch
 (`get_thread`) — still no new reply since 2026-09-27T17:32:04Z; due 2026-09-30
 (tomorrow).
 
+Run 13 (2026-09-30): RG-4 re-checked (`get_thread`) — still exactly 3 messages, no new
+reply since 2026-09-27T17:32:04Z. `default_due_at` (2026-09-30T00:00:00Z) has now
+passed, so this run applied the recommended default for real — status moved
+OPEN -> DEFAULTED in `.factory/decisions.yaml`, "Editorial/content-forward" is now the
+recorded answer (formalizing what every run has already been building against since
+run 1), and issue #8 (which tracked RG-2/3/4 together) was closed. This run's major
+task: the screenshot + axe-core harness (`tests/design/screenshots.spec.ts`) had only
+ever covered the 3 Phase 1 routes since design run 9 last touched it — six shipped
+pages (`/trending` #19, `/rising` #20, `/alternative/[slug]` #61, `/compare/[a]/[b]`
+#62, `/search` #63, plus the newsletter section #71 added to the homepage) had never
+been screenshotted or WCAG-scanned by this lane. Extended `ROUTES` with one entry per
+still-uncovered page family (`/trending`, `/rising`, `/alternative/notion`,
+`/compare/ollama/vllm`, `/search`; `/` re-captures the newsletter section under its
+existing entry) — see PR #73. Independent reviewer subagent (skeptical senior product
+designer/front-end engineer): verified every new route resolves to a real page and a
+real content slug, `/compare/ollama/vllm` is a validly pre-rendered URL order, no
+shipped route family was missed, no filename collisions — no findings. 253/253 tests
+pass (unchanged — test-only harness file, not part of the Vitest suite), lint/tsc
+clean, `npm audit --audit-level=high` 0 vulns, all run locally; `next build` reproduces
+the known ADR-006 sandbox font-fetch gap, confirmed it compiles past this change first.
+PR #73 merged (squash, 6/6 CI checks green — including the real, correctly-fonted
+Playwright run: 48/48 checks passed, 0 axe-core WCAG 2.1 A/AA violations across all 8
+routes × 6 viewport/color-scheme projects); `commit-screenshots` fired on the resulting
+push and committed all 48 real screenshots. Reviewed a representative sample directly
+(home light/dark desktop + mobile, trending, rising, search, alternative-notion,
+compare-ollama-vllm desktop + mobile light): everything held up — type hierarchy,
+spacing, and both themes consistent with `DESIGN-SYSTEM.md`; the newsletter section's
+teal "Notify me" button and input match existing tokens; `RankedList`/`RankingRow`
+renders identically on `/trending` and `/rising` as expected from a shared component;
+the compare page's `StatusChip`/`MomentumChip` pair reads clearly distinct (square vs.
+dot vs. flame — no repeat of UX-2026-003's collision) and its table reflows cleanly on
+mobile with no horizontal scroll, unlike `AlternativesTable`'s original mobile bug
+(UX-2026-002) — a different component, doesn't need the same fix but is reassuring it
+wasn't inherited. No new findings this run — a genuinely clean catch-up pass. **Next
+major task:** TECH-DEBT.md's two still-open design-owned rows — `MomentumChip`'s
+tooltip-only signal exposure (not reliably reachable by screen reader/keyboard/touch)
+first, then `AlternativesTable`'s non-interactive sort — unless a higher-priority
+finding or a new dev-lane page needing a pattern lands first.
+
 ## Findings
 | ID | Severity | Status | Component | Mapping | Issue/PR |
 |---|---|---|---|---|---|

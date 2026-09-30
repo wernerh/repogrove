@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-30T07:11:26.335564+00:00",
+  "generated_at": "2026-09-30T09:26:04.014486+00:00",
   "product": {
     "current_version": "0.0.0-bootstrap",
     "current_focus": "Phase 3 \u2014 search, SEO, alternatives, newsletter signup"
   },
   "metrics": {
-    "runs": 41,
+    "runs": 42,
     "features_completed": 16,
     "bugs_fixed": 4,
     "security_issues_fixed": 3,
@@ -18,7 +18,7 @@
     "production": "not_deployed",
     "infrastructure": "none"
   },
-  "open_decisions": 1,
+  "open_decisions": 0,
   "security_findings": {
     "total": 4,
     "open": 1,
