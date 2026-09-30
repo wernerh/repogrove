@@ -7,6 +7,18 @@ entries.
 ## [Unreleased]
 
 ### Fixed
+- 2026-09-30 — `alternatives.commercial` chips (`AlternativesTable.tsx`) render their
+  entries verbatim, with no capitalization — but every `content/repos/*.md` file with a
+  non-empty `commercial` list had a raw lowercase slug there instead of a real product
+  name (e.g. `firebase` instead of `Firebase`), so the site had been quietly showing
+  raw slugs as commercial-alternative names since bootstrap. Fixed `appwrite.md`,
+  `coolify.md`, `lazygit.md`, `pocketbase.md`, `supabase.md`. Separately, `ollama.md`'s
+  `alternatives.open_source` listed `lm-studio` — but LM Studio is closed-source
+  freeware, not open source (traced to `ARCHITECTURE.md`'s own illustrative example,
+  fixed too) — moved to `alternatives.commercial` as `"LM Studio"`. New validator in
+  `assertValidAlternatives` (`src/lib/content.ts`) fails the build if a future
+  `commercial` entry looks like a slug (all-lowercase, no space), so this can't recur
+  silently. 307/307 tests pass; PR #84 merged (3/3 CI checks green). (dev)
 - 2026-09-30 — `MomentumChip`'s underlying signals (star growth, open issues,
   contributor growth) are now reachable by keyboard, touch, and screen reader, not
   mouse-hover only. Converted the chip to a real WAI-ARIA "disclosure (show/hide)"

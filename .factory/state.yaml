@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-30T20:58:05Z"
-  holder: "dev"
-  last_run: "2026-09-30T19:05:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-30T21:12:43Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,14 +19,52 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 48
+  runs: 49
   features_completed: 18
-  bugs_fixed: 7
+  bugs_fixed: 8
   security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
 
 next_actions:
+  - "2026-09-30 (run 35): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
+    Held off Phase 4 feature work again this run for the same reason as runs 33/34.
+    Scanned content/ for a latent bug (same instinct as runs 33/34's dangling-reference
+    scan) and found one: every content/repos/*.md file with a non-empty
+    alternatives.commercial array had a raw lowercase-kebab-case slug there instead of a
+    real product display name (e.g. 'firebase' instead of 'Firebase', 'aws-amplify'
+    instead of 'AWS Amplify') — AlternativesTable.tsx renders commercial entries
+    verbatim with no capitalization (confirmed by reading the component and by existing
+    test fixtures elsewhere using properly-cased names), so the site has been quietly
+    showing raw slugs as brand names on every affected repo page since bootstrap.
+    Separately found content/repos/ollama.md's alternatives.open_source listed
+    'lm-studio' — verified via web search that LM Studio is closed-source/proprietary
+    freeware (built on open components like llama.cpp, but the app itself has no public
+    source), not an open-source project, so it was miscategorized since bootstrap
+    (traced to ARCHITECTURE.md's own illustrative frontmatter example, which had the
+    same mistake — fixed too). Major task: fixed the casing of every commercial entry
+    across appwrite.md/coolify.md/lazygit.md/pocketbase.md/supabase.md; moved lm-studio
+    out of ollama.md's open_source into commercial as 'LM Studio' (ollama's open_source
+    is now [localai, vllm]); added a new validator to assertValidAlternatives
+    (src/lib/content.ts) that fails the build when a commercial entry is all-lowercase
+    with no space, so this class of bug can't silently recur. Independent review
+    (subagent, skeptical-senior-engineer pass) found no MAJOR issues; one MINOR
+    (the new heuristic would false-positive on a genuine all-lowercase one-word brand
+    name, e.g. a hypothetical 'back4app' — no current content triggers it) addressed by
+    documenting the trade-off in the validator's own comment. 307/307 tests pass (4
+    new/updated: a reject/accept pair for the validator in tests/lib/content.test.ts,
+    plus tests/app/repo-page.test.tsx and the real-fixture Ollama parse test updated for
+    the corrected data), lint clean, tsc --noEmit clean, npm audit --audit-level=high 0
+    vulnerabilities, all run locally; next build reproduces the known ADR-006 sandbox
+    font-fetch gap (confirmed it compiles past this change first), left to CI's
+    GitHub-hosted runner — all 3 checks (CI, Factory guardrails, Design screenshots &
+    accessibility) green on PR #84 before squash-merging it myself; post-merge CI on
+    main also confirmed green. CHANGELOG.md/PROJECT_STATE.md/.factory/decisions.yaml
+    updated. Next: re-check RG-7/8/9 each run; once RG-7 resolves, hold or pick up
+    decision-free Phase 4 items (community submissions, agent roles) — more content
+    coverage/accuracy fixes stay available as decision-free work meanwhile."
   - "2026-09-30 (run 34): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.

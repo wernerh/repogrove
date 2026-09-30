@@ -15,10 +15,10 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 34: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03). Held off Phase 4 again;
-shipped decision-free content instead (PocketBase + Appwrite, PR #83). Next: re-check
-RG-7/8/9 each run; once RG-7 resolves, hold or pick up decision-free Phase 4 items
-(community submissions, agent roles) — more content coverage stays available meanwhile.
+Run 35: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03). Held off Phase 4 again;
+fixed a content-accuracy bug instead (alternatives.commercial rendered raw slugs as
+brand names since bootstrap, PR #84). Next: re-check RG-7/8/9 each run; once RG-7
+resolves, pick up decision-free Phase 4 items — content coverage/fixes stay available.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -55,6 +55,6 @@ None blocking (rule 8). RG-7/8/9 open (see Next action) — Phase 4 stays stubbe
 - [x] 2026-09-29/30 — `/alternative/:slug` (#61), `/compare/:a/:b` (#62),
   sitemap/robots (#64), `/search` (#63, ADR-008), newsletter form UI (#65, PR #71),
   basic news widget (#72, PR #74) — Phase 3 MVP gate complete.
-- [x] 2026-09-30 — Decision-free content: Developer Tools grove (LazyGit, Neovim, #81);
-  Self-Hosted grove +PocketBase/Appwrite (#83).
+- [x] 2026-09-30 — Decision-free content: Developer Tools grove (#81); Self-Hosted
+  grove +PocketBase/Appwrite (#83); alternatives.commercial slug-display fix (#84).
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (issues #76-78), awaiting owner
