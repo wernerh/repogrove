@@ -248,21 +248,30 @@ export function parseReleases(body: unknown): ReleaseMetric[] {
 }
 
 // A repo page only ever shows a handful of recent releases (issue #72's "Latest"
-// section) — no need to fetch or store more than this many per repo.
+// section) — no need to store more than this many per repo.
 const RELEASES_PER_REPO = 5;
+
+// GitHub applies `per_page` *before* we can filter out drafts (TECH-DEBT.md
+// 2026-09-30): if a repo's `RELEASES_PER_REPO` most-recently-created releases include
+// a draft, requesting exactly that many would under-show real, already-published
+// releases sitting just past the cutoff. Over-fetch, then `fetchRepoReleases` slices
+// to `RELEASES_PER_REPO` *after* `parseReleases` has dropped drafts/malformed entries,
+// so a draft never displaces a real release from the visible window.
+const RELEASES_FETCH_PAGE_SIZE = RELEASES_PER_REPO * 2;
 
 /**
  * Fetches a repo's most recent releases — a separate, independently-failable API call
- * from `fetchRepoMetrics`, same pattern as `fetchContributorCount`: `per_page=5` keeps
- * the payload small, and GitHub already orders `/releases` newest-created-first, so
- * no client-side sort is needed before this reads off the top.
+ * from `fetchRepoMetrics`, same pattern as `fetchContributorCount`. Requests
+ * `RELEASES_FETCH_PAGE_SIZE` (more than we keep, see its doc comment) and GitHub
+ * already orders `/releases` newest-created-first, so no client-side sort is needed
+ * before this reads off the top.
  */
 export async function fetchRepoReleases(
   github: string,
   { fetchImpl = fetch, token = process.env.GITHUB_TOKEN }: { fetchImpl?: typeof fetch; token?: string } = {},
 ): Promise<ReleaseMetric[]> {
   const response = await fetchImpl(
-    `https://api.github.com/repos/${github}/releases?per_page=${RELEASES_PER_REPO}`,
+    `https://api.github.com/repos/${github}/releases?per_page=${RELEASES_FETCH_PAGE_SIZE}`,
     {
       headers: githubHeaders(token),
       signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
@@ -272,7 +281,7 @@ export async function fetchRepoReleases(
     throw new Error(`GitHub API returned ${response.status} ${response.statusText} for ${github} releases`);
   }
   const body = await response.json();
-  return parseReleases(body);
+  return parseReleases(body).slice(0, RELEASES_PER_REPO);
 }
 
 export interface IngestionResults {

@@ -172,6 +172,28 @@ function optionalStringArray(data: Record<string, unknown>, field: string): stri
 }
 
 /**
+ * A content filename becomes its route slug — and, since #64's sitemap.ts,
+ * a real publicly-listed URL — so it must actually be kebab-case
+ * (`CLAUDE.md` §6: "content files are named after their slug"). Nothing
+ * upstream of `parseRepo`/`parseGrove`/`parseAlternative`/`parseComparison`
+ * checked this before (TECH-DEBT.md 2026-09-29): a stray uppercase letter,
+ * space, underscore, or leading/trailing/doubled hyphen in a future
+ * `content/*.md` filename would have silently flowed straight through into
+ * a sitemap URL rather than failing the build. Matches the same
+ * fail-loudly convention as `assertNoGithubCollisions`/
+ * `assertComparisonReposExist` — a content-shape invariant enforced at
+ * parse time, not left to a page-render crash or a bad indexed URL.
+ */
+function assertSlugIsKebabCase(slug: string, source: string): void {
+  if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) {
+    throw new ContentValidationError(
+      `${source}'s filename must be kebab-case (lowercase letters, digits, and single hyphens only, ` +
+        `no leading/trailing/doubled hyphen) — got slug "${slug}"`,
+    );
+  }
+}
+
+/**
  * Content files conventionally open with a `# <Name>` heading that repeats
  * the frontmatter `name` — good for reading the raw Markdown, redundant
  * once the page already renders `name` as its own `<h1>`. Drop just that
@@ -374,6 +396,7 @@ function findDuplicate(values: string[]): string | undefined {
 export function parseRepo({ filename, data, body }: RawFile): Repo {
   const source = `content/repos/${filename}`;
   const slug = filename.replace(/\.md$/, "");
+  assertSlugIsKebabCase(slug, source);
   const github = requireString(data, "github", source);
   const name = requireString(data, "name", source);
   const category = requireStringArray(data, "category", source);
@@ -416,6 +439,7 @@ export function parseRepo({ filename, data, body }: RawFile): Repo {
 export function parseAlternative({ filename, data, body }: RawFile): Alternative {
   const source = `content/alternatives/${filename}`;
   const slug = filename.replace(/\.md$/, "");
+  assertSlugIsKebabCase(slug, source);
   const product = requireString(data, "product", source);
   const category = requireString(data, "category", source);
 
@@ -440,6 +464,7 @@ export function parseAlternative({ filename, data, body }: RawFile): Alternative
 export function parseGrove({ filename, data, body }: RawFile): Grove {
   const source = `content/groves/${filename}`;
   const slug = filename.replace(/\.md$/, "");
+  assertSlugIsKebabCase(slug, source);
   const name = requireString(data, "name", source);
   const description = requireString(data, "description", source);
   const relatedGroves = optionalStringArray(data, "related_groves");
@@ -462,6 +487,7 @@ export function parseGrove({ filename, data, body }: RawFile): Grove {
 export function parseComparison({ filename, data, body }: RawFile): Comparison {
   const source = `content/comparisons/${filename}`;
   const slug = filename.replace(/\.md$/, "");
+  assertSlugIsKebabCase(slug, source);
   const repoSlugs = requireStringArray(data, "repos", source);
 
   if (repoSlugs.length !== 2) {
