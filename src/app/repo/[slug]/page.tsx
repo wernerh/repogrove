@@ -145,34 +145,6 @@ export default async function RepoPage({ params }: PageProps) {
 
       <StarGrowthChart history={snapshotHistory} />
 
-      <section className="mt-6">
-        <h2 className="font-sans text-xl font-semibold text-text-default">Latest</h2>
-        {releases.length > 0 ? (
-          <ul className="mt-3 flex flex-col gap-2">
-            {releases.map((release) => (
-              <li
-                key={release.tagName}
-                className="flex flex-wrap items-baseline gap-x-2 font-sans text-sm"
-              >
-                <a
-                  href={release.htmlUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-text-link hover:underline"
-                >
-                  {release.name ?? release.tagName}
-                </a>
-                <span className="font-mono text-xs text-text-secondary">
-                  {dateFormatter.format(new Date(release.publishedAt))}
-                </span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="mt-3 font-sans text-sm text-text-secondary">No recent releases.</p>
-        )}
-      </section>
-
       <div className="mt-6">
         <Markdown>{bodyBeforeAlternatives}</Markdown>
       </div>
@@ -203,6 +175,42 @@ export default async function RepoPage({ params }: PageProps) {
           </ul>
         </section>
       )}
+
+      {/* UX-2026-004: placed last, after the editorial narrative, alternatives and
+          comparisons — matching PRODUCT.md §5/§10's page-perspective order
+          (Overview -> Alternatives -> Comparison -> Momentum -> News). Originally
+          landed (#74) directly after the star chart and before the repo's own
+          one-sentence tagline (the first line of its Markdown body); with no distinct
+          lede styling on that tagline, "Latest" pushed it down to visually read as a
+          trailing continuation of the "No recent releases." empty state rather than
+          the page's lead sentence. See docs/design/findings/UX-2026-004. */}
+      <section className="mt-6">
+        <h2 className="font-sans text-xl font-semibold text-text-default">Latest</h2>
+        {releases.length > 0 ? (
+          <ul className="mt-3 flex flex-col gap-2">
+            {releases.map((release) => (
+              <li
+                key={release.tagName}
+                className="flex flex-wrap items-baseline gap-x-2 font-sans text-sm"
+              >
+                <a
+                  href={release.htmlUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-text-link hover:underline"
+                >
+                  {release.name ?? release.tagName}
+                </a>
+                <span className="font-mono text-xs text-text-secondary">
+                  {dateFormatter.format(new Date(release.publishedAt))}
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-3 font-sans text-sm text-text-secondary">No recent releases.</p>
+        )}
+      </section>
     </article>
   );
 }

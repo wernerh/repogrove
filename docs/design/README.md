@@ -236,9 +236,36 @@ tooltip-only signal exposure (not reliably reachable by screen reader/keyboard/t
 first, then `AlternativesTable`'s non-interactive sort — unless a higher-priority
 finding or a new dev-lane page needing a pattern lands first.
 
+Run 14 (2026-09-30) reviewed the real, CI-committed `docs/design/screenshots/`
+refreshed since run 13 — dev runs 30/31 shipped the basic news widget (#72, PR #74) and
+two TECH-DEBT.md fixes (PR #75) in between, so this was the first design look at the
+news widget's real rendering, per this lane's own stated priority ("a new dev-lane page
+needing a pattern" ranks above the existing backlog). Found UX-2026-004 (MINOR): the
+"Latest" section, inserted directly after the star-growth chart, buried the repo page's
+one-sentence tagline (the first line of the Markdown body) underneath its own "No
+recent releases." empty state, with no visual separation — the tagline now read as a
+trailing continuation of the news section instead of the page's lead sentence
+(PRODUCT.md §5). Fixed same run: pure JSX reorder (no content/data changes) moving
+"Latest" to the very end of the page, after "Compared with" — matching PRODUCT.md §10's
+documented Overview → Alternatives → Comparison → Momentum → News order and restoring
+the tagline's prominence right after the chart. Independent reviewer subagent confirmed
+the new placement, ruled out a landmark/heading-order accessibility regression (DOM
+order now matches visual order), and caught a dangling doc reference in this fix's own
+first-draft code comment before it shipped (fixed — this finding doc is that reference).
+295/295 tests pass (no test changes needed — existing tests assert headings/text by
+role and content, not DOM order), lint clean, `tsc --noEmit` clean; `npm run build`
+reproduces the known ADR-006 sandbox font-fetch gap, confirmed it compiles past this
+change first, real build and a refreshed `repo-ollama__*.png` screenshot set left to CI.
+No open design-lane owner decisions this run (RG-4 was DEFAULTED for real at design run
+13; no further re-checks needed per its own note). **Next major task (unchanged from
+run 13, still not started):** TECH-DEBT.md's two open design-owned rows —
+`MomentumChip`'s tooltip-only signal exposure first, then `AlternativesTable`'s
+non-interactive sort.
+
 ## Findings
 | ID | Severity | Status | Component | Mapping | Issue/PR |
 |---|---|---|---|---|---|
 | UX-2026-001 | MAJOR | Verified (fixed) | Header logo + homepage section headings | `layout.tsx`, `page.tsx` | #50, PR #51 |
 | UX-2026-002 | MINOR | Fixed (same run) | Alternatives table mobile Category column | `AlternativesTable.tsx` | PR #57 follow-up |
 | UX-2026-003 | MAJOR | Verified (fixed) | StatusChip/MomentumChip icon collision | `StatusChip.tsx` | #52, PR #60 |
+| UX-2026-004 | MINOR | Fixed (same run) | Repo page "Latest" section placement | `src/app/repo/[slug]/page.tsx` | PR TBD (this run) |

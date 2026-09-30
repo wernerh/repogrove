@@ -382,6 +382,21 @@ premature scale CLAUDE.md §4 asks the design lane to avoid.
 - **Page headers:** title (Inter, `text-2xl`) + one-line context/breadcrumb (mono for a
   slug like `owner/name`, sans for everything else) + primary action (if any) right-
   aligned on desktop, stacked on mobile.
+- **Repo page section order** (`/repo/[slug]`, spec §5/§10 — new, design run 14,
+  UX-2026-004): top to bottom, **header/metadata → star-growth chart → editorial body
+  (the content file's own one-sentence tagline first, then "What it does"/"Why people
+  use it"/Pros/Cons — this tagline is the page's most important line per spec §5 and
+  must be the first thing after the chart, with nothing else inserted above it) →
+  Alternatives table → Related Grove → Compared with → Latest (news/releases)**. This
+  matches spec §10's documented perspective order (Overview → Alternatives → Comparison
+  → Momentum → News) — News/Latest is a supplementary, lowest-priority section and goes
+  last, never ahead of the editorial lede. (Found the hard way: the basic news widget,
+  #72/PR #74, originally landed "Latest" directly after the chart and ahead of the
+  tagline, with no distinct lede styling on the tagline to protect it — the two visually
+  ran together. Fixed same run it was found, see UX-2026-004.) A future new section on
+  this page should be placed by this order, not appended wherever is most convenient in
+  the JSX — flag it here (or ask design) if a new section doesn't obviously fit one of
+  these slots.
 - **Ranked list row** (`/trending` #19, `/rising` #20) — **built 2026-09-29 (design run
   12):** `src/components/RankedList.tsx` — a shared `RankedList` (the `<ol>`/empty-state
   wrapper) plus an internal `RankingRow` (rank span with `aria-label="Rank N"`,
