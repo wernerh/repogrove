@@ -17,7 +17,7 @@ completed run 24.
 ## Next action (exactly one)
 Run 31 raised Phase 4's owner-gated items as decisions instead of guessing (RG-7 hold
 until deployed?, RG-8 auth provider?, RG-9 scope a public API now?) — emailed, mirrored
-as issues #76-78. Also shipped two small TECH-DEBT.md fixes (PR #75, awaiting CI/merge).
+as issues #76-78. Also shipped two small TECH-DEBT.md fixes (PR #75, merged, CI green).
 Next action: wait for replies (RG-7 defaults 2026-10-03; RG-8/9 have no default); pick
 up decision-free Phase 4 items (community submissions, agent roles, spec §19) meanwhile.
 

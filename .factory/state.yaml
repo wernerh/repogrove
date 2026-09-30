@@ -10,7 +10,7 @@ product:
 execution:
   active_tasks: []
   blocked_tasks: []
-  open_prs: ["#75 (fix: slug kebab-case validation + release draft-cutoff — factory-opened, awaiting CI)"]
+  open_prs: []
 
 health:
   ci: green
@@ -64,11 +64,13 @@ next_actions:
     updated), lint clean, tsc --noEmit clean, npm audit --audit-level=high 0
     vulnerabilities, all run locally; next build reproduces the known ADR-006 sandbox
     font-fetch gap (confirmed it compiles past this change first) — left to CI. Opened
-    PR #75 (factory, tech-debt labels), subscribed to its activity; CI still running at
-    close-out, left for next run per the 40-minute lock-hold rule rather than waiting.
+    PR #75 (factory, tech-debt labels), subscribed to its activity; all 6 checks green
+    (including a real next build on CI's GitHub-hosted runner) before squash-merging it
+    myself; post-merge CI on main also confirmed green.
     ROADMAP.md/PROJECT_STATE.md/CHANGELOG.md/DECISIONS.md/decisions.yaml updated. Next:
-    check PR #75's CI and merge if green; check RG-7/8/9 threads for a reply; otherwise
-    pick up a decision-free Phase 4 item or continue TECH-DEBT.md upkeep."
+    check RG-7/8/9 threads for a reply; otherwise pick up a decision-free Phase 4 item
+    (community submission workflow, formalizing the agent roles, spec §19) or continue
+    general TECH-DEBT.md upkeep."
   - "2026-09-30 (run 30): shipped the basic news widget (#72), PR #74 — the last item on
     docs/WORKPLAN.md's Phase 3 gate (the 17-item MVP list, spec §30/PRODUCT.md), which is
     now fully complete. v1 scope exactly as #72 specified: a 'Latest' section on
