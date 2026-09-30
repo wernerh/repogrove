@@ -202,6 +202,46 @@ describe("parseRepo — malformed frontmatter fails loudly", () => {
   });
 });
 
+describe("assertSlugIsKebabCase (filename -> slug validation)", () => {
+  it("rejects an uppercase letter in a repo filename", () => {
+    expect(() =>
+      parseRepo({
+        filename: "Broken.md",
+        body: "Body",
+        data: {},
+      }),
+    ).toThrow(/must be kebab-case/);
+  });
+
+  it("rejects an underscore in a Grove filename", () => {
+    expect(() => parseGrove({ filename: "self_hosted.md", body: "Body", data: {} })).toThrow(/must be kebab-case/);
+  });
+
+  it("rejects a leading hyphen in an alternative filename", () => {
+    expect(() => parseAlternative({ filename: "-notion.md", body: "Body", data: {} })).toThrow(/must be kebab-case/);
+  });
+
+  it("rejects a doubled hyphen in a comparison filename", () => {
+    expect(() => parseComparison({ filename: "ollama--vllm.md", body: "Body", data: {} })).toThrow(
+      /must be kebab-case/,
+    );
+  });
+
+  it("rejects a trailing hyphen", () => {
+    expect(() => parseGrove({ filename: "ai-.md", body: "Body", data: {} })).toThrow(/must be kebab-case/);
+  });
+
+  it("rejects a space in the filename", () => {
+    expect(() => parseGrove({ filename: "self hosted.md", body: "Body", data: {} })).toThrow(/must be kebab-case/);
+  });
+
+  it("accepts a normal multi-word kebab-case slug and validates other fields normally", () => {
+    expect(() =>
+      parseGrove({ filename: "self-hosting-2.md", body: "Body", data: { name: "Self Hosting" } }),
+    ).toThrow(/missing required frontmatter field "description"/);
+  });
+});
+
 describe("parseGrove — malformed frontmatter fails loudly", () => {
   it("throws when description is missing", () => {
     expect(() =>

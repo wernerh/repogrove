@@ -368,7 +368,7 @@ describe("parseReleases", () => {
 });
 
 describe("fetchRepoReleases", () => {
-  it("fetches per_page=5 recent releases and parses them", async () => {
+  it("fetches per_page=10 recent releases (over-fetches 2x what it keeps) and parses them", async () => {
     const fetchImpl = vi.fn().mockResolvedValue(
       jsonResponse([
         {
@@ -390,7 +390,7 @@ describe("fetchRepoReleases", () => {
       },
     ]);
     expect(fetchImpl).toHaveBeenCalledWith(
-      "https://api.github.com/repos/ollama/ollama/releases?per_page=5",
+      "https://api.github.com/repos/ollama/ollama/releases?per_page=10",
       expect.objectContaining({ headers: expect.not.objectContaining({ Authorization: expect.anything() }) }),
     );
   });
@@ -407,6 +407,43 @@ describe("fetchRepoReleases", () => {
   it("throws on a non-2xx response, like fetchRepoMetrics/fetchContributorCount", async () => {
     const fetchImpl = vi.fn().mockResolvedValue(jsonResponse({ message: "rate limited" }, false, 403));
     await expect(fetchRepoReleases("ollama/ollama", { fetchImpl, token: "" })).rejects.toThrow(/403/);
+  });
+
+  // TECH-DEBT.md 2026-09-30: GitHub applies `per_page` *server-side*, before we can
+  // filter out drafts — so a draft among the most-recently-created releases used to
+  // push a real, already-published release out of the top-5 window. This mock
+  // reproduces that server-side truncation (slicing the fixture to the *requested*
+  // `per_page` before responding, exactly like the real API would), so it genuinely
+  // exercises the bug: under the old `per_page=5` request, the 5 most-recently-created
+  // entries are all drafts, so GitHub would hand back only those 5 and every one gets
+  // filtered out downstream, leaving 0 releases. Requesting `per_page=10` (this fix)
+  // gets all 10 back, `parseReleases` drops the 5 drafts, and the 5 real releases
+  // survive.
+  it("doesn't let drafts among the most-recent releases push real releases out of the top 5", async () => {
+    const drafts = Array.from({ length: 5 }, (_, i) => ({
+      tag_name: `v0.0.${i}-draft`,
+      name: null,
+      html_url: `https://github.com/ollama/ollama/releases/tag/v0.0.${i}-draft`,
+      published_at: "2026-09-25T00:00:00Z",
+      draft: true,
+    }));
+    const realReleases = Array.from({ length: 5 }, (_, i) => ({
+      tag_name: `v1.${i}.0`,
+      name: `v1.${i}.0`,
+      html_url: `https://github.com/ollama/ollama/releases/tag/v1.${i}.0`,
+      published_at: "2026-09-2" + i + "T00:00:00Z",
+      draft: false,
+    }));
+    // Newest-created-first, same order GitHub's real /releases endpoint returns.
+    const allReleasesNewestFirst = [...drafts, ...realReleases];
+    const fetchImpl = vi.fn(async (url: string | URL | Request) => {
+      const perPage = Number(new URL(url.toString()).searchParams.get("per_page"));
+      return jsonResponse(allReleasesNewestFirst.slice(0, perPage)) as unknown as Response;
+    });
+    const releases = await fetchRepoReleases("ollama/ollama", { fetchImpl, token: "" });
+    expect(releases).toHaveLength(5);
+    expect(releases.every((r) => !r.tagName.includes("draft"))).toBe(true);
+    expect(releases.map((r) => r.tagName)).toEqual(["v1.0.0", "v1.1.0", "v1.2.0", "v1.3.0", "v1.4.0"]);
   });
 });
 
