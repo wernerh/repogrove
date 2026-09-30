@@ -4,10 +4,12 @@ import { describe, expect, it, vi } from "vitest";
 // Isolated from tests/app/repo-page.test.tsx (which exercises the page against the
 // real committed data/repogrove.db, per this codebase's usual convention — see
 // tests/app/trending-page-empty.test.tsx for the same isolation pattern) so this file
-// alone can mock @/lib/releases down to a populated state. The real db has no
-// repository_releases rows yet (no ingestion run has fetched them), so the real-content
-// test can only cover the empty-state render branch; this file covers the populated
-// one — a real link + formatted date, and a name-less release falling back to its tag.
+// alone can mock @/lib/releases down to a populated state — a real link + formatted
+// date, and a name-less release falling back to its tag. The real committed db is
+// refreshed daily by ingestion and now has real releases for every tracked repo, so
+// neither render branch (empty or populated) can safely be asserted against real db
+// content any more — see tests/app/repo-page-releases-empty.test.tsx for the empty-state
+// sibling, which mocks @/lib/releases the same way this file does.
 vi.mock("@/lib/releases", () => ({
   getRecentReleases: () => [
     {
