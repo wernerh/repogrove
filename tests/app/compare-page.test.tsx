@@ -1,13 +1,46 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import ComparePage, { generateMetadata, generateStaticParams } from "@/app/compare/[a]/[b]/page";
+import { getAllComparisons } from "@/lib/content";
 
 describe("Compare page (/compare/[a]/[b])", () => {
   it("statically generates params for both URL orders of every comparison", async () => {
     const params = generateStaticParams();
     expect(params).toContainEqual({ a: "ollama", b: "vllm" });
     expect(params).toContainEqual({ a: "vllm", b: "ollama" });
-    expect(params).toHaveLength(2);
+    // Twice the real comparison count (both URL orders per comparison) —
+    // derived from the real fixtures rather than hardcoded, so this doesn't
+    // need updating every time a new content/comparisons/*.md file ships.
+    expect(params).toHaveLength(getAllComparisons().length * 2);
+  });
+
+  it("renders /compare/appwrite/supabase from content/comparisons/appwrite-vs-supabase.md", async () => {
+    // Deliberately structural/content-only, not a specific Stars/Momentum
+    // assertion: Appwrite has no ingested snapshot history yet in the real
+    // committed data/repogrove.db (it was added to content/repos/ after the
+    // last ingestion run), but that's a temporary, mutable state the next
+    // scheduled ingestion run will change — asserting against it here would
+    // be exactly the real-db coupling TECH-DEBT.md's 2026-09-30 row warns
+    // about. The graceful-degradation behavior itself (no crash either way)
+    // is covered in isolation by compare-page-no-history.test.tsx, which
+    // mocks @/lib/snapshots instead of relying on the real db's current,
+    // temporary emptiness.
+    render(await ComparePage({ params: Promise.resolve({ a: "appwrite", b: "supabase" }) }));
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Appwrite vs Supabase" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Appwrite" })).toHaveAttribute(
+      "href",
+      "/repo/appwrite",
+    );
+    expect(screen.getByRole("link", { name: "Supabase" })).toHaveAttribute(
+      "href",
+      "/repo/supabase",
+    );
+
+    expect(screen.getByRole("heading", { level: 2, name: "How they differ" })).toBeInTheDocument();
+    expect(screen.getByText(/Supabase is built on real Postgres/)).toBeInTheDocument();
   });
 
   it("renders /compare/ollama/vllm from content/comparisons/ollama-vs-vllm.md, not hardcoded data", async () => {
