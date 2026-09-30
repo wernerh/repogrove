@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-30T22:50:00Z"
-  holder: "dev"
-  last_run: "2026-09-30T21:12:43Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-30T23:11:52Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,14 +19,55 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 49
-  features_completed: 18
+  runs: 50
+  features_completed: 19
   bugs_fixed: 8
   security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
 
 next_actions:
+  - "2026-09-30 (run 36): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
+    Held off Phase 4 feature work again this run, consistent with runs 33-35. Audited
+    content/ for another latent bug (same instinct as those runs) and found none this
+    time — groves/related_groves/alternatives casing/comparisons all internally
+    consistent. Found a real content-coverage gap instead: content/repos/supabase.md,
+    appwrite.md, and pocketbase.md have listed each other under
+    alternatives.open_source since they were added (runs 33-34), but had zero
+    /compare/:a/:b pages among them — only ollama-vs-vllm existed, despite this Grove
+    having the most mutually-cross-referenced repos. Major task: added
+    content/comparisons/appwrite-vs-supabase.md, pocketbase-vs-supabase.md,
+    appwrite-vs-pocketbase.md, each with original 'How they differ' prose (Appwrite's
+    MariaDB-backed document-style API + broader messaging/functions vs. Supabase's
+    real Postgres; PocketBase's single-binary+SQLite minimal-ops story vs. Supabase's
+    Postgres concurrency/managed option; Appwrite's multi-service breadth vs.
+    PocketBase's single-binary simplicity) — matching house style, not a raw
+    GitHub-description scrape, per rule 4. Updated 3 tests whose hardcoded
+    'only one comparison'/'supabase has none' assumptions no longer held
+    (tests/lib/content.test.ts, tests/app/repo-page.test.tsx, tests/app/compare-page.test.tsx
+    — supabase -> coolify as the 'no comparisons' fixture in two of them). Independent
+    review (subagent, skeptical-senior-engineer pass) found one real MAJOR pre-push:
+    the first-draft render test asserted a specific real-data state (Appwrite's
+    Stars/Momentum showing em-dash/'Not enough data yet') against the real, unmocked,
+    committed data/repogrove.db — true only because Appwrite has no ingested snapshot
+    history yet (added to content after the last ingestion run), and would have broken
+    the moment the next scheduled ingestion run populated real rows for it — exactly
+    the real-db-coupling failure mode TECH-DEBT.md's 2026-09-30 row already documents.
+    Fixed pre-push: moved that assertion into a new isolated file,
+    tests/app/compare-page-no-history.test.tsx, mocking @/lib/snapshots (same pattern
+    as rising-page-empty.test.tsx); the real-db render test now only asserts
+    structural/content facts that hold regardless of ingestion state. 310/310 tests
+    pass (7 new/updated), lint clean, tsc --noEmit clean, npm audit --audit-level=high
+    0 vulnerabilities, all run locally; next build reproduces the known ADR-006
+    sandbox font-fetch gap (confirmed it compiles past this change first), left to
+    CI's GitHub-hosted runner — all 3 checks (CI, Factory guardrails, Design
+    screenshots & accessibility) green on PR #85 before squash-merging it myself;
+    post-merge CI on main also confirmed green. CHANGELOG.md/DECISIONS.md/
+    .factory/decisions.yaml/PROJECT_STATE.md updated. Next: re-check RG-7/8/9 each
+    run; once RG-7 resolves, hold or pick up decision-free Phase 4 items — more
+    content coverage/accuracy fixes stay available as decision-free work meanwhile."
   - "2026-09-30 (run 35): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.

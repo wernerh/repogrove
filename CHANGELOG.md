@@ -31,6 +31,21 @@ entries.
   (design)
 
 ### Added
+- 2026-09-30 — Comparison pages for the Self-Hosted grove's backend trio:
+  `content/comparisons/appwrite-vs-supabase.md`, `pocketbase-vs-supabase.md`,
+  `appwrite-vs-pocketbase.md` — routine editorial content work done while Phase 4
+  feature work stays held pending RG-7 (no owner reply yet, defaults 2026-10-03).
+  Supabase/Appwrite/PocketBase already listed each other under
+  `alternatives.open_source` in their own content files, but had no `/compare/:a/:b`
+  page among them — only `ollama-vs-vllm` existed. Independent review caught one real
+  MAJOR before push: a first-draft render test asserted Appwrite's Stars/Momentum
+  showing "—"/"Not enough data yet" against the real, unmocked `data/repogrove.db` —
+  true only because Appwrite has no ingested snapshot history yet (added to content
+  after the last ingestion run), and would have broken the moment the next scheduled
+  run populates real rows for it. Fixed by moving that assertion into a new isolated,
+  mocked test file (`tests/app/compare-page-no-history.test.tsx`), same pattern as
+  `rising-page-empty.test.tsx`. 310/310 tests pass; PR #85 merged (3/3 CI checks
+  green). (dev)
 - 2026-09-30 — PocketBase and Appwrite (`content/repos/pocketbase.md`, `appwrite.md`)
   added to the Self-Hosted grove — routine editorial content work done while Phase 4
   feature work stays held pending RG-7 (no owner reply yet, defaults 2026-10-03).
