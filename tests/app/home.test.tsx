@@ -20,10 +20,11 @@ describe("Homepage", () => {
       "/grove/developer-tools",
     );
     // Grove card footer — repo count, from getReposInGrove, not hand-copied.
-    // AI: Ollama, LangChain, vLLM. Self-Hosted and Developer Tools both have 2
-    // members (Supabase/Coolify; Neovim/LazyGit), so that text appears twice.
+    // AI: Ollama, LangChain, vLLM (3). Developer Tools: Neovim, LazyGit (2).
+    // Self-Hosted: Supabase, Coolify, Appwrite, PocketBase (4).
     expect(screen.getByText("3 repos")).toBeInTheDocument();
-    expect(screen.getAllByText("2 repos")).toHaveLength(2);
+    expect(screen.getByText("2 repos")).toBeInTheDocument();
+    expect(screen.getByText("4 repos")).toBeInTheDocument();
 
     // Repos — from content/repos/*.md, rendered as cards.
     expect(screen.getByRole("link", { name: "Ollama" })).toHaveAttribute("href", "/repo/ollama");
@@ -40,10 +41,11 @@ describe("Homepage", () => {
     expect(screen.getByText("Run large language models locally.")).toBeInTheDocument();
     expect(screen.getByText("Open-source Firebase alternative.")).toBeInTheDocument();
     // Repo card footer — primary category tag, from frontmatter. "ai" is the
-    // primary category for 3 of the example repos (Ollama, LangChain, vLLM),
-    // so this asserts presence via getAllByText rather than a single match.
+    // primary category for 3 of the example repos (Ollama, LangChain, vLLM)
+    // and "backend" for 3 more (Supabase, Appwrite, PocketBase), so both
+    // assert presence via getAllByText rather than a single match.
     expect(screen.getAllByText("ai").length).toBeGreaterThan(0);
-    expect(screen.getByText("backend")).toBeInTheDocument();
+    expect(screen.getAllByText("backend").length).toBeGreaterThan(0);
     expect(screen.getAllByText("devtools").length).toBeGreaterThan(0);
 
     // Not hardcoded strings — the tagline comes from the component, but the
@@ -54,9 +56,9 @@ describe("Homepage", () => {
 
   it("renders each repo/Grove card as exactly one link (single focus stop, no nested interactives)", () => {
     render(<Home />);
-    // 3 Grove cards + 7 repo cards = 10 card links; the header's own "RepoGrove"
+    // 3 Grove cards + 9 repo cards = 12 card links; the header's own "RepoGrove"
     // wordmark link isn't part of this render (Home doesn't mount RootLayout).
-    expect(screen.getAllByRole("link")).toHaveLength(10);
+    expect(screen.getAllByRole("link")).toHaveLength(12);
   });
 
   it("renders the RepoGrove Weekly newsletter signup section (issue #65, form UI only)", () => {

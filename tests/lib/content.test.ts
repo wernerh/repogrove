@@ -31,11 +31,13 @@ describe("getAllRepos (real /content fixtures)", () => {
     const repos = getAllRepos();
     const slugs = repos.map((r) => r.slug).sort();
     expect(slugs).toEqual([
+      "appwrite",
       "coolify",
       "langchain",
       "lazygit",
       "neovim",
       "ollama",
+      "pocketbase",
       "supabase",
       "vllm",
     ]);
@@ -84,7 +86,12 @@ describe("getReposInGrove (derived from repo frontmatter, per ADR-003)", () => {
 
   it("finds every self-hosted-grove repo under the self-hosted grove", () => {
     const reposInSelfHosted = getReposInGrove("self-hosted");
-    expect(reposInSelfHosted.map((r) => r.slug).sort()).toEqual(["coolify", "supabase"]);
+    expect(reposInSelfHosted.map((r) => r.slug).sort()).toEqual([
+      "appwrite",
+      "coolify",
+      "pocketbase",
+      "supabase",
+    ]);
   });
 
   it("finds every developer-tools-grove repo under the developer-tools grove", () => {
