@@ -189,6 +189,21 @@ function stripLeadingTitle(body: string, name: string): string {
 }
 
 /**
+ * Plain-English first paragraph of a Markdown body — the "one-line
+ * description" `RepoCard` uses (spec §8/§25's card pattern: hand-authored
+ * editorial copy, never a second, competing description) and, since issue
+ * #63, `buildSearchIndex`'s second real call site (`src/lib/search.ts`) —
+ * extracted here rather than duplicated a second time, matching this
+ * codebase's established "extract on second use" convention (see
+ * `numberFormatter`'s `src/lib/format.ts` extraction, TECH-DEBT.md
+ * 2026-09-29).
+ */
+export function firstParagraph(body: string): string {
+  const paragraph = body.split(/\n\s*\n/)[0] ?? "";
+  return paragraph.replace(/\s+/g, " ").trim();
+}
+
+/**
  * Splits a repo's raw Markdown body around one `## <heading>` section
  * (removing it entirely), returning what comes before and after. Used by
  * `/repo/[slug]` to swap `content/repos/*.md`'s hand-authored "## Alternatives"

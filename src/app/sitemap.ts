@@ -30,6 +30,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: SITE_URL, changeFrequency: "daily", priority: 1 },
     { url: `${SITE_URL}/trending`, changeFrequency: "daily", priority: 0.8 },
     { url: `${SITE_URL}/rising`, changeFrequency: "daily", priority: 0.8 },
+    { url: `${SITE_URL}/search`, changeFrequency: "weekly", priority: 0.5 },
   ];
 
   const repoRoutes: MetadataRoute.Sitemap = getAllRepos().map((repo) => ({

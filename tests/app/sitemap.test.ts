@@ -55,6 +55,7 @@ describe("sitemap (issue #64 — real /content fixtures)", () => {
     expect(urls).toContain(SITE_URL);
     expect(urls).toContain(`${SITE_URL}/trending`);
     expect(urls).toContain(`${SITE_URL}/rising`);
+    expect(urls).toContain(`${SITE_URL}/search`);
   });
 
   it("every entry is an absolute https URL under SITE_URL with no duplicates", () => {

@@ -67,6 +67,12 @@ export default function RootLayout({
               >
                 Rising
               </Link>
+              <Link
+                href="/search"
+                className="font-sans text-sm font-medium text-text-secondary hover:text-text-default hover:underline"
+              >
+                Search
+              </Link>
             </nav>
           </div>
         </header>

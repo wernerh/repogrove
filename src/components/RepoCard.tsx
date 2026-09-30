@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Repo } from "@/lib/content";
+import { firstParagraph, type Repo } from "@/lib/content";
 
 interface RepoCardProps {
   repo: Repo;
@@ -14,21 +14,6 @@ interface RepoCardProps {
 }
 
 const numberFormatter = new Intl.NumberFormat("en-US");
-
-/**
- * `content/repos/*.md` bodies conventionally open with a one-sentence
- * plain-English description ("Run large language models locally.") before
- * their "## What it does" section — exactly the "one-line plain-English
- * description" docs/design/DESIGN-SYSTEM.md's Repo/Grove card spec calls
- * for. Pulling just that first paragraph keeps the card in sync with the
- * hand-authored editorial copy (never a second, competing description) —
- * the full body, headings included, still renders in full on the repo page
- * itself, unmodified.
- */
-function firstParagraph(body: string): string {
-  const paragraph = body.split(/\n\s*\n/)[0] ?? "";
-  return paragraph.replace(/\s+/g, " ").trim();
-}
 
 /**
  * Repo card — docs/design/DESIGN-SYSTEM.md's "Repo/Grove card" component
