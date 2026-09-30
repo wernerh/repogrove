@@ -6,6 +6,18 @@ entries.
 
 ## [Unreleased]
 
+### Fixed
+- 2026-09-30 — `MomentumChip`'s underlying signals (star growth, open issues,
+  contributor growth) are now reachable by keyboard, touch, and screen reader, not
+  mouse-hover only. Converted the chip to a real WAI-ARIA "disclosure (show/hide)"
+  button (`aria-expanded`/`aria-controls`, toggling a signal panel via the native
+  `hidden` attribute), closing a TECH-DEBT.md item the design lane had flagged against
+  its own component. `/compare/[a]/[b]`'s table cells gained `align-top` so the two
+  side-by-side `MomentumChip` instances there can expand independently without
+  misaligning the row (caught by independent review pre-merge). See
+  `docs/design/findings/UX-2026-005-momentum-chip-tooltip-accessibility.md`. PR #82.
+  (design)
+
 ### Added
 - 2026-09-30 — Developer Tools grove (`content/groves/developer-tools.md`), backed by
   two new real repos, LazyGit and Neovim (`content/repos/lazygit.md`, `neovim.md`) —
