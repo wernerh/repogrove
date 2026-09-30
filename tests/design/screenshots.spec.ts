@@ -8,9 +8,9 @@ import path from "node:path";
  * Design lane's screenshot + accessibility harness. See playwright.config.ts and
  * docs/adr/ADR-007-design-screenshot-a11y-harness.md.
  *
- * One route per page family that exists today (Phase 1 walking skeleton, #7) —
- * extend ROUTES as new pages land. Each route runs once per project (defined in
- * playwright.config.ts: desktop/tablet/mobile × light/dark), producing:
+ * One route per page family that exists today — extend ROUTES as new pages land.
+ * Each route runs once per project (defined in playwright.config.ts:
+ * desktop/tablet/mobile × light/dark), producing:
  *   - a full-page screenshot under docs/design/screenshots/ (small, synthetic
  *     example-content pages only — see CLAUDE.md rule 1 and this lane's brief:
  *     "commit only small synthetic-data screenshots")
@@ -18,11 +18,26 @@ import path from "node:path";
  *
  * A failure here is a real regression to fix (or a documented, dated exception),
  * never something to skip or loosen the tag list to get green (CLAUDE.md rule 7).
+ *
+ * Extended design run 13 (2026-09-30) to add every route Phase 2/3 shipped since
+ * this file was last touched (design run 9, RankedList extraction) but that never
+ * got its own entry here: /trending and /rising (#19/#20, share RankedList/
+ * RankingRow — one of each is enough to catch a shared-component regression),
+ * /alternative/notion (#61, AlternativesTable's sibling single-column pattern),
+ * /compare/ollama/vllm (#62, the at-a-glance comparison table), and /search (#63,
+ * SearchBox — a Client Component with interactive, JS-driven results, unlike every
+ * route already covered). "/" (home) already existed but is re-screenshotted by
+ * this same route entry now that #71 added the newsletter signup section to it.
  */
 const ROUTES: { path: string; name: string }[] = [
   { path: "/", name: "home" },
   { path: "/grove/ai", name: "grove-ai" },
   { path: "/repo/ollama", name: "repo-ollama" },
+  { path: "/trending", name: "trending" },
+  { path: "/rising", name: "rising" },
+  { path: "/alternative/notion", name: "alternative-notion" },
+  { path: "/compare/ollama/vllm", name: "compare-ollama-vllm" },
+  { path: "/search", name: "search" },
 ];
 
 const SCREENSHOT_DIR = path.join(process.cwd(), "docs/design/screenshots");
