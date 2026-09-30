@@ -1,16 +1,16 @@
 factory:
-  current_run: "2026-09-30T12:49:53Z"
-  holder: "dev"
-  last_run: "2026-09-30T11:19:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-30T13:15:00Z"
 
 product:
   current_version: "0.0.0-bootstrap"
-  current_focus: "Phase 3 MVP gate complete — Phase 4+ not yet scoped (owner-gated items pending)"
+  current_focus: "Phase 3 MVP gate complete — Phase 4 owner decisions raised (RG-7/8/9), awaiting owner"
 
 execution:
   active_tasks: []
   blocked_tasks: []
-  open_prs: []
+  open_prs: ["#75 (fix: slug kebab-case validation + release draft-cutoff — factory-opened, awaiting CI)"]
 
 health:
   ci: green
@@ -19,14 +19,56 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 43
+  runs: 44
   features_completed: 17
-  bugs_fixed: 4
+  bugs_fixed: 5
   security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
 
 next_actions:
+  - "2026-09-30 (run 31): Phase 3's MVP gate stayed complete this run (no new Phase 3/4
+    roadmap items to pick up per PROJECT_STATE.md's own prior next-action) — confirmed
+    main CI green, no open issues besides the standing SEC-003 needs-human, no open PRs
+    (all 5 dependabot PRs noted in run 30's close-out — #29, #46-49 — are gone; the
+    owner merged/closed them directly outside the factory's flow). Checked Gmail for
+    replies on any open decision thread — none open (RG-2/3/4/6 all
+    ANSWERED/DEFAULTED/RESOLVED) — nothing to record. Major task: raised Phase 4's
+    owner-gated items as decisions instead of guessing or filing issues that assume an
+    answer, per run 30's own explicit next-action. RG-7 (cheap, defaults 2026-10-03):
+    hold Phase 4 feature work until the site is actually deployed? The owner still
+    hasn't provisioned the Azure Storage account RG-2 chose (ADR-002) — a hard human
+    gate — so there's no live site or real traffic yet; recommended holding rather than
+    building speculative infra. RG-8 (expensive, no default): an auth provider for
+    accounts (needed by watchlists/alerts spec §22 and RepoGrove Pro spec §32), or
+    defer both — recommended defer. RG-9 (expensive, no default): scope the public API
+    (api.repogrove.com, spec §13/§32) now, or leave unscoped until real demand —
+    recommended leave unscoped; also flagged that ADR-002's static hosting can't run an
+    API at all without its own further hosting decision. Emailed whurter5@gmail.com
+    (thread 1a0f26990ebc1e9c, one batched email per docs/DECISION-PROTOCOL.md), mirrored
+    each as its own needs-human issue (#76, #77, #78). Two Phase 4 items (community
+    submission workflow, formalizing the discovery/editorial agent roles spec §19) need
+    no owner decision and are available to pick up once there's bandwidth — not started
+    this run to keep scope to the decision-raising itself. Small related tasks (2, both
+    TECH-DEBT.md rows): (1) src/lib/content.ts's parseRepo/parseGrove/parseAlternative/
+    parseComparison never validated a content filename was kebab-case before it became
+    a public sitemap URL (2026-09-29 row) — added assertSlugIsKebabCase, 7 new tests;
+    (2) fetchRepoReleases's per_page=5 was applied by GitHub before parseReleases could
+    filter drafts, so a draft among the 5 most-recent releases could push a real one out
+    of the 'Latest' window (2026-09-30 row) — now over-fetches per_page=10 and slices to
+    5 post-filter. Independent review (subagent) found the first draft of the release
+    regression test didn't actually exercise the bug (mock ignored the requested
+    per_page); fixed the mock to truncate like the real API, verified by hand it fails
+    against the pre-fix code (0 releases instead of 5) and passes with the fix. Both
+    TECH-DEBT.md rows marked resolved in the same PR. 295/295 tests pass (8 new/
+    updated), lint clean, tsc --noEmit clean, npm audit --audit-level=high 0
+    vulnerabilities, all run locally; next build reproduces the known ADR-006 sandbox
+    font-fetch gap (confirmed it compiles past this change first) — left to CI. Opened
+    PR #75 (factory, tech-debt labels), subscribed to its activity; CI still running at
+    close-out, left for next run per the 40-minute lock-hold rule rather than waiting.
+    ROADMAP.md/PROJECT_STATE.md/CHANGELOG.md/DECISIONS.md/decisions.yaml updated. Next:
+    check PR #75's CI and merge if green; check RG-7/8/9 threads for a reply; otherwise
+    pick up a decision-free Phase 4 item or continue TECH-DEBT.md upkeep."
   - "2026-09-30 (run 30): shipped the basic news widget (#72), PR #74 — the last item on
     docs/WORKPLAN.md's Phase 3 gate (the 17-item MVP list, spec §30/PRODUCT.md), which is
     now fully complete. v1 scope exactly as #72 specified: a 'Latest' section on

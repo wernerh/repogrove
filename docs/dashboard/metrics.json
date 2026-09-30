@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-30T11:17:59.288220+00:00",
+  "generated_at": "2026-09-30T13:05:53.198804+00:00",
   "product": {
     "current_version": "0.0.0-bootstrap",
     "current_focus": "Phase 3 MVP gate complete \u2014 Phase 4+ not yet scoped (owner-gated items pending)"
@@ -18,7 +18,7 @@
     "production": "not_deployed",
     "infrastructure": "none"
   },
-  "open_decisions": 0,
+  "open_decisions": 3,
   "security_findings": {
     "total": 4,
     "open": 1,

@@ -1,6 +1,6 @@
 # RepoGrove factory dashboard
 
-_Generated 2026-09-30T11:17:59.288220+00:00_
+_Generated 2026-09-30T13:05:53.198804+00:00_
 
 ## Product
 - Version: 0.0.0-bootstrap
@@ -20,7 +20,7 @@ _Generated 2026-09-30T11:17:59.288220+00:00_
 - production: not_deployed
 - infrastructure: none
 
-## Open owner decisions: 0
+## Open owner decisions: 3
 
 ## Findings
 - Security: {'total': 4, 'open': 1, 'fixed': 2, 'verified': 3}

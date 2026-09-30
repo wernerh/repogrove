@@ -15,12 +15,11 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 30 shipped the basic news widget (#72, PR #74), Phase 3's last gate item. Phase 4+
-(`ROADMAP.md`) is deliberately un-filed — historical charts, community submissions,
-newsletter automation, discovery agents, public API, RepoGrove Pro are each their own
-owner-gated territory (vendor/paid-subscription/public-API-shape, CLAUDE.md rule 6).
-Next action: flag Phase 4's expensive-to-reverse items as owner decisions before
-filing any Phase 4 issue — not a backlog this factory can act on alone.
+Run 31 raised Phase 4's owner-gated items as decisions instead of guessing (RG-7 hold
+until deployed?, RG-8 auth provider?, RG-9 scope a public API now?) — emailed, mirrored
+as issues #76-78. Also shipped two small TECH-DEBT.md fixes (PR #75, awaiting CI/merge).
+Next action: wait for replies (RG-7 defaults 2026-10-03; RG-8/9 have no default); pick
+up decision-free Phase 4 items (community submissions, agent roles, spec §19) meanwhile.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -31,6 +30,7 @@ filing any Phase 4 issue — not a backlog this factory can act on alone.
 | 2026-09-27 | RepositorySnapshot: committed SQLite (`data/repogrove.db`), not build-time regen | ADR-005 | LOCKED | cheap |
 | 2026-09-29 | Grove Heat v1: star-growth-rate-only label, thresholds provisional | ADR-004 — other issue #21 inputs need new ingestion | PROVISIONAL | cheap |
 | 2026-09-30 | Visual direction: editorial/content-forward (RG-4 defaulted, no owner reply) | Due date passed; formalizes existing DESIGN-SYSTEM.md/token work | DEFAULTED | cheap |
+| 2026-09-30 | RG-7/8/9: hold Phase 4 until deployed? auth provider? public API scope now? | Phase 3 MVP gate complete; these gate Phase 4's expensive items (CLAUDE.md rule 6) | OPEN | cheap/expensive |
 
 ## Assumptions
 - A1: "Grove"/repo pages are hand-authored/agent-drafted Markdown reviewed via PR, not
@@ -45,8 +45,8 @@ crawling infra, admin CMS, live deploy — spec §30, §33, ADR-002.
 Phases 2 and 3 both completed within budget; no Phase 3 item needed a split.
 
 ## Blockers and attempts
-None blocking (rule 8). 5 open dependabot PRs (#29, #46-49) outside this lane's merge
-gate — owner merges these directly.
+None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 feature work stays
+stubbed on RG-8/RG-9 until answered (no auto-default, expensive-to-reverse).
 
 ## Milestones
 - [x] 2026-09-27 — Repo bootstrapped; Phase 1 walking skeleton — #5, #6, #7
@@ -57,4 +57,4 @@ gate — owner merges these directly.
 - [x] 2026-09-29/30 — `/alternative/:slug` (#61), `/compare/:a/:b` (#62),
   sitemap/robots (#64), `/search` (#63, ADR-008), newsletter form UI (#65, PR #71),
   basic news widget (#72, PR #74) — Phase 3 MVP gate complete.
-- [ ] Phase 4+ — not yet scoped; several items are owner-gated (see Next action)
+- [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (issues #76-78), awaiting owner

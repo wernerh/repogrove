@@ -43,12 +43,21 @@ Technical considerations / Testing / Security / Rollout / Documentation / Depend
   complete.
 
 ## Phase 4+ — Deferred product roadmap (spec §31–32)
-- [ ] Historical charts, watchlists/alerts (Phase 2 of product)
-- [ ] Community submission workflow (issue → AI research → draft PR → approval)
-- [ ] Newsletter automation
-- [ ] Discovery/classification/research/editorial/SEO agents (spec §19) formalised
-- [ ] Public API (`api.repogrove.com`)
-- [ ] RepoGrove Pro / B2B intelligence (Phase 3 of product)
+No issues filed yet — three of these items each need an owner decision before any code
+work starts (RG-7/RG-8/RG-9, `.factory/decisions.yaml`, asked 2026-09-30, issues
+#76/#77/#78); the other two don't and can be picked up once Phase 4 formally starts.
+- [ ] Is the site deployed and live yet, or should Phase 4 hold until it is? (RG-7 — OPEN)
+- [ ] Historical charts, watchlists/alerts (Phase 2 of product) — blocked on RG-8 (accounts/auth)
+- [ ] Community submission workflow (issue → AI research → draft PR → approval) — no
+  decision needed, not yet started
+- [ ] Newsletter automation — blocked on a vendor/PII decision (not yet asked separately;
+  see RG-7's framing — likely folded into whenever Phase 4 formally starts)
+- [ ] Discovery/classification/research/editorial/SEO agents (spec §19) formalised — no
+  decision needed, not yet started
+- [ ] Public API (`api.repogrove.com`) — blocked on RG-9 (scope) and, if scoped, a
+  further hosting decision (ADR-002's static hosting can't run an API)
+- [ ] RepoGrove Pro / B2B intelligence (Phase 3 of product) — blocked on RG-8
+  (accounts/auth) and a payments-vendor decision (not yet asked)
 
 Issues for Phase 1 items are opened in this bootstrap PR's follow-up (see GitHub Issues,
 label `phase-1`). Later phases' issues are opened when the prior phase's gate passes, not

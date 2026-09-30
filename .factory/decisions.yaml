@@ -204,3 +204,98 @@
     `docs/design/screenshots/*.png` on every push since. Closed the mirrored
     `needs-human` issue (#41) this run after re-verifying the job in the current
     workflow file. Nothing further needed on this decision.
+
+- id: RG-7
+  lane: dev
+  question: >
+    Phase 3's 17-item MVP gate is complete (run 30), but the site itself still isn't
+    deployed anywhere — you (not the factory) still need to provision the Azure Storage
+    account RG-2 chose (ADR-002); that's a hard human gate the factory can't cross on
+    its own. Before Phase 4 (historical charts/watchlists, community submissions,
+    newsletter automation, a public API, RepoGrove Pro/B2B — spec §31-32) turns into
+    real work, three of those items each need an owner-gated, expensive-to-reverse call
+    the factory won't make for you (auth provider, paid vendor, public API shape —
+    CLAUDE.md rule 6). Rather than default any of them, or build speculative
+    infrastructure for a site with zero live traffic yet, my recommendation is: hold all
+    three (see RG-8/RG-9 below) until the site is actually live and has some real usage
+    to design against — and separately, if you want, provisioning that Azure Storage
+    account is the one thing standing between "Phase 3 code-complete" and "the public
+    can actually see RepoGrove". Want the factory to keep building Phase 4 groundwork in
+    parallel regardless, or hold new feature work until the site is live?
+  options:
+    - "Hold — don't start Phase 4 feature work until the site is deployed and has real users (recommended)"
+    - "Keep building Phase 4 groundwork now, deployment timing aside"
+  recommended_default: "Hold — don't start Phase 4 feature work until the site is deployed and has real users (recommended)"
+  reversibility: cheap
+  asked_at: "2026-09-30T13:02:34Z"
+  email_thread_id: "1a0f26990ebc1e9c"
+  default_due_at: "2026-10-03T13:02:34Z"
+  status: OPEN
+  answer: null
+  answered_at: null
+  note: >
+    Cheap to reverse (a sequencing preference, not a vendor/architecture pivot) —
+    given a default due date unlike RG-8/RG-9. Mirrored as needs-human issue.
+
+- id: RG-8
+  lane: dev
+  question: >
+    Phase 4's "personal watchlists/alerts" (spec §22) and "RepoGrove Pro" (spec §32,
+    paid subscriptions) both need user accounts, which need an auth provider — an
+    expensive-to-reverse choice CLAUDE.md rule 6 reserves for you. Given ADR-002's Azure
+    Storage static-website hosting has no server/API routes, any of these options adds
+    real infrastructure the site doesn't have today (a managed auth service, or Azure
+    Static Web Apps/Functions as RG-2's own note already flagged for Phase 3's
+    search/newsletter). Three honest options: (1) pick an auth provider now (e.g. Clerk,
+    Auth0/Okta, or Supabase Auth — each would also need its own new-vendor/data-handling
+    sign-off) so watchlists/Pro can start; (2) explicitly defer both features — no
+    accounts, no auth, until there's a concrete reason to build them; (3) you already
+    have a preferred provider/account from another project. No default applies — this
+    stays stubbed either way until you answer.
+  options:
+    - "Defer — no accounts/auth yet, revisit when there's a concrete reason (recommended)"
+    - "Pick a provider now: Clerk"
+    - "Pick a provider now: Auth0/Okta"
+    - "Pick a provider now: Supabase Auth"
+    - "I have an existing provider/account to use"
+  recommended_default: "Defer — no accounts/auth yet, revisit when there's a concrete reason (recommended)"
+  reversibility: expensive
+  asked_at: "2026-09-30T13:02:34Z"
+  email_thread_id: "1a0f26990ebc1e9c"
+  default_due_at: null
+  status: OPEN
+  answer: null
+  answered_at: null
+  note: >
+    Expensive-to-reverse (auth provider — CLAUDE.md rule 6's own example) — never
+    auto-defaults per docs/DECISION-PROTOCOL.md; watchlists/Pro stay unbuilt until
+    answered. Mirrored as needs-human issue.
+
+- id: RG-9
+  lane: dev
+  question: >
+    Phase 4's public API (`api.repogrove.com`, spec §13/§32) is an explicit
+    expensive-to-reverse "public API shape" call under CLAUDE.md rule 6. Beyond shape
+    (REST? what's versioned/stable? rate limits? API keys or open?), ADR-002's static
+    Azure Storage hosting has no server to run an API from at all — building this for
+    real would first need its own hosting decision (Azure Functions, a separate small
+    API host, etc.), on top of the API-shape question itself. Given RepoGrove has no
+    live site, no users, and no API consumers yet, my recommendation is to leave this
+    entirely unscoped until there's real demand for it, rather than design (or partially
+    build) a public contract nobody's asked for yet. Agree, or do you want scoping work
+    to start now?
+  options:
+    - "Leave unscoped for now — revisit once there's real demand (recommended)"
+    - "Start scoping the API shape now, even without live demand yet"
+  recommended_default: "Leave unscoped for now — revisit once there's real demand (recommended)"
+  reversibility: expensive
+  asked_at: "2026-09-30T13:02:34Z"
+  email_thread_id: "1a0f26990ebc1e9c"
+  default_due_at: null
+  status: OPEN
+  answer: null
+  answered_at: null
+  note: >
+    Expensive-to-reverse (public API shape — CLAUDE.md rule 6's own example, plus a
+    hosting-decision dependency on top) — never auto-defaults per
+    docs/DECISION-PROTOCOL.md. Mirrored as needs-human issue.

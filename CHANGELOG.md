@@ -706,3 +706,25 @@ entries.
   green on PR #74 before squash-merging; post-merge CI on `main` also green. Issue
   #72 auto-closed by the merge. `docs/WORKPLAN.md`'s Phase 3 gate (the 17-item MVP
   list) is now fully complete. (dev)
+- 2026-09-30 — Content-filename kebab-case validation + release draft-cutoff fix (PR
+  #75). Added `assertSlugIsKebabCase(slug, source)` (`src/lib/content.ts`), called
+  from `parseRepo`/`parseGrove`/`parseAlternative`/`parseComparison` — a content
+  filename becomes its route slug and (since the sitemap shipped) a public URL, so a
+  malformed one now fails the build loudly instead of silently reaching a sitemap
+  entry. Also fixed `fetchRepoReleases`: GitHub truncates `per_page` server-side
+  before drafts can be filtered, so a draft among a repo's most-recent releases could
+  push a real one out of the "Latest" section's window — now over-fetches
+  (`per_page=10`) and slices to 5 after filtering. Independent review caught that the
+  first regression test for the release fix didn't actually exercise the bug (the
+  mock ignored the requested `per_page`); fixed to truncate the fixture like the real
+  API would, confirmed it fails against the pre-fix code and passes with the fix.
+  8 new/updated tests (295/295 total), lint/`tsc --noEmit` clean, 0 audit
+  vulnerabilities, all run locally. (dev)
+- 2026-09-30 — Raised three Phase 4 owner decisions instead of guessing or filing
+  issues that assume an answer: RG-7 (hold Phase 4 feature work until the site is
+  actually deployed, since the owner hasn't yet provisioned the Azure Storage account
+  RG-2 chose?), RG-8 (an auth provider for accounts — needed by watchlists/alerts and
+  RepoGrove Pro — or defer both?), RG-9 (scope the public API now, or leave it
+  unscoped until there's real demand?). All recommend holding/deferring given the
+  site has no live traffic yet. Emailed the owner, mirrored as issues #76/#77/#78.
+  (dev)
