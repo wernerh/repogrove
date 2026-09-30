@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import Home from "@/app/page";
 
 describe("Homepage", () => {
-  it("renders both example Groves and both example repos, from real content", () => {
+  it("renders every example Grove and repo, from real content", () => {
     render(<Home />);
 
     // Groves — from content/groves/*.md, rendered as cards (docs/design/DESIGN-SYSTEM.md's
@@ -15,9 +15,15 @@ describe("Homepage", () => {
       "href",
       "/grove/self-hosted",
     );
+    expect(screen.getByRole("link", { name: "Developer Tools" })).toHaveAttribute(
+      "href",
+      "/grove/developer-tools",
+    );
     // Grove card footer — repo count, from getReposInGrove, not hand-copied.
-    expect(screen.getByText("3 repos")).toBeInTheDocument(); // AI: Ollama, LangChain, vLLM
-    expect(screen.getByText("2 repos")).toBeInTheDocument(); // Self-Hosted: Supabase, Coolify
+    // AI: Ollama, LangChain, vLLM. Self-Hosted and Developer Tools both have 2
+    // members (Supabase/Coolify; Neovim/LazyGit), so that text appears twice.
+    expect(screen.getByText("3 repos")).toBeInTheDocument();
+    expect(screen.getAllByText("2 repos")).toHaveLength(2);
 
     // Repos — from content/repos/*.md, rendered as cards.
     expect(screen.getByRole("link", { name: "Ollama" })).toHaveAttribute("href", "/repo/ollama");
@@ -25,14 +31,20 @@ describe("Homepage", () => {
       "href",
       "/repo/supabase",
     );
+    expect(screen.getByRole("link", { name: "Neovim" })).toHaveAttribute("href", "/repo/neovim");
+    expect(screen.getByRole("link", { name: "LazyGit" })).toHaveAttribute(
+      "href",
+      "/repo/lazygit",
+    );
     // Repo card body — the content file's own one-line description, not a hardcoded string.
     expect(screen.getByText("Run large language models locally.")).toBeInTheDocument();
     expect(screen.getByText("Open-source Firebase alternative.")).toBeInTheDocument();
     // Repo card footer — primary category tag, from frontmatter. "ai" is the
-    // primary category for 3 of the 5 example repos (Ollama, LangChain, vLLM),
+    // primary category for 3 of the example repos (Ollama, LangChain, vLLM),
     // so this asserts presence via getAllByText rather than a single match.
     expect(screen.getAllByText("ai").length).toBeGreaterThan(0);
     expect(screen.getByText("backend")).toBeInTheDocument();
+    expect(screen.getAllByText("devtools").length).toBeGreaterThan(0);
 
     // Not hardcoded strings — the tagline comes from the component, but the
     // content list must not be baked in; asserting against the real fixture
@@ -42,9 +54,9 @@ describe("Homepage", () => {
 
   it("renders each repo/Grove card as exactly one link (single focus stop, no nested interactives)", () => {
     render(<Home />);
-    // 2 Grove cards + 5 repo cards = 7 card links; the header's own "RepoGrove"
+    // 3 Grove cards + 7 repo cards = 10 card links; the header's own "RepoGrove"
     // wordmark link isn't part of this render (Home doesn't mount RootLayout).
-    expect(screen.getAllByRole("link")).toHaveLength(7);
+    expect(screen.getAllByRole("link")).toHaveLength(10);
   });
 
   it("renders the RepoGrove Weekly newsletter signup section (issue #65, form UI only)", () => {
