@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-09-30T17:03:40Z"
-  holder: "dev"
-  last_run: "2026-09-30T15:10:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-09-30T17:03:40Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,7 +19,7 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 46
+  runs: 47
   features_completed: 17
   bugs_fixed: 7
   security_issues_fixed: 3
@@ -27,6 +27,49 @@ metrics:
   failed_runs: 0
 
 next_actions:
+  - "2026-09-30 (run 33): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
+    Held off Phase 4 feature work again this run — per CLAUDE.md rule 8, a quiet run is
+    a success, but there was real safe work available: expanding curated content
+    coverage, which is ordinary decision-free editorial work (rule 4), not Phase 4
+    groundwork, so it doesn't preempt RG-7's still-open question. Found, while scoping
+    this, that content/groves/ai.md and content/groves/self-hosted.md have both named
+    'developer-tools' under their related_groves frontmatter since bootstrap, but no
+    content/groves/developer-tools.md ever existed — a dangling reference nothing had
+    caught, because related_groves is parsed but never rendered as a link anywhere.
+    Major task: added content/groves/developer-tools.md, backed by two new real,
+    well-known repos (content/repos/lazygit.md, neovim.md — both jesseduffield/lazygit
+    and neovim/neovim), each with original 'What it does'/'Why people use it'/Pros/Cons
+    interpretation matching the house style (not a raw GitHub-description scrape, per
+    rule 4). Both pick up real GitHub ingestion automatically on the next ingestion.yml
+    run (tracked repos are derived from every content/repos/*.md's github: field).
+    Small related task: added assertGrovesExist(repos, groves) to src/lib/content.ts,
+    wired into getAllRepos() right after the existing assertNoGithubCollisions — fails
+    the build loudly if a repo's groves: field ever names a Grove with no corresponding
+    content file, closing the exact gap that let 'developer-tools' dangle unnoticed.
+    Same fail-loudly convention as assertComparisonReposExist/assertNoGithubCollisions/
+    assertValidAlternatives. Independent review (subagent, skeptical-senior-engineer
+    pass) found no BLOCKER/MAJOR issues; one real MINOR — no test rendered
+    /repo/lazygit or /repo/neovim through the actual page component, only through
+    generateStaticParams — fixed pre-push by adding a render test for /repo/neovim
+    (heading, license, description, and the body's own 'Related Grove' link),
+    mirroring the existing ollama test. A second MINOR (cosmetic wording inconsistency
+    in 'Alternatives' prose that splitOutSection strips from every repo page before
+    rendering, so never actually shown) was left as-is per the reviewer's own judgment.
+    300/300 tests pass (4 new/updated: assertGrovesExist's own throw/non-throw cases,
+    the new neovim render test, plus count/slug-list updates in
+    tests/{lib/content,app/home,app/grove-page,app/repo-page}.test.tsx for the +2
+    repos/+1 grove), lint clean, tsc --noEmit clean, npm audit --audit-level=high 0
+    vulnerabilities, all run locally; next build reproduces the known ADR-006 sandbox
+    font-fetch gap (confirmed it compiles past this change first), left to CI's
+    GitHub-hosted runner — all 5 gating checks + 1 skipped push-only job green on PR
+    #81 before squash-merging it myself; post-merge CI on main also confirmed green.
+    TECH-DEBT.md/CHANGELOG.md/DECISIONS.md/PROJECT_STATE.md updated. Next: re-check
+    RG-7/8/9 each run; once RG-7 resolves, hold or pick up decision-free Phase 4 items
+    (community submissions, agent roles, spec §19) per its answer — more content
+    coverage (additional repos/Groves/alternatives/comparisons) stays available as
+    decision-free work meanwhile."
   - "2026-09-30 (run 32): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03) hasn't passed; RG-8/RG-9 have no default (expensive-to-reverse) and

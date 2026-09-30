@@ -7,6 +7,16 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-09-30 — Developer Tools grove (`content/groves/developer-tools.md`), backed by
+  two new real repos, LazyGit and Neovim (`content/repos/lazygit.md`, `neovim.md`) —
+  routine editorial content work done while Phase 4 feature work stays held pending
+  RG-7 (no owner reply yet, defaults 2026-10-03). Closes a dangling reference: both
+  `ai.md` and `self-hosted.md` had named `developer-tools` under `related_groves` since
+  bootstrap, but the Grove file itself never existed. New `assertGrovesExist` validator
+  in `src/lib/content.ts` (wired into `getAllRepos()`) now fails the build loudly if a
+  repo's `groves:` field ever names a Grove with no corresponding content file — same
+  convention as the existing `assertComparisonReposExist`/`assertNoGithubCollisions`.
+  PR #81. (dev)
 - 2026-09-27 — Factory bootstrap: repo scaffold, operating docs (CLAUDE.md,
   PROJECT_STATE.md, PRODUCT.md, ARCHITECTURE.md, ADRs), CI + guardrail workflows,
   factory state/decision files, initial roadmap issues. (dev)

@@ -15,11 +15,11 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 32: RG-7/8/9 still no owner reply (RG-7 defaults 2026-10-03). Held off Phase 4
-feature work — starting now would preempt RG-7's still-open question. Instead validated
-#72 end-to-end (triggered `ingestion.yml`; fixed a real-db-coupled test it broke, PR
-#80). Next: re-check RG-7/8/9 each run; once RG-7 resolves, hold or pick up
-decision-free Phase 4 items (community submissions, agent roles, spec §19) per its answer.
+Run 33: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03). Held off Phase 4 feature
+work again; shipped decision-free content instead (Developer Tools grove, PR #81).
+Next: re-check RG-7/8/9 each run; once RG-7 resolves, hold or pick up decision-free
+Phase 4 items (community submissions, agent roles) per its answer — more content
+coverage stays available meanwhile.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -45,8 +45,7 @@ crawling infra, admin CMS, live deploy — spec §30, §33, ADR-002.
 Phases 2 and 3 both completed within budget; no Phase 3 item needed a split.
 
 ## Blockers and attempts
-None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 feature work stays
-stubbed on RG-8/RG-9 until answered (no auto-default, expensive-to-reverse).
+None blocking (rule 8). RG-7/8/9 open (see Next action) — Phase 4 stays stubbed on RG-8/RG-9 until answered (no auto-default, expensive-to-reverse).
 
 ## Milestones
 - [x] 2026-09-27 — Repo bootstrapped; Phase 1 walking skeleton — #5, #6, #7
@@ -57,4 +56,5 @@ stubbed on RG-8/RG-9 until answered (no auto-default, expensive-to-reverse).
 - [x] 2026-09-29/30 — `/alternative/:slug` (#61), `/compare/:a/:b` (#62),
   sitemap/robots (#64), `/search` (#63, ADR-008), newsletter form UI (#65, PR #71),
   basic news widget (#72, PR #74) — Phase 3 MVP gate complete.
+- [x] 2026-09-30 — Developer Tools grove: LazyGit, Neovim (#81, decision-free content)
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (issues #76-78), awaiting owner

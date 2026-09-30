@@ -237,6 +237,12 @@
     Cheap to reverse (a sequencing preference, not a vendor/architecture pivot) —
     given a default due date unlike RG-8/RG-9. Mirrored as needs-human issue.
 
+    Re-checked 2026-09-30 (dev run 33, via get_thread) — thread 1a0f26990ebc1e9c still
+    exactly the one original message, no owner reply. default_due_at (2026-10-03) hasn't
+    passed. Held off Phase 4 feature work again this run, consistent with the still-open
+    question; used the run instead for decision-free editorial content work (Developer
+    Tools grove, PR #81) — not Phase 4 groundwork, so doesn't preempt either answer.
+
 - id: RG-8
   lane: dev
   question: >
@@ -271,6 +277,8 @@
     auto-defaults per docs/DECISION-PROTOCOL.md; watchlists/Pro stay unbuilt until
     answered. Mirrored as needs-human issue.
 
+    Re-checked 2026-09-30 (dev run 33) — no owner reply; stays open, no default applies.
+
 - id: RG-9
   lane: dev
   question: >
@@ -299,3 +307,5 @@
     Expensive-to-reverse (public API shape — CLAUDE.md rule 6's own example, plus a
     hosting-decision dependency on top) — never auto-defaults per
     docs/DECISION-PROTOCOL.md. Mirrored as needs-human issue.
+
+    Re-checked 2026-09-30 (dev run 33) — no owner reply; stays open, no default applies.
