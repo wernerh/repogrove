@@ -34,6 +34,7 @@ describe("getAllRepos (real /content fixtures)", () => {
       "appwrite",
       "coolify",
       "dokploy",
+      "gitui",
       "helix",
       "langchain",
       "lazygit",
@@ -43,6 +44,7 @@ describe("getAllRepos (real /content fixtures)", () => {
       "ollama",
       "pocketbase",
       "supabase",
+      "tig",
       "vim",
       "vllm",
       "zed",
@@ -113,9 +115,11 @@ describe("getReposInGrove (derived from repo frontmatter, per ADR-003)", () => {
   it("finds every developer-tools-grove repo under the developer-tools grove", () => {
     const reposInDevTools = getReposInGrove("developer-tools");
     expect(reposInDevTools.map((r) => r.slug).sort()).toEqual([
+      "gitui",
       "helix",
       "lazygit",
       "neovim",
+      "tig",
       "vim",
       "zed",
     ]);

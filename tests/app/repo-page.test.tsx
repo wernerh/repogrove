@@ -9,6 +9,7 @@ describe("Repo page (/repo/[slug])", () => {
       "appwrite",
       "coolify",
       "dokploy",
+      "gitui",
       "helix",
       "langchain",
       "lazygit",
@@ -18,6 +19,7 @@ describe("Repo page (/repo/[slug])", () => {
       "ollama",
       "pocketbase",
       "supabase",
+      "tig",
       "vim",
       "vllm",
       "zed",
@@ -158,10 +160,11 @@ describe("Repo page (/repo/[slug])", () => {
 
   it("resolves langchain's own alternatives.open_source (llamaindex) now that it has a profile", async () => {
     // langchain.md has listed alternatives.open_source: [llamaindex] since
-    // bootstrap — content/repos/llamaindex.md never existed until this run,
-    // so it previously rendered as an unresolved "Not yet profiled" row (see
-    // "renders the Alternatives table leaving tig/gitui unresolved" below for
-    // the current real-content unresolved case).
+    // bootstrap — content/repos/llamaindex.md never existed until a later
+    // run, so it previously rendered as an unresolved "Not yet profiled"
+    // row. As of this run every repo's alternatives.open_source resolves to
+    // a real profile (see "resolves lazygit's own alternatives.open_source"
+    // below, the last such gap to close).
     const element = await RepoPage({ params: Promise.resolve({ slug: "langchain" }) });
     render(element);
 
@@ -271,23 +274,64 @@ describe("Repo page (/repo/[slug])", () => {
     expect(screen.getByRole("link", { name: "Helix" })).toHaveAttribute("href", "/repo/helix");
   });
 
-  it("renders the Alternatives table leaving tig/gitui unresolved (no content/repos/{tig,gitui}.md yet)", async () => {
-    // lazygit.md's frontmatter: alternatives.open_source = [tig, gitui],
-    // commercial = [GitKraken, Sourcetree] — the current real-content case
-    // for an unresolved open-source row, now that LocalAI and LlamaIndex
-    // both have their own profiles.
+  it("resolves lazygit's own alternatives.open_source (tig, gitui) now that both have profiles", async () => {
+    // lazygit.md has listed alternatives.open_source: [tig, gitui] since
+    // bootstrap — content/repos/tig.md and content/repos/gitui.md didn't
+    // exist until this run, so both previously rendered as unresolved
+    // "Not yet profiled" rows. This was the last dangling-reference class
+    // left open (runs 33/34/37/38/39/40/41/42 closed the others).
     const element = await RepoPage({ params: Promise.resolve({ slug: "lazygit" }) });
     render(element);
 
     expect(screen.getByRole("heading", { level: 2, name: "Alternatives" })).toBeInTheDocument();
-    expect(screen.getByText("tig")).toBeInTheDocument();
-    expect(screen.getByText("gitui")).toBeInTheDocument();
-    expect(screen.getAllByText("Not yet profiled").length).toBeGreaterThanOrEqual(2);
-    expect(screen.queryByRole("link", { name: /^tig$/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /^gitui$/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Tig" })).toHaveAttribute("href", "/repo/tig");
+    expect(screen.getByRole("link", { name: "GitUI" })).toHaveAttribute("href", "/repo/gitui");
+    expect(screen.queryByText("Not yet profiled")).not.toBeInTheDocument();
     expect(screen.getByText("Commercial alternatives")).toBeInTheDocument();
     expect(screen.getByText("GitKraken")).toBeInTheDocument();
     expect(screen.getByText("Sourcetree")).toBeInTheDocument();
+  });
+
+  it("renders /repo/tig from content/repos/tig.md, not a hardcoded string", async () => {
+    render(await RepoPage({ params: Promise.resolve({ slug: "tig" }) }));
+
+    expect(screen.getByRole("heading", { level: 1, name: "Tig" })).toBeInTheDocument();
+    expect(screen.getByText(/📜 GPL-2.0/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/An ncurses-based text-mode interface for exploring a Git repository's history/),
+    ).toBeInTheDocument();
+    // The body's own "## Related Grove" section links back to Developer
+    // Tools — proves this new content/repos/*.md file renders through the
+    // real page, not just through generateStaticParams.
+    expect(screen.getByRole("link", { name: "Developer Tools" })).toHaveAttribute(
+      "href",
+      "/grove/developer-tools",
+    );
+    // Its own alternatives.open_source (lazygit, gitui) both already exist,
+    // so both resolve to real links.
+    expect(screen.getByRole("link", { name: "LazyGit" })).toHaveAttribute("href", "/repo/lazygit");
+    expect(screen.getByRole("link", { name: "GitUI" })).toHaveAttribute("href", "/repo/gitui");
+  });
+
+  it("renders /repo/gitui from content/repos/gitui.md, not a hardcoded string", async () => {
+    render(await RepoPage({ params: Promise.resolve({ slug: "gitui" }) }));
+
+    expect(screen.getByRole("heading", { level: 1, name: "GitUI" })).toBeInTheDocument();
+    expect(screen.getByText(/📜 MIT/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/A terminal UI for git written in Rust, built for speed on very large repositories/),
+    ).toBeInTheDocument();
+    // The body's own "## Related Grove" section links back to Developer
+    // Tools — proves this new content/repos/*.md file renders through the
+    // real page, not just through generateStaticParams.
+    expect(screen.getByRole("link", { name: "Developer Tools" })).toHaveAttribute(
+      "href",
+      "/grove/developer-tools",
+    );
+    // Its own alternatives.open_source (lazygit, tig) both already exist,
+    // so both resolve to real links.
+    expect(screen.getByRole("link", { name: "LazyGit" })).toHaveAttribute("href", "/repo/lazygit");
+    expect(screen.getByRole("link", { name: "Tig" })).toHaveAttribute("href", "/repo/tig");
   });
 
   it("renders /repo/localai from content/repos/localai.md, not a hardcoded string", async () => {
