@@ -13,6 +13,8 @@ the small utilities that add up to a faster, more enjoyable workflow.
 ## Core projects
 - [Neovim](/repo/neovim) — hyperextensible, backwards-compatible fork of Vim with
   built-in LSP and Treesitter support.
+- [Vim](/repo/vim) — the modal editor Neovim forked from, still actively maintained
+  more than three decades on.
 - [LazyGit](/repo/lazygit) — a fast terminal UI for git, for people who'd rather not
   memorize every subcommand.
 

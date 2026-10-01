@@ -17,6 +17,7 @@ describe("Repo page (/repo/[slug])", () => {
       "ollama",
       "pocketbase",
       "supabase",
+      "vim",
       "vllm",
     ]);
   });
@@ -186,6 +187,41 @@ describe("Repo page (/repo/[slug])", () => {
       "href",
       "/repo/langchain",
     );
+  });
+
+  it("renders /repo/vim from content/repos/vim.md, not a hardcoded string", async () => {
+    render(await RepoPage({ params: Promise.resolve({ slug: "vim" }) }));
+
+    expect(screen.getByRole("heading", { level: 1, name: "Vim" })).toBeInTheDocument();
+    expect(screen.getByText(/📜 Vim License/)).toBeInTheDocument();
+    expect(screen.getByText(/A modal, keyboard-driven text editor descended from vi/)).toBeInTheDocument();
+    // The body's own "## Related Grove" section links back to Developer
+    // Tools — proves this new content/repos/*.md file renders through the
+    // real page, not just through generateStaticParams.
+    expect(screen.getByRole("link", { name: "Developer Tools" })).toHaveAttribute(
+      "href",
+      "/grove/developer-tools",
+    );
+    // Its own alternatives.open_source (neovim) already exists, so it
+    // resolves to a real link rather than "Not yet profiled"; helix/zed
+    // stay unresolved (no content/repos/{helix,zed}.md yet).
+    expect(screen.getByRole("link", { name: "Neovim" })).toHaveAttribute("href", "/repo/neovim");
+    expect(screen.getByText("helix")).toBeInTheDocument();
+    expect(screen.getByText("zed")).toBeInTheDocument();
+  });
+
+  it("resolves Neovim's own alternatives.open_source (vim) now that it has a profile", async () => {
+    // neovim.md has listed alternatives.open_source: [vim, helix, zed] since
+    // it was added (dev run 33) — content/repos/vim.md never existed until
+    // this run, so vim previously rendered as an unresolved "Not yet
+    // profiled" row; helix/zed remain the real unresolved case.
+    const element = await RepoPage({ params: Promise.resolve({ slug: "neovim" }) });
+    render(element);
+
+    expect(screen.getByRole("link", { name: "Vim" })).toHaveAttribute("href", "/repo/vim");
+    expect(screen.getByText("helix")).toBeInTheDocument();
+    expect(screen.getByText("zed")).toBeInTheDocument();
+    expect(screen.getAllByText("Not yet profiled").length).toBeGreaterThanOrEqual(2);
   });
 
   it("renders the Alternatives table leaving tig/gitui unresolved (no content/repos/{tig,gitui}.md yet)", async () => {
