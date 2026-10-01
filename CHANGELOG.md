@@ -7,6 +7,21 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-01 — Vim (`content/repos/vim.md`, Vim License) added to the Developer Tools
+  grove — routine editorial content work done while Phase 4 feature work stays held
+  pending RG-7 (no owner reply yet, defaults 2026-10-03). Closes a dangling reference:
+  `neovim.md` has named `vim` under `alternatives.open_source` since bootstrap (run
+  33), but no profile for it ever existed, so it rendered as "Not yet profiled" on
+  Neovim's page. Cross-referenced Neovim back under Vim's own `alternatives.open_source`
+  (alongside still-unresolved `helix`/`zed`, left as backlog); `content/groves/
+  developer-tools.md`'s "Core projects" list extended. Facts (Vim License name/GPL-
+  compatibility, no native LSP client — third-party plugins like `yegappan/lsp` fill
+  the gap, unlike Neovim's built-in client — and the February 2026 Vim 9.2 release)
+  verified via WebFetch/WebSearch against Wikipedia, a license explainer, and
+  independent release-coverage sources — an independent review subagent specifically
+  fact-checked the dated 9.2-release claim as the highest fabrication-risk detail and
+  confirmed it independently; no other issues found. 318/318 tests pass; PR #89
+  merged (6/6 checks green, including the non-gating screenshot job). (dev)
 - 2026-10-01 — LlamaIndex (`content/repos/llamaindex.md`, MIT) added to the AI grove —
   routine editorial content work done while Phase 4 feature work stays held pending
   RG-7 (no owner reply yet, defaults 2026-10-03). Closes a dangling reference:
