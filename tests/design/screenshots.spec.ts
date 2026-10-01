@@ -58,6 +58,40 @@ for (const route of ROUTES) {
     await expect(page.getByRole("link", { name: /RepoGrove/ })).toBeVisible();
     await page.waitForLoadState("networkidle");
 
+    // UX-2026-006 (design run 18 re-diagnosis): the project's own
+    // `commit-screenshots` CI job found zero pixel diff after that issue's
+    // first fix merged — the real regression was a silently clipping
+    // `overflow-x-auto` wrapper (a horizontally scrollable container with no
+    // visual affordance), which neither the axe-core scan below nor a
+    // class-presence unit test can detect, since nothing about it is a WCAG
+    // violation or a missing Tailwind class — the element is scrollable
+    // exactly as authored, just with real content silently cut off at its
+    // visible edge by default. This asserts, for every route at every
+    // viewport this harness covers, that no such wrapper is actually
+    // overflowing right now — the generic version of the check that would
+    // have caught UX-2026-006's first (ineffective) fix immediately instead
+    // of only on the next run's manual screenshot review.
+    const overflowingScrollers = await page.evaluate(() => {
+      const offenders: { selector: string; scrollWidth: number; clientWidth: number }[] = [];
+      for (const el of Array.from(document.querySelectorAll<HTMLElement>("*"))) {
+        const style = getComputedStyle(el);
+        if (style.overflowX !== "auto" && style.overflowX !== "scroll") continue;
+        // 1px tolerance for sub-pixel layout rounding, not a real overflow.
+        if (el.scrollWidth > el.clientWidth + 1) {
+          offenders.push({
+            selector: el.tagName.toLowerCase() + (el.className ? `.${el.className.toString().split(" ").join(".")}` : ""),
+            scrollWidth: el.scrollWidth,
+            clientWidth: el.clientWidth,
+          });
+        }
+      }
+      return offenders;
+    });
+    expect(
+      overflowingScrollers,
+      `found ${overflowingScrollers.length} horizontally-overflowing scroll container(s) on ${route.path} with no visual scroll affordance: ${JSON.stringify(overflowingScrollers)}`,
+    ).toEqual([]);
+
     await page.screenshot({
       path: path.join(SCREENSHOT_DIR, `${route.name}__${testInfo.project.name}.png`),
       fullPage: true,
