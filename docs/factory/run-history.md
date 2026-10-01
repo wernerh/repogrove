@@ -12,6 +12,33 @@ context) to skim, same role the archived entries played in state.yaml before thi
 Newest-archived-first, same order they appeared in state.yaml.
 
 ```yaml
+  - "2026-10-01 (run 39): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
+    Held off Phase 4 feature work again this run, consistent with runs 33-38. Audited
+    content/ for the next decision-free content gap: content/repos/langchain.md has
+    listed 'llamaindex' under alternatives.open_source since bootstrap, but
+    content/repos/llamaindex.md never existed, so it rendered as 'Not yet profiled' on
+    LangChain's page — the same class of dangling-reference gap runs 33/34/37/38
+    closed. Major task: added content/repos/llamaindex.md (run-llama/llama_index, MIT,
+    AI grove), cross-referencing LangChain. Facts (MIT license, Python-first flagship
+    package, RAG/data-framework positioning, separate paid LlamaParse/LlamaCloud
+    hosted offerings) verified via WebFetch/WebSearch against the project's own GitHub
+    repo page and independent comparison sources (IBM, dev.co), not scraped from a
+    one-line description. Independent review (subagent, skeptical-senior-engineer
+    pass) flagged the first draft's '300+ integration packages' figure as an
+    unnecessarily specific metric despite two corroborating sources, and a stale
+    langchain.md 'Alternatives' prose line left over from before Phase 3 built
+    /alternative/:slug pages — both fixed before merge. 316/316 tests pass (8
+    new/updated), lint clean, tsc --noEmit clean, npm audit --audit-level=high 0
+    vulnerabilities, all run locally; npm run build reproduced the known ADR-006
+    sandbox font-fetch gap (confirmed it compiles past content loading first), left to
+    CI's GitHub-hosted runner, which came back green (6/6 checks, including the
+    non-gating screenshot job). PR #88 merged (squash). Updated PROJECT_STATE.md (next
+    action, milestones), CHANGELOG.md, DECISIONS.md, .factory/decisions.yaml
+    (RG-7/8/9 re-check notes). Remaining one-off content gaps for future runs: tig,
+    gitui, vim, helix, zed (all still dangling alternatives.open_source references
+    with no profile)."
   - "2026-10-01 (run 38): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.

@@ -7,6 +7,36 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-01 — Dev run 48: added `content/alternatives/firebase.md`, the second
+  `/alternative/:slug` page after `notion.md`. Three existing repo pages
+  (`appwrite.md`, `supabase.md`, `pocketbase.md`) already listed Firebase under
+  `alternatives.commercial` with no corresponding alternative page — the highest-value
+  gap of this kind (the only commercial-product name referenced by more than one
+  existing repo), same prioritization precedent run 37 used for LocalAI's open-source
+  dangling reference. All three Open-source entries (Appwrite, Supabase, PocketBase)
+  slugify-resolve to real repo pages and render as real links with live star counts
+  (`AlternativePage`'s resolved branch, previously only exercised by a synthetic mock);
+  AWS Amplify listed as the Commercial alternative, already named alongside Firebase in
+  two of the three repos' own `alternatives.commercial`. Every Best-fit bullet grounded
+  in a specific fact from the three repos' own content files — independent review
+  (subagent, skeptical-senior-engineer pass) caught two early bullets over-generalizing
+  a claim across all three repos when it only held for some (e.g. a "real SQL" claim
+  that doesn't fit Appwrite's own documented "document-style database, not raw SQL"
+  Con) — tightened to scope each claim correctly before merge. Updated the two
+  hardcoded alternatives-slug test fixtures this affects
+  (`tests/lib/content.test.ts`, `tests/app/alternative-page.test.tsx`) and added a new
+  real-content render test for `/alternative/firebase`. Also closed out one stale
+  `TECH-DEBT.md` row (the `/trending`/`/rising` row-duplication the design lane's
+  `RankedList` extraction, run 35, already fixed) and filed a new one
+  (`AlternativesTable.tsx`'s commercial chips don't link to a matching
+  `/alternative/:slug` page even when one exists — out of scope for this content-only
+  change). 334/334 tests pass, lint/`tsc --noEmit` clean, `npm audit --audit-level=high`
+  0 vulnerabilities, all run locally; `npm run build` left to CI (known ADR-006
+  sandbox font-fetch gap) — all 3 checks (CI, Factory guardrails, Design screenshots &
+  accessibility) green on PR #100 before squash-merging; post-merge CI on `main` also
+  confirmed green. Re-checked RG-7/8/9 (Gmail thread `1a0f26990ebc1e9c`) — still
+  exactly the one original message, no owner reply; `default_due_at` (2026-10-03)
+  hasn't passed.
 - 2026-10-01 — Dev run 47: added `content/comparisons/langchain-vs-llamaindex.md` —
   langchain.md and llamaindex.md have listed each other under
   `alternatives.open_source` since llamaindex.md was added (run 39, PR #88), but no

@@ -15,9 +15,9 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 47: RG-7/8/9 still no reply (defaults 2026-10-03). Closed langchain/llamaindex, the
-last comparison gap; content/ has no known dangling refs/gaps. Next: re-check RG-7/8/9;
-find new decision-free work (drift pass, content audit, TECH-DEBT.md) if still open.
+Run 48: RG-7/8/9 still no reply (defaults 2026-10-03). Added content/alternatives/
+firebase.md (highest-value commercial gap, 3 repos). Next: re-check RG-7/8/9;
+GitKraken/Sourcetree and Vercel/Heroku/Netlify are the next commercial-page gaps.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -36,8 +36,7 @@ find new decision-free work (drift pass, content audit, TECH-DEBT.md) if still o
 - A2: No pilot customer — general public product; no contractual obligations to model.
 
 ## Not doing (yet)
-Accounts, paid subscriptions, watchlists/alerts, recommendation engine, massive
-crawling infra, admin CMS, live deploy — spec §30, §33, ADR-002.
+Accounts, paid subscriptions, watchlists/alerts, recommendation engine, massive crawling infra, admin CMS, live deploy — spec §30, §33, ADR-002.
 
 ## Timebox
 Phases 2 and 3 both completed within budget; no Phase 3 item needed a split.
@@ -56,5 +55,6 @@ None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 stays stubbed u
   basic news widget (#72, PR #74) — Phase 3 MVP gate complete.
 - [x] 2026-09-30/10-01 — Decision-free content: dev-tools grove, +PocketBase/Appwrite,
   commercial-slug fix, LocalAI/Dokploy/LlamaIndex/Vim/Helix/Zed/Tig/GitUI (#81, #83-90,
-  #92-93); all comparisons incl. langchain-llamaindex (#85, #94-95, #97-98) — done.
+  #92-93); all comparisons incl. langchain-llamaindex; /alternative/firebase (#85,
+  #94-95, #97-98, #100) — done.
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (#76-78), awaiting owner
