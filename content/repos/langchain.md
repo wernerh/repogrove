@@ -36,8 +36,8 @@ together bespoke plumbing for every new model provider or vector store.
 - For a single, well-understood use case, calling a provider's SDK directly is often simpler
 
 ## Alternatives
-LlamaIndex (see `content/alternatives/` once those pages exist — placeholder link until
-Phase 3 builds alternative pages).
+LlamaIndex (narrower focus on data ingestion, indexing, and retrieval over LangChain's
+broader general-purpose orchestration).
 
 ## Related Grove
 [AI](/grove/ai)
