@@ -1,6 +1,6 @@
 factory:
-  current_run: null
-  holder: null
+  current_run: "2026-10-01T06:50:24Z"
+  holder: "dev"
   last_run: "2026-10-01T05:22:00Z"
 
 product:
