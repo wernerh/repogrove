@@ -7,6 +7,22 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-01 — Three new `/compare/:a/:b` pages closing out the Developer Tools grove's
+  git-TUI trio (GitUI/LazyGit/Tig, added runs 33/43): `content/comparisons/
+  gitui-vs-lazygit.md`, `gitui-vs-tig.md`, `lazygit-vs-tig.md`. All three repos have
+  listed each other under `alternatives.open_source` since Tig/GitUI landed (run 43),
+  but had zero `/compare/:a/:b` pages among them — the same fully-mutual-trio content
+  gap run 36's Supabase/Appwrite/PocketBase comparisons closed for the Self-Hosted
+  grove, just for this grove's three-way git-TUI cluster. Each page's hand-written "How
+  they differ" prose draws only on facts already verified in the three repos' own
+  content files (LazyGit's Go implementation independently re-confirmed via its
+  pkg.go.dev module listing) — no new unverified claims. 2 new tests (a
+  `getComparisonsForRepo` trio-coverage test, a `/compare/lazygit/tig` render test);
+  326/326 tests pass. Small related task: fixed TECH-DEBT.md's 2026-10-01 row —
+  `.factory/state.yaml`'s `next_actions` list had grown to 22 entries/~600 lines and
+  cost this run's own lock-acquisition read a tool-output truncation; archived the 14
+  oldest entries (runs 22-35) to new `docs/factory/run-history.md`, kept the most
+  recent ~8 in `state.yaml` with a pointer note. (dev)
 - 2026-10-01 — Tig (`content/repos/tig.md`, GPL-2.0) and GitUI (`content/repos/gitui.md`,
   MIT) added to the Developer Tools grove — routine editorial content work done while
   Phase 4 feature work stays held pending RG-7 (no owner reply yet, defaults

@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-10-01T14:50:00Z"
-  holder: "dev"
-  last_run: "2026-10-01T13:17:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-10-01T15:08:00Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,14 +19,56 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 58
-  features_completed: 26
+  runs: 59
+  features_completed: 27
   bugs_fixed: 9
   security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
 
 next_actions:
+  - "2026-10-01 (run 44): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
+    Held off Phase 4 feature work again this run, consistent with runs 33-43. Audited
+    content/ for the next decision-free content gap (last run's dangling-reference class
+    is fully closed): cross-referenced every content/repos/*.md's alternatives.open_source
+    against content/comparisons/*.md and found the Developer Tools grove's git-TUI trio —
+    gitui, lazygit, tig — have listed each other under alternatives.open_source since
+    run 43, but had zero /compare/:a/:b pages among them, the same fully-mutual-trio
+    content gap run 36's Supabase/Appwrite/PocketBase comparisons closed for the
+    Self-Hosted grove. Major task: added content/comparisons/gitui-vs-lazygit.md,
+    gitui-vs-tig.md, lazygit-vs-tig.md, each 'How they differ' prose drawing only on
+    facts already stated in the three repos' own content files, plus one new
+    independently verified fact (LazyGit's Go implementation, confirmed via its own
+    pkg.go.dev module listing). Independent review (subagent, skeptical-senior-engineer
+    pass) flagged a real MINOR: the first draft of gitui-vs-lazygit.md and
+    lazygit-vs-tig.md both asserted LazyGit has 'the larger, longer-established
+    community' of the three projects — true in the real world but not stated in any of
+    the three repos' own content files and not independently re-verified (no star-count
+    snapshot exists yet for gitui/tig in data/repogrove.db to cross-check against) —
+    reworded both pages to drop the unverified comparison, keeping only already-sourced
+    language/architecture/feature-coupling facts. Small related task: fixed
+    TECH-DEBT.md's 2026-10-01 row — this run's own lock-acquisition read of this file's
+    next_actions list (22 entries, ~600 lines) hit a tool-output truncation, the exact
+    cost the row warned about; archived the 14 oldest entries (runs 22-35) to new
+    docs/factory/run-history.md, kept the most recent ~8 here with a pointer note
+    (nothing in scripts/factory/ reads next_actions, confirmed by grep before trimming).
+    326/326 tests pass (2 new: a getComparisonsForRepo trio-coverage test, a real
+    /compare/lazygit/tig render test), lint clean, tsc --noEmit clean, npm audit
+    --audit-level=high 0 vulnerabilities, all run locally; npm run build reproduced the
+    known ADR-006 sandbox font-fetch gap (confirmed it compiles past content loading
+    first), left to CI's GitHub-hosted runner — confirmed all 4 gating checks green on
+    PR #94 (scripts/factory/check.py, dependency scan, lint/test/build, factory
+    guardrails; the non-gating screenshot/axe-core job was still in progress at merge
+    time, consistent with its own 'does not gate merges' label) before squash-merging it
+    myself; post-merge CI on main also confirmed green (all 3 gating checks). ROADMAP.md
+    needed no changes (no roadmap item touched). CHANGELOG.md/PROJECT_STATE.md/
+    DECISIONS.md/.factory/decisions.yaml/TECH-DEBT.md updated. Next: re-check RG-7/8/9
+    each run; the editor cluster (vim/neovim/helix/zed, fully mutual, 6 missing
+    comparison pairs) is the next biggest missing-comparisons content gap; ollama/
+    localai/vllm trio has 1 remaining pair (ollama-vs-localai, localai-vs-vllm) also
+    open; coolify/dokploy pair also has no comparison yet."
   - "2026-10-01 (run 43): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
@@ -306,301 +348,12 @@ next_actions:
     .factory/decisions.yaml/PROJECT_STATE.md updated. Next: re-check RG-7/8/9 each
     run; once RG-7 resolves, hold or pick up decision-free Phase 4 items — more
     content coverage/accuracy fixes stay available as decision-free work meanwhile."
-  - "2026-09-30 (run 35): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
-    — still exactly the one original message, no owner reply. RG-7's default_due_at
-    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
-    Held off Phase 4 feature work again this run for the same reason as runs 33/34.
-    Scanned content/ for a latent bug (same instinct as runs 33/34's dangling-reference
-    scan) and found one: every content/repos/*.md file with a non-empty
-    alternatives.commercial array had a raw lowercase-kebab-case slug there instead of a
-    real product display name (e.g. 'firebase' instead of 'Firebase', 'aws-amplify'
-    instead of 'AWS Amplify') — AlternativesTable.tsx renders commercial entries
-    verbatim with no capitalization (confirmed by reading the component and by existing
-    test fixtures elsewhere using properly-cased names), so the site has been quietly
-    showing raw slugs as brand names on every affected repo page since bootstrap.
-    Separately found content/repos/ollama.md's alternatives.open_source listed
-    'lm-studio' — verified via web search that LM Studio is closed-source/proprietary
-    freeware (built on open components like llama.cpp, but the app itself has no public
-    source), not an open-source project, so it was miscategorized since bootstrap
-    (traced to ARCHITECTURE.md's own illustrative frontmatter example, which had the
-    same mistake — fixed too). Major task: fixed the casing of every commercial entry
-    across appwrite.md/coolify.md/lazygit.md/pocketbase.md/supabase.md; moved lm-studio
-    out of ollama.md's open_source into commercial as 'LM Studio' (ollama's open_source
-    is now [localai, vllm]); added a new validator to assertValidAlternatives
-    (src/lib/content.ts) that fails the build when a commercial entry is all-lowercase
-    with no space, so this class of bug can't silently recur. Independent review
-    (subagent, skeptical-senior-engineer pass) found no MAJOR issues; one MINOR
-    (the new heuristic would false-positive on a genuine all-lowercase one-word brand
-    name, e.g. a hypothetical 'back4app' — no current content triggers it) addressed by
-    documenting the trade-off in the validator's own comment. 307/307 tests pass (4
-    new/updated: a reject/accept pair for the validator in tests/lib/content.test.ts,
-    plus tests/app/repo-page.test.tsx and the real-fixture Ollama parse test updated for
-    the corrected data), lint clean, tsc --noEmit clean, npm audit --audit-level=high 0
-    vulnerabilities, all run locally; next build reproduces the known ADR-006 sandbox
-    font-fetch gap (confirmed it compiles past this change first), left to CI's
-    GitHub-hosted runner — all 3 checks (CI, Factory guardrails, Design screenshots &
-    accessibility) green on PR #84 before squash-merging it myself; post-merge CI on
-    main also confirmed green. CHANGELOG.md/PROJECT_STATE.md/.factory/decisions.yaml
-    updated. Next: re-check RG-7/8/9 each run; once RG-7 resolves, hold or pick up
-    decision-free Phase 4 items (community submissions, agent roles) — more content
-    coverage/accuracy fixes stay available as decision-free work meanwhile."
-  - "2026-09-30 (run 34): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
-    — still exactly the one original message, no owner reply. RG-7's default_due_at
-    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
-    Held off Phase 4 feature work again this run for the same reason as run 33 —
-    starting it now would preempt RG-7's still-open sequencing question. Found, while
-    scoping decision-free content work, that content/repos/supabase.md's frontmatter
-    has listed alternatives.open_source: [appwrite, pocketbase] since bootstrap, but
-    neither had its own content/repos/*.md file — both rendered as 'Not yet profiled'
-    on Supabase's Alternatives table, the same kind of latent content gap run 33's
-    developer-tools grove closed for related_groves (just not caught by a fail-loudly
-    validator this time, since alternatives.open_source is deliberately allowed to
-    reference not-yet-profiled slugs — see AlternativesTable's own doc comment).
-    Major task: added content/repos/pocketbase.md and appwrite.md (both real,
-    well-known repos — pocketbase/pocketbase MIT, appwrite/appwrite BSD-3-Clause),
-    groves: [self-hosted], with original 'What it does'/'Why people use it'/Pros/Cons
-    interpretation matching house style (not a raw GitHub-description scrape, per rule
-    4), cross-referencing each other and Supabase under alternatives.open_source. Both
-    pick up real GitHub ingestion automatically on the next ingestion.yml run. Small
-    related task: extended content/groves/self-hosted.md's 'Core projects' list to
-    include both. Independent review (subagent, skeptical-senior-engineer pass) found
-    two MINOR issues, both fixed pre-push: (1) the working branch was named
-    content/self-hosted-backends-pocketbase-appwrite, not a CLAUDE.md §6-allowed
-    prefix — renamed to feat/self-hosted-backends-pocketbase-appwrite, matching the
-    directly comparable prior PR (#81, feat/developer-tools-grove); (2) no test
-    rendered /repo/pocketbase or /repo/appwrite through the actual page component,
-    only through generateStaticParams/getReposInGrove — fixed by adding a
-    /repo/pocketbase render test mirroring the existing /repo/neovim one, including
-    asserting its alternatives.open_source cross-references now resolve to real links
-    instead of 'Not yet profiled'. 305/305 tests pass (8 new/updated: slug-list
-    updates in tests/{lib/content,app/home,app/repo-page}.test.tsx for the +2 repos,
-    plus the new /repo/pocketbase render test), lint clean, tsc --noEmit clean, npm
-    audit --audit-level=high 0 vulnerabilities, all run locally; next build reproduces
-    the known ADR-006 sandbox font-fetch gap (confirmed it compiles past this change
-    first), left to CI's GitHub-hosted runner — all 5 gating checks + 1 skipped
-    push-only job green on PR #83 before squash-merging it myself; post-merge CI on
-    main also confirmed green. TECH-DEBT.md needed no changes (no new debt
-    introduced/resolved). CHANGELOG.md/DECISIONS.md/PROJECT_STATE.md updated. Next:
-    re-check RG-7/8/9 each run; once RG-7 resolves, hold or pick up decision-free
-    Phase 4 items (community submissions, agent roles, spec §19) per its answer — more
-    content coverage (additional repos/Groves/alternatives/comparisons) stays
-    available as decision-free work meanwhile."
-  - "2026-09-30 (run 33): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
-    — still exactly the one original message, no owner reply. RG-7's default_due_at
-    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
-    Held off Phase 4 feature work again this run — per CLAUDE.md rule 8, a quiet run is
-    a success, but there was real safe work available: expanding curated content
-    coverage, which is ordinary decision-free editorial work (rule 4), not Phase 4
-    groundwork, so it doesn't preempt RG-7's still-open question. Found, while scoping
-    this, that content/groves/ai.md and content/groves/self-hosted.md have both named
-    'developer-tools' under their related_groves frontmatter since bootstrap, but no
-    content/groves/developer-tools.md ever existed — a dangling reference nothing had
-    caught, because related_groves is parsed but never rendered as a link anywhere.
-    Major task: added content/groves/developer-tools.md, backed by two new real,
-    well-known repos (content/repos/lazygit.md, neovim.md — both jesseduffield/lazygit
-    and neovim/neovim), each with original 'What it does'/'Why people use it'/Pros/Cons
-    interpretation matching the house style (not a raw GitHub-description scrape, per
-    rule 4). Both pick up real GitHub ingestion automatically on the next ingestion.yml
-    run (tracked repos are derived from every content/repos/*.md's github: field).
-    Small related task: added assertGrovesExist(repos, groves) to src/lib/content.ts,
-    wired into getAllRepos() right after the existing assertNoGithubCollisions — fails
-    the build loudly if a repo's groves: field ever names a Grove with no corresponding
-    content file, closing the exact gap that let 'developer-tools' dangle unnoticed.
-    Same fail-loudly convention as assertComparisonReposExist/assertNoGithubCollisions/
-    assertValidAlternatives. Independent review (subagent, skeptical-senior-engineer
-    pass) found no BLOCKER/MAJOR issues; one real MINOR — no test rendered
-    /repo/lazygit or /repo/neovim through the actual page component, only through
-    generateStaticParams — fixed pre-push by adding a render test for /repo/neovim
-    (heading, license, description, and the body's own 'Related Grove' link),
-    mirroring the existing ollama test. A second MINOR (cosmetic wording inconsistency
-    in 'Alternatives' prose that splitOutSection strips from every repo page before
-    rendering, so never actually shown) was left as-is per the reviewer's own judgment.
-    300/300 tests pass (4 new/updated: assertGrovesExist's own throw/non-throw cases,
-    the new neovim render test, plus count/slug-list updates in
-    tests/{lib/content,app/home,app/grove-page,app/repo-page}.test.tsx for the +2
-    repos/+1 grove), lint clean, tsc --noEmit clean, npm audit --audit-level=high 0
-    vulnerabilities, all run locally; next build reproduces the known ADR-006 sandbox
-    font-fetch gap (confirmed it compiles past this change first), left to CI's
-    GitHub-hosted runner — all 5 gating checks + 1 skipped push-only job green on PR
-    #81 before squash-merging it myself; post-merge CI on main also confirmed green.
-    TECH-DEBT.md/CHANGELOG.md/DECISIONS.md/PROJECT_STATE.md updated. Next: re-check
-    RG-7/8/9 each run; once RG-7 resolves, hold or pick up decision-free Phase 4 items
-    (community submissions, agent roles, spec §19) per its answer — more content
-    coverage (additional repos/Groves/alternatives/comparisons) stays available as
-    decision-free work meanwhile."
-  - "2026-09-30 (run 32): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
-    — still exactly the one original message, no owner reply. RG-7's default_due_at
-    (2026-10-03) hasn't passed; RG-8/RG-9 have no default (expensive-to-reverse) and
-    stay open regardless. Priority order (CLAUDE.md/prompt): CI green on main, no
-    open PRs, security open_findings all 0 except 2 pre-existing LOW (owner-blocked,
-    unchanged), design open_findings all 0 (no BLOCKER/MAJOR ux) — nothing ahead of
-    PROJECT_STATE.md's own next action in the priority list. That next action itself
-    was ambiguous between two readings (wait quietly, or pick up decision-free Phase 4
-    items) — given RG-7 explicitly asks the owner whether to hold Phase 4 feature work
-    until deployed and is still open (not yet defaulted), starting Phase 4 feature work
-    now would preempt the very question just asked, so deliberately did not start any
-    Phase 4 item this run (community submissions / agent roles stay available once
-    RG-7 resolves either way). Instead used the run for verification/maintenance
-    (still 'safe work', not idle — CLAUDE.md rule 8's 'quiet run' bar is 'no safe work
-    to do', not 'no owner-gated work to do'): manually triggered `ingestion.yml`
-    (`workflow_dispatch`) to validate #72's basic-news-widget release-ingestion path
-    end-to-end for the first time since PR #74/#75 merged — the committed
-    `data/repogrove.db` had never actually gained a `repository_releases` table (no
-    ingestion run had fired a release-fetch since the schema/code shipped). The run
-    succeeded: populated 5 real releases for all 5 tracked repos, confirming the
-    schema migration and release-fetch code both work for real, not just against
-    mocks/fixtures. This immediately broke `tests/app/repo-page.test.tsx`'s
-    empty-state test for that section, which had (by its own doc comment) only ever
-    asserted against the real committed db on the premise it had no releases yet —
-    true by accident, not by design. Major task: fixed the test coupling. Moved the
-    empty-state assertion into a new isolated file,
-    `tests/app/repo-page-releases-empty.test.tsx`, mocking `@/lib/releases` to `[]` —
-    same isolation pattern its populated-state sibling
-    `tests/app/repo-page-releases.test.tsx` already used; removed the real-db-coupled
-    version; corrected a stale doc comment in the populated-state sibling that made
-    the same now-false claim. Independent review (subagent) found one MAJOR: this
-    left no test exercising the real, unmocked `getRecentReleases` path (real SQL/
-    schema/date formatting) against actual ingested rows — fixed pre-push by adding a
-    structural smoke test back to `repo-page.test.tsx`, scoped via `within()` to the
-    'Latest' `<section>` alone, asserting only that it renders either the empty state
-    or at least one release link (never specific content, so it survives future
-    ingestion refreshes); manually verified the smoke test actually fails if the
-    section breaks (mutated the heading text, confirmed failure, reverted). Small
-    related task: corrected a stale 2026-09-27 TECH-DEBT.md row claiming Phase 3's
-    search/newsletter both still needed a server API — stale now that #63 shipped a
-    client-side-only search (ADR-008) and #65 shipped form-UI-only with no working
-    submit path. 296/296 tests pass (1 new, 1 removed), lint clean, tsc --noEmit
-    clean, npm audit --audit-level=high 0 vulnerabilities, all run locally; next
-    build reproduces the known ADR-006 sandbox font-fetch gap (confirmed it compiles
-    past this change first), left to CI's GitHub-hosted runner — all 4 checks green
-    on PR #80 before squash-merging it myself; post-merge CI on main also confirmed
-    green (2 duplicate-triggered runs, both success). TECH-DEBT.md/CHANGELOG.md/
-    PROJECT_STATE.md updated. Next: re-check RG-7/8/9 each run; once RG-7 resolves
-    (owner reply, or its 2026-10-03 default), hold or pick up decision-free Phase 4
-    items (community submissions, agent roles, spec §19) per whichever answer stands."
-  - "2026-09-30 (run 31): Phase 3's MVP gate stayed complete this run (no new Phase 3/4
-    roadmap items to pick up per PROJECT_STATE.md's own prior next-action) — confirmed
-    main CI green, no open issues besides the standing SEC-003 needs-human, no open PRs
-    (all 5 dependabot PRs noted in run 30's close-out — #29, #46-49 — are gone; the
-    owner merged/closed them directly outside the factory's flow). Checked Gmail for
-    replies on any open decision thread — none open (RG-2/3/4/6 all
-    ANSWERED/DEFAULTED/RESOLVED) — nothing to record. Major task: raised Phase 4's
-    owner-gated items as decisions instead of guessing or filing issues that assume an
-    answer, per run 30's own explicit next-action. RG-7 (cheap, defaults 2026-10-03):
-    hold Phase 4 feature work until the site is actually deployed? The owner still
-    hasn't provisioned the Azure Storage account RG-2 chose (ADR-002) — a hard human
-    gate — so there's no live site or real traffic yet; recommended holding rather than
-    building speculative infra. RG-8 (expensive, no default): an auth provider for
-    accounts (needed by watchlists/alerts spec §22 and RepoGrove Pro spec §32), or
-    defer both — recommended defer. RG-9 (expensive, no default): scope the public API
-    (api.repogrove.com, spec §13/§32) now, or leave unscoped until real demand —
-    recommended leave unscoped; also flagged that ADR-002's static hosting can't run an
-    API at all without its own further hosting decision. Emailed whurter5@gmail.com
-    (thread 1a0f26990ebc1e9c, one batched email per docs/DECISION-PROTOCOL.md), mirrored
-    each as its own needs-human issue (#76, #77, #78). Two Phase 4 items (community
-    submission workflow, formalizing the discovery/editorial agent roles spec §19) need
-    no owner decision and are available to pick up once there's bandwidth — not started
-    this run to keep scope to the decision-raising itself. Small related tasks (2, both
-    TECH-DEBT.md rows): (1) src/lib/content.ts's parseRepo/parseGrove/parseAlternative/
-    parseComparison never validated a content filename was kebab-case before it became
-    a public sitemap URL (2026-09-29 row) — added assertSlugIsKebabCase, 7 new tests;
-    (2) fetchRepoReleases's per_page=5 was applied by GitHub before parseReleases could
-    filter drafts, so a draft among the 5 most-recent releases could push a real one out
-    of the 'Latest' window (2026-09-30 row) — now over-fetches per_page=10 and slices to
-    5 post-filter. Independent review (subagent) found the first draft of the release
-    regression test didn't actually exercise the bug (mock ignored the requested
-    per_page); fixed the mock to truncate like the real API, verified by hand it fails
-    against the pre-fix code (0 releases instead of 5) and passes with the fix. Both
-    TECH-DEBT.md rows marked resolved in the same PR. 295/295 tests pass (8 new/
-    updated), lint clean, tsc --noEmit clean, npm audit --audit-level=high 0
-    vulnerabilities, all run locally; next build reproduces the known ADR-006 sandbox
-    font-fetch gap (confirmed it compiles past this change first) — left to CI. Opened
-    PR #75 (factory, tech-debt labels), subscribed to its activity; all 6 checks green
-    (including a real next build on CI's GitHub-hosted runner) before squash-merging it
-    myself; post-merge CI on main also confirmed green.
-    ROADMAP.md/PROJECT_STATE.md/CHANGELOG.md/DECISIONS.md/decisions.yaml updated. Next:
-    check RG-7/8/9 threads for a reply; otherwise pick up a decision-free Phase 4 item
-    (community submission workflow, formalizing the agent roles, spec §19) or continue
-    general TECH-DEBT.md upkeep."
-  - "2026-09-30 (run 30): shipped the basic news widget (#72), PR #74 — the last item on
-    docs/WORKPLAN.md's Phase 3 gate (the 17-item MVP list, spec §30/PRODUCT.md), which is
-    now fully complete. v1 scope exactly as #72 specified: a 'Latest' section on
-    /repo/[slug] listing a repo's recent GitHub releases (name/tag, publish date, link
-    to the real GitHub release), or an explicit 'No recent releases' empty state — never
-    a fabricated one. Storage: new repository_releases table in the already-committed
-    data/repogrove.db (docs/adr/ADR-005's 2026-09-30 addendum) — UNIQUE(github,
-    tag_name), not UNIQUE(github, captured_on), since a release doesn't recur daily like
-    a metrics snapshot and can be edited after publishing. Ingestion:
-    scripts/ingestion/fetch-snapshots.ts's runIngestion gained a third,
-    independently-failable per-repo API call (GET /repos/{owner}/{repo}/releases?
-    per_page=5) — same failure-isolation pattern as the existing contributor-count
-    fetch, so a releases-fetch failure never throws away that repo's star/fork/issue
-    snapshot. New src/lib/releases.ts (read side, mirrors src/lib/snapshots.ts's
-    process.getBuiltinModule pattern for node:sqlite under jsdom tests). Independent
-    review before push found one MAJOR: an earlier parseReleases coerced every field
-    with String(...), so a genuinely malformed release entry (missing tag_name/
-    html_url/a resolvable date) became the literal text \"undefined\" rather than being
-    skipped — that string could reach dateFormatter.format(new Date(...)) on the page
-    and throw RangeError: Invalid time value on an Invalid Date, breaking that repo's
-    whole page render/static build for one bad release. Fixed pre-push: parseReleases
-    now requires a real tag_name, an https://github.com/... html_url, and a parseable
-    date, skipping the entry otherwise (with regression tests) — this also fixed the
-    same review's MINOR finding (the unvalidated html_url rendered as a link href with
-    no host check). A third MINOR (per_page=5 applied before the draft filter, so a
-    draft among a repo's 5 most-recently-created releases could push a real one out of
-    the window) filed as a TECH-DEBT.md row rather than fixed, to keep the PR scoped.
-    287/287 tests pass (34 new/updated: repository_releases round-trip/idempotency,
-    parseReleases/fetchRepoReleases/runIngestion release coverage including the
-    malformed-entry regressions above, the read-side module, and both the real-db
-    empty-state render and an isolated populated-state render for the page), lint
-    clean, tsc --noEmit clean, npm audit --audit-level=high 0 vulnerabilities, all run
-    locally; next build reproduces the known ADR-006 sandbox font-fetch gap (confirmed
-    it compiles past this change first), left to CI's GitHub-hosted runner — all 6
-    checks green on PR #74 before squash-merging it myself; post-merge CI on main also
-    confirmed green. Issue #72 auto-closed by the merge. ROADMAP.md/PROJECT_STATE.md/
-    CHANGELOG.md/DECISIONS.md updated — Phase 3 marked complete; Phase 4+ deliberately
-    left unfiled (several items — newsletter automation, public API, RepoGrove Pro —
-    are their own owner-gated territory per CLAUDE.md rule 6; next run should raise
-    those as owner decisions before filing issues, not default them). No open dev-lane
-    owner decisions this run (RG-4 was DEFAULTED for real last run, design run 13 — its
-    own note says no further re-checks are needed unless the owner replies). Next: scope
-    what, if anything, Phase 4 needs before its first roadmap issue can be filed."
-  - "2026-09-30 (run 29): took over a stale lock (design, set 01:14 UTC by a run that
-    died right after acquiring it — no branch/PR, nothing to recover, >5h30m old,
-    CLAUDE.md's 50-minute rule). Shipped the newsletter signup form UI (#65), PR #71 —
-    Phase 3's last previously-filed item. New src/components/NewsletterSignupForm.tsx:
-    real client-side email validation (empty/malformed both get an inline error),
-    clearly labeled 'Coming soon', no working submit path (no fetch, no form
-    action/method — enforced in code, not just tested) since storing a subscriber
-    email needs an owner decision (vendor + PII storage, CLAUDE.md rule 6) that hasn't
-    been made, and output: \"export\" (ADR-002) has no server runtime to store one in
-    even if it had. Wired into the homepage as a new 'RepoGrove Weekly' section.
-    Independent review before push: no BLOCKER/MAJOR findings; one MINOR fixed
-    pre-push (editing the email after a successful fake submission left a stale
-    confirmation message on screen — any edit now clears both error and submitted
-    state). 253/253 tests pass (5 new + 1 updated), lint clean, tsc --noEmit clean,
-    npm audit --audit-level=high 0 vulns, all run locally; next build reproduces the
-    known ADR-006 sandbox font-fetch gap (confirmed it gets past compiling this change
-    first), left to CI — all 6 checks green (5 success + 1 skipped push-only job) on
-    PR #71 before squash-merging it myself; post-merge CI on main also confirmed
-    green. Issue #65 auto-closed by the merge. While closing out, re-read
-    docs/WORKPLAN.md's Phase 3 gate ('the 17-item MVP list in PRODUCT.md/spec §30 is
-    complete') against PRODUCT.md's own list and found item 11 ('basic news', spec
-    §11) was never turned into a ROADMAP.md row or GitHub issue across 28 prior runs —
-    filed #72 (recommended v1 scope: GitHub Releases only, per-repo, no new
-    vendor/licensing risk, extends the existing ingestion job) so Phase 3 isn't
-    mistakenly read as gate-complete. RG-4 re-checked via get_thread (design lane's
-    decision, still OPEN, no new reply since 2026-09-27T17:32:04Z, due today
-    2026-09-30) — not this lane's call. ROADMAP.md/PROJECT_STATE.md/CHANGELOG.md/
-    DECISIONS.md/TECH-DEBT.md updated. Next: #72 (basic news widget)."
-  - "2026-09-30 (run 28): shipped /search (#63), PR #70 — Phase 3's search item, only #65 (newsletter form UI) now left in Phase 3. New docs/adr/ADR-008-search-v1.md, the short architecture note issue #63 itself asked for before landing implementation: search v1 is a static, build-time-generated index (src/lib/search.ts's buildSearchIndex(), server-only, reads getAllRepos/getAllGroves/getAllAlternatives — the same public /content every page already renders, no data/repogrove.db field) matched entirely client-side (src/lib/search-match.ts's searchEntries(), pure tiered case-insensitive substring ranking: exact title > starts-with > contains > category > description) — no server, no new vendor, no new runtime dependency, compatible with output: \"export\". New /search route: src/app/search/page.tsx (Server Component builds the index once at build time) passes it to src/components/SearchBox.tsx (Client Component, the input + live results, same stretched-link/focus pattern as RepoCard/RankedList). sitemap.ts/layout.tsx gained the new route. src/lib/content.ts gained an exported firstParagraph helper (moved out of RepoCard.tsx, its second real call site — pure refactor, no behavior change). Independent review before push found a real MAJOR: an alternative with no bestFit items (legitimately optional) got a fabricated description sentence, contradicting this codebase's 'omit, don't fabricate' convention — fixed pre-push by extracting alternativeDescription() as its own directly-tested pure function returning \"\" instead, and rewrote the one test that had been tautologically re-deriving the old fallback logic inline. Pushed, then CI caught a real Turbopack build failure this sandbox's own local build can't reach (blocked by the known ADR-006 font-fetch gap): SearchBox.tsx (Client Component) importing searchEntries from the same module that also held buildSearchIndex pulled content.ts's node:fs import into the client bundle graph, which Turbopack's static-export build can't chunk ('the chunking context (unknown) does not support external modules (request: node:fs)') — root-caused from the CI job log, fixed by splitting the pure matching half into src/lib/search-match.ts with zero dependency on content.ts (SearchBox now imports from there directly; search.ts keeps buildSearchIndex and re-exports the matching half for server-side/test convenience), tests split the same way, re-validated locally (lint/tsc/247 tests, and a local next build now gets past the point that failed on CI and fails only at the already-known font-fetch gap, confirming the fix), re-pushed. 247/247 tests pass (21 new/updated), lint clean, tsc --noEmit clean, npm audit --audit-level=high 0 vulns, all run locally; all 3 CI checks green on PR #70's final commit (ci.yml, factory-guardrails.yml, design-screenshots.yml) before squash-merging it myself; post-merge CI on main also confirmed green. Issue #63 auto-closed by the merge. RG-4 re-checked via get_thread (design lane's decision, still OPEN, no new reply since 2026-09-27T17:32:04Z, due today 2026-09-30) — not this lane's call. ROADMAP.md/PROJECT_STATE.md/CHANGELOG.md/DECISIONS.md updated. Next: #65 (newsletter form UI) is the only Phase 3 item left — its acceptance criteria explicitly scope the first PR to form UI only (no working submit path) per the issue's own owner-decision-blocked storage/vendor question."
-  - "2026-09-29 (run 27): shipped sitemap.xml + robots.txt (#64, PR #69) — Phase 3's SEO baseline. New src/app/sitemap.ts/src/app/robots.ts (Next's static MetadataRoute convention, output: \"export\" compatible), enumerating every repo/Grove/alternative/comparison route from the same getAllRepos/getAllGroves/getAllAlternatives/getAllComparisons content-loader functions every page already calls. New src/lib/site.ts (SITE_URL constant, repogrove.com per PRODUCT.md's already-documented target domain — doesn't provision anything). /trending and /rising already had real per-page metadata since #19/#20 shipped — issue #64's problem statement was stale on that point; added a regression test rather than redoing done work. Independent review before push found a real MAJOR: the sitemap's doc comment argued omitting the reversed /compare/:b/:a URL avoided duplicate-content indexing, but that URL is still pre-rendered (generateStaticParams renders both orders) and internally linked from the other repo's own page — a sitemap omission alone doesn't stop it being indexed separately. Fixed with alternates.canonical on the compare page's generateMetadata (both URL orders point at the file's own canonical repoSlugs order) plus metadataBase on the root layout. One MINOR (content.ts has no slug-format/kebab-case validation, so a malformed filename would flow into a public sitemap URL) filed as a TECH-DEBT.md row rather than fixed, to keep the PR scoped. Pushed, then CI caught a real build error this sandbox's own local build can't reach (blocked earlier by the known ADR-006 font-fetch gap): Next 16's output: \"export\" needs metadata-route files to declare export const dynamic = \"force-static\" explicitly, without which next build fails page-data collection for /robots.txt outright — root-caused from the CI job log, fixed (added to both files), re-validated locally (lint/tsc/226 tests), re-pushed. 226/226 tests pass (18 new/updated), lint clean, tsc --noEmit clean, npm audit --audit-level=high 0 vulns, all run locally; all 6 CI checks green on PR #69 (including a real next build on the GitHub-hosted runner) before squash-merging it myself; post-merge CI on main also confirmed green. Issue #64 auto-closed by the merge. RG-4 re-checked via get_thread (design lane's decision, still OPEN, no new reply since 2026-09-27T17:32:04Z, due today 2026-09-30) — not this lane's call. ROADMAP.md/PROJECT_STATE.md updated. OG image generation and JSON-LD structured data stay out per issue #64's own non-goals. Next: #63 (search) needs a short ADR first (output: \"export\" has no server runtime for a DB-backed FTS query); #65 (newsletter) is owner-decision-blocked on storage/vendor past its form-UI-only first PR."
-  - "2026-09-29 (run 26): shipped Phase 3's second item, /compare/:a/:b (#62), PR #67. New content type content/comparisons/<a>-vs-<b>.md (ARCHITECTURE.md schema'd this run — reserved since bootstrap, never specified): frontmatter repos: [<a>, <b>], exactly two content/repos/*.md slugs; body has one required '## How they differ' prose section (the one thing that can't be computed). New src/lib/content.ts support: parseComparison/getAllComparisons/getComparison/getComparisonsForRepo, plus assertComparisonReposExist/assertNoDuplicateComparisonPairs cross-file validators wired into getAllComparisons — same fail-loudly convention as parseRepo/parseAlternative, but unlike /alternative/:slug's tolerant resolved-or-plain-text rendering, both repos here must already exist (a comparison has nothing to render for one that doesn't) so a comparison naming an unknown repo slug fails the build. extractListItems exported (was parseAlternative-private) so the new page reuses it on a repo's own '## Pros'/'## Cons' body sections rather than re-authoring them. New src/app/compare/[a]/[b]/page.tsx: at-a-glance table (stars/license/status/momentum/category) reusing getRepo/getGrowthSummaries/computeHeat, plus reused Pros/Cons, plus the hand-written prose; getComparison resolves either URL order to the same content file, always rendered in the file's own canonical order. Small 'Compared with' cross-link section added to /repo/[slug]. First real comparison: content/comparisons/ollama-vs-vllm.md (both repos already existed and already listed each other as alternatives). numberFormatter (TECH-DEBT.md 2026-09-29 row, open at 2 duplicate call sites) extracted to new src/lib/format.ts rather than duplicated a third time; both existing call sites switched over, row marked resolved. Independent review before push found no MAJOR issues; fixed two MINOR items pre-push — the two-repo Grove Heat lookup called getSnapshotHistory once per repo (2 db opens), so src/lib/snapshots.ts gained a batched getSnapshotHistories (mirrors getGrowthSummaries' existing batching, refactored to share one query helper — both now call a private fetchHistoriesByGithub), switched the compare page to it; and this run's own close-out doc updates. One POLISH item addressed (short comment on the comparison content file's unrendered leading title, matching stripLeadingTitle's convention). 208/208 tests pass (30 new), lint clean, tsc --noEmit clean, npm audit --audit-level=high 0 vulns, all run locally; next build reproduced the known ADR-006 sandbox font-fetch gap, left to CI's GitHub-hosted runner — confirmed 6/6 checks green on PR #67 before squash-merging it myself; post-merge CI on main also confirmed green. Issue #62 auto-closed by the merge. RG-4 re-checked via get_thread (design lane's decision, still OPEN, no new reply since 2026-09-27T17:32:04Z, due tomorrow 2026-09-30) — not this lane's call. ROADMAP.md/PROJECT_STATE.md updated with the real PR number. Next: #64 (sitemap/SEO) is unblocked; #63 (search) needs a short ADR first (output: \"export\" has no server runtime for a DB-backed FTS query); #65 (newsletter) is owner-decision-blocked on storage/vendor past its form-UI-only first PR."
-  - "2026-09-29 (run 25): filed the 5 Phase 3 GitHub issues (#61 alternatives pages, #62 comparison pages, #63 full-text search, #64 sitemap/OpenGraph/SEO, #65 newsletter signup), mirroring how #5-7/#16-21 mirrored Phase 1/2's ROADMAP rows — each with Problem/Proposed solution/Non-goals/Acceptance criteria/Testing/Security/Dependencies per the established issue shape. Then shipped Phase 3's first item: /alternative/:slug (#61), PR #66. content/alternatives/notion.md (a bootstrap-era fixture proving the content shape per ARCHITECTURE.md) already existed but nothing rendered it. New src/lib/content.ts support: parseAlternative/getAllAlternatives/getAlternative reading content/alternatives/*.md's frontmatter (product, category) and body sections (## Open source/Free/Commercial/Best fit, plain bullet lists per spec §4 — not YAML arrays like Repo.alternatives), same fail-loudly-on-malformed-content convention as parseRepo/parseGrove (missing product/category, every alternative-type section empty, or a duplicate item anywhere, all throw ContentValidationError). New src/app/alternative/[slug]/page.tsx: resolves each Open-source display name against content/repos/*.md by slugifying it (slugifyAlternativeName) and calling getRepo — link + stars when resolved, plain text + 'Not yet profiled' otherwise, the same resolved-or-plain-text convention AlternativesTable already established for Repo.alternatives.open_source (not reused directly — AlternativesTable's h2/table shape didn't fit a single-column bullet list well, so this page has its own small presentational rendering instead). content/alternatives/notion.md's bootstrap-era placeholder Free/Commercial sections filled in with real, uncontroversial facts (Notion free tier/Google Docs/Craft; Confluence/Coda/ClickUp) now that a real route renders them; a stale process note with no field to render into was trimmed out of the content file. Independent review before push found no MAJOR issues; fixed two MINOR items pre-push — the resolved-Open-source-item render path (real link + star count) had no test through the actual page component, only the pure resolveOpenSourceAlternatives helper was unit-tested, so added an isolated vi.mock-based test (tests/app/alternative-page-resolved.test.tsx, mirroring tests/app/trending-page-empty.test.tsx's isolation pattern) asserting both the resolved link+stars and a sibling unresolved item's 'Not yet profiled' render correctly; and assertNoDuplicateListItems wasn't applied to 'Best fit', breaking the fail-loudly convention applied to the other three sections — fixed and covered by a new test. Two POLISH items also addressed (moved the unrendered process note out of the content file; documented the '-'-only bullet-marker convention in extractListItems' doc comment). One POLISH item (numberFormatter duplicated between AlternativesTable.tsx and the new page) left as a TECH-DEBT.md row rather than fixed, to keep the PR scoped to the routing/content-loader work. 178/178 tests pass (17 new), lint clean, tsc --noEmit clean, npm audit --audit-level=high 0 vulns, all run locally; next build reproduced the known ADR-006 sandbox font-fetch gap, left to CI's GitHub-hosted runner — confirmed 6/6 checks green on PR #66 before squash-merging it myself (labels added post-creation: factory, content — create_pull_request doesn't take a labels param, used issue_write update instead); post-merge CI on main also confirmed green. Issue #61 auto-closed by the merge. RG-4 re-checked (design lane's decision, still OPEN, no new reply, due tomorrow 2026-09-30) — not this lane's call. ROADMAP.md/PROJECT_STATE.md updated — Phase 3's first item checked off. Next: #62 (comparison pages) or #64 (sitemap/SEO) are both unblocked; #63 (search) needs a short ADR first (output: \"export\" has no server runtime for a DB-backed FTS query); #65 (newsletter) is owner-decision-blocked on storage/vendor past its form-UI-only first PR."
-  - "2026-09-29 (run 24): shipped Grove Heat v1 (#21), PR #59 — Phase 2's last item, now complete (ROADMAP.md's whole Phase 2 checklist is checked). Took over the factory lock from a stale security-lane hold (set 15:05:31Z, >90min old with no further commits, per CLAUDE.md's staleness rule). Checked data/repogrove.db directly via node:sqlite before starting: 5 repos, 3 calendar days each; contributors only non-null on the most recent snapshot per repo (added in a later migration than the other columns), so no real contributor-growth delta is computable yet. Of issue #21's proposed inputs, only star growth rate has enough real history — scoped v1 to that (docs/adr/ADR-004-grove-heat-v1.md has the full methodology, threshold derivation against the 5 real repos' growth rates, and a v2 revisit list). New src/lib/heat.ts: computeHeat(history) -> HeatResult | null, labels one of the four states docs/design/DESIGN-SYSTEM.md already specified (Rising/Active/Slowing/Dormant); returns null (no chip) rather than fabricating a label when there's not enough history, matching the codebase's 'omit, don't fabricate' convention. Open-issues/contributor-growth ship as supplementary non-gating signals. New src/components/MomentumChip.tsx mirrors StatusChip's pattern with the already-wired momentum-* tokens; wired into /repo/[slug] next to StatusChip, reusing the existing getSnapshotHistory call (no second DB open). Independent review before push caught a real MAJOR bug: the star-growth rate used getGrowthSummary's 30-day-windowed baseline while the supplementary signals defaulted to the absolute-earliest snapshot ever (invisible today at <=3 days of history, would silently diverge past 30 days) — fixed pre-push by extracting getGrowthBaseline(history) out of src/lib/snapshots.ts so every signal shares one baseline row, with a dedicated regression test. 160/160 tests pass (25 new/updated), lint clean, tsc --noEmit clean, npm audit --audit-level=high 0 vulns, all run locally; next build reproduced the known ADR-006 sandbox font-fetch gap, left to CI's GitHub-hosted runner — confirmed all 3 checks green on PR #59 (ci.yml, factory-guardrails.yml, non-gating design-screenshots.yml) before squash-merging it myself; post-merge CI on main also confirmed green, and real post-merge screenshots (repo-ollama, both StatusChip and MomentumChip reading Active/green today) reviewed directly — renders cleanly, no layout issues. Issue #21 auto-closed by the merge. ROADMAP.md/PROJECT_STATE.md updated — Phase 2 complete, current phase is now Phase 3. No dev-lane owner decisions are open (RG-4 is design lane's; checked it too via get_thread — still no new reply since 2026-09-27T17:32:04Z, due today 2026-09-30). Next: no Phase 3 issues filed yet — file them mirroring how Phase 1/2 issues mirrored ROADMAP.md, then start with /alternative/:slug (spec §4, distinct from the already-shipped /repo/[slug] AlternativesTable)."
-  - "2026-09-29 (run 23): shipped /rising (#20), PR #56 — same Phase 2 data-maturity gate /trending already met. New src/lib/rising.ts: pure rankByRelativeGrowth(repos, summaries), sorts by percentGrowth = deltaStars / (currentStars - deltaStars) * 100 descending (relative to each repo's own size, not absolute stars — the spec's §6/§8 distinction from /trending). Excludes no-history/single-snapshot repos (same convention as /trending) plus a zero/negative-baseline repo (would divide to Infinity/NaN). New src/app/rising/page.tsx mirrors /trending's page/row pattern; header nav gained a Rising link. Independent review before push found no MAJOR issues; fixed 5 MINOR/POLISH items: formatPercent now signs off the *rounded* value so a genuinely tiny nonzero percentage displays \"±0.0%\" not a stray-looking \"+0.0%\"/\"-0.0%\" (a float-percentage rounding edge case /trending's integer deltas can't hit) — added a dedicated isolated test proving both the tiny-positive and tiny-negative case; reason-line copy changed to \"star growth\" (not bare \"stars\", which read as a fraction of one star); /trending's own doc comment (called /rising \"not yet built\") fixed; new TECH-DEBT.md row for the ~40-line row-rendering block now duplicated between the two pages (not extracted here — kept this PR scoped to ranking behavior); added a negative-baseline test case alongside the existing zero-baseline one. 120/120 tests pass (15 new), lint clean, tsc --noEmit clean, npm audit --audit-level=high 0 vulns, all run locally; next build reproduced the known ADR-006 sandbox font-fetch gap, left to CI's GitHub-hosted runner — confirmed 5/5 gating checks + the non-gating screenshot job green on PR #56 (axe-core 0 WCAG 2.1 A/AA violations) before squash-merging it myself; post-merge CI on main (ci.yml + design-screenshots.yml) also confirmed green. Issue #20 auto-closed by the merge. ROADMAP.md/PROJECT_STATE.md updated with the real PR number. Checked Gmail (newer_than:2d, from:whurter5@gmail.com) for any new owner reply — nothing new on any RepoGrove decision thread (RG-4 still unanswered, design lane's call, due 2026-09-30). Next: both Phase 2 pages are now done — only Phase 2 item left is ADR-004 (Momentum/Heat, #21); its inputs list includes signals not yet ingested (commit recency, release frequency) — scope a v1 to already-ingested signals first (see PROJECT_STATE.md's Next action)."
-  - "2026-09-29 (run 22): Phase 2 data-maturity gate met for the first time (5 repos, 3+ calendar days of snapshot history in data/repogrove.db, confirmed via node:sqlite before starting). Shipped /trending (#19), PR #55: repos ranked by absolute star growth (deltaStars descending), reason line computed from real growth data (\"+N stars in the last M days\"), excludes repos with no/single-snapshot history, keeps negative growth sorted last rather than hiding it. Added getGrowthSummaries(githubSlugs, dbPath?) to src/lib/snapshots.ts — opens data/repogrove.db once via a parameterized WHERE github IN (...) query instead of once per repo — and used it to fix the 2026-09-29 homepage N+1 tech-debt row too (src/app/page.tsx), verified behavior-equivalent to the old latestStars() helper by a dedicated test. New src/lib/trending.ts (rankByAbsoluteGrowth, pure/unit-tested independent of the db). Header nav gained a Trending link. Independent review before push found no MAJOR issues; fixed all 4 MINOR/POLISH items raised (TECH-DEBT.md row, a test assertion that didn't mirror formatDelta's exact branching, a missing empty-state test — added via an isolated vi.mock'd test file — and a stale doc comment). 105/105 tests pass (15 new/updated), lint clean, tsc --noEmit clean, npm audit --audit-level=high 0 vulns, all run locally; next build reproduced the known ADR-006 sandbox font-fetch gap, left to CI's GitHub-hosted runner — confirmed 6/6 checks green on PR #55 (including axe-core, 0 WCAG 2.1 A/AA violations) before squash-merging it myself. Issue #19 auto-closed by the merge. ROADMAP.md/PROJECT_STATE.md updated with the real PR number. Next: /rising (#20) shares the identical data-maturity gate, now also met — start it next run."
-
+  - "Older next_actions entries (runs 22-35) archived to docs/factory/run-history.md
+    on 2026-10-01 (dev run 44) -- TECH-DEBT.md's 2026-10-01 row: this list's
+    unbounded growth was costing a real tool-output truncation on every lock-
+    acquisition read. Keeping only the most recent ~8 entries here going forward;
+    full history (including these) stays in docs/factory/run-history.md, which
+    nothing in scripts/factory/ reads -- safe to keep trimming the same way each run."
 security:
   last_run: "2026-09-29T07:05:39Z"
   next_action: "Re-check SEC-001 (factory-guardrails.yml permissions gap, owner-blocked) and SEC-003 (Dependabot alerts disabled, owner-blocked, issue #33) each run; once app grows an API surface (Phase 3 search/newsletter) review A02/A03/A09 for real. Run 9: no code, workflow, dependency, or content changes at all since run 8 (git diff --stat 7f39e3e..HEAD — only dev run 20's docs/state close-out, zero src/scripts/.github/workflows/package.json diff) — the quietest run yet. Re-verified all 4 findings by reading the code directly: SEC-001 (factory-guardrails.yml still no permissions: block, owner-blocked, unchanged; ci.yml/ingestion.yml/design-screenshots.yml all still correctly scoped), SEC-002 (GITHUB_SLUG_PATTERN + both regression tests unmodified), SEC-004 (static-server.mjs try/catch fix + regression test unmodified). SEC-003: re-ran the same 3 GitHub-side checks — vulnerability-alerts and secret-scanning/alerts both this sandbox's own proxy rejection again (consistent with run 8's noted discrepancy); branches/main/protection still a real GitHub 403 (no admin scope). Status unchanged, issue #33 stays open, owner-actionable. Reviewed the 2 open dependabot GitHub Actions PRs touching the one write-scoped workflow (#46 download-artifact 4->8, #47 upload-artifact 4->7) for relevance to the run-7-reviewed commit-screenshots job scoping — outside this lane's merge gate, no new finding (v8's digest-mismatch:error default is a secure-by-default improvement, not a risk). Secret-pattern scan of every commit since run 8 — no hits. Re-confirmed A01/A02/A07/A09 with fresh greps (no src/app/api or middleware.ts, no dangerouslySetInnerHTML/eval(/new Function( usage beyond the explanatory comment in src/lib/content.ts; the one real Authorization-header hit is the pre-reviewed ingestion-job GitHub token forwarding, not user-facing auth). main's CI green at the current head (checked via Actions API). npm ci (0 vulns)/lint (clean)/test (79/79)/audit --audit-level=high (0 vulns) all run locally; build reproduced the known ADR-006 sandbox font-fetch gap, confirmed green on CI's real GitHub-hosted runner instead. No new findings — genuinely quiet run."
