@@ -36,8 +36,8 @@ teams running models in production rather than a single local chat session.
 - Primarily GPU-oriented; CPU inference is not its strong suit
 
 ## Alternatives
-Ollama (simpler local serving), LocalAI (see `content/alternatives/` once those pages
-exist — placeholder link until Phase 3 builds alternative pages).
+**Open-source:** Ollama, LocalAI.
+**Commercial:** none tracked yet.
 
 ## Related Grove
 [AI](/grove/ai)

@@ -35,6 +35,7 @@ describe("getAllRepos (real /content fixtures)", () => {
       "coolify",
       "langchain",
       "lazygit",
+      "localai",
       "neovim",
       "ollama",
       "pocketbase",
@@ -84,7 +85,7 @@ describe("getAllGroves (real /content fixtures)", () => {
 describe("getReposInGrove (derived from repo frontmatter, per ADR-003)", () => {
   it("finds every AI-grove repo under the AI grove via its groves: frontmatter field", () => {
     const reposInAi = getReposInGrove("ai");
-    expect(reposInAi.map((r) => r.slug).sort()).toEqual(["langchain", "ollama", "vllm"]);
+    expect(reposInAi.map((r) => r.slug).sort()).toEqual(["langchain", "localai", "ollama", "vllm"]);
   });
 
   it("finds every self-hosted-grove repo under the self-hosted grove", () => {
