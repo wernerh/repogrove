@@ -15,10 +15,10 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 38: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03). Held off Phase 4 again;
-added Dokploy to the Self-Hosted grove instead (PR #87, dangling `coolify.md` ref).
-Remaining one-off content gaps: LlamaIndex, tig, gitui, vim, helix, zed. Next:
-re-check RG-7/8/9 each run; once resolved, pick up decision-free Phase 4 items.
+Run 39: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03). Held off Phase 4 again;
+added LlamaIndex to the AI grove instead (PR #88, dangling `langchain.md` ref).
+Remaining one-off content gaps: tig, gitui, vim, helix, zed. Next: re-check RG-7/8/9
+each run; once resolved, pick up decision-free Phase 4 items.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -44,7 +44,7 @@ crawling infra, admin CMS, live deploy — spec §30, §33, ADR-002.
 Phases 2 and 3 both completed within budget; no Phase 3 item needed a split.
 
 ## Blockers and attempts
-None blocking (rule 8). RG-7/8/9 open (see Next action) — Phase 4 stays stubbed on RG-8/RG-9 until answered (no auto-default, expensive-to-reverse).
+None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 stays stubbed until answered.
 
 ## Milestones
 - [x] 2026-09-27 — Repo bootstrapped; Phase 1 walking skeleton — #5, #6, #7
@@ -56,5 +56,5 @@ None blocking (rule 8). RG-7/8/9 open (see Next action) — Phase 4 stays stubbe
   sitemap/robots (#64), `/search` (#63, ADR-008), newsletter form UI (#65, PR #71),
   basic news widget (#72, PR #74) — Phase 3 MVP gate complete.
 - [x] 2026-09-30/10-01 — Decision-free content: dev-tools grove (#81); +PocketBase/
-  Appwrite (#83); commercial-slug fix (#84); comparisons (#85); LocalAI/Dokploy (#86/87).
+  Appwrite (#83); commercial-slug fix (#84); comparisons (#85); LocalAI/Dokploy/LlamaIndex (#86-88).
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (#76-78), awaiting owner

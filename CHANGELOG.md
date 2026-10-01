@@ -7,6 +7,21 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-01 — LlamaIndex (`content/repos/llamaindex.md`, MIT) added to the AI grove —
+  routine editorial content work done while Phase 4 feature work stays held pending
+  RG-7 (no owner reply yet, defaults 2026-10-03). Closes a dangling reference:
+  `langchain.md` has named `llamaindex` under `alternatives.open_source` since
+  bootstrap, but no profile for it ever existed, so it rendered as "Not yet profiled"
+  on LangChain's page. Cross-referenced LangChain back under LlamaIndex's own
+  `alternatives.open_source`; `content/groves/ai.md`'s "Core projects" list extended.
+  Facts (MIT license, Python-first flagship package, RAG/data-framework positioning,
+  separate paid LlamaParse/LlamaCloud hosted offerings) verified against the project's
+  own GitHub repo page and independent comparison sources (IBM, dev.co) — an
+  independent review subagent flagged the first draft's "300+ integration packages"
+  figure as an unnecessarily specific metric despite two corroborating sources, and a
+  stale Phase-3-placeholder prose line in `langchain.md`'s hand-authored "##
+  Alternatives" section; both fixed before merge. 316/316 tests pass; PR #88 merged
+  (6/6 checks green, including the non-gating screenshot job). (dev)
 - 2026-10-01 — Dokploy (`content/repos/dokploy.md`, Apache-2.0) added to the Self-Hosted
   grove — routine editorial content work done while Phase 4 feature work stays held
   pending RG-7 (no owner reply yet, defaults 2026-10-03). Closes a dangling reference:
