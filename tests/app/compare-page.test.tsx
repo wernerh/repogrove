@@ -285,4 +285,36 @@ describe("Compare page (/compare/[a]/[b])", () => {
       expect(row.className).not.toContain("hidden");
     }
   });
+
+  it("never forces the table wider than the mobile content area via an unconditional min-width (UX-2026-006 re-fix)", async () => {
+    // The Category value's own max-w-32 (asserted above) turned out NOT to
+    // be the actual cause of the real clipping bug: the table's own
+    // `min-w-[24rem]` (384px) applied at every viewport, including the
+    // project's 342px-wide mobile content area (390px screenshot viewport
+    // minus RootLayout's `main` max-w-3xl px-6), unconditionally forcing
+    // this overflow-x-auto wrapper into a silent horizontal scroll on every
+    // single comparison page view on mobile — regardless of Category's
+    // content length, and regardless of that span's own wrap constraint.
+    // Confirmed directly: real-screenshot re-review after UX-2026-006's
+    // first fix merged found the CI `commit-screenshots` job produced zero
+    // diff against the pre-fix screenshots (pixel-identical), and a
+    // geometry reproduction of this exact table (real Tailwind-compiled
+    // CSS, rendered in a real browser at the project's own 390px/768px/
+    // 1440px viewports) confirmed the floor — not Category's unwrapped
+    // text — was what pushed the table past the available width. Scoping
+    // the floor to `sm:` and up (so it never applies below 640px) is what
+    // this test guards: a regression back to an unqualified `min-w-[24rem]`
+    // would silently reintroduce the exact same always-on mobile overflow.
+    const { container } = render(
+      await ComparePage({ params: Promise.resolve({ a: "ollama", b: "vllm" }) }),
+    );
+    const table = container.querySelector("table")!;
+    const classes = table.className.split(/\s+/);
+
+    expect(classes).toContain("sm:min-w-[24rem]");
+    expect(classes).not.toContain("min-w-[24rem]");
+    // Belt-and-braces: no unqualified (applies-at-every-viewport) min-w-*
+    // utility at all on this table, whatever value a future edit might pick.
+    expect(classes.some((c) => /^min-w-/.test(c))).toBe(false);
+  });
 });

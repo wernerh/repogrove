@@ -700,3 +700,36 @@ earlier in this run failed and are worth recording so the reasoning survives: a 
   sort, `MomentumChip` empty-signals fallback) — both still blocked on data that hasn't
   landed — or a fresh screenshot/drift pass across the other routes this run didn't have
   cause to re-open.
+- **Done 2026-10-01 (design run 18):** did exactly what run 17 queued up — re-reviewed the
+  real, `commit-screenshots`-refreshed `compare-ollama-vllm__mobile-*.png` — and found
+  UX-2026-006's fix had **zero actual effect**: the screenshot was pixel-identical
+  before/after that fix's merge (the CI commit job itself made no new commit, since it
+  only commits on a real diff). Major task: re-diagnosed and re-fixed. The real cause was
+  never Category's own unwrapped text — it was the table's `min-w-[24rem]` (384px)
+  applying unconditionally, including below `sm`, while `RootLayout`'s `main max-w-3xl
+  px-6` leaves only 342px of content width at the project's 390px mobile screenshot
+  viewport; 384 > 342 always, for every comparison, regardless of any cell's content.
+  Root-caused with a real Chromium/Playwright reproduction of the actual table (real
+  compiled `globals.css`, real `FactRow`/`StatusChip`/`MomentumChip` markup) at
+  390/768/1440px — not trusting class-name presence a second time. Fix: scoped the floor
+  to `sm:min-w-[24rem]` (never applies below 640px, where it was always harmful; leaves
+  the already-reviewed tablet/desktop rendering byte-for-byte unchanged, since natural
+  content there already exceeds 384px anyway). Kept the first fix's `max-w-32`/
+  `break-words`/`sm:max-w-none` on the Category span as a second, independent guard.
+  Independent review (subagent) passed the layout/breakpoint reasoning but caught a real
+  process gap: the new regression test was itself class-presence-only, the same blind
+  spot that let the first fix ship broken. Closed it with a generic, durable check added
+  to the Playwright harness itself (`tests/design/screenshots.spec.ts`): every route ×
+  viewport now asserts no element with computed `overflow-x: auto|scroll` has
+  `scrollWidth` exceeding `clientWidth` — real rendered-geometry verification, not a
+  proxy for it. Verified that check's own logic before relying on it (flagged the
+  pre-fix reproduction, passed clean on the post-fix one). Full writeup:
+  `docs/design/findings/UX-2026-006-compare-page-category-row-mobile-overflow.md`.
+  333/333 tests pass (2 new), lint/`tsc --noEmit` clean; `npm run build` reproduces the
+  known ADR-006 sandbox font-fetch gap, left to CI. **Process note for future runs:** a
+  green CI run, a passing unit test, and an independent review all missed this — none of
+  them verify actual rendered geometry in a browser. This lane's "look at screenshots
+  before judging" rule is what caught it, on the very next run it could have. **Next
+  major task:** real-screenshot re-review of this second fix is next run's first job
+  (the `commit-screenshots` job for this PR's merge should finally show a real diff this
+  time); if clean, fall back to `TECH-DEBT.md`'s two remaining open `design`-owned rows.

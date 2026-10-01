@@ -119,7 +119,28 @@ export default async function ComparePage({ params }: PageProps) {
       </h1>
 
       <div className="mt-6 overflow-x-auto">
-        <table className="w-full min-w-[24rem] border-collapse text-left font-sans text-sm">
+        {/* UX-2026-006 (re-diagnosed): `min-w-[24rem]` (384px) used to apply
+            unconditionally, including below `sm`. On the project's own 390px
+            mobile screenshot viewport, `main`'s `max-w-3xl px-6` leaves only
+            342px of content width — 384px *always* exceeded that, for every
+            comparison, regardless of any cell's own content, forcing this
+            wrapper's horizontal scroll with no visual affordance on every
+            mobile pageview. The first fix (max-w-32/break-words on the
+            Category value below) targeted the wrong cause: it caps that one
+            column's own preferred width, but does nothing about the table's
+            own forced floor, so the real CI build (real Inter font) kept
+            clipping identically after that fix merged — confirmed directly
+            from the `commit-screenshots` job on the fix's own merge commit
+            finding zero screenshot diff to commit, i.e. pixel-identical
+            before/after. Scoping the floor to `sm:` and up removes it below
+            the breakpoint where it was always harmful while leaving the
+            already-reviewed tablet/desktop rendering (design run 13)
+            unchanged; the table shrinks to its natural (comfortably
+            sub-342px) width on mobile instead, with no scroll and no
+            clipping. Category's max-w-32/break-words wrap stays as a second,
+            independent guard against a future long category list still
+            widening the table past 342px even without the old floor. */}
+        <table className="w-full sm:min-w-[24rem] border-collapse text-left font-sans text-sm">
           <caption className="sr-only">
             {repoA.name} vs {repoB.name} at a glance
           </caption>
@@ -174,19 +195,21 @@ export default async function ComparePage({ params }: PageProps) {
               label="Category"
               repos={repos}
               render={(repo) => (
-                // UX-2026-006: no `table-layout: fixed` on this table, so a
-                // cell avoids wrapping if it can — an unconstrained category
-                // list (3+ items, e.g. vLLM's "ai, llm, inference") widens
-                // the whole table past the mobile viewport instead of
-                // wrapping to a second line, and the `overflow-x-auto`
-                // wrapper's resulting horizontal scroll has no visual
-                // affordance, silently clipping real content at the
-                // viewport edge. `inline-block` (so `max-w`/wrapping apply
-                // to this otherwise-inline `span`) plus `max-w-32` below
-                // `sm` forces a wrap onto a second line instead — content
-                // stays visible and in the accessibility tree at every
-                // viewport, never hidden; `sm:max-w-none` restores the
-                // single-line desktop/tablet rendering this had before.
+                // UX-2026-006: this table has no `table-layout: fixed`, so a
+                // cell avoids wrapping if it can. The table's own forced
+                // `min-w-[24rem]` floor (see the comment on the `<table>`
+                // above) was the real, always-on cause of the mobile
+                // overflow this was first filed against; this span's own
+                // `max-w-32`/`break-words` is a second, independent guard
+                // for a future long category list that could still widen
+                // the table past the mobile content width (342px) on its
+                // own even without that floor. `inline-block` (so `max-w`/
+                // wrapping apply to this otherwise-inline `span`) plus
+                // `max-w-32` below `sm` forces a wrap onto a second line
+                // instead of growing the column — content stays visible and
+                // in the accessibility tree at every viewport, never
+                // hidden; `sm:max-w-none` restores the single-line
+                // desktop/tablet rendering this had before.
                 <span className="inline-block max-w-32 text-text-secondary break-words sm:max-w-none">
                   {repo.category.join(", ")}
                 </span>
