@@ -72,6 +72,29 @@ describe("Compare page (/compare/[a]/[b])", () => {
     expect(screen.getByText(/reach for Ollama to run a model locally/)).toBeInTheDocument();
   });
 
+  it("renders /compare/lazygit/tig from content/comparisons/lazygit-vs-tig.md, part of the fully-mutual git-TUI trio", async () => {
+    // gitui, lazygit, and tig each list the other two under
+    // alternatives.open_source — this is one of the three new comparison
+    // files (gitui-vs-lazygit, gitui-vs-tig, lazygit-vs-tig) that closes the
+    // trio out, same shape as the appwrite/pocketbase/supabase trio.
+    const { container } = render(
+      await ComparePage({ params: Promise.resolve({ a: "lazygit", b: "tig" }) }),
+    );
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "LazyGit vs Tig" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "LazyGit" })).toHaveAttribute("href", "/repo/lazygit");
+    expect(screen.getByRole("link", { name: "Tig" })).toHaveAttribute("href", "/repo/tig");
+
+    const table = container.querySelector("table")!;
+    expect(within(table).getByText(/MIT/)).toBeInTheDocument();
+    expect(within(table).getByText(/GPL-2.0/)).toBeInTheDocument();
+
+    expect(screen.getByRole("heading", { level: 2, name: "How they differ" })).toBeInTheDocument();
+    expect(screen.getByText(/Tig predates LazyGit by years/)).toBeInTheDocument();
+  });
+
   it("resolves the reverse URL order (/compare/vllm/ollama) to the same content, rendered in canonical order", async () => {
     const { container: forward } = render(
       await ComparePage({ params: Promise.resolve({ a: "ollama", b: "vllm" }) }),
