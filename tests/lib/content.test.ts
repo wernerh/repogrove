@@ -45,6 +45,7 @@ describe("getAllRepos (real /content fixtures)", () => {
       "supabase",
       "vim",
       "vllm",
+      "zed",
     ]);
   });
 
@@ -116,6 +117,7 @@ describe("getReposInGrove (derived from repo frontmatter, per ADR-003)", () => {
       "lazygit",
       "neovim",
       "vim",
+      "zed",
     ]);
   });
 
