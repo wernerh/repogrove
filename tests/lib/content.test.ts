@@ -42,6 +42,7 @@ describe("getAllRepos (real /content fixtures)", () => {
       "ollama",
       "pocketbase",
       "supabase",
+      "vim",
       "vllm",
     ]);
   });
@@ -109,7 +110,7 @@ describe("getReposInGrove (derived from repo frontmatter, per ADR-003)", () => {
 
   it("finds every developer-tools-grove repo under the developer-tools grove", () => {
     const reposInDevTools = getReposInGrove("developer-tools");
-    expect(reposInDevTools.map((r) => r.slug).sort()).toEqual(["lazygit", "neovim"]);
+    expect(reposInDevTools.map((r) => r.slug).sort()).toEqual(["lazygit", "neovim", "vim"]);
   });
 
   it("returns an empty array for a grove with no member repos", () => {
