@@ -1,14 +1,14 @@
 # RepoGrove factory dashboard
 
-_Generated 2026-10-01T15:13:23.340685+00:00_
+_Generated 2026-10-01T17:03:55.952872+00:00_
 
 ## Product
 - Version: 0.0.0-bootstrap
 - Focus: Phase 3 MVP gate complete — Phase 4 owner decisions raised (RG-7/8/9), awaiting owner; Phase 4 feature work deliberately held while RG-7 is open
 
 ## Metrics
-- runs: 59
-- features_completed: 27
+- runs: 60
+- features_completed: 28
 - bugs_fixed: 9
 - security_issues_fixed: 3
 - deployments: 0

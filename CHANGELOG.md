@@ -7,6 +7,23 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-01 — Three new `/compare/:a/:b` pages completing/closing content coverage gaps:
+  `content/comparisons/localai-vs-ollama.md` and `localai-vs-vllm.md` complete the AI
+  grove's fully-mutual Ollama/LocalAI/vLLM inference-engine trio (previously only
+  `ollama-vs-vllm` existed, despite all three listing each other under
+  `alternatives.open_source`); `content/comparisons/coolify-vs-dokploy.md` closes the
+  Self-Hosted grove's one remaining uncompared pair (listed each other since `dokploy.md`
+  landed, run 38). Each page's hand-written "How they differ" prose draws primarily on
+  facts already stated in the five repos' own content files; `coolify-vs-dokploy.md`
+  also adds one independently verified fact beyond that — per Coolify's own docs
+  (`coolify.io/docs`, fetched this run), its multi-server deployment is standalone
+  Docker per server plus an external load balancer, with Docker Swarm support already
+  deprecated and slated for removal in Coolify v5, unlike Dokploy's built-in Swarm
+  orchestration. Independent review caught a real MINOR (the AI-trio file initially
+  broke the established alphabetical-by-slug comparison-file naming convention — fixed:
+  `ollama-vs-localai.md` → `localai-vs-ollama.md`) and a NIT (an internal-sounding
+  citation phrase reworded for end readers) before merge. 6 new/updated tests; 329/329
+  tests pass. PR #95 merged (4/4 gating checks green; post-merge CI on main green). (dev)
 - 2026-10-01 — Three new `/compare/:a/:b` pages closing out the Developer Tools grove's
   git-TUI trio (GitUI/LazyGit/Tig, added runs 33/43): `content/comparisons/
   gitui-vs-lazygit.md`, `gitui-vs-tig.md`, `lazygit-vs-tig.md`. All three repos have

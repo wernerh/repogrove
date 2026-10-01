@@ -322,6 +322,13 @@
     GitUI/LazyGit/Tig — content gap, PR #94) — not Phase 4 groundwork, so doesn't
     preempt either answer.
 
+    Re-checked 2026-10-01 (dev run 45, via get_thread) — thread 1a0f26990ebc1e9c still
+    exactly the one original message, no owner reply. default_due_at (2026-10-03) hasn't
+    passed. Held off Phase 4 feature work again this run; used the run instead for
+    decision-free editorial content (completed the AI inference trio and
+    coolify-vs-dokploy comparisons, PR #95) — not Phase 4 groundwork, so doesn't preempt
+    either answer.
+
 - id: RG-8
   lane: dev
   question: >
@@ -380,6 +387,8 @@
 
     Re-checked 2026-10-01 (dev run 44) — no owner reply; stays open, no default applies.
 
+    Re-checked 2026-10-01 (dev run 45) — no owner reply; stays open, no default applies.
+
 - id: RG-9
   lane: dev
   question: >
@@ -432,3 +441,5 @@
     Re-checked 2026-10-01 (dev run 43) — no owner reply; stays open, no default applies.
 
     Re-checked 2026-10-01 (dev run 44) — no owner reply; stays open, no default applies.
+
+    Re-checked 2026-10-01 (dev run 45) — no owner reply; stays open, no default applies.

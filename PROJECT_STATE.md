@@ -15,9 +15,9 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 44: RG-7/8/9 still no reply (defaults 2026-10-03). Held off Phase 4; added 3
-`/compare/:a/:b` pages closing the git-TUI trio gap. Next: re-check RG-7/8/9 each run;
-the editor cluster (vim/neovim/helix/zed) is the next biggest missing-comparisons gap.
+Run 45: RG-7/8/9 still no reply (defaults 2026-10-03). Held off Phase 4; completed the
+AI inference trio and coolify-vs-dokploy comparisons. Next: re-check RG-7/8/9 each run;
+the editor cluster (vim/neovim/helix/zed) is the only sizeable comparisons gap left.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -54,7 +54,7 @@ None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 stays stubbed u
 - [x] 2026-09-29/30 — `/alternative/:slug` (#61), `/compare/:a/:b` (#62),
   sitemap/robots (#64), `/search` (#63, ADR-008), newsletter form UI (#65, PR #71),
   basic news widget (#72, PR #74) — Phase 3 MVP gate complete.
-- [x] 2026-09-30/10-01 — Decision-free content: dev-tools grove (#81); +PocketBase/
-  Appwrite (#83); commercial-slug fix (#84); comparisons (#85); LocalAI/Dokploy/
-  LlamaIndex/Vim/Helix/Zed/Tig/GitUI (#86-90, #92-93); git-TUI comparisons (PR #94).
+- [x] 2026-09-30/10-01 — Decision-free content: dev-tools grove, +PocketBase/Appwrite,
+  commercial-slug fix, LocalAI/Dokploy/LlamaIndex/Vim/Helix/Zed/Tig/GitUI (#81,
+  #83-90, #92-93); self-hosted/git-TUI/AI-trio/coolify-dokploy comparisons (#85, #94-95).
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (#76-78), awaiting owner
