@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-10-01T00:48:52Z"
-  holder: "dev"
-  last_run: "2026-09-30T23:11:52Z"
+  current_run: null
+  holder: null
+  last_run: "2026-10-01T01:11:06Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,14 +19,53 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 50
-  features_completed: 19
+  runs: 51
+  features_completed: 20
   bugs_fixed: 8
   security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
 
 next_actions:
+  - "2026-10-01 (run 37): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
+    Held off Phase 4 feature work again this run, consistent with runs 33-36. Audited
+    content/ for the next decision-free content gap and found LocalAI: both ollama.md
+    and vllm.md have listed 'localai' under alternatives.open_source since bootstrap —
+    the only slug referenced by two existing repos at once, the highest-value gap left
+    — but content/repos/localai.md never existed, so it rendered as 'Not yet profiled'
+    on both pages. Major task: added content/repos/localai.md (mudler/LocalAI, MIT, AI
+    grove), cross-referencing ollama/vllm; added it to content/groves/ai.md's Core
+    projects. Small related task: updated ollama.md/vllm.md's hand-authored
+    '## Alternatives' prose (never rendered — splitOutSection strips it before the page
+    renders the real AlternativesTable instead — but visibly stale 'placeholder...
+    until Phase 3' wording now that LocalAI has a real page). Independent review
+    (subagent, skeptical-senior-engineer pass) flagged two of localai.md's factual
+    claims (built-in Agents feature, Distributed Mode's PostgreSQL+NATS requirement) as
+    likely fabricated from its own training-data memory — re-verified both directly
+    against live localai.io documentation pages (/docs/features/agents/,
+    /docs/features/distributed-mode/) and confirmed accurate before keeping them,
+    rather than either blindly trusting the review or blindly reverting correct
+    content. Updated tests for the new 10th repo: generateStaticParams slug lists
+    (tests/app/repo-page.test.tsx, tests/lib/content.test.ts), AI grove's repo list;
+    rewrote the Alternatives-table test since ollama's open_source entries (localai,
+    vllm) now both resolve instead of one being unresolved — added a new test using
+    langchain/llamaindex as the real-content unresolved case instead (llamaindex still
+    has no profile), plus a render test for /repo/localai itself; tests/app/home.test.tsx's
+    AI grove repo count (3->4) and total homepage card-link count (12->13). 312/312
+    tests pass (8 new/updated), lint clean, tsc --noEmit clean, npm audit
+    --audit-level=high 0 vulnerabilities, all run locally; next build reproduces the
+    known ADR-006 sandbox font-fetch gap (confirmed it compiles past content loading
+    first), left to CI's GitHub-hosted runner — all 3 checks (CI, Factory guardrails,
+    Design screenshots & accessibility) green on PR #86 before squash-merging it
+    myself; post-merge CI on main also confirmed green. CHANGELOG.md/DECISIONS.md/
+    .factory/decisions.yaml/PROJECT_STATE.md updated. Next: re-check RG-7/8/9 each run;
+    once RG-7 resolves, hold or pick up decision-free Phase 4 items — content coverage
+    is now thin (every alternatives.open_source slug across all 10 repos either
+    resolves or is a real one-off like LlamaIndex/dokploy/tig/gitui/vim/helix/zed that
+    would need its own repo added; next run should look there or re-scan for other
+    classes of content/validator gaps if RG-7 is still open)."
   - "2026-09-30 (run 36): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.

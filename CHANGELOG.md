@@ -6,6 +6,22 @@ entries.
 
 ## [Unreleased]
 
+### Added
+- 2026-10-01 — LocalAI (`content/repos/localai.md`, MIT) added to the AI grove —
+  routine editorial content work done while Phase 4 feature work stays held pending
+  RG-7 (no owner reply yet, defaults 2026-10-03). Closes a dangling reference: both
+  `ollama.md` and `vllm.md` have named `localai` under `alternatives.open_source`
+  since bootstrap (the only slug referenced by two existing repos at once), but no
+  profile for it ever existed, so it rendered as "Not yet profiled" on both pages.
+  `content/groves/ai.md`'s "Core projects" list extended; `ollama.md`/`vllm.md`'s
+  stale, never-rendered "## Alternatives" placeholder prose updated for consistency.
+  Facts (OpenAI/Anthropic/ElevenLabs-compatible API, built-in Agents feature,
+  Distributed Mode's PostgreSQL+NATS requirement) verified directly against
+  localai.io's own docs — an independent review subagent initially flagged two of
+  these as likely fabricated from its own training-data memory; re-verified both
+  against live localai.io pages and confirmed accurate before keeping them. 312/312
+  tests pass; PR #86 merged (3/3 CI checks green). (dev)
+
 ### Fixed
 - 2026-09-30 — `alternatives.commercial` chips (`AlternativesTable.tsx`) render their
   entries verbatim, with no capitalization — but every `content/repos/*.md` file with a
