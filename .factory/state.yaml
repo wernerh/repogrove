@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-10-01T09:15:04Z"
-  holder: "design"
-  last_run: "2026-10-01T09:08:53Z"
+  current_run: null
+  holder: null
+  last_run: "2026-10-01T09:40:00Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,9 +19,9 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 55
+  runs: 56
   features_completed: 24
-  bugs_fixed: 8
+  bugs_fixed: 9
   security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
@@ -549,8 +549,8 @@ security:
     A10: "PASS (fixed a bypass — SEC-002)"
 
 design:
-  last_run: "2026-09-30T17:13:34Z"
-  next_action: "Run 15: picked up the carried-over first item from run 13/14's queue — MomentumChip's tooltip-only signal exposure (TECH-DEBT.md 2026-09-29 row, design-owned). Converted MomentumChip (src/components/MomentumChip.tsx) from a title-tooltip-only span to a real WAI-ARIA 'disclosure (show/hide)' button — aria-expanded/aria-controls, toggling a signal panel via the native hidden attribute (kept in the DOM at all times so aria-controls always resolves), reachable by keyboard/touch for free from the native <button>, with a screen-reader-only hint in the accessible name. See docs/design/findings/UX-2026-005-momentum-chip-tooltip-accessibility.md. Independent reviewer subagent (skeptical senior product designer + front-end engineer) found one real MAJOR pre-merge: /compare/[a]/[b] renders two MomentumChip instances in the same table row (one per compared repo) with fully independent expand state, and FactRow's table cells had no vertical-align, so expanding only one side would visibly misalign the row against its sibling — fixed with align-top on every FactRow cell, plus a new compare-page test expanding one side and asserting the row stays aligned, the sibling chip/panel are unaffected, and the two instances' aria-controls/id pairs never collide. Two lower-severity findings from the same review (a pre-existing, not-introduced-here dark-mode ring-offset-color gap shared by every focus:ring-offset-2 button; an unreachable-today empty-heat.signals fallback gap) filed as new TECH-DEBT.md rows rather than fixed in this PR. 304/304 tests pass (9 new/updated), lint clean, tsc --noEmit clean, npm audit --audit-level=high 0 vulnerabilities, all run locally; npm run build reproduced the known ADR-006 sandbox font-fetch gap (confirmed it compiled past this change first), left to CI's GitHub-hosted runner — all 5 gating checks + 1 non-gating axe-core job green on PR #82 before squash-merging it myself; post-merge CI on main confirmed running green at close-out. TECH-DEBT.md's 2026-09-29 row marked resolved; DESIGN-SYSTEM.md's Momentum/Heat contract, Status chips pattern note, and run log updated; CHANGELOG.md updated. No open design-lane owner decisions (RG-4 DEFAULTED for real at run 13, no further re-checks needed). Real, correctly-fonted post-merge screenshots (repo-ollama, compare-ollama-vllm) still need a direct look once commit-screenshots recommits them from this push — collapsed-state chrome is visually unchanged so no regression is expected, but unverified until seen; that's next run's first step. Next major task after that: TECH-DEBT.md's remaining open design-owned row — AlternativesTable's non-interactive sort — unless the pending screenshot review or a new dev-lane page needing a pattern surfaces something higher-priority first."
+  last_run: "2026-10-01T09:40:00Z"
+  next_action: "Run 16: start-of-run housekeeping first — directly reviewed the real post-merge screenshots (repo-ollama, compare-ollama-vllm, light/dark x desktop/mobile) that run 15 left pending; MomentumChip's disclosure chip renders cleanly collapsed on both pages, and the two independent instances on /compare/[a]/[b] stay align-top with no regression. Checked for open design-lane owner decisions (none — RG-4 DEFAULTED run 13, RG-6 ANSWERED) and open ux/accessibility GitHub issues/PRs (none open). Major task: TECH-DEBT.md's 2026-09-30 design row — MomentumChip's and NewsletterSignupForm's focus:ring-offset-2 buttons had no ring-offset-color, falling back to Tailwind's default white (a visible dark-mode halo). Added focus:ring-offset-bg-default to both (verified against render ancestry — neither button sits on a bg-subtle/bg-elevated surface today — and against the compiled Tailwind output via @tailwindcss/node's compile(), confirming it resolves to the correct per-theme --color-bg-default token, not a static color); documented the convention in DESIGN-SYSTEM.md's new 'Focus rings' note; 2 new regression tests. Independent reviewer subagent (skeptical senior product designer + front-end engineer) caught a real MAJOR before this went further: my first pass had marked the wrong two TECH-DEBT.md rows resolved and left the actual tracked row untouched — found and fixed before the PR opened. Small related task: closed out two other genuinely stale 2026-09-28 TECH-DEBT.md rows (screenshot harness / commit-screenshots job) that were never marked resolved even though CHANGELOG.md's own dev-run-17 entry (2026-09-29) already confirmed the facts they were waiting on. 321/321 tests pass (2 new), lint clean; npm run build reproduced the known ADR-006 sandbox font-fetch gap, left to CI. PR #91: all 4 gating checks + 1 non-gating axe-core job green; squash-merged myself; post-merge CI on main confirmed green (gating checks) before close-out. TECH-DEBT.md's 2026-09-30 design row and two 2026-09-28 rows marked resolved; CHANGELOG.md updated. Not fixed this run (deliberately, per TECH-DEBT.md's own deferral reasoning, still correct): AlternativesTable's non-interactive sort (needs a 2nd sortable column first) and MomentumChip's empty-heat.signals fallback (still unreachable with real data — computeHeat always returns exactly 3 signals). Next run: no open design-lane findings or pending reviews; pick up AlternativesTable's sort if a 2nd sortable data field has landed by then, otherwise re-scan for new dev-lane pages/components needing a pattern (Phase 4 still held on RG-7/8/9) or re-review DESIGN-SYSTEM.md/UX-PRINCIPLES.md against PRODUCT.md for drift (none found this run)."
   timebox: null
   failed_attempts: 0
   open_findings:
@@ -560,6 +560,7 @@ design:
     polish: 0
   fixed_unverified: []
   verified_fixes:
+    - "2026-10-01 — TECH-DEBT.md's 2026-09-30 row: MomentumChip's and NewsletterSignupForm's focus:ring-offset-2 buttons had no ring-offset-color, falling back to Tailwind's default white (a visible dark-mode halo). Fixed with focus:ring-offset-bg-default on both; verified via render-ancestry check (neither button ever sits on a bg-subtle/bg-elevated surface) and by compiling the Tailwind utility directly (@tailwindcss/node) to confirm it resolves to the themed --color-bg-default token. Not screenshot-verifiable (the existing harness only shoots default/collapsed page state, not :focus) — covered by 2 new code-level regression tests instead (PR #91)"
     - "2026-09-28 — cascade-layer bug: unlayered `article a`/`body` base CSS was silently overriding `text-*` utility classes on links inside <article> (repo page GitHub link rendered link-teal instead of text-secondary); moved into `@layer base`, re-screenshotted to confirm"
     - "2026-09-28 — repo/Grove `<h1>` used `text-3xl` (39px/hero under the new type scale) where DESIGN-SYSTEM.md's Page headers spec calls for `text-2xl` (31px); fixed on both pages"
     - "2026-09-29 — UX-2026-001: header logo + homepage 'Groves' heading used literal leaf/tree emoji, contradicting DESIGN-SYSTEM.md's documented 'no illustrated leaf' brand rationale (a third heading's non-foliage emoji removed alongside for consistency); removed, relying on typography alone (issue #50)"

@@ -882,3 +882,21 @@ entries.
   added back a structural (non-content-specific) smoke test confirming the real,
   unmocked render path still works. 296/296 tests pass, lint/`tsc --noEmit` clean; PR
   #80 merged (4/4 CI checks green). (dev)
+- 2026-10-01 — Fixed TECH-DEBT.md's 2026-09-30 row: `MomentumChip`'s disclosure button
+  and `NewsletterSignupForm`'s submit button used `focus:ring-offset-2` with no
+  `ring-offset-color`, falling back to Tailwind's default (white) — a visible light
+  halo between the button and the blue focus ring in dark mode. Added
+  `focus:ring-offset-bg-default` to both; `bg.default` is the correct token for both
+  (verified against render ancestry, not assumed — neither button ever sits on a
+  `bg-subtle`/`bg-elevated` surface today) and resolves per theme automatically since
+  it's the same semantic token already redefined in `globals.css`'s dark-mode media
+  query. Documented the convention in `DESIGN-SYSTEM.md`'s new "Focus rings" note.
+  Independent reviewer subagent caught that the first pass had marked the wrong two
+  TECH-DEBT.md rows resolved and missed the actual tracked row — fixed before the PR
+  opened; also corrected two unrelated, genuinely stale 2026-09-28 rows (screenshot
+  harness / `commit-screenshots` job) that were never marked resolved even though the
+  facts they waited on have been true since dev run 17 (2026-09-29). Verified the
+  compiled Tailwind utility directly (`@tailwindcss/node`'s `compile()`) rather than
+  trusting the class name alone. 321/321 tests pass (2 new regression tests), lint
+  clean; `npm run build` reproduced the known ADR-006 sandbox font-fetch gap, left to
+  CI. PR #91 merged (4/4 gating checks green). (design)
