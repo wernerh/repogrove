@@ -35,8 +35,8 @@ yourself.
 - Less control over serving internals than raw llama.cpp
 
 ## Alternatives
-LM Studio, LocalAI, vLLM (see `content/alternatives/` once those pages exist —
-placeholder links until Phase 3 builds alternative pages).
+**Open-source:** LocalAI, vLLM.
+**Commercial:** LM Studio.
 
 ## Related Grove
 [AI](/grove/ai)

@@ -10,6 +10,7 @@ describe("Repo page (/repo/[slug])", () => {
       "coolify",
       "langchain",
       "lazygit",
+      "localai",
       "neovim",
       "ollama",
       "pocketbase",
@@ -125,27 +126,61 @@ describe("Repo page (/repo/[slug])", () => {
     ).rejects.toThrow();
   });
 
-  it("renders the Alternatives table (spec §3-4), resolving vllm, leaving localai unresolved, and listing LM Studio as commercial", async () => {
+  it("renders the Alternatives table (spec §3-4), resolving both LocalAI and vLLM, and listing LM Studio as commercial", async () => {
     // ollama.md's frontmatter: alternatives.open_source = [localai, vllm],
     // alternatives.commercial = [LM Studio] — LM Studio is closed-source/
     // proprietary freeware, not an open-source project (2026-09-30 content-
     // accuracy fix), so it renders as a plain commercial chip, not an
-    // unresolved open-source row. Only vllm has its own content/repos/vllm.md
-    // today — see tests/components/alternatives-table.test.tsx for the
-    // component's own unit coverage of resolved vs. unresolved rows.
+    // unresolved open-source row. Both open-source entries now have their own
+    // content/repos/*.md files (localai.md added this run) — see
+    // "renders the Alternatives table leaving llamaindex unresolved" below for
+    // real unresolved-row coverage, and tests/components/alternatives-table.test.tsx
+    // for the component's own unit coverage of resolved vs. unresolved rows.
     const element = await RepoPage({ params: Promise.resolve({ slug: "ollama" }) });
     render(element);
 
     expect(screen.getByRole("heading", { level: 2, name: "Alternatives" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "vLLM" })).toHaveAttribute("href", "/repo/vllm");
-    expect(screen.getByText("localai")).toBeInTheDocument();
-    expect(screen.getAllByText("Not yet profiled")).toHaveLength(1);
+    expect(screen.getByRole("link", { name: "LocalAI" })).toHaveAttribute("href", "/repo/localai");
+    expect(screen.queryByText("Not yet profiled")).not.toBeInTheDocument();
     expect(screen.getByText("Commercial alternatives")).toBeInTheDocument();
     expect(screen.getByText("LM Studio")).toBeInTheDocument();
     // The hand-authored "## Alternatives" placeholder prose from
     // content/repos/ollama.md is replaced, not duplicated alongside the
     // table — see src/lib/content.ts's splitOutSection.
     expect(screen.queryByText(/placeholder links/)).not.toBeInTheDocument();
+  });
+
+  it("renders the Alternatives table leaving llamaindex unresolved (no content/repos/llamaindex.md yet)", async () => {
+    // langchain.md's frontmatter: alternatives.open_source = [llamaindex],
+    // commercial = [] — the real-content case that used to be covered by
+    // ollama's mixed resolved/unresolved rows before LocalAI got its own
+    // profile this run. LlamaIndex has no content/repos/llamaindex.md, so it
+    // must still render as an unresolved "Not yet profiled" row.
+    const element = await RepoPage({ params: Promise.resolve({ slug: "langchain" }) });
+    render(element);
+
+    expect(screen.getByRole("heading", { level: 2, name: "Alternatives" })).toBeInTheDocument();
+    expect(screen.getByText("llamaindex")).toBeInTheDocument();
+    expect(screen.getByText("Not yet profiled")).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /llamaindex/i })).not.toBeInTheDocument();
+    expect(screen.queryByText("Commercial alternatives")).not.toBeInTheDocument();
+  });
+
+  it("renders /repo/localai from content/repos/localai.md, not a hardcoded string", async () => {
+    render(await RepoPage({ params: Promise.resolve({ slug: "localai" }) }));
+
+    expect(screen.getByRole("heading", { level: 1, name: "LocalAI" })).toBeInTheDocument();
+    expect(screen.getByText(/📜 MIT/)).toBeInTheDocument();
+    expect(screen.getByText(/LocalAI runs open-weight models/)).toBeInTheDocument();
+    // The body's own "## Related Grove" section links back to the AI grove —
+    // proves this new content/repos/*.md file renders through the real page,
+    // not just through generateStaticParams.
+    expect(screen.getByRole("link", { name: "AI" })).toHaveAttribute("href", "/grove/ai");
+    // Its own alternatives.open_source (ollama, vllm) both already exist, so
+    // both resolve to real links rather than "Not yet profiled".
+    expect(screen.getByRole("link", { name: "Ollama" })).toHaveAttribute("href", "/repo/ollama");
+    expect(screen.getByRole("link", { name: "vLLM" })).toHaveAttribute("href", "/repo/vllm");
   });
 
   it("renders a 'Compared with' cross-link for a repo named in a /compare/:a/:b content file (issue #62)", async () => {
