@@ -412,7 +412,7 @@ describe("splitOutSection", () => {
 describe("getAllAlternatives (real /content fixtures)", () => {
   it("loads every alternatives content file", () => {
     const alternatives = getAllAlternatives();
-    expect(alternatives.map((a) => a.slug).sort()).toEqual(["notion"]);
+    expect(alternatives.map((a) => a.slug).sort()).toEqual(["firebase", "notion"]);
   });
 
   it("parses Notion's frontmatter and body sections correctly", () => {

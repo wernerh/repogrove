@@ -8,7 +8,7 @@ import AlternativePage, {
 describe("Alternative page (/alternative/[slug])", () => {
   it("statically generates params for every alternatives content file", async () => {
     const params = generateStaticParams();
-    expect(params.map((p) => p.slug).sort()).toEqual(["notion"]);
+    expect(params.map((p) => p.slug).sort()).toEqual(["firebase", "notion"]);
   });
 
   it("renders /alternative/notion from content/alternatives/notion.md, not a hardcoded string", async () => {
@@ -31,13 +31,40 @@ describe("Alternative page (/alternative/[slug])", () => {
     expect(screen.getByText("Team documentation")).toBeInTheDocument();
   });
 
+  it("renders /alternative/firebase with every Open source item resolved to a real content/repos/*.md page", async () => {
+    // Unlike Notion (see the AppFlowy assertion above), every one of
+    // Firebase's real Open source entries — Appwrite, Supabase, PocketBase —
+    // already has its own content/repos/*.md page (all three list Firebase
+    // as a commercial alternative themselves), so this exercises the
+    // resolved render branch against real /content, not a synthetic mock
+    // (tests/app/alternative-page-resolved.test.tsx covers that in
+    // isolation).
+    render(await AlternativePage({ params: Promise.resolve({ slug: "firebase" }) }));
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Firebase alternatives" }),
+    ).toBeInTheDocument();
+
+    for (const [name, slug] of [
+      ["Appwrite", "appwrite"],
+      ["Supabase", "supabase"],
+      ["PocketBase", "pocketbase"],
+    ] as const) {
+      const link = screen.getByRole("link", { name });
+      expect(link).toHaveAttribute("href", `/repo/${slug}`);
+    }
+
+    // Commercial renders as a plain list, same as notion.md's Confluence/Coda/ClickUp.
+    expect(screen.getByText("AWS Amplify")).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "AWS Amplify" })).not.toBeInTheDocument();
+  });
+
   it("resolves an Open source name against a real content/repos/*.md page when the slug matches", () => {
-    // None of Notion's real content items resolve today (see the AppFlowy
-    // assertion above), so this exercises the resolution helper directly
-    // against a name that *does* slugify to a real repo ("Ollama" ->
-    // "ollama", which exists in content/repos/) — same resolved-or-null
-    // convention tests/lib/content.test.ts's slugifyAlternativeName unit
-    // test covers the slugifying half of.
+    // Exercises the resolution helper directly against a name that
+    // slugifies to a real repo ("Ollama" -> "ollama", which exists in
+    // content/repos/) — same resolved-or-null convention
+    // tests/lib/content.test.ts's slugifyAlternativeName unit test covers
+    // the slugifying half of.
     const [resolved, unresolved] = resolveOpenSourceAlternatives(["Ollama", "Definitely Not A Repo"]);
     expect(resolved.repo?.slug).toBe("ollama");
     expect(unresolved.repo).toBeNull();
