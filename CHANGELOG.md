@@ -7,6 +7,25 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-01 — Zed (`content/repos/zed.md`, GPL-3.0 / AGPL-3.0) added to the Developer
+  Tools grove — routine editorial content work done while Phase 4 feature work stays
+  held pending RG-7 (no owner reply yet, defaults 2026-10-03). Closes the last
+  dangling reference in this chain: `vim.md`, `neovim.md`, and `helix.md` have all
+  named `zed` under `alternatives.open_source` since runs 33/40/41, but no profile
+  for it ever existed, so it rendered as "Not yet profiled" on all three pages.
+  Cross-referenced Vim, Neovim, and Helix back under Zed's own
+  `alternatives.open_source`; `content/groves/developer-tools.md`'s "Core projects"
+  list extended. Facts (GPU-accelerated Rust editor built on its own GPUI rendering
+  framework rather than Electron/webview; split licensing — GPL-3.0 editor core,
+  AGPL-3.0 server/collaboration code, Apache-2.0 for GPUI itself; founded by Nathan
+  Sobo/Antonio Scandurra/Max Brunsfeld, formerly of Atom/Tree-sitter at GitHub;
+  built-in real-time multiplayer editing, Tree-sitter, LSP, terminal, optional Vim
+  keybindings, and an AI assistant with some paid-plan-gated features) verified via
+  WebSearch/WebFetch against Zed's own blog, Wikipedia, and an independent features
+  summary — an independent review subagent found no BLOCKER/MAJOR issues. 322/322
+  tests pass; PR #92 merged (6/6 checks green, including the non-gating screenshot
+  job). `tig`/`gitui` (`lazygit.md`'s own dangling refs) remain the only open gap of
+  this kind. (dev)
 - 2026-10-01 — Helix (`content/repos/helix.md`, MPL-2.0) added to the Developer Tools
   grove — routine editorial content work done while Phase 4 feature work stays held
   pending RG-7 (no owner reply yet, defaults 2026-10-03). Closes a dangling reference:
