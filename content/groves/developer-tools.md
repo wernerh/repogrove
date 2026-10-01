@@ -17,6 +17,8 @@ the small utilities that add up to a faster, more enjoyable workflow.
   more than three decades on.
 - [LazyGit](/repo/lazygit) — a fast terminal UI for git, for people who'd rather not
   memorize every subcommand.
+- [Helix](/repo/helix) — a Rust-built modal editor with multi-cursor selections, LSP,
+  and Tree-sitter built in from the start.
 
 ## Related Groves
 AI, Self-Hosted
