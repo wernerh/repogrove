@@ -538,6 +538,9 @@ describe("getAllComparisons (real /content fixtures)", () => {
     expect(comparisons.map((c) => c.slug).sort()).toEqual([
       "appwrite-vs-pocketbase",
       "appwrite-vs-supabase",
+      "gitui-vs-lazygit",
+      "gitui-vs-tig",
+      "lazygit-vs-tig",
       "ollama-vs-vllm",
       "pocketbase-vs-supabase",
     ]);
@@ -589,6 +592,26 @@ describe("getComparisonsForRepo", () => {
       .map((c) => c.slug)
       .sort();
     expect(slugs).toEqual(["appwrite-vs-supabase", "pocketbase-vs-supabase"]);
+  });
+
+  it("finds both comparisons for each repo in a fully mutual three-way trio", () => {
+    // gitui, lazygit, and tig each list the other two under
+    // alternatives.open_source, and all three cross-pairs now have their own
+    // comparison file (gitui-vs-lazygit, gitui-vs-tig, lazygit-vs-tig) — the
+    // same fully-mutual-trio shape as supabase/appwrite/pocketbase, just for
+    // the Developer Tools grove's git-TUI cluster.
+    expect(getComparisonsForRepo("gitui").map((c) => c.slug).sort()).toEqual([
+      "gitui-vs-lazygit",
+      "gitui-vs-tig",
+    ]);
+    expect(getComparisonsForRepo("lazygit").map((c) => c.slug).sort()).toEqual([
+      "gitui-vs-lazygit",
+      "lazygit-vs-tig",
+    ]);
+    expect(getComparisonsForRepo("tig").map((c) => c.slug).sort()).toEqual([
+      "gitui-vs-tig",
+      "lazygit-vs-tig",
+    ]);
   });
 });
 
