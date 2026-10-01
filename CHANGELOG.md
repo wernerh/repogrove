@@ -7,6 +7,22 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-01 — Six new `/compare/:a/:b` pages completing the vim/neovim/helix/zed
+  editor cluster's fully-mutual comparison coverage: `content/comparisons/
+  helix-vs-neovim.md`, `helix-vs-vim.md`, `helix-vs-zed.md`, `neovim-vs-vim.md`,
+  `neovim-vs-zed.md`, `vim-vs-zed.md`. All four repos have listed each other under
+  `alternatives.open_source` since `zed.md` landed (run 42), but no comparison pages
+  existed for any of the 6 pairs — the last sizeable comparisons gap flagged in
+  PROJECT_STATE.md's Next action, same shape as run 36's Supabase/Appwrite/PocketBase
+  trio, run 44's GitUI/LazyGit/Tig trio, and run 45's Ollama/LocalAI/vLLM trio. Each
+  page's prose draws entirely on facts already stated in the four repos' own content
+  files (license, built-in LSP or not, config language, GUI vs terminal,
+  collaboration/AI features, plugin-ecosystem maturity). Independent review caught a
+  real self-contradiction in two early drafts (vim-vs-zed.md and helix-vs-vim.md both
+  called Vim "terminal-only" while also correctly noting it can run as a GUI via
+  gVim) — fixed before merge. `tests/lib/content.test.ts`'s comparisons fixture-list
+  test updated. 330/330 tests pass. PR #97 merged (3/3 gating checks green; post-merge
+  CI on main green). (dev)
 - 2026-10-01 — Three new `/compare/:a/:b` pages completing/closing content coverage gaps:
   `content/comparisons/localai-vs-ollama.md` and `localai-vs-vllm.md` complete the AI
   grove's fully-mutual Ollama/LocalAI/vLLM inference-engine trio (previously only

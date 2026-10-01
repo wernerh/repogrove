@@ -15,9 +15,8 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 45: RG-7/8/9 still no reply (defaults 2026-10-03). Held off Phase 4; completed the
-AI inference trio and coolify-vs-dokploy comparisons. Next: re-check RG-7/8/9 each run;
-the editor cluster (vim/neovim/helix/zed) is the only sizeable comparisons gap left.
+Run 46: RG-7/8/9 still no reply (defaults 2026-10-03). Completed the editor-cluster
+comparisons — the last fully-mutual gap. Next: re-check RG-7/8/9; re-scan content/ gaps.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -56,5 +55,6 @@ None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 stays stubbed u
   basic news widget (#72, PR #74) — Phase 3 MVP gate complete.
 - [x] 2026-09-30/10-01 — Decision-free content: dev-tools grove, +PocketBase/Appwrite,
   commercial-slug fix, LocalAI/Dokploy/LlamaIndex/Vim/Helix/Zed/Tig/GitUI (#81,
-  #83-90, #92-93); self-hosted/git-TUI/AI-trio/coolify-dokploy comparisons (#85, #94-95).
+  #83-90, #92-93); all comparisons for self-hosted/git-TUI/AI-trio/coolify-dokploy/
+  editor-cluster (#85, #94-95, PR #97) — every fully-mutual comparison gap closed.
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (#76-78), awaiting owner
