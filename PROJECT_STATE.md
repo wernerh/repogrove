@@ -15,9 +15,9 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 40: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03). Held off Phase 4 again;
-added Vim to Developer Tools (PR #89, dangling `neovim.md` ref). Remaining gaps:
-tig/gitui (lazygit.md), helix/zed (vim.md). Next: re-check RG-7/8/9 each run.
+Run 41: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03). Held off Phase 4 again;
+added Helix to Developer Tools (PR #90, dangling `vim.md`/`neovim.md` ref). Remaining:
+tig/gitui (lazygit.md), zed (vim/neovim/helix.md). Next: re-check RG-7/8/9 each run.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -56,5 +56,5 @@ None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 stays stubbed u
   basic news widget (#72, PR #74) — Phase 3 MVP gate complete.
 - [x] 2026-09-30/10-01 — Decision-free content: dev-tools grove (#81); +PocketBase/
   Appwrite (#83); commercial-slug fix (#84); comparisons (#85); LocalAI/Dokploy/
-  LlamaIndex/Vim (#86-89); each closed a dangling `alternatives.open_source` ref.
+  LlamaIndex/Vim/Helix (#86-90); each closed a dangling `alternatives.open_source` ref.
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (#76-78), awaiting owner

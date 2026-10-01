@@ -7,6 +7,22 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-01 — Helix (`content/repos/helix.md`, MPL-2.0) added to the Developer Tools
+  grove — routine editorial content work done while Phase 4 feature work stays held
+  pending RG-7 (no owner reply yet, defaults 2026-10-03). Closes a dangling reference:
+  both `vim.md` and `neovim.md` have named `helix` under `alternatives.open_source`
+  since runs 33/40, but no profile for it ever existed, so it rendered as "Not yet
+  profiled" on both pages. Cross-referenced Vim and Neovim back under Helix's own
+  `alternatives.open_source` (alongside still-unresolved `zed`, left as backlog);
+  `content/groves/developer-tools.md`'s "Core projects" list extended. Facts (Rust
+  implementation, Kakoune-inspired selection-first modal editing with multiple
+  selections as a core primitive, built-in Tree-sitter/LSP with no plugins required,
+  MPL-2.0 license, no official stable plugin system — the experimental Steel/Scheme
+  scripting layer requires building from a fork) verified via WebFetch/WebSearch
+  against helix-editor.com, Gentoo's package database, and an independent walkthrough
+  of Steel's current status — an independent review subagent found no BLOCKER/MAJOR
+  issues. 319/319 tests pass; PR #90 merged (3/3 checks green, including the
+  non-gating screenshot job). (dev)
 - 2026-10-01 — Vim (`content/repos/vim.md`, Vim License) added to the Developer Tools
   grove — routine editorial content work done while Phase 4 feature work stays held
   pending RG-7 (no owner reply yet, defaults 2026-10-03). Closes a dangling reference:
