@@ -652,3 +652,51 @@ earlier in this run failed and are worth recording so the reasoning survives: a 
   `TECH-DEBT.md`'s remaining open `design`-owned row — `AlternativesTable`'s
   non-interactive sort — unless a higher-priority finding (from the pending screenshot
   review above, or a new dev-lane page needing a pattern) lands first.
+- **Done 2026-10-01 (design run 16):** real-screenshot re-review of run 15's `MomentumChip`
+  disclosure-button change (`repo-ollama`, `compare-ollama-vllm`, light/dark x
+  desktop/mobile) confirmed clean, no regression — see the Status chips entry above.
+  `AlternativesTable`'s sort stayed non-interactive (no second sortable field has landed)
+  and `MomentumChip`'s empty-`heat.signals` fallback stayed unreachable (both still just
+  `TECH-DEBT.md` rows, not actioned). Major task: `TECH-DEBT.md`'s 2026-09-30 "design" row
+  — `focus:ring-offset-2` buttons with no `ring-offset-color` fell back to Tailwind's
+  default white, a visible dark-mode halo — fixed with `focus:ring-offset-bg-default`;
+  see the Focus rings entry above. Small related task: closed out two stale, already-true
+  2026-09-28 `TECH-DEBT.md` rows. 321/321 tests pass (2 new), lint/`tsc --noEmit` clean,
+  PR #91 all gating checks green, squash-merged.
+- **Done 2026-10-01 (design run 17):** no open design-lane findings, no open design
+  decisions beyond RG-4 (already `DEFAULTED`), no new dev-lane UI since run 16 (dev run 45
+  shipped content-only PRs — three new `/compare/[a]/[b]` pages reusing the existing
+  pattern, no `src/` changes) — so this run's first step was the real-screenshot review
+  the mission always calls for, against the `compare-ollama-vllm__mobile-*.png` screenshot
+  `commit-screenshots` refreshed right after dev run 45's PR #95 merged. Found a real,
+  live regression: vLLM's `category` list grew to three items since design run 13's
+  review of this same page (`ai, llm, inference`, not present when that review called the
+  page clean), and this table's `FactRow`s have no `table-layout: fixed` — a cell avoids
+  wrapping if it can, so the whole table widens past the 390px mobile viewport and the
+  `overflow-x-auto` wrapper's scroll has no visual affordance; vLLM's Category value was
+  silently clipped at the viewport edge, mid-word. Major task: fixed as UX-2026-006.
+  First draft mirrored `AlternativesTable`'s own UX-2026-002 fix verbatim — hide the whole
+  `Category` row below `sm` — but an independent reviewer subagent caught that this was a
+  materially worse fix than it looked: `hidden` is `display:none`, removed from the
+  accessibility tree too, so it would have hidden the fact from a screen reader at the
+  exact mobile viewport where the bug was found, not just from sighted users (and the
+  draft's own comments overclaimed otherwise); it was also more lossy than necessary on a
+  two-repo comparison page, where Category is arguably more central than on
+  `AlternativesTable`'s multi-row listing. Revised to a wrap-based fix instead: the
+  Category value's `<span>` gained `inline-block max-w-32 break-words sm:max-w-none` —
+  `max-w-32` (8rem/128px, independently confirmed via `@tailwindcss/postcss` to compile
+  to a real `max-width` rule, not an unrecognized class) forces a wrap onto a second line
+  below `sm` instead of widening the table, keeping the content visible and in the
+  accessibility tree at every viewport; `sm:max-w-none` restores the original single-line
+  rendering at 640px+. Wrote the regression test first (confirmed it failed pre-fix), then
+  implemented the revised fix; see
+  `docs/design/findings/UX-2026-006-compare-page-category-row-mobile-overflow.md` for the
+  full writeup including the reverted first draft. 330/330 tests pass (1 new),
+  lint/`tsc --noEmit` clean; `npm run build` reproduces the known ADR-006 sandbox
+  font-fetch gap, left to CI. **Next major task:**
+  real-screenshot re-review of this fix (`compare-ollama-vllm__mobile-*.png` after
+  `commit-screenshots` recommits post-merge) is next run's first job; if that's clean,
+  fall back to `TECH-DEBT.md`'s two remaining open `design`-owned rows (`AlternativesTable`
+  sort, `MomentumChip` empty-signals fallback) — both still blocked on data that hasn't
+  landed — or a fresh screenshot/drift pass across the other routes this run didn't have
+  cause to re-open.
