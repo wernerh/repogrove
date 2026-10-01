@@ -538,9 +538,12 @@ describe("getAllComparisons (real /content fixtures)", () => {
     expect(comparisons.map((c) => c.slug).sort()).toEqual([
       "appwrite-vs-pocketbase",
       "appwrite-vs-supabase",
+      "coolify-vs-dokploy",
       "gitui-vs-lazygit",
       "gitui-vs-tig",
       "lazygit-vs-tig",
+      "localai-vs-ollama",
+      "localai-vs-vllm",
       "ollama-vs-vllm",
       "pocketbase-vs-supabase",
     ]);
@@ -571,15 +574,20 @@ describe("getComparison (order-independent lookup)", () => {
 
 describe("getComparisonsForRepo", () => {
   it("finds the comparison for a repo named on either side of a pair", () => {
-    expect(getComparisonsForRepo("ollama").map((c) => c.slug)).toEqual(["ollama-vs-vllm"]);
-    expect(getComparisonsForRepo("vllm").map((c) => c.slug)).toEqual(["ollama-vs-vllm"]);
+    // coolify-vs-dokploy is the real single-comparison fixture now (ollama
+    // and vllm each gained a second comparison this run — see the
+    // fully-mutual-trio test below for those).
+    expect(getComparisonsForRepo("coolify").map((c) => c.slug)).toEqual(["coolify-vs-dokploy"]);
+    expect(getComparisonsForRepo("dokploy").map((c) => c.slug)).toEqual(["coolify-vs-dokploy"]);
   });
 
   it("returns an empty array for a repo with no comparisons", () => {
-    // supabase now has two comparisons of its own (appwrite-vs-supabase,
-    // pocketbase-vs-supabase) — coolify has none, so it's the real fixture
-    // for this "no comparisons at all" case.
-    expect(getComparisonsForRepo("coolify")).toEqual([]);
+    // langchain has no comparison content file at all — coolify (the
+    // previous fixture here) now has one (coolify-vs-dokploy), and every AI
+    // grove repo except langchain/llamaindex now has at least one comparison
+    // too, so langchain is the real fixture for this "no comparisons at all"
+    // case.
+    expect(getComparisonsForRepo("langchain")).toEqual([]);
   });
 
   it("sorts multiple comparisons for the same repo by the other repo's name", () => {
@@ -611,6 +619,26 @@ describe("getComparisonsForRepo", () => {
     expect(getComparisonsForRepo("tig").map((c) => c.slug).sort()).toEqual([
       "gitui-vs-tig",
       "lazygit-vs-tig",
+    ]);
+  });
+
+  it("finds both comparisons for each repo in the AI grove's fully mutual inference trio", () => {
+    // ollama, localai, and vllm each list the other two under
+    // alternatives.open_source, and all three cross-pairs now have their own
+    // comparison file (ollama-vs-vllm pre-dated this run; localai-vs-ollama
+    // and localai-vs-vllm complete the trio) — same fully-mutual-trio shape
+    // as the git-TUI and self-hosted-backend trios above.
+    expect(getComparisonsForRepo("ollama").map((c) => c.slug).sort()).toEqual([
+      "localai-vs-ollama",
+      "ollama-vs-vllm",
+    ]);
+    expect(getComparisonsForRepo("localai").map((c) => c.slug).sort()).toEqual([
+      "localai-vs-ollama",
+      "localai-vs-vllm",
+    ]);
+    expect(getComparisonsForRepo("vllm").map((c) => c.slug).sort()).toEqual([
+      "localai-vs-vllm",
+      "ollama-vs-vllm",
     ]);
   });
 });

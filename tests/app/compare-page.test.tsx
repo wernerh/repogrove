@@ -95,6 +95,54 @@ describe("Compare page (/compare/[a]/[b])", () => {
     expect(screen.getByText(/Tig predates LazyGit by years/)).toBeInTheDocument();
   });
 
+  it("renders /compare/coolify/dokploy from content/comparisons/coolify-vs-dokploy.md", async () => {
+    // coolify.md and dokploy.md have listed each other under
+    // alternatives.open_source since dokploy.md was added (run 38) — this is
+    // the comparison page that finally closes that pair out.
+    const { container } = render(
+      await ComparePage({ params: Promise.resolve({ a: "coolify", b: "dokploy" }) }),
+    );
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Coolify vs Dokploy" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Coolify" })).toHaveAttribute("href", "/repo/coolify");
+    expect(screen.getByRole("link", { name: "Dokploy" })).toHaveAttribute("href", "/repo/dokploy");
+
+    const table = container.querySelector("table")!;
+    expect(within(table).getAllByText(/Apache-2.0/).length).toBeGreaterThan(0);
+
+    expect(screen.getByRole("heading", { level: 2, name: "How they differ" })).toBeInTheDocument();
+    expect(screen.getByText(/Dokploy builds multi-server deployment on Docker Swarm/)).toBeInTheDocument();
+  });
+
+  it("renders /compare/ollama/localai from content/comparisons/localai-vs-ollama.md, part of the fully-mutual AI inference trio", async () => {
+    // ollama, localai, and vllm each list the other two under
+    // alternatives.open_source — localai-vs-ollama and localai-vs-vllm are
+    // the two new comparison files that complete the trio alongside the
+    // pre-existing ollama-vs-vllm. URL order is ollama/localai (neither
+    // matches the content file's own canonical [localai, ollama] order) to
+    // also exercise the non-canonical-URL-order lookup, same as the
+    // vllm/ollama reverse-order test below.
+    const { container } = render(
+      await ComparePage({ params: Promise.resolve({ a: "ollama", b: "localai" }) }),
+    );
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "LocalAI vs Ollama" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Ollama" })).toHaveAttribute("href", "/repo/ollama");
+    expect(screen.getByRole("link", { name: "LocalAI" })).toHaveAttribute("href", "/repo/localai");
+
+    const table = container.querySelector("table")!;
+    expect(within(table).getAllByText(/MIT/).length).toBeGreaterThan(0);
+
+    expect(screen.getByRole("heading", { level: 2, name: "How they differ" })).toBeInTheDocument();
+    expect(
+      screen.getByText(/Ollama is built around one job done simply/),
+    ).toBeInTheDocument();
+  });
+
   it("resolves the reverse URL order (/compare/vllm/ollama) to the same content, rendered in canonical order", async () => {
     const { container: forward } = render(
       await ComparePage({ params: Promise.resolve({ a: "ollama", b: "vllm" }) }),
