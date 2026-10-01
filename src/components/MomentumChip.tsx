@@ -55,7 +55,7 @@ export default function MomentumChip({ heat }: { heat: HeatResult }) {
         aria-expanded={expanded}
         aria-controls={panelId}
         onClick={() => setExpanded((value) => !value)}
-        className={`inline-flex items-center gap-2 rounded-full border border-border-subtle bg-bg-subtle p-2 text-sm font-medium leading-none ${config.textClassName} hover:bg-bg-elevated focus:outline-none focus:ring-2 focus:ring-cta-fill focus:ring-offset-2`}
+        className={`inline-flex items-center gap-2 rounded-full border border-border-subtle bg-bg-subtle p-2 text-sm font-medium leading-none ${config.textClassName} hover:bg-bg-elevated focus:outline-none focus:ring-2 focus:ring-cta-fill focus:ring-offset-2 focus:ring-offset-bg-default`}
       >
         {/* Icon is decorative — the text label is what a screen reader
             announces; color/icon alone is never the only signal (WCAG
