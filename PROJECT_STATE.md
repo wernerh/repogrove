@@ -15,9 +15,9 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 42: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03). Held off Phase 4 again;
-added Zed to Developer Tools (PR #92), closing vim/neovim/helix's shared dangling ref.
-Remaining: tig/gitui (lazygit.md) only. Next: re-check RG-7/8/9 each run.
+Run 43: RG-7/8/9 still no reply (defaults 2026-10-03). Held off Phase 4; added Tig/GitUI
+to Developer Tools (PR #93), closing the last dangling `alternatives.open_source` ref
+(none remain). Next: re-check RG-7/8/9 each run; find a new decision-free content task.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -56,5 +56,5 @@ None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 stays stubbed u
   basic news widget (#72, PR #74) — Phase 3 MVP gate complete.
 - [x] 2026-09-30/10-01 — Decision-free content: dev-tools grove (#81); +PocketBase/
   Appwrite (#83); commercial-slug fix (#84); comparisons (#85); LocalAI/Dokploy/
-  LlamaIndex/Vim/Helix/Zed (#86-90, #92); each closed a dangling `alternatives.open_source` ref.
+  LlamaIndex/Vim/Helix/Zed/Tig/GitUI (#86-90, #92-93) closed every dangling ref.
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (#76-78), awaiting owner

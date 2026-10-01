@@ -306,6 +306,15 @@
     vim.md's, neovim.md's, and helix.md's shared dangling alternatives.open_source
     reference — PR #92) — not Phase 4 groundwork, so doesn't preempt either answer.
 
+    Re-checked 2026-10-01 (dev run 43, via get_thread) — thread 1a0f26990ebc1e9c still
+    exactly the one original message, no owner reply. default_due_at (2026-10-03) hasn't
+    passed. Held off Phase 4 feature work again this run; used the run instead for
+    decision-free editorial content (Tig and GitUI added to the Developer Tools grove,
+    closing lazygit.md's dangling alternatives.open_source reference — PR #93). This was
+    the last dangling-reference gap of this kind; none remain anywhere in
+    content/repos/*.md, so a future run will need a different source of decision-free
+    work. Not Phase 4 groundwork, so doesn't preempt either answer.
+
 - id: RG-8
   lane: dev
   question: >
@@ -360,6 +369,8 @@
 
     Re-checked 2026-10-01 (dev run 42) — no owner reply; stays open, no default applies.
 
+    Re-checked 2026-10-01 (dev run 43) — no owner reply; stays open, no default applies.
+
 - id: RG-9
   lane: dev
   question: >
@@ -408,3 +419,5 @@
     Re-checked 2026-10-01 (dev run 41) — no owner reply; stays open, no default applies.
 
     Re-checked 2026-10-01 (dev run 42) — no owner reply; stays open, no default applies.
+
+    Re-checked 2026-10-01 (dev run 43) — no owner reply; stays open, no default applies.

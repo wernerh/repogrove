@@ -7,6 +7,26 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-01 — Tig (`content/repos/tig.md`, GPL-2.0) and GitUI (`content/repos/gitui.md`,
+  MIT) added to the Developer Tools grove — routine editorial content work done while
+  Phase 4 feature work stays held pending RG-7 (no owner reply yet, defaults
+  2026-10-03). Closes the last dangling reference of this kind: `lazygit.md` has named
+  both `tig` and `gitui` under `alternatives.open_source` since bootstrap, but neither
+  profile ever existed, so both rendered as "Not yet profiled" — no dangling
+  `alternatives.open_source` reference remains anywhere in `content/repos/*.md` after
+  this PR. Cross-referenced Tig, GitUI, and LazyGit under each other's own
+  `alternatives.open_source` (fully reciprocal); `content/groves/developer-tools.md`'s
+  "Core projects" list extended (grove now has 7 members). Facts (Tig: ncurses-based C
+  repository browser predating both LazyGit and GitUI, maintained by Jonas Fonseca,
+  doubles as a `git log`/`diff` pager; GitUI: Rust terminal UI created by Stephan
+  Dilly, staging-first workflow built on `git2`, fast/memory-light on very large
+  repositories, moved from `extrawurst/gitui` to the `gitui-org` GitHub organization)
+  verified via WebSearch/WebFetch against multiple independent sources — an
+  independent review subagent flagged an unverified specific date in the first draft's
+  GitUI org-move claim (sourced only from a single AI-generated wiki); the org name
+  itself was re-verified against a second independent source and kept, the
+  unverifiable date dropped. 324/324 tests pass; PR #93 merged (3/3 checks green,
+  including the non-gating screenshot job). (dev)
 - 2026-10-01 — Zed (`content/repos/zed.md`, GPL-3.0 / AGPL-3.0) added to the Developer
   Tools grove — routine editorial content work done while Phase 4 feature work stays
   held pending RG-7 (no owner reply yet, defaults 2026-10-03). Closes the last
