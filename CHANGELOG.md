@@ -972,3 +972,23 @@ entries.
   trusting the class name alone. 321/321 tests pass (2 new regression tests), lint
   clean; `npm run build` reproduced the known ADR-006 sandbox font-fetch gap, left to
   CI. PR #91 merged (4/4 gating checks green). (design)
+- 2026-10-01 — UX-2026-006: `/compare/[a]/[b]`'s at-a-glance table has no
+  `table-layout: fixed`, so a cell avoids wrapping if it can — vLLM's `category` list
+  grew to three items (`ai, llm, inference`) since design run 13 last reviewed this
+  page as clean on mobile, and the real `compare-ollama-vllm__mobile-light.png`
+  screenshot showed the value silently clipped mid-word at the 390px viewport edge
+  (the `overflow-x-auto` wrapper's horizontal scroll has no visual affordance). A
+  first-draft fix mirrored `AlternativesTable`'s own UX-2026-002 fix (hide the row
+  below `sm`) but an independent reviewer subagent caught that `hidden` is
+  `display:none`, removed from the accessibility tree too — it would have hidden the
+  fact from a screen reader at the same mobile viewport, not just sighted users, and
+  was more lossy than necessary on a two-repo comparison page. Shipped a wrap-based
+  fix instead (`inline-block max-w-32 break-words sm:max-w-none` on the Category
+  value), keeping the content visible and in the accessibility tree at every
+  viewport; independently compiled the new Tailwind utilities via
+  `@tailwindcss/postcss` to confirm they resolve to real CSS. Regression test written
+  first (confirmed it failed pre-fix). 330/330 tests pass (1 new), lint/`tsc --noEmit`
+  clean; `npm run build` reproduced the known ADR-006 sandbox font-fetch gap, left to
+  CI. PR #96 merged (3/3 gating checks green). Real-screenshot re-review of the
+  rendered fix is next design run's first job (the post-merge `commit-screenshots`
+  run was still in progress when this run closed out). (design)

@@ -69,3 +69,15 @@ they are not to be treated as validated research. Next review trigger: first rea
 after Phase 1 ships, or the first design-lane run of a new Africa/Johannesburg day per
 CLAUDE.md §4 (re-read Goal/Assumptions, note what might change and what built work would
 be thrown away).
+
+**2026-10-01 (design run 17), first design-lane run of this Africa/Johannesburg day:**
+re-read PROJECT_STATE.md's Goal/Assumptions (A1 content stays reviewed-via-PR, A2 no
+pilot customer) and this file's own personas/journeys. Nothing has changed since the last
+check — Phase 3's MVP gate is complete, Phase 4 stays held on RG-7/8/9 (none answered),
+and no real traffic exists yet, so every persona/journey above is still ASSUMPTION with
+nothing to confirm or revise. What might change: an owner reply to RG-7/8/9 (auth
+provider, API scope, deploy-timing sequencing) would not itself invalidate these — they're
+about who uses the *content* pages, not account/API features. What built work would be
+thrown away: none identified — the design-system tokens and component patterns built
+against the "editorial/content-forward" direction (RG-4) hold regardless of how RG-7/8/9
+resolve.
