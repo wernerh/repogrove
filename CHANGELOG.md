@@ -7,6 +7,25 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-01 — SEC-005: confirmed (not just recommended) that `main` has no
+  branch-protection rule — `GET .../branches/main/protection` finally returned a
+  decisive GitHub `404 "Branch not protected"` instead of the ambiguous `403` every
+  prior run (4, 6, 7, 8, 9) got from the same endpoint, so this is now a verified gap
+  rather than an unconfirmed recommendation: no required status checks, no required
+  review, nothing stopping a force-push to `main` beyond each lane's own discipline.
+  `docs/security/findings/SEC-005-branch-protection-not-enabled.md` added;
+  `docs/security/README.md` (A05 row, Findings table, review log) and
+  `docs/security/PRODUCTION-HARDENING.md` updated; commented on the existing
+  `needs-human` issue #33 (already covered this recommendation alongside SEC-003 —
+  no new issue opened) with the confirmed status. Also reviewed the ~2,860 lines of
+  real Phase 3+ app surface that landed since the last security run (run 9,
+  2026-09-29): `/search`, `/compare/:a/:b`, `/alternative/:slug`, the newsletter
+  signup form, and the new `repository_releases` ingestion path — no findings (search
+  is pure client-side substring matching with no server round-trip; the newsletter
+  form has no working submit path at all; releases use parameterised SQL throughout
+  and constrain `html_url` to `https://github.com/...` before rendering it as a link).
+  Re-verified SEC-001/002/003/004 unchanged. No code/workflow fix needed this run
+  (SEC-005 isn't fixable by this lane — repo-admin action). (security)
 - 2026-10-01 — Six new `/compare/:a/:b` pages completing the vim/neovim/helix/zed
   editor cluster's fully-mutual comparison coverage: `content/comparisons/
   helix-vs-neovim.md`, `helix-vs-vim.md`, `helix-vs-zed.md`, `neovim-vs-vim.md`,

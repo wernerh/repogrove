@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-10-01T19:05:00Z"
-  holder: "security"
-  last_run: "2026-10-01T18:49:14Z"
+  current_run: null
+  holder: null
+  last_run: "2026-10-01T19:04:25Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,7 +19,7 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 62
+  runs: 63
   features_completed: 29
   bugs_fixed: 10
   security_issues_fixed: 3
@@ -349,24 +349,24 @@ next_actions:
     full history (including these) stays in docs/factory/run-history.md, which
     nothing in scripts/factory/ reads -- safe to keep trimming the same way each run."
 security:
-  last_run: "2026-09-29T07:05:39Z"
-  next_action: "Re-check SEC-001 (factory-guardrails.yml permissions gap, owner-blocked) and SEC-003 (Dependabot alerts disabled, owner-blocked, issue #33) each run; once app grows an API surface (Phase 3 search/newsletter) review A02/A03/A09 for real. Run 9: no code, workflow, dependency, or content changes at all since run 8 (git diff --stat 7f39e3e..HEAD — only dev run 20's docs/state close-out, zero src/scripts/.github/workflows/package.json diff) — the quietest run yet. Re-verified all 4 findings by reading the code directly: SEC-001 (factory-guardrails.yml still no permissions: block, owner-blocked, unchanged; ci.yml/ingestion.yml/design-screenshots.yml all still correctly scoped), SEC-002 (GITHUB_SLUG_PATTERN + both regression tests unmodified), SEC-004 (static-server.mjs try/catch fix + regression test unmodified). SEC-003: re-ran the same 3 GitHub-side checks — vulnerability-alerts and secret-scanning/alerts both this sandbox's own proxy rejection again (consistent with run 8's noted discrepancy); branches/main/protection still a real GitHub 403 (no admin scope). Status unchanged, issue #33 stays open, owner-actionable. Reviewed the 2 open dependabot GitHub Actions PRs touching the one write-scoped workflow (#46 download-artifact 4->8, #47 upload-artifact 4->7) for relevance to the run-7-reviewed commit-screenshots job scoping — outside this lane's merge gate, no new finding (v8's digest-mismatch:error default is a secure-by-default improvement, not a risk). Secret-pattern scan of every commit since run 8 — no hits. Re-confirmed A01/A02/A07/A09 with fresh greps (no src/app/api or middleware.ts, no dangerouslySetInnerHTML/eval(/new Function( usage beyond the explanatory comment in src/lib/content.ts; the one real Authorization-header hit is the pre-reviewed ingestion-job GitHub token forwarding, not user-facing auth). main's CI green at the current head (checked via Actions API). npm ci (0 vulns)/lint (clean)/test (79/79)/audit --audit-level=high (0 vulns) all run locally; build reproduced the known ADR-006 sandbox font-fetch gap, confirmed green on CI's real GitHub-hosted runner instead. No new findings — genuinely quiet run."
+  last_run: "2026-10-01T19:04:25Z"
+  next_action: "Re-check SEC-001 (factory-guardrails.yml permissions gap, owner-blocked), SEC-003 (Dependabot alerts disabled, owner-blocked) and SEC-005 (branch protection on main confirmed absent, owner-blocked) each run, all tracked on issue #33. Run 10: first security run since run 9 (2026-09-29) — 15 dev/design runs landed in the gap, so reviewed the real Phase 3+ attack surface that shipped in that window (git diff --stat bc8aa60..HEAD -- src scripts .github package.json package-lock.json: 33 files, ~2,860 lines — /search, /compare/[a]/[b], /alternative/[slug], /trending, /rising, sitemap.ts/robots.ts, the newsletter signup form, and a new repository_releases ingestion path) rather than relying on dev-lane PR descriptions. No findings: SearchBox.tsx/search-match.ts do pure client-side substring matching, no server round-trip, no regex built from user input; NewsletterSignupForm.tsx confirmed to have no working submit path (no fetch, no real action) so A02 stays NEEDS-VERIFICATION rather than becoming live; the new repository_releases table (snapshots-db.ts, src/lib/releases.ts) uses parameterised queries throughout; fetch-snapshots.ts's new fetchRepoReleases reuses the already-fixed GITHUB_SLUG_PATTERN and independently constrains html_url to https://github.com/... before it's ever rendered as a link href (confirmed rel=noopener noreferrer, JSX auto-escaping, no dangerouslySetInnerHTML). Re-verified SEC-001/002/004 unchanged by reading the code directly. SEC-003 re-confirmed (dependabot/alerts still returns GitHub's real disabled message). New finding SEC-005: re-ran the branches/main/protection check every prior run (4,6,7,8,9) logged as an ambiguous 403 and got a decisive 404 'Branch not protected' instead (re-ran twice to rule out a fluke; secret-scanning/alerts checked same pass, still proxy-blocked, unchanged — ruling out a general proxy change) — main is now confirmed to have no branch-protection rule at all. Owner-blocked (repo-admin action); added to existing issue #33 via comment (not a new issue) and docs/security/PRODUCTION-HARDENING.md's existing row. Checked RG-7/8/9's Gmail thread per DECISION-PROTOCOL.md — still exactly the one original message, no owner reply, not this lane's decision. npm ci (0 vulns)/lint (clean)/test (330/330)/audit --audit-level=high (0 vulns) all run locally; build reproduced the known ADR-006 sandbox font-fetch gap, confirmed green on CI's real GitHub-hosted runner instead (main head bdec5b9, all checks green)."
   timebox: null
   failed_attempts: 0
   open_findings:
     critical: 0
     high: 0
     medium: 0
-    low: 2
+    low: 3
     info: 0
   fixed_unverified: []
-  verified_fixes: ["SEC-001 (partial — ci.yml fixed, factory-guardrails.yml open, owner-blocked; re-checked 2026-09-29 run 9, unchanged)", "SEC-002 (ingestion slug regex traversal bypass, fixed + regression-tested; re-checked 2026-09-29 run 9, regex and tests unmodified)", "SEC-004 (design static-server malformed-URI crash, fixed + regression-tested — PR #40, commit 95ed8f1; re-checked 2026-09-29 run 9, unmodified)"]
+  verified_fixes: ["SEC-001 (partial — ci.yml fixed, factory-guardrails.yml open, owner-blocked; re-checked 2026-10-01 run 10, unchanged)", "SEC-002 (ingestion slug regex traversal bypass, fixed + regression-tested; re-checked 2026-10-01 run 10, regex and tests unmodified)", "SEC-004 (design static-server malformed-URI crash, fixed + regression-tested — PR #40, commit 95ed8f1; re-checked 2026-10-01 run 10, unmodified)"]
   owasp_reviewed:
     A01: "NOT APPLICABLE"
-    A02: "NEEDS-VERIFICATION"
-    A03: "PASS"
+    A02: "NEEDS-VERIFICATION (newsletter signup form landed, PR #71, but confirmed no working submit path — no PII actually collected/transmitted; re-confirmed 2026-10-01 run 10)"
+    A03: "PASS (re-confirmed 2026-10-01 run 10 against the real Phase 3 surface: client-side-only search, parameterised SQL throughout the new repository_releases table)"
     A04: "PASS"
-    A05: "FINDING (LOW, partially fixed — SEC-001 open/owner-blocked; SEC-004 fixed+verified; new commit-screenshots job in design-screenshots.yml reviewed run 7, least-privilege, no finding)"
+    A05: "FINDING (LOW, partially fixed — SEC-001 open/owner-blocked; SEC-004 fixed+verified; SEC-005 confirmed 2026-10-01 run 10 — branch protection on main absent; new commit-screenshots job in design-screenshots.yml reviewed run 7, least-privilege, no finding)"
     A06: "PASS (defense-in-depth gap noted — SEC-003)"
     A07: "NOT APPLICABLE"
     A08: "PASS"
