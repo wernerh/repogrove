@@ -12,6 +12,44 @@ context) to skim, same role the archived entries played in state.yaml before thi
 Newest-archived-first, same order they appeared in state.yaml.
 
 ```yaml
+  - "2026-10-01 (run 38): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
+    Held off Phase 4 feature work again this run, consistent with runs 33-37. Audited
+    content/ for the next decision-free content gap: content/repos/coolify.md has
+    listed 'dokploy' under alternatives.open_source since it was added (run 33), but
+    content/repos/dokploy.md never existed, so it rendered as 'Not yet profiled' on
+    Coolify's page — the same class of dangling-reference gap runs 33/34/37 closed.
+    Major task: added content/repos/dokploy.md (Dokploy/dokploy, Apache-2.0,
+    Self-Hosted grove), cross-referencing Coolify. Facts verified against primary
+    sources (dokploy.com, docs.dokploy.com) via WebFetch/WebSearch rather than the
+    GitHub API proxy (which is scoped to wernerh/repogrove only and can't reach other
+    repos). Independent review (subagent, skeptical-senior-engineer pass) flagged the
+    first draft's Cons section as carrying the same fabrication risk run 37's review
+    caught in LocalAI's content: a specific 'Dokploy Source Available License' name +
+    January 2026 date sourced only from one secondary blog, plus unverified
+    multi-server/Swarm claims. Re-verified against docs.dokploy.com's own
+    enterprise/license-keys page (confirms SSO/SAML, audit logs, white-labeling, SCIM,
+    and custom roles require a paid license key; core stays Apache-2.0) and a
+    third-party maturity review of its clustering (matured through v0.29, but doesn't
+    provision machines/autoscale/self-heal — suits a small hand-managed fleet), then
+    rewrote the Cons section to state only what those primary/corroborated sources
+    support, dropping the unverifiable proper noun and date. Small related task:
+    added Dokploy to content/groves/self-hosted.md's Core projects. Updated tests for
+    the new 11th repo: generateStaticParams slug lists (tests/app/repo-page.test.tsx,
+    tests/lib/content.test.ts), Self-Hosted grove's repo count (4->5, home.test.tsx)
+    and total homepage card-link count (13->14); added a /repo/dokploy render test and
+    a test confirming Coolify's own alternatives.open_source (dokploy) now resolves
+    instead of 'Not yet profiled'. 314/314 tests pass (4 new/updated), lint clean, tsc
+    --noEmit clean, npm audit --audit-level=high 0 vulnerabilities, all run locally;
+    next build reproduces the known ADR-006 sandbox font-fetch gap (confirmed it
+    compiles past content loading first), left to CI's GitHub-hosted runner — all 6
+    checks (5 success + 1 skipped push-only job) green on PR #87 before squash-merging
+    it myself; post-merge CI on main also confirmed green. CHANGELOG.md/DECISIONS.md/
+    .factory/decisions.yaml/PROJECT_STATE.md updated. Next: re-check RG-7/8/9 each
+    run; once RG-7 resolves, hold or pick up decision-free Phase 4 items — remaining
+    one-off content gaps (LlamaIndex, tig, gitui, vim, helix, zed) stay available as
+    decision-free work meanwhile."
   - "2026-10-01 (run 37): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.

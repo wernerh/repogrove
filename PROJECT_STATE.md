@@ -15,8 +15,9 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 46: RG-7/8/9 still no reply (defaults 2026-10-03). Completed the editor-cluster
-comparisons — the last fully-mutual gap. Next: re-check RG-7/8/9; re-scan content/ gaps.
+Run 47: RG-7/8/9 still no reply (defaults 2026-10-03). Closed langchain/llamaindex, the
+last comparison gap; content/ has no known dangling refs/gaps. Next: re-check RG-7/8/9;
+find new decision-free work (drift pass, content audit, TECH-DEBT.md) if still open.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -54,7 +55,6 @@ None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 stays stubbed u
   sitemap/robots (#64), `/search` (#63, ADR-008), newsletter form UI (#65, PR #71),
   basic news widget (#72, PR #74) — Phase 3 MVP gate complete.
 - [x] 2026-09-30/10-01 — Decision-free content: dev-tools grove, +PocketBase/Appwrite,
-  commercial-slug fix, LocalAI/Dokploy/LlamaIndex/Vim/Helix/Zed/Tig/GitUI (#81,
-  #83-90, #92-93); all comparisons for self-hosted/git-TUI/AI-trio/coolify-dokploy/
-  editor-cluster (#85, #94-95, PR #97) — every fully-mutual comparison gap closed.
+  commercial-slug fix, LocalAI/Dokploy/LlamaIndex/Vim/Helix/Zed/Tig/GitUI (#81, #83-90,
+  #92-93); all comparisons incl. langchain-llamaindex (#85, #94-95, #97-98) — done.
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (#76-78), awaiting owner

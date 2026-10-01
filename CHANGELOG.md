@@ -7,6 +7,24 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-01 — Dev run 47: added `content/comparisons/langchain-vs-llamaindex.md` —
+  langchain.md and llamaindex.md have listed each other under
+  `alternatives.open_source` since llamaindex.md was added (run 39, PR #88), but no
+  comparison page existed for the pair. This was the last fully-mutual comparison gap
+  in `content/` (the editor cluster, run 46, closed the previous one). Prose grounded
+  entirely in facts already stated in both repos' own `content/repos/*.md` files
+  (general-purpose orchestration vs. retrieval-first data framework), no new external
+  research needed. Independent review (subagent, skeptical-senior-engineer pass) found
+  no fabricated/unverified claims and confirmed format/ordering conventions. Every repo
+  in `content/repos/` now has at least one comparison; `tests/lib/content.test.ts`'s and
+  `tests/app/repo-page.test.tsx`'s "no comparisons" fixtures (previously `langchain`)
+  were swapped for a synthetic slug and a new isolated mocked test
+  (`tests/app/repo-page-no-comparisons.test.tsx`) respectively, since no real repo is
+  left without one. 332/332 tests pass, lint/`tsc --noEmit` clean; `npm run build` left
+  to CI (known ADR-006 sandbox font-fetch gap) — all 3 gating checks green on PR #98
+  before squash-merging; post-merge CI on `main` also confirmed green. Re-checked
+  RG-7/8/9 (Gmail thread `1a0f26990ebc1e9c`) — still exactly the one original message,
+  no owner reply; `default_due_at` (2026-10-03) hasn't passed.
 - 2026-10-01 — SEC-005: confirmed (not just recommended) that `main` has no
   branch-protection rule — `GET .../branches/main/protection` finally returned a
   decisive GitHub `404 "Branch not protected"` instead of the ambiguous `403` every

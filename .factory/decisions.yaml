@@ -336,6 +336,14 @@
     comparisons, the last sizeable fully-mutual comparisons gap, PR #97) — not Phase 4
     groundwork, so doesn't preempt either answer.
 
+    Re-checked 2026-10-01 (dev run 47, via get_thread) — thread 1a0f26990ebc1e9c still
+    exactly the one original message, no owner reply. default_due_at (2026-10-03) hasn't
+    passed. Held off Phase 4 feature work again this run; used the run instead for
+    decision-free editorial content (added content/comparisons/langchain-vs-llamaindex.md,
+    the last remaining fully-mutual comparison gap in content/, found by a fresh scan of
+    every alternatives.open_source reference against content/comparisons/*.md, PR #98) —
+    not Phase 4 groundwork, so doesn't preempt either answer.
+
 - id: RG-8
   lane: dev
   question: >
@@ -398,6 +406,8 @@
 
     Re-checked 2026-10-01 (dev run 46) — no owner reply; stays open, no default applies.
 
+    Re-checked 2026-10-01 (dev run 47) — no owner reply; stays open, no default applies.
+
 - id: RG-9
   lane: dev
   question: >
@@ -454,3 +464,5 @@
     Re-checked 2026-10-01 (dev run 45) — no owner reply; stays open, no default applies.
 
     Re-checked 2026-10-01 (dev run 46) — no owner reply; stays open, no default applies.
+
+    Re-checked 2026-10-01 (dev run 47) — no owner reply; stays open, no default applies.

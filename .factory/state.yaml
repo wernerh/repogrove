@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-10-01T20:49:11Z"
-  holder: "dev"
-  last_run: "2026-10-01T19:04:25Z"
+  current_run: null
+  holder: null
+  last_run: "2026-10-01T21:02:34Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,14 +19,50 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 63
-  features_completed: 29
+  runs: 64
+  features_completed: 30
   bugs_fixed: 10
   security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
 
 next_actions:
+  - "2026-10-01 (run 47): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
+    Held off Phase 4 feature work again this run, consistent with runs 33-46. Fresh scan
+    of content/ (cross-referencing every content/repos/*.md's alternatives.open_source
+    against content/comparisons/*.md, picking up run 46's own next-action pointer):
+    confirmed zero dangling alternatives.open_source references anywhere (every repo
+    slug named resolves to a real content/repos/*.md file), but found one remaining
+    fully-mutual pair with no comparison page — langchain.md and llamaindex.md have
+    listed each other since llamaindex.md was added (run 39) but had no
+    content/comparisons/*.md file, the last gap of this kind. Major task: added
+    content/comparisons/langchain-vs-llamaindex.md, prose grounded entirely in facts
+    already stated in both repos' own content files (general-purpose orchestration vs.
+    retrieval-first data framework, Python-first flagship package, LlamaParse/LlamaCloud
+    as separate paid services) — no new external research needed. Independent review
+    (subagent, skeptical-senior-engineer pass) traced every claim back to the two repo
+    files, confirmed alphabetical slug ordering and format match, and found no
+    fabricated/unverified claims or other issues. Every repo in content/repos/ now has
+    at least one comparison, so two tests that used langchain as a 'no comparisons'
+    real-repo fixture needed updating: tests/lib/content.test.ts's empty-array test
+    swapped to a synthetic non-existent slug (the function is a pure filter with no
+    repo-existence check); tests/app/repo-page.test.tsx's 'omits Compared with' test
+    moved to a new isolated file, tests/app/repo-page-no-comparisons.test.tsx, mocking
+    getComparisonsForRepo to [] rather than depending on a real repo happening to have
+    none (same isolation pattern repo-page-releases-empty.test.tsx already established).
+    Also added a real /compare/langchain/llamaindex render test and a
+    getComparisonsForRepo test for the new pair. 332/332 tests pass, lint/tsc --noEmit
+    clean; npm run build left to CI (known ADR-006 sandbox font-fetch gap) — all 3
+    gating checks (CI, Factory guardrails, scripts/factory/check.py) green on PR #98
+    before squash-merging it myself; post-merge CI on main also confirmed green
+    (lint/test/build all passed for real, including a real next build). CHANGELOG.md/
+    PROJECT_STATE.md/DECISIONS.md/.factory/decisions.yaml updated. Next: re-check
+    RG-7/8/9; content/ has no known dangling-reference or missing-comparison gaps left
+    — a future decision-free run will need a new source of work (a fresh drift pass,
+    a content-accuracy audit, or one of TECH-DEBT.md's open low-severity dev-lane rows,
+    e.g. #32's Grove Heat v1 threshold-revisit row) if RG-7/8/9 are still open by then."
   - "2026-10-01 (run 46): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
@@ -304,48 +340,10 @@ next_actions:
     (RG-7/8/9 re-check notes). Remaining one-off content gaps for future runs: tig,
     gitui, vim, helix, zed (all still dangling alternatives.open_source references
     with no profile)."
-  - "2026-10-01 (run 38): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
-    — still exactly the one original message, no owner reply. RG-7's default_due_at
-    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
-    Held off Phase 4 feature work again this run, consistent with runs 33-37. Audited
-    content/ for the next decision-free content gap: content/repos/coolify.md has
-    listed 'dokploy' under alternatives.open_source since it was added (run 33), but
-    content/repos/dokploy.md never existed, so it rendered as 'Not yet profiled' on
-    Coolify's page — the same class of dangling-reference gap runs 33/34/37 closed.
-    Major task: added content/repos/dokploy.md (Dokploy/dokploy, Apache-2.0,
-    Self-Hosted grove), cross-referencing Coolify. Facts verified against primary
-    sources (dokploy.com, docs.dokploy.com) via WebFetch/WebSearch rather than the
-    GitHub API proxy (which is scoped to wernerh/repogrove only and can't reach other
-    repos). Independent review (subagent, skeptical-senior-engineer pass) flagged the
-    first draft's Cons section as carrying the same fabrication risk run 37's review
-    caught in LocalAI's content: a specific 'Dokploy Source Available License' name +
-    January 2026 date sourced only from one secondary blog, plus unverified
-    multi-server/Swarm claims. Re-verified against docs.dokploy.com's own
-    enterprise/license-keys page (confirms SSO/SAML, audit logs, white-labeling, SCIM,
-    and custom roles require a paid license key; core stays Apache-2.0) and a
-    third-party maturity review of its clustering (matured through v0.29, but doesn't
-    provision machines/autoscale/self-heal — suits a small hand-managed fleet), then
-    rewrote the Cons section to state only what those primary/corroborated sources
-    support, dropping the unverifiable proper noun and date. Small related task:
-    added Dokploy to content/groves/self-hosted.md's Core projects. Updated tests for
-    the new 11th repo: generateStaticParams slug lists (tests/app/repo-page.test.tsx,
-    tests/lib/content.test.ts), Self-Hosted grove's repo count (4->5, home.test.tsx)
-    and total homepage card-link count (13->14); added a /repo/dokploy render test and
-    a test confirming Coolify's own alternatives.open_source (dokploy) now resolves
-    instead of 'Not yet profiled'. 314/314 tests pass (4 new/updated), lint clean, tsc
-    --noEmit clean, npm audit --audit-level=high 0 vulnerabilities, all run locally;
-    next build reproduces the known ADR-006 sandbox font-fetch gap (confirmed it
-    compiles past content loading first), left to CI's GitHub-hosted runner — all 6
-    checks (5 success + 1 skipped push-only job) green on PR #87 before squash-merging
-    it myself; post-merge CI on main also confirmed green. CHANGELOG.md/DECISIONS.md/
-    .factory/decisions.yaml/PROJECT_STATE.md updated. Next: re-check RG-7/8/9 each
-    run; once RG-7 resolves, hold or pick up decision-free Phase 4 items — remaining
-    one-off content gaps (LlamaIndex, tig, gitui, vim, helix, zed) stay available as
-    decision-free work meanwhile."
-  - "Older next_actions entries (runs 22-37) archived to docs/factory/run-history.md
-    on 2026-10-01 (dev runs 44/46) -- TECH-DEBT.md's 2026-10-01 row: this list's
+  - "Older next_actions entries (runs 22-38) archived to docs/factory/run-history.md
+    on 2026-10-01 (dev runs 44/46/47) -- TECH-DEBT.md's 2026-10-01 row: this list's
     unbounded growth was costing a real tool-output truncation on every lock-
-    acquisition read. Keeping only the most recent ~8 entries here going forward;
+    acquisition read. Keeping only the most recent ~9 entries here going forward;
     full history (including these) stays in docs/factory/run-history.md, which
     nothing in scripts/factory/ reads -- safe to keep trimming the same way each run."
 security:
