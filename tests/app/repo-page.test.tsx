@@ -11,6 +11,7 @@ describe("Repo page (/repo/[slug])", () => {
       "dokploy",
       "langchain",
       "lazygit",
+      "llamaindex",
       "localai",
       "neovim",
       "ollama",
@@ -152,20 +153,58 @@ describe("Repo page (/repo/[slug])", () => {
     expect(screen.queryByText(/placeholder links/)).not.toBeInTheDocument();
   });
 
-  it("renders the Alternatives table leaving llamaindex unresolved (no content/repos/llamaindex.md yet)", async () => {
-    // langchain.md's frontmatter: alternatives.open_source = [llamaindex],
-    // commercial = [] — the real-content case that used to be covered by
-    // ollama's mixed resolved/unresolved rows before LocalAI got its own
-    // profile this run. LlamaIndex has no content/repos/llamaindex.md, so it
-    // must still render as an unresolved "Not yet profiled" row.
+  it("resolves langchain's own alternatives.open_source (llamaindex) now that it has a profile", async () => {
+    // langchain.md has listed alternatives.open_source: [llamaindex] since
+    // bootstrap — content/repos/llamaindex.md never existed until this run,
+    // so it previously rendered as an unresolved "Not yet profiled" row (see
+    // "renders the Alternatives table leaving tig/gitui unresolved" below for
+    // the current real-content unresolved case).
     const element = await RepoPage({ params: Promise.resolve({ slug: "langchain" }) });
     render(element);
 
     expect(screen.getByRole("heading", { level: 2, name: "Alternatives" })).toBeInTheDocument();
-    expect(screen.getByText("llamaindex")).toBeInTheDocument();
-    expect(screen.getByText("Not yet profiled")).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /llamaindex/i })).not.toBeInTheDocument();
-    expect(screen.queryByText("Commercial alternatives")).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "LlamaIndex" })).toHaveAttribute(
+      "href",
+      "/repo/llamaindex",
+    );
+    expect(screen.queryByText("Not yet profiled")).not.toBeInTheDocument();
+  });
+
+  it("renders /repo/llamaindex from content/repos/llamaindex.md, not a hardcoded string", async () => {
+    render(await RepoPage({ params: Promise.resolve({ slug: "llamaindex" }) }));
+
+    expect(screen.getByRole("heading", { level: 1, name: "LlamaIndex" })).toBeInTheDocument();
+    expect(screen.getByText(/📜 MIT/)).toBeInTheDocument();
+    expect(screen.getByText(/Open-source data framework for connecting large language models/)).toBeInTheDocument();
+    // The body's own "## Related Grove" section links back to the AI grove —
+    // proves this new content/repos/*.md file renders through the real page,
+    // not just through generateStaticParams.
+    expect(screen.getByRole("link", { name: "AI" })).toHaveAttribute("href", "/grove/ai");
+    // Its own alternatives.open_source (langchain) already exists, so it
+    // resolves to a real link rather than "Not yet profiled".
+    expect(screen.getByRole("link", { name: "LangChain" })).toHaveAttribute(
+      "href",
+      "/repo/langchain",
+    );
+  });
+
+  it("renders the Alternatives table leaving tig/gitui unresolved (no content/repos/{tig,gitui}.md yet)", async () => {
+    // lazygit.md's frontmatter: alternatives.open_source = [tig, gitui],
+    // commercial = [GitKraken, Sourcetree] — the current real-content case
+    // for an unresolved open-source row, now that LocalAI and LlamaIndex
+    // both have their own profiles.
+    const element = await RepoPage({ params: Promise.resolve({ slug: "lazygit" }) });
+    render(element);
+
+    expect(screen.getByRole("heading", { level: 2, name: "Alternatives" })).toBeInTheDocument();
+    expect(screen.getByText("tig")).toBeInTheDocument();
+    expect(screen.getByText("gitui")).toBeInTheDocument();
+    expect(screen.getAllByText("Not yet profiled").length).toBeGreaterThanOrEqual(2);
+    expect(screen.queryByRole("link", { name: /^tig$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /^gitui$/i })).not.toBeInTheDocument();
+    expect(screen.getByText("Commercial alternatives")).toBeInTheDocument();
+    expect(screen.getByText("GitKraken")).toBeInTheDocument();
+    expect(screen.getByText("Sourcetree")).toBeInTheDocument();
   });
 
   it("renders /repo/localai from content/repos/localai.md, not a hardcoded string", async () => {

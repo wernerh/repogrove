@@ -13,6 +13,8 @@ orchestrating agents.
 ## Core projects
 - [Ollama](/repo/ollama) — run large language models locally with a simple CLI/API.
 - [LangChain](/repo/langchain) — framework for composing LLM calls into applications.
+- [LlamaIndex](/repo/llamaindex) — data framework for connecting LLMs to your own
+  documents and data via retrieval-augmented generation (RAG).
 - [vLLM](/repo/vllm) — high-throughput inference and serving engine for production LLMs.
 - [LocalAI](/repo/localai) — OpenAI-compatible local inference server covering text,
   audio, image, and video models.
