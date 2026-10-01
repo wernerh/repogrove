@@ -15,9 +15,10 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 37: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03). Held off Phase 4 again;
-added LocalAI to the AI grove instead (PR #86). Next: re-check RG-7/8/9 each run;
-once resolved, pick up decision-free Phase 4 items.
+Run 38: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03). Held off Phase 4 again;
+added Dokploy to the Self-Hosted grove instead (PR #87, dangling `coolify.md` ref).
+Remaining one-off content gaps: LlamaIndex, tig, gitui, vim, helix, zed. Next:
+re-check RG-7/8/9 each run; once resolved, pick up decision-free Phase 4 items.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -54,7 +55,6 @@ None blocking (rule 8). RG-7/8/9 open (see Next action) — Phase 4 stays stubbe
 - [x] 2026-09-29/30 — `/alternative/:slug` (#61), `/compare/:a/:b` (#62),
   sitemap/robots (#64), `/search` (#63, ADR-008), newsletter form UI (#65, PR #71),
   basic news widget (#72, PR #74) — Phase 3 MVP gate complete.
-- [x] 2026-09-30/10-01 — Decision-free content: Developer Tools grove (#81);
-  Self-Hosted grove +PocketBase/Appwrite (#83); alternatives.commercial slug-display
-  fix (#84); backend-trio comparison pages (#85); LocalAI added to AI grove (#86).
-- [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (issues #76-78), awaiting owner
+- [x] 2026-09-30/10-01 — Decision-free content: dev-tools grove (#81); +PocketBase/
+  Appwrite (#83); commercial-slug fix (#84); comparisons (#85); LocalAI/Dokploy (#86/87).
+- [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (#76-78), awaiting owner

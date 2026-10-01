@@ -7,6 +7,20 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-01 — Dokploy (`content/repos/dokploy.md`, Apache-2.0) added to the Self-Hosted
+  grove — routine editorial content work done while Phase 4 feature work stays held
+  pending RG-7 (no owner reply yet, defaults 2026-10-03). Closes a dangling reference:
+  `coolify.md` has named `dokploy` under `alternatives.open_source` since it was added
+  (dev run 33), but no profile for it ever existed, so it rendered as "Not yet
+  profiled" on Coolify's page. `content/groves/self-hosted.md`'s "Core projects" list
+  extended. Facts verified against primary sources (dokploy.com, docs.dokploy.com's
+  enterprise/license-keys page) — an independent review subagent flagged the first
+  draft's licensing claim (an unverifiable specific license name + date, from a
+  secondary blog only) and its multi-server/Swarm claims as carrying the same
+  fabrication risk run 37's reviewer caught in LocalAI's content; rewrote the Cons
+  section to state only what docs.dokploy.com and a third-party maturity review
+  actually corroborate. 314/314 tests pass; PR #87 merged (6/6 checks green,
+  including the non-gating screenshot job). (dev)
 - 2026-10-01 — LocalAI (`content/repos/localai.md`, MIT) added to the AI grove —
   routine editorial content work done while Phase 4 feature work stays held pending
   RG-7 (no owner reply yet, defaults 2026-10-03). Closes a dangling reference: both

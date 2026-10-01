@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-10-01T01:13:14.565579+00:00",
+  "generated_at": "2026-10-01T03:16:56.084150+00:00",
   "product": {
     "current_version": "0.0.0-bootstrap",
     "current_focus": "Phase 3 MVP gate complete \u2014 Phase 4 owner decisions raised (RG-7/8/9), awaiting owner; Phase 4 feature work deliberately held while RG-7 is open"
   },
   "metrics": {
-    "runs": 51,
-    "features_completed": 20,
+    "runs": 52,
+    "features_completed": 21,
     "bugs_fixed": 8,
     "security_issues_fixed": 3,
     "deployments": 0,
