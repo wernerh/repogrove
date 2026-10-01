@@ -212,4 +212,47 @@ describe("Compare page (/compare/[a]/[b])", () => {
     expect(cells.length).toBeGreaterThan(0);
     cells.forEach((cell) => expect(cell.className).toContain("align-top"));
   });
+
+  it("wraps the Category value instead of letting it widen the table past the mobile viewport (UX-2026-006)", async () => {
+    // vLLM's category list (ai, llm, inference) is three items long — real
+    // content on main today, not a synthetic worst case. At the project's
+    // own 390px mobile screenshot viewport (playwright.config.ts), an
+    // un-constrained three-item Category value widens this table (no
+    // table-layout: fixed, so a cell avoids wrapping if it can) past the
+    // viewport, and the overflow-x-auto wrapper's horizontal scroll has no
+    // visual affordance — real text gets clipped at the viewport edge with
+    // no hint there's more (confirmed against the real, correctly-fonted
+    // compare-ollama-vllm__mobile-light.png screenshot, where vLLM's own
+    // three-item category list — ai, llm, inference — is cut off mid-word).
+    // Fixed by constraining the value's width below `sm` so it wraps onto a
+    // second line instead (content stays visible and in the a11y tree at
+    // every viewport) — not by hiding the row, which an earlier draft of
+    // this fix did and an independent review correctly flagged: `hidden` is
+    // `display:none`, removed from the accessibility tree too, so it would
+    // have also hidden the fact from a screen reader on the same mobile
+    // viewport where the bug was found, not just from sighted users.
+    const { container } = render(
+      await ComparePage({ params: Promise.resolve({ a: "ollama", b: "vllm" }) }),
+    );
+    const table = container.querySelector("table")!;
+    const categoryRow = within(table).getByText("Category").closest("tr")!;
+
+    // The row itself is never hidden at any breakpoint — only its value
+    // cells get a wrap-forcing max-width below `sm`.
+    expect(categoryRow.className).not.toContain("hidden");
+
+    const ollamaValue = within(categoryRow).getByText("ai, llm");
+    const vllmValue = within(categoryRow).getByText("ai, llm, inference");
+    for (const value of [ollamaValue, vllmValue]) {
+      expect(value.className).toContain("max-w-32");
+      expect(value.className).toContain("sm:max-w-none");
+      expect(value.className).toContain("break-words");
+    }
+
+    // The four other FactRows are untouched by this fix.
+    for (const label of ["Stars", "License", "Status", "Momentum"]) {
+      const row = within(table).getByText(label).closest("tr")!;
+      expect(row.className).not.toContain("hidden");
+    }
+  });
 });

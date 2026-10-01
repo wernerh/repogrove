@@ -174,7 +174,22 @@ export default async function ComparePage({ params }: PageProps) {
               label="Category"
               repos={repos}
               render={(repo) => (
-                <span className="text-text-secondary">{repo.category.join(", ")}</span>
+                // UX-2026-006: no `table-layout: fixed` on this table, so a
+                // cell avoids wrapping if it can — an unconstrained category
+                // list (3+ items, e.g. vLLM's "ai, llm, inference") widens
+                // the whole table past the mobile viewport instead of
+                // wrapping to a second line, and the `overflow-x-auto`
+                // wrapper's resulting horizontal scroll has no visual
+                // affordance, silently clipping real content at the
+                // viewport edge. `inline-block` (so `max-w`/wrapping apply
+                // to this otherwise-inline `span`) plus `max-w-32` below
+                // `sm` forces a wrap onto a second line instead — content
+                // stays visible and in the accessibility tree at every
+                // viewport, never hidden; `sm:max-w-none` restores the
+                // single-line desktop/tablet rendering this had before.
+                <span className="inline-block max-w-32 text-text-secondary break-words sm:max-w-none">
+                  {repo.category.join(", ")}
+                </span>
               )}
             />
           </tbody>
