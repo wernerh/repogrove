@@ -21,9 +21,10 @@ describe("Homepage", () => {
     );
     // Grove card footer — repo count, from getReposInGrove, not hand-copied.
     // AI: Ollama, LangChain, vLLM, LocalAI (4). Developer Tools: Neovim, LazyGit (2).
-    // Self-Hosted: Supabase, Coolify, Appwrite, PocketBase (4).
-    expect(screen.getAllByText("4 repos")).toHaveLength(2);
+    // Self-Hosted: Supabase, Coolify, Appwrite, PocketBase, Dokploy (5).
+    expect(screen.getByText("4 repos")).toBeInTheDocument();
     expect(screen.getByText("2 repos")).toBeInTheDocument();
+    expect(screen.getByText("5 repos")).toBeInTheDocument();
 
     // Repos — from content/repos/*.md, rendered as cards.
     expect(screen.getByRole("link", { name: "Ollama" })).toHaveAttribute("href", "/repo/ollama");
@@ -55,9 +56,9 @@ describe("Homepage", () => {
 
   it("renders each repo/Grove card as exactly one link (single focus stop, no nested interactives)", () => {
     render(<Home />);
-    // 3 Grove cards + 10 repo cards = 13 card links; the header's own "RepoGrove"
+    // 3 Grove cards + 11 repo cards = 14 card links; the header's own "RepoGrove"
     // wordmark link isn't part of this render (Home doesn't mount RootLayout).
-    expect(screen.getAllByRole("link")).toHaveLength(13);
+    expect(screen.getAllByRole("link")).toHaveLength(14);
   });
 
   it("renders the RepoGrove Weekly newsletter signup section (issue #65, form UI only)", () => {

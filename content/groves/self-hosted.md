@@ -17,6 +17,8 @@ Projects that let you replace a hosted SaaS with something you run and control y
   storage, functions, messaging).
 - [PocketBase](/repo/pocketbase) — open-source backend in a single file (SQLite, auth,
   storage, realtime API).
+- [Dokploy](/repo/dokploy) — self-hostable PaaS for deploying apps, databases, and
+  Compose stacks across your own servers, including multi-server Docker Swarm clusters.
 
 ## Related Groves
 AI, Developer Tools
