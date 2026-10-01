@@ -541,11 +541,17 @@ describe("getAllComparisons (real /content fixtures)", () => {
       "coolify-vs-dokploy",
       "gitui-vs-lazygit",
       "gitui-vs-tig",
+      "helix-vs-neovim",
+      "helix-vs-vim",
+      "helix-vs-zed",
       "lazygit-vs-tig",
       "localai-vs-ollama",
       "localai-vs-vllm",
+      "neovim-vs-vim",
+      "neovim-vs-zed",
       "ollama-vs-vllm",
       "pocketbase-vs-supabase",
+      "vim-vs-zed",
     ]);
   });
 
