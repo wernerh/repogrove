@@ -20,6 +20,7 @@ describe("Repo page (/repo/[slug])", () => {
       "supabase",
       "vim",
       "vllm",
+      "zed",
     ]);
   });
 
@@ -203,25 +204,27 @@ describe("Repo page (/repo/[slug])", () => {
       "href",
       "/grove/developer-tools",
     );
-    // Its own alternatives.open_source (neovim, helix) now both resolve to
-    // real links; zed stays unresolved (no content/repos/zed.md yet).
+    // Its own alternatives.open_source (neovim, helix, zed) now all resolve
+    // to real links — zed.md closed the last dangling reference this run.
     expect(screen.getByRole("link", { name: "Neovim" })).toHaveAttribute("href", "/repo/neovim");
     expect(screen.getByRole("link", { name: "Helix" })).toHaveAttribute("href", "/repo/helix");
-    expect(screen.getByText("zed")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Zed" })).toHaveAttribute("href", "/repo/zed");
   });
 
-  it("resolves Neovim's own alternatives.open_source (vim, helix) now that both have profiles", async () => {
+  it("resolves Neovim's own alternatives.open_source (vim, helix, zed) now that all three have profiles", async () => {
     // neovim.md has listed alternatives.open_source: [vim, helix, zed] since
-    // it was added (dev run 33) — content/repos/vim.md and content/repos/
-    // helix.md didn't exist until later runs, so both previously rendered as
-    // unresolved "Not yet profiled" rows; zed remains the real unresolved case.
+    // it was added (dev run 33) — content/repos/vim.md, content/repos/
+    // helix.md, and content/repos/zed.md didn't all exist until later runs,
+    // so each rendered as an unresolved "Not yet profiled" row in turn; zed
+    // was the last of the three, closed this run.
     const element = await RepoPage({ params: Promise.resolve({ slug: "neovim" }) });
     render(element);
 
     expect(screen.getByRole("link", { name: "Vim" })).toHaveAttribute("href", "/repo/vim");
     expect(screen.getByRole("link", { name: "Helix" })).toHaveAttribute("href", "/repo/helix");
-    expect(screen.getByText("zed")).toBeInTheDocument();
-    expect(screen.getAllByText("Not yet profiled").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByRole("link", { name: "Zed" })).toHaveAttribute("href", "/repo/zed");
+    // No unresolved rows left — zed.md was the last dangling reference.
+    expect(screen.queryByText("Not yet profiled")).not.toBeInTheDocument();
   });
 
   it("renders /repo/helix from content/repos/helix.md, not a hardcoded string", async () => {
@@ -239,12 +242,33 @@ describe("Repo page (/repo/[slug])", () => {
       "href",
       "/grove/developer-tools",
     );
-    // Its own alternatives.open_source (vim, neovim) already exist, so both
-    // resolve to real links rather than "Not yet profiled"; zed stays
-    // unresolved (no content/repos/zed.md yet).
+    // Its own alternatives.open_source (vim, neovim, zed) now all resolve to
+    // real links — zed.md closed the last dangling reference this run.
     expect(screen.getByRole("link", { name: "Vim" })).toHaveAttribute("href", "/repo/vim");
     expect(screen.getByRole("link", { name: "Neovim" })).toHaveAttribute("href", "/repo/neovim");
-    expect(screen.getByText("zed")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Zed" })).toHaveAttribute("href", "/repo/zed");
+  });
+
+  it("renders /repo/zed from content/repos/zed.md, not a hardcoded string", async () => {
+    render(await RepoPage({ params: Promise.resolve({ slug: "zed" }) }));
+
+    expect(screen.getByRole("heading", { level: 1, name: "Zed" })).toBeInTheDocument();
+    expect(screen.getByText(/📜 GPL-3.0 \/ AGPL-3.0/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/A GPU-accelerated code editor built from scratch in Rust/),
+    ).toBeInTheDocument();
+    // The body's own "## Related Grove" section links back to Developer
+    // Tools — proves this new content/repos/*.md file renders through the
+    // real page, not just through generateStaticParams.
+    expect(screen.getByRole("link", { name: "Developer Tools" })).toHaveAttribute(
+      "href",
+      "/grove/developer-tools",
+    );
+    // Its own alternatives.open_source (vim, neovim, helix) all already
+    // exist, so all three resolve to real links.
+    expect(screen.getByRole("link", { name: "Vim" })).toHaveAttribute("href", "/repo/vim");
+    expect(screen.getByRole("link", { name: "Neovim" })).toHaveAttribute("href", "/repo/neovim");
+    expect(screen.getByRole("link", { name: "Helix" })).toHaveAttribute("href", "/repo/helix");
   });
 
   it("renders the Alternatives table leaving tig/gitui unresolved (no content/repos/{tig,gitui}.md yet)", async () => {

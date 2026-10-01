@@ -19,6 +19,8 @@ the small utilities that add up to a faster, more enjoyable workflow.
   memorize every subcommand.
 - [Helix](/repo/helix) — a Rust-built modal editor with multi-cursor selections, LSP,
   and Tree-sitter built in from the start.
+- [Zed](/repo/zed) — a GPU-accelerated, GUI-first editor built in Rust with
+  real-time multiplayer editing built into the core.
 
 ## Related Groves
 AI, Self-Hosted
