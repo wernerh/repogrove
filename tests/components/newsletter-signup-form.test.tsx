@@ -58,4 +58,15 @@ describe("NewsletterSignupForm", () => {
     expect(screen.getByRole("status")).toHaveTextContent(/aren.t open yet/i);
     expect(fetchSpy).not.toHaveBeenCalled();
   });
+
+  // TECH-DEBT.md's 2026-09-30 "design" row: a `focus:ring-offset-2` button
+  // with no `ring-offset-color` falls back to Tailwind's default (white),
+  // visible as a light halo against dark-mode surfaces. Regression guard
+  // for the DESIGN-SYSTEM.md "Focus rings" convention (fixed design run 16).
+  it("pairs its submit button's focus ring offset with the themed bg-default token, not the browser default", () => {
+    render(<NewsletterSignupForm />);
+    const button = screen.getByRole("button", { name: /notify me/i });
+    expect(button.className).toContain("focus:ring-offset-2");
+    expect(button.className).toContain("focus:ring-offset-bg-default");
+  });
 });

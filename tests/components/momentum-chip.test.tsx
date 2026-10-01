@@ -99,4 +99,15 @@ describe("MomentumChip", () => {
     // useful before deciding whether to press it.
     expect(screen.getByRole("button", { name: /active.*show momentum signals/i })).toBeInTheDocument();
   });
+
+  // TECH-DEBT.md's 2026-09-30 "design" row: a `focus:ring-offset-2` button
+  // with no `ring-offset-color` falls back to Tailwind's default (white),
+  // visible as a light halo against dark-mode surfaces. Regression guard
+  // for the DESIGN-SYSTEM.md "Focus rings" convention (fixed design run 16).
+  it("pairs its focus ring offset with the themed bg-default token, not the browser default", () => {
+    render(<MomentumChip heat={heat()} />);
+    const button = screen.getByRole("button", { name: /active/i });
+    expect(button.className).toContain("focus:ring-offset-2");
+    expect(button.className).toContain("focus:ring-offset-bg-default");
+  });
 });

@@ -283,6 +283,15 @@ premature scale CLAUDE.md §4 asks the design lane to avoid.
   dropdown open). Easing: `ease-out` for entrances, `ease-in` for exits. Respect
   `prefers-reduced-motion` — disable non-essential transitions (fine for hover-color, must
   disable for anything that moves position/size) when set.
+- **Focus rings:** `focus:ring-2 focus:ring-cta-fill`, and when the ring needs breathing
+  room from the element's own fill (`focus:ring-offset-2`), always pair it with
+  `focus:ring-offset-bg-default` — never the Tailwind default (`white`), which shows as a
+  visible light halo between the ring and the element in dark mode. `bg.default` is the
+  semantic token already used for the page background every current `ring-offset-2` button
+  sits directly on (`NewsletterSignupForm`'s submit button, `MomentumChip`'s disclosure
+  button); if a future button sits on a `bg.subtle`/`bg.elevated` surface instead, match
+  the ring-offset to *that* surface's token, not `bg.default` by default. Fixed
+  2026-10-01 (design run 16) — see TECH-DEBT.md's 2026-09-30 "design" row.
 
 ## Component patterns (specs — dev/design lanes implement against these as pages land;
 **built** notes below mark which ones have real code)
