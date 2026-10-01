@@ -544,6 +544,7 @@ describe("getAllComparisons (real /content fixtures)", () => {
       "helix-vs-neovim",
       "helix-vs-vim",
       "helix-vs-zed",
+      "langchain-vs-llamaindex",
       "lazygit-vs-tig",
       "localai-vs-ollama",
       "localai-vs-vllm",
@@ -588,12 +589,25 @@ describe("getComparisonsForRepo", () => {
   });
 
   it("returns an empty array for a repo with no comparisons", () => {
-    // langchain has no comparison content file at all — coolify (the
-    // previous fixture here) now has one (coolify-vs-dokploy), and every AI
-    // grove repo except langchain/llamaindex now has at least one comparison
-    // too, so langchain is the real fixture for this "no comparisons at all"
-    // case.
-    expect(getComparisonsForRepo("langchain")).toEqual([]);
+    // Every real repo now has at least one comparison content file (langchain
+    // and llamaindex, the last pair without one, gained langchain-vs-llamaindex
+    // this run), so there's no remaining real-repo fixture for "no comparisons
+    // at all" — getComparisonsForRepo is a pure filter over repoSlugs with no
+    // repo-existence check, so a slug naming no real repo exercises the same
+    // empty branch just as validly.
+    expect(getComparisonsForRepo("not-a-real-repo-slug")).toEqual([]);
+  });
+
+  it("finds the comparison for the AI grove's langchain/llamaindex pair", () => {
+    // langchain and llamaindex list only each other under
+    // alternatives.open_source — a single mutual pair, not a trio, so each
+    // side gets exactly one comparison (same shape as coolify/dokploy above).
+    expect(getComparisonsForRepo("langchain").map((c) => c.slug)).toEqual([
+      "langchain-vs-llamaindex",
+    ]);
+    expect(getComparisonsForRepo("llamaindex").map((c) => c.slug)).toEqual([
+      "langchain-vs-llamaindex",
+    ]);
   });
 
   it("sorts multiple comparisons for the same repo by the other repo's name", () => {

@@ -393,15 +393,14 @@ describe("Repo page (/repo/[slug])", () => {
     );
   });
 
-  it("omits the 'Compared with' section for a repo with no comparison content file", async () => {
-    // coolify (the previous fixture here) now has a comparison of its own
-    // (coolify-vs-dokploy) — langchain has none, so it's the real fixture
-    // for this "no comparisons at all" case.
-    const element = await RepoPage({ params: Promise.resolve({ slug: "langchain" }) });
-    render(element);
-
-    expect(screen.queryByRole("heading", { level: 2, name: "Compared with" })).not.toBeInTheDocument();
-  });
+  // The "omits the 'Compared with' section for a repo with no comparison
+  // content file" case no longer has a real-repo fixture — every repo now has
+  // at least one comparison content file (langchain-vs-llamaindex closed the
+  // last gap) — so it moved to tests/app/repo-page-no-comparisons.test.tsx,
+  // which mocks getComparisonsForRepo instead of relying on a real repo
+  // happening to have none (same isolation pattern repo-page-releases-empty's
+  // own doc comment and TECH-DEBT.md's 2026-09-30 row establish for this
+  // exact kind of real-data coupling).
 
   it("renders the 'Latest' releases section against the real committed database without crashing (issue #72)", async () => {
     // Deliberately a structural smoke test, not a specific-content assertion: the real
