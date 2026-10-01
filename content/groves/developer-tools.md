@@ -21,6 +21,10 @@ the small utilities that add up to a faster, more enjoyable workflow.
   and Tree-sitter built in from the start.
 - [Zed](/repo/zed) — a GPU-accelerated, GUI-first editor built in Rust with
   real-time multiplayer editing built into the core.
+- [Tig](/repo/tig) — the original ncurses-based git repository browser, also usable
+  as a `git log`/`git diff` pager.
+- [GitUI](/repo/gitui) — a Rust-built terminal git UI focused on staging speed and
+  very large repository histories.
 
 ## Related Groves
 AI, Self-Hosted
