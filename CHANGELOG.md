@@ -1045,3 +1045,30 @@ entries.
   CI. PR #96 merged (3/3 gating checks green). Real-screenshot re-review of the
   rendered fix is next design run's first job (the post-merge `commit-screenshots`
   run was still in progress when this run closed out). (design)
+- 2026-10-01 — UX-2026-006, re-diagnosed and re-fixed: the real-screenshot re-review
+  the prior run queued up found that fix's own `commit-screenshots` CI job had
+  produced **zero diff** — the real, correctly-fonted screenshot was pixel-identical
+  before and after that merge, meaning the fix had no actual effect in production.
+  Root-caused with a real Chromium/Playwright reproduction of the exact table (real
+  compiled `globals.css`, real component markup) at the project's 390/768/1440px
+  viewports: the table's `min-w-[24rem]` (384px) applied unconditionally, including
+  below `sm`, while `RootLayout`'s `main max-w-3xl px-6` leaves only 342px of content
+  width at the 390px mobile viewport — 384 > 342 always, regardless of Category's
+  content, which is what actually forced the silent `overflow-x-auto` clipping on
+  every mobile pageview of this route. Scoped the floor to `sm:min-w-[24rem]`
+  instead (never applies below 640px; tablet/desktop unchanged, since natural
+  content there already exceeds 384px), keeping the first fix's `max-w-32`/
+  `break-words` Category wrap as a second, independent guard. Independent review
+  (subagent) caught that the new regression test was itself class-presence-only —
+  the same blind spot that let the first fix ship broken — so added a generic,
+  durable rendered-geometry check to the Playwright screenshot harness instead
+  (every route × viewport: no `overflow-x: auto|scroll` element may have
+  `scrollWidth` exceeding `clientWidth`), verified against both the pre- and
+  post-fix reproductions before relying on it. 333/333 tests pass (2 new), lint/
+  `tsc --noEmit` clean; `npm run build` reproduced the known ADR-006 sandbox
+  font-fetch gap, left to CI. PR #99 merged (5/5 gating checks green, including the
+  real Playwright/axe-core run — 48/48 checks passed, our new overflow check
+  included); post-merge `commit-screenshots` finally produced a real diff this
+  time, and the refreshed `compare-ollama-vllm__mobile-*.png` screenshots were
+  reviewed directly this same run — vLLM's full "ai, llm, inference" now renders
+  with clear margin before the viewport edge, no clipping. (design)
