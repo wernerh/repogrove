@@ -8,6 +8,7 @@ describe("Repo page (/repo/[slug])", () => {
     expect(params.map((p) => p.slug).sort()).toEqual([
       "appwrite",
       "coolify",
+      "dokploy",
       "langchain",
       "lazygit",
       "localai",
@@ -181,6 +182,37 @@ describe("Repo page (/repo/[slug])", () => {
     // both resolve to real links rather than "Not yet profiled".
     expect(screen.getByRole("link", { name: "Ollama" })).toHaveAttribute("href", "/repo/ollama");
     expect(screen.getByRole("link", { name: "vLLM" })).toHaveAttribute("href", "/repo/vllm");
+  });
+
+  it("renders /repo/dokploy from content/repos/dokploy.md, not a hardcoded string", async () => {
+    render(await RepoPage({ params: Promise.resolve({ slug: "dokploy" }) }));
+
+    expect(screen.getByRole("heading", { level: 1, name: "Dokploy" })).toBeInTheDocument();
+    expect(screen.getByText(/📜 Apache-2\.0/)).toBeInTheDocument();
+    expect(screen.getByText(/Dokploy wraps Docker and Docker Swarm/)).toBeInTheDocument();
+    // The body's own "## Related Grove" section links back to Self-Hosted —
+    // proves this new content/repos/*.md file renders through the real page,
+    // not just through generateStaticParams.
+    expect(screen.getByRole("link", { name: "Self-Hosted" })).toHaveAttribute(
+      "href",
+      "/grove/self-hosted",
+    );
+    // Its own alternatives.open_source (coolify) already existed before this
+    // repo did, so it resolves to a real link rather than "Not yet profiled".
+    expect(screen.getByRole("link", { name: "Coolify" })).toHaveAttribute("href", "/repo/coolify");
+  });
+
+  it("resolves Coolify's own alternatives.open_source (dokploy) now that it has a profile", async () => {
+    // coolify.md has listed alternatives.open_source: [dokploy] since it was
+    // added (dev run 33) — content/repos/dokploy.md never existed until this
+    // run, so it previously rendered as an unresolved "Not yet profiled" row,
+    // the same kind of dangling-reference gap LocalAI/PocketBase/Appwrite
+    // closed in earlier runs.
+    const element = await RepoPage({ params: Promise.resolve({ slug: "coolify" }) });
+    render(element);
+
+    expect(screen.getByRole("link", { name: "Dokploy" })).toHaveAttribute("href", "/repo/dokploy");
+    expect(screen.queryByText("Not yet profiled")).not.toBeInTheDocument();
   });
 
   it("renders a 'Compared with' cross-link for a repo named in a /compare/:a/:b content file (issue #62)", async () => {

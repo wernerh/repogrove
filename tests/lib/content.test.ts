@@ -33,6 +33,7 @@ describe("getAllRepos (real /content fixtures)", () => {
     expect(slugs).toEqual([
       "appwrite",
       "coolify",
+      "dokploy",
       "langchain",
       "lazygit",
       "localai",
@@ -93,6 +94,7 @@ describe("getReposInGrove (derived from repo frontmatter, per ADR-003)", () => {
     expect(reposInSelfHosted.map((r) => r.slug).sort()).toEqual([
       "appwrite",
       "coolify",
+      "dokploy",
       "pocketbase",
       "supabase",
     ]);
