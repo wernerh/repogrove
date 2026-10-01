@@ -143,6 +143,36 @@ describe("Compare page (/compare/[a]/[b])", () => {
     ).toBeInTheDocument();
   });
 
+  it("renders /compare/langchain/llamaindex from content/comparisons/langchain-vs-llamaindex.md", async () => {
+    // langchain.md and llamaindex.md have listed each other under
+    // alternatives.open_source since llamaindex.md was added (run 39) — this
+    // is the comparison page that finally closes that pair out, the last
+    // mutual pair in content/ without one.
+    const { container } = render(
+      await ComparePage({ params: Promise.resolve({ a: "langchain", b: "llamaindex" }) }),
+    );
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "LangChain vs LlamaIndex" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "LangChain" })).toHaveAttribute(
+      "href",
+      "/repo/langchain",
+    );
+    expect(screen.getByRole("link", { name: "LlamaIndex" })).toHaveAttribute(
+      "href",
+      "/repo/llamaindex",
+    );
+
+    const table = container.querySelector("table")!;
+    expect(within(table).getAllByText(/MIT/).length).toBeGreaterThan(0);
+
+    expect(screen.getByRole("heading", { level: 2, name: "How they differ" })).toBeInTheDocument();
+    expect(
+      screen.getByText(/LangChain is built around general-purpose orchestration/),
+    ).toBeInTheDocument();
+  });
+
   it("resolves the reverse URL order (/compare/vllm/ollama) to the same content, rendered in canonical order", async () => {
     const { container: forward } = render(
       await ComparePage({ params: Promise.resolve({ a: "ollama", b: "vllm" }) }),
