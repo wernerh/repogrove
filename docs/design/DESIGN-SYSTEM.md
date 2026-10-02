@@ -241,15 +241,27 @@ editorial body -> alternatives -> related Grove in the main column; "Compared wi
 Latest never sits above the lede); ⭐ emoji replaced by an amber `StarIcon` everywhere; list
 bullets removed from chip lists.
 
-**Deliberately not built from the mockups (no backing data — not fabricated; file dev-lane
-issues if wanted):** "Health Index 98/100", "Maintainer velocity / releases last 90d" tiles,
-"Architectural Anatomy", Quick Start tabs, Language Composition bar, "Community Pulse"
-(Discord/Reddit), commit-density chart, "Recent Project Milestones", an "Editorial Curator
-Verdict" block, "Track this Grove", a Most-Stars/Name sort toggle, an "Index 2025.04"
-stamp, and ⌘K shortcuts. Homepage "Explore:" chips were prototyped and removed — they
-duplicated the Groves grid and broke the one-link-per-card invariant.
+**Details-page widgets built from real data (added same day after owner feedback that the
+first pass matched the look but not the details-page layout):** hero "Visit on GitHub" button
+with star count; "Direct alternative to:" chips (open-source + commercial alternatives); a
+4-tile stat strip (stargazers with growth, forks, contributors, open issues — em dash, never
+0, when untracked); sidebar **Repository ledger** (license, status, category, contributors,
+watchers, open issues, tracking since), **Grove neighbors** (same-Grove repos by stars),
+Compared with, Latest releases; and a main-column **"How it compares" matrix** (stars,
+contributors, forks, status, license across this repo and up to three profiled alternatives).
+Components: `RepoStatTiles`, `RepoLedger`, `GroveNeighbors`, `ComparisonMatrix`.
 
-**Verification:** 376/376 unit tests; the screenshot harness ran 48/48 (0 axe-core WCAG 2.1
+**Still not built — each needs data we do not hold (not fabricated; each is a dev-lane/owner
+item because it adds ingestion fields or hand-authored content-model fields):** Health Index;
+Quick Start tabs; Language Composition (ingestion doesn't capture language); Community Pulse
+(Discord/Reddit); commit-density / velocity chart (needs commit history, not just releases);
+"Architectural Anatomy" and free-text matrix rows (self-hosting, ideal workload); a numbered
+"Why engineers choose it" grid and an "Editorial Curator Verdict" (would need structured
+content fields); "Track this Grove"; a Most-Stars/Name sort toggle; an "Index" date stamp;
+⌘K. Homepage "Explore:" chips were prototyped and removed — they duplicated the Groves grid
+and broke the one-link-per-card invariant.
+
+**Verification:** 383/383 unit tests; the screenshot harness ran 48/48 (0 axe-core WCAG 2.1
 A/AA violations, no horizontally overflowing scroller) across desktop/tablet/mobile ×
 light/dark. It caught one real regression during this work (mobile alternatives table
 overflowing its new card padding) — fixed by tightening mobile gutters (`px-4`, card `p-4`).
