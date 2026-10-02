@@ -34,8 +34,7 @@ of client SDKs.
 - Self-hosting via Docker is well documented
 
 ## Cons
-- More moving parts to operate self-hosted than a single-binary alternative like
-  PocketBase
+- More moving parts to operate self-hosted than a single-binary alternative like PocketBase
 - Its own document-style database, not raw SQL, unlike Supabase's Postgres
 
 ## Alternatives

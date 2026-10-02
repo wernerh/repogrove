@@ -33,20 +33,14 @@ one server or a multi-node Swarm cluster.
 - Traefik-based routing and TLS come configured by default
 
 ## Pros
-- Multi-server and Docker Swarm support is a first-class, built-in feature rather than
-  an add-on
+- Multi-server and Docker Swarm support is a first-class, built-in feature rather than an add-on
 - Large, fast-growing template catalog for one-click self-hosted services
 - Active development and a large community following its rapid growth
 
 ## Cons
-- Some enterprise features — SSO/SAML, audit logging, white-labeling, SCIM
-  provisioning, and custom roles — require a separate paid license key from the
-  Dokploy team; the core deployment platform itself stays Apache-2.0
-- Multi-server support orchestrates workloads across machines you provision and join
-  yourself — it doesn't provision servers, autoscale, or recover a dead node on its
-  own, so it suits a small, hand-managed fleet more than a large dynamic one
-- Self-hosting it means you're also responsible for its own security posture and
-  uptime
+- Some enterprise features — SSO/SAML, audit logging, white-labeling, SCIM provisioning, and custom roles — require a separate paid license key from the Dokploy team; the core deployment platform itself stays Apache-2.0
+- Multi-server support orchestrates workloads across machines you provision and join yourself — it doesn't provision servers, autoscale, or recover a dead node on its own, so it suits a small, hand-managed fleet more than a large dynamic one
+- Self-hosting it means you're also responsible for its own security posture and uptime
 
 ## Alternatives
 **Open-source:** Coolify.

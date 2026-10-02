@@ -355,6 +355,56 @@ function assertNoDuplicateListItems(items: string[], sectionLabel: string, sourc
 }
 
 /**
+ * Fails the build if a `## <heading>` bullet is word-wrapped onto a second
+ * physical line in the Markdown source. `extractListItems` only captures
+ * lines literally starting with "- ", so a wrapped continuation line is
+ * silently dropped rather than parse-erroring — caught for real on all 4
+ * Databases-grove repos' `## Pros`/`## Cons` during independent review
+ * (2026-10-02, PR #108), after the exact same bug class had already been
+ * found and fixed once for `content/alternatives/*.md`. `/compare/:a/:b`
+ * reuses each repo's own Pros/Cons via `extractListItems` (see its own doc
+ * comment), so a wrapped bullet there renders truncated mid-sentence on a
+ * live page with no parse error to catch it. A generic, durable build-time
+ * check here — same "durable check, not a one-off fix" rule the design lane
+ * applied to UX-2026-006's rendered-geometry overflow check — means a future
+ * wrapped bullet fails CI instead of truncating silently.
+ *
+ * Detection: any non-blank, non-"- "-prefixed line immediately following a
+ * bullet line (or another such continuation line) within the section, before
+ * a blank line or the next `## ` heading, is a wrapped continuation. A
+ * deliberate blank-line-separated closing sentence after the bullets isn't
+ * flagged — only a line directly glued onto the previous one is.
+ */
+function assertNoWrappedListItems(body: string, heading: string, source: string): void {
+  const lines = body.split("\n");
+  const headingLine = `## ${heading}`.toLowerCase();
+  const startIdx = lines.findIndex((line) => line.trim().toLowerCase() === headingLine);
+  if (startIdx === -1) return;
+
+  let previousWasBullet = false;
+  for (let i = startIdx + 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line.toLowerCase().startsWith("## ")) break;
+    if (line === "") {
+      previousWasBullet = false;
+      continue;
+    }
+    if (line.startsWith("- ")) {
+      previousWasBullet = true;
+      continue;
+    }
+    if (previousWasBullet) {
+      throw new ContentValidationError(
+        `${source} has a "${heading}" bullet wrapped onto a second physical line (continuing with ` +
+          `"${line.slice(0, 40)}${line.length > 40 ? "…" : ""}") — extractListItems only captures lines ` +
+          `starting with "- ", so this continuation would be silently dropped on /compare/:a/:b. Put the ` +
+          `whole bullet on a single line.`,
+      );
+    }
+  }
+}
+
+/**
  * Validates `alternatives` frontmatter the way `assertNoGithubCollisions`
  * validates cross-file `github:` fields — fail the build loudly rather than
  * let a bad edit ship silently (CLAUDE.md §3.4). Independent review of the
@@ -445,6 +495,8 @@ export function parseRepo({ filename, data, body }: RawFile): Repo {
     commercial: optionalStringArray(altRaw, "commercial"),
   };
   assertValidAlternatives(alternatives, slug, source);
+  assertNoWrappedListItems(body, "Pros", source);
+  assertNoWrappedListItems(body, "Cons", source);
 
   return {
     slug,
@@ -481,6 +533,15 @@ export function parseAlternative({ filename, data, body }: RawFile): Alternative
   assertNoDuplicateListItems(free, "Free", source);
   assertNoDuplicateListItems(commercial, "Commercial", source);
   assertNoDuplicateListItems(bestFit, "Best fit", source);
+  // Same wrapped-bullet guard parseRepo applies to "Pros"/"Cons" — this file
+  // type (content/alternatives/*.md) is the one that already suffered this
+  // exact bug once for real (gitkraken.md/sourcetree.md's "Best fit" bullets,
+  // run 49), so it gets the same build-time protection on all four of its
+  // own list sections, not just the repo side.
+  assertNoWrappedListItems(body, "Open source", source);
+  assertNoWrappedListItems(body, "Free", source);
+  assertNoWrappedListItems(body, "Commercial", source);
+  assertNoWrappedListItems(body, "Best fit", source);
 
   return { slug, product, category, openSource, free, commercial, bestFit };
 }

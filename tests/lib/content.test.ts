@@ -350,6 +350,111 @@ describe("parseRepo — malformed frontmatter fails loudly", () => {
     });
     expect(repo.alternatives.commercial).toEqual(["Firebase", "AWS Amplify"]);
   });
+
+  it("throws when a Pros bullet is word-wrapped onto a second physical line", () => {
+    // extractListItems (used by /compare/:a/:b to reuse a repo's own Pros/
+    // Cons) only captures lines literally starting with "- ", so a wrapped
+    // continuation line is silently dropped rather than failing to parse —
+    // found for real on 4 Databases-grove repos during review (PR #108).
+    // This locks the build-time guard in: a wrapped bullet must fail loudly
+    // here instead of truncating silently on a live compare page.
+    expect(() =>
+      parseRepo({
+        filename: "wrapped.md",
+        body: [
+          "Body text",
+          "",
+          "## Pros",
+          "- A bullet that wraps onto a",
+          "  second physical line",
+        ].join("\n"),
+        data: {
+          github: "acme/wrapped",
+          name: "Wrapped",
+          category: ["ai"],
+          license: "MIT",
+          status: "active",
+          groves: ["ai"],
+        },
+      }),
+    ).toThrow(/"Pros" bullet wrapped onto a second physical line/);
+  });
+
+  it("throws when a Cons bullet is word-wrapped onto a second physical line", () => {
+    expect(() =>
+      parseRepo({
+        filename: "wrapped.md",
+        body: [
+          "Body text",
+          "",
+          "## Cons",
+          "- A bullet that wraps onto a",
+          "  second physical line",
+        ].join("\n"),
+        data: {
+          github: "acme/wrapped",
+          name: "Wrapped",
+          category: ["ai"],
+          license: "MIT",
+          status: "active",
+          groves: ["ai"],
+        },
+      }),
+    ).toThrow(/"Cons" bullet wrapped onto a second physical line/);
+  });
+
+  it("accepts Pros/Cons bullets that each stay on a single physical line", () => {
+    const repo = parseRepo({
+      filename: "fine.md",
+      body: [
+        "Body text",
+        "",
+        "## Pros",
+        "- A short bullet",
+        "- Another short bullet",
+        "",
+        "## Cons",
+        "- Yet another short bullet",
+      ].join("\n"),
+      data: {
+        github: "acme/fine",
+        name: "Fine",
+        category: ["ai"],
+        license: "MIT",
+        status: "active",
+        groves: ["ai"],
+      },
+    });
+    expect(repo.name).toBe("Fine");
+  });
+
+  it("does not flag a deliberate blank-line-separated closing sentence after the bullets", () => {
+    // A non-bulleted line is only a wrapped-continuation risk when it's
+    // glued directly onto the previous bullet line with no blank line in
+    // between — a paragraph after a blank line is ordinary prose, not a
+    // truncated bullet, and extractListItems already stops collecting once
+    // it hits a non-"- " line anyway.
+    const repo = parseRepo({
+      filename: "fine.md",
+      body: [
+        "Body text",
+        "",
+        "## Pros",
+        "- A short bullet",
+        "",
+        "A closing sentence, deliberately not a bullet.",
+      ].join("\n"),
+      data: {
+        github: "acme/fine",
+        name: "Fine",
+        category: ["ai"],
+        license: "MIT",
+        status: "active",
+        groves: ["ai"],
+      },
+    });
+    expect(repo.name).toBe("Fine");
+  });
 });
 
 describe("assertSlugIsKebabCase (filename -> slug validation)", () => {
@@ -713,6 +818,42 @@ describe("parseAlternative — malformed content fails loudly", () => {
     expect(alt.free).toEqual([]);
     expect(alt.commercial).toEqual([]);
     expect(alt.bestFit).toEqual([]);
+  });
+
+  it("throws when a Best fit bullet is word-wrapped onto a second physical line", () => {
+    // Same wrapped-bullet guard parseRepo applies to Pros/Cons (PR #108) —
+    // content/alternatives/*.md is the file type that already suffered this
+    // exact bug once for real (gitkraken.md/sourcetree.md's "Best fit"
+    // bullets, DECISIONS.md run 49), so it gets the same build-time
+    // protection on all four of its own list sections.
+    expect(() =>
+      parseAlternative({
+        filename: "wrapped.md",
+        body: [
+          "## Open source",
+          "- AppFlowy",
+          "",
+          "## Best fit",
+          "- A bullet that wraps onto a",
+          "  second physical line",
+        ].join("\n"),
+        data: { product: "Wrapped", category: "productivity" },
+      }),
+    ).toThrow(/"Best fit" bullet wrapped onto a second physical line/);
+  });
+
+  it("throws when an Open source bullet is word-wrapped onto a second physical line", () => {
+    expect(() =>
+      parseAlternative({
+        filename: "wrapped.md",
+        body: [
+          "## Open source",
+          "- A bullet that wraps onto a",
+          "  second physical line",
+        ].join("\n"),
+        data: { product: "Wrapped", category: "productivity" },
+      }),
+    ).toThrow(/"Open source" bullet wrapped onto a second physical line/);
   });
 
   it("treats a placeholder line with no bullet items as an empty list", () => {

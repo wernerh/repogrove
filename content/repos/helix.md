@@ -37,22 +37,15 @@ out of the box against a project's configured language servers.
   the editor is usable day to day
 
 ## Pros
-- Fast, responsive editing even on large files, consistent with its Rust
-  implementation
-- Built-in LSP and Tree-sitter support without installing or configuring separate
-  plugins
+- Fast, responsive editing even on large files, consistent with its Rust implementation
+- Built-in LSP and Tree-sitter support without installing or configuring separate plugins
 - Multi-cursor/multi-selection editing is a first-class primitive, not retrofitted
-- Config is declarative TOML (keymaps, settings, themes) — no scripting language
-  required to get a working setup
+- Config is declarative TOML (keymaps, settings, themes) — no scripting language required to get a working setup
 
 ## Cons
-- Vim/Neovim muscle memory doesn't transfer directly: Helix's selection-first model
-  reverses the order of motions and actions
-- No official, stable plugin system as of this writing — a community Scheme-based
-  scripting layer (Steel) exists but requires building from a fork, not mainline
-  releases
-- Much younger and smaller plugin/theme ecosystem than Vim or Neovim, since
-  extensibility has deliberately been kept out of the editor's core so far
+- Vim/Neovim muscle memory doesn't transfer directly: Helix's selection-first model reverses the order of motions and actions
+- No official, stable plugin system as of this writing — a community Scheme-based scripting layer (Steel) exists but requires building from a fork, not mainline releases
+- Much younger and smaller plugin/theme ecosystem than Vim or Neovim, since extensibility has deliberately been kept out of the editor's core so far
 
 ## Alternatives
 Vim and Neovim are the established modal editors Helix's selection-first model
