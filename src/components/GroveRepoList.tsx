@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import GroveRepoRow from "@/components/GroveRepoRow";
+import PaginationBar from "@/components/PaginationBar";
 import {
   DEFAULT_PER_PAGE,
   PER_PAGE_OPTIONS,
@@ -143,69 +144,13 @@ export default function GroveRepoList({ rows, groveName }: { rows: GroveRow[]; g
         </ul>
       )}
 
-      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 rounded-md border border-border-subtle bg-bg-elevated p-4 shadow-elevation-1">
-        <p aria-live="polite" className="whitespace-nowrap font-mono text-sm text-text-secondary">
-          Showing {view.from}–{view.to} of {view.total} {view.total === 1 ? "repository" : "repositories"}
-        </p>
-
-        {view.totalPages > 1 && (
-          <nav aria-label="Pagination" className="flex items-center gap-2">
-            <button
-              type="button"
-              aria-label="Previous page"
-              disabled={view.page === 1}
-              onClick={() => setPage(view.page - 1)}
-              className={`rounded-md border border-border-subtle px-3 py-1.5 font-sans text-sm text-text-default hover:bg-bg-subtle disabled:cursor-not-allowed disabled:opacity-40 ${FOCUS_RING}`}
-            >
-              <span aria-hidden="true">‹</span>
-            </button>
-            {Array.from({ length: view.totalPages }, (_, i) => i + 1).map((n) => (
-              <button
-                key={n}
-                type="button"
-                aria-label={`Page ${n}`}
-                aria-current={n === view.page ? "page" : undefined}
-                onClick={() => setPage(n)}
-                className={`min-w-9 rounded-md border px-3 py-1.5 font-mono text-sm ${FOCUS_RING} ${
-                  n === view.page
-                    ? "border-cta-fill bg-cta-fill text-cta-text"
-                    : "border-border-subtle text-text-default hover:bg-bg-subtle"
-                }`}
-              >
-                {n}
-              </button>
-            ))}
-            <button
-              type="button"
-              aria-label="Next page"
-              disabled={view.page === view.totalPages}
-              onClick={() => setPage(view.page + 1)}
-              className={`rounded-md border border-border-subtle px-3 py-1.5 font-sans text-sm text-text-default hover:bg-bg-subtle disabled:cursor-not-allowed disabled:opacity-40 ${FOCUS_RING}`}
-            >
-              <span aria-hidden="true">›</span>
-            </button>
-          </nav>
-        )}
-
-        <div role="group" aria-label="Repositories per page" className="flex items-center gap-2">
-          <span className="whitespace-nowrap font-mono text-sm text-text-secondary">Per page:</span>
-          {PER_PAGE_OPTIONS.map((n) => (
-            <button
-              key={n}
-              type="button"
-              aria-pressed={perPage === n}
-              onClick={() => resetTo({ perPage: n })}
-              className={`min-w-9 rounded-md border px-2 py-1 font-mono text-sm ${FOCUS_RING} ${
-                perPage === n
-                  ? "border-cta-fill bg-cta-fill text-cta-text"
-                  : "border-border-subtle text-text-default hover:bg-bg-subtle"
-              }`}
-            >
-              {n}
-            </button>
-          ))}
-        </div>
-      </div>
+      <PaginationBar
+        view={view}
+        perPage={perPage}
+        perPageOptions={PER_PAGE_OPTIONS}
+        onPageChange={setPage}
+        onPerPageChange={(n) => resetTo({ perPage: n })}
+      />
     </div>
   );
 }

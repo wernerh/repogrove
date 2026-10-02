@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getAllGroves, getAllRepos, getRepo, getReposInGrove } from "@/lib/content";
 import { getGrowthSummaries } from "@/lib/snapshots";
 import GroveCard from "@/components/GroveCard";
+import PaginatedCardGrid from "@/components/PaginatedCardGrid";
 import RepoCard from "@/components/RepoCard";
 import NewsletterSignupForm from "@/components/NewsletterSignupForm";
 
@@ -80,19 +81,22 @@ export default function Home() {
           Repository intelligence pages — what it is, why people use it, and
           what to use instead.
         </p>
-        <ul className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-          {repos.map((repo) => (
-            <li key={repo.slug}>
-              <RepoCard
-                repo={repo}
-                stars={growthByRepo.get(repo.github)?.currentStars ?? null}
-                alternatives={repo.alternatives.open_source.map(
-                  (altSlug) => getRepo(altSlug)?.name ?? altSlug,
-                )}
-              />
-            </li>
-          ))}
-        </ul>
+        <div className="mt-6">
+          <PaginatedCardGrid
+            items={repos.map((repo) => ({
+              key: repo.slug,
+              node: (
+                <RepoCard
+                  repo={repo}
+                  stars={growthByRepo.get(repo.github)?.currentStars ?? null}
+                  alternatives={repo.alternatives.open_source.map(
+                    (altSlug) => getRepo(altSlug)?.name ?? altSlug,
+                  )}
+                />
+              ),
+            }))}
+          />
+        </div>
       </section>
 
       <section className="rounded-md border border-border-subtle bg-bg-elevated p-8 shadow-elevation-1">

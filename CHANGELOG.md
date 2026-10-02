@@ -7,6 +7,13 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-02 — Homepage "Repositories" section is now paginated (10 per page by default,
+  5 / 10 / 20 selectable) instead of one 22-card scroll. New `PaginatedCardGrid` (Client
+  Component; the Server Component pre-renders the `RepoCard`s and passes them down so the
+  fs-backed content loader stays out of the client bundle) and a shared `PaginationBar`
+  extracted from the Grove page's list (second caller). Page 1 is pre-rendered into the static
+  HTML; later pages render in the browser. 439 tests; axe 0 WCAG 2.1 A/AA violations
+  (light/dark × desktop/mobile). (design)
 - 2026-10-02 — Grove page (`/grove/[slug]`) rebuilt to the owner's "Developer Tools Grove"
   mockup: breadcrumb + updated date, header card with a four-figure stat strip (repos,
   collective stars, median daily star gain, maintenance-status bar) and license mix; a
