@@ -7,6 +7,24 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-02 — Security run 11: SEC-006 — the owner provisioned a real Azure Static Web
+  Apps deployment directly (`c0a5938`/`c6e47df`), and `push`-to-`main` now deploys for
+  real (confirmed green). With a live deployment for the first time, added
+  `public/staticwebapp.config.json` setting `X-Content-Type-Options`, `X-Frame-Options`,
+  `Referrer-Policy` and a `Permissions-Policy` denying every powerful browser feature
+  this site's code never uses — headers-only, no routing change, regression-tested
+  (`tests/infra/staticwebapp-config.test.ts`, written failing first). Reviewed the new
+  deploy workflow itself (job-scoped `permissions`, secrets referenced only via the
+  `secrets.*` context, no `pull_request_target`) and ruled out fork-PR secret
+  exfiltration via GitHub's own platform-level secret-withholding for fork-triggered
+  `pull_request` runs. `Content-Security-Policy` deliberately deferred — no
+  server/middleware for nonces on this static export, and no way to inspect a real
+  `out/` build or the live site itself from this sandbox (ADR-006's known font-fetch
+  gap; this lane never inspects live cloud resources). Flagged a discrepancy for the
+  dev lane in `DECISIONS.md`: RG-2/ADR-002 recorded "Azure Storage static-website
+  hosting," but what's actually live is Azure Static Web Apps, a related but distinct
+  product. 463 tests (6 new); lint/tsc clean; `npm audit` 0 vulnerabilities. See
+  `docs/security/findings/SEC-006-missing-security-headers.md`. (security)
 - 2026-10-02 — Dev run 59: added Portainer (`content/repos/portainer.md`, `portainer/portainer`,
   Zlib license) to the Self-Hosted grove — the next item from `PRODUCT.md` §2's own named
   example list (Coolify, Dokploy, CasaOS, Portainer, Immich, Nextcloud) not yet built.

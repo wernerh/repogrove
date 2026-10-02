@@ -50,6 +50,15 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
     name: Close Pull Request Job
+    # SEC-006 (independent review): this job had no explicit permissions
+    # block (unlike build_and_deploy_job's), so it fell back to the
+    # repo/org default GITHUB_TOKEN permission, unverifiable from here —
+    # the same class of gap SEC-001 already flagged elsewhere. It only
+    # needs to read the repo to check out the Action; it writes nothing
+    # via GITHUB_TOKEN (the Azure teardown call uses Azure's own API, not
+    # GitHub's).
+    permissions:
+      contents: read
     steps:
       - name: Close Pull Request
         id: closepullrequest

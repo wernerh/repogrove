@@ -606,3 +606,38 @@
     Re-checked 2026-10-02 (dev run 56) — no owner reply; stays open, no default applies.
 
     Re-checked 2026-10-02 (dev run 58) — no owner reply; stays open, no default applies.
+- id: RG-10
+  lane: security
+  question: >
+    Now that Azure Static Web Apps is live (you provisioned it directly, commit
+    `c0a5938`), its auto-generated CI workflow
+    (`.github/workflows/azure-static-web-apps-orange-sea-032472e10.yml`) deploys a real
+    preview environment on every pull request against `main` (`opened`/`synchronize`/
+    `reopened`), not only on a push to `main` — confirmed already happening today, using
+    the live `AZURE_STATIC_WEB_APPS_API_TOKEN_...` secret, on every factory-lane PR
+    (dev/design/security alike). This is Azure's own standard scaffold for connecting a
+    GitHub repo to a Static Web App, and is very likely exactly what you want (PR
+    previews are the whole point of that feature) — but it's a different thing than "CI
+    validates lint/test/build only," means every PR now touches a live cloud resource,
+    and sits in some tension with `ADR-002-hosting.md`'s "deploy-related work... stays
+    stubbed... rather than half-built against unconfirmed credentials" language, written
+    before this resource existed. Found during an independent security review of PR
+    #123 (SEC-006) — not a vulnerability (same-repo PRs are already a trusted surface,
+    and GitHub withholds secrets from fork-triggered `pull_request` runs regardless), just
+    flagging the operational fact and checking it's wanted as-is.
+  options:
+    - "Keep PR previews as-is — this is intended, no change needed (recommended)"
+    - "Restrict the deploy workflow to push-to-main only (drop the pull_request trigger, lose PR previews)"
+  recommended_default: "Keep PR previews as-is — this is intended, no change needed (recommended)"
+  reversibility: cheap
+  asked_at: "2026-10-02T23:35:00Z"
+  email_thread_id: "1a0fef704e8671c2"
+  default_due_at: "2026-10-05T23:35:00Z"
+  status: OPEN
+  answer: null
+  answered_at: null
+  note: >
+    Cheap to reverse (just a workflow trigger) — given a default due date. Raised by the
+    security lane during PR #123's independent review (SEC-006), not by this lane
+    deciding unilaterally that per-PR previews are fine. Mirrored as needs-human issue
+    #124.
