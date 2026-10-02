@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-10-02T14:50:00Z"
-  holder: "dev"
-  last_run: "2026-10-02T13:16:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-10-02T14:50:00Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,14 +19,59 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 73
-  features_completed: 38
-  bugs_fixed: 11
+  runs: 74
+  features_completed: 39
+  bugs_fixed: 12
   security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
 
 next_actions:
+  - "2026-10-02 (run 56): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03T13:02:34Z) hasn't passed (~22h off at this run's start — the next dev
+    run should apply RG-7's recommended default, 'Hold', per
+    docs/DECISION-PROTOCOL.md's auto-default rule, if still unanswered by then).
+    RG-8/RG-9 have no default and stay open regardless. Held off Phase 4 feature work
+    again this run. Major task: completed the Databases grove's comparison matrix —
+    added content/comparisons/duckdb-vs-postgresql.md, clickhouse-vs-postgresql.md,
+    and clickhouse-vs-sqlite.md, closing the full mutual quartet (DuckDB/ClickHouse/
+    SQLite/PostgreSQL all already cross-referenced each other in
+    alternatives.open_source since run 55; only 3 of the 6 pairwise comparison pages
+    existed). PR #108: independent review (subagent, skeptical-senior-engineer pass)
+    found a real MAJOR — all 4 Databases repos' Pros/Cons bullets were wrapped across
+    2 source lines, which extractListItems() silently truncates (only lines starting
+    with '- ' are captured), so /compare pages for this grove were rendering
+    mid-sentence-truncated bullets live; fixed by rewrapping to single lines, verified
+    via a direct extractListItems() call showing full untruncated output before
+    merging. 369/369 tests pass (pre-fix), lint/tsc --noEmit clean, npm audit
+    --audit-level=high 0 vulnerabilities, all run locally; npm run build reproduced
+    the known ADR-006 sandbox font-fetch gap, left to CI's GitHub-hosted runner — all
+    5 checks green before squash-merging it myself. After merging #108, scanned the
+    rest of content/repos/*.md for the same wrapped-bullet pattern and found 11 more
+    affected files (appwrite, dokploy, gitui, helix, lazygit, llamaindex, localai,
+    pocketbase, tig, vim, zed) — decided to fix site-wide rather than leave known,
+    already-live tech debt. PR #109: rewrapped all 11 files' Pros/Cons to single
+    lines (wording verified unchanged via normalization diff) and added a new durable
+    build-time guard, assertNoWrappedListItems(), following the design lane's
+    UX-2026-006 precedent (a generic check over a one-off fix) — wired into
+    parseRepo() for Pros/Cons. A second independent review caught that the guard was
+    wired into parseRepo() only, leaving parseAlternative()'s Open source/Free/
+    Commercial/Best fit sections — the exact file type that already suffered this bug
+    once for real per DECISIONS.md's run-49 entry — with zero protection; fixed by
+    wiring the same guard into parseAlternative() for all 4 of its headings before
+    opening the PR. 375/375 tests pass (6 new), lint/tsc --noEmit clean, npm audit
+    0 vulnerabilities, all run locally; npm run build left to CI (known ADR-006 gap)
+    — CI went green post-lock-expiry (all 6 checks), merged once confirmed green at
+    close-out. Rejected two other candidate tasks this run: adding SurrealDB to the
+    Databases grove (BSL 1.1 is source-available, not OSI-approved open source — would
+    compromise the 'open-source ecosystem' positioning without a clear site policy on
+    source-available licenses) and adding PocketBase to the Databases grove (it's a
+    self-hosted BaaS, not a core database engine — stretches curation integrity).
+    CHANGELOG.md/PROJECT_STATE.md/DECISIONS.md/.factory/decisions.yaml updated. Next:
+    re-check RG-7/8/9 (apply RG-7's default if due date has passed); find the next
+    content gap — no known dangling-reference, missing-comparison, or wrapped-bullet
+    gaps remain."
   - "2026-10-02 (run 55): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03T13:02:34Z) hasn't passed (due tomorrow — the next dev run should apply
@@ -382,48 +427,13 @@ next_actions:
     highest-value shape as Firebase) and Vercel/Heroku/Netlify (named by coolify.md,
     dokploy.md — 2 repos) are the next commercial-alternative-page gaps if RG-7/8/9 are
     still open by then."
-  - "2026-10-01 (run 47): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
-    — still exactly the one original message, no owner reply. RG-7's default_due_at
-    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
-    Held off Phase 4 feature work again this run, consistent with runs 33-46. Fresh scan
-    of content/ (cross-referencing every content/repos/*.md's alternatives.open_source
-    against content/comparisons/*.md, picking up run 46's own next-action pointer):
-    confirmed zero dangling alternatives.open_source references anywhere (every repo
-    slug named resolves to a real content/repos/*.md file), but found one remaining
-    fully-mutual pair with no comparison page — langchain.md and llamaindex.md have
-    listed each other since llamaindex.md was added (run 39) but had no
-    content/comparisons/*.md file, the last gap of this kind. Major task: added
-    content/comparisons/langchain-vs-llamaindex.md, prose grounded entirely in facts
-    already stated in both repos' own content files (general-purpose orchestration vs.
-    retrieval-first data framework, Python-first flagship package, LlamaParse/LlamaCloud
-    as separate paid services) — no new external research needed. Independent review
-    (subagent, skeptical-senior-engineer pass) traced every claim back to the two repo
-    files, confirmed alphabetical slug ordering and format match, and found no
-    fabricated/unverified claims or other issues. Every repo in content/repos/ now has
-    at least one comparison, so two tests that used langchain as a 'no comparisons'
-    real-repo fixture needed updating: tests/lib/content.test.ts's empty-array test
-    swapped to a synthetic non-existent slug (the function is a pure filter with no
-    repo-existence check); tests/app/repo-page.test.tsx's 'omits Compared with' test
-    moved to a new isolated file, tests/app/repo-page-no-comparisons.test.tsx, mocking
-    getComparisonsForRepo to [] rather than depending on a real repo happening to have
-    none (same isolation pattern repo-page-releases-empty.test.tsx already established).
-    Also added a real /compare/langchain/llamaindex render test and a
-    getComparisonsForRepo test for the new pair. 332/332 tests pass, lint/tsc --noEmit
-    clean; npm run build left to CI (known ADR-006 sandbox font-fetch gap) — all 3
-    gating checks (CI, Factory guardrails, scripts/factory/check.py) green on PR #98
-    before squash-merging it myself; post-merge CI on main also confirmed green
-    (lint/test/build all passed for real, including a real next build). CHANGELOG.md/
-    PROJECT_STATE.md/DECISIONS.md/.factory/decisions.yaml updated. Next: re-check
-    RG-7/8/9; content/ has no known dangling-reference or missing-comparison gaps left
-    — a future decision-free run will need a new source of work (a fresh drift pass,
-    a content-accuracy audit, or one of TECH-DEBT.md's open low-severity dev-lane rows,
-    e.g. #32's Grove Heat v1 threshold-revisit row) if RG-7/8/9 are still open by then."
-  - "Older next_actions entries (runs 22-46) archived to docs/factory/run-history.md
-    on 2026-10-01/02 (dev runs 44/46/47/48/50/51/52/53/54/55) -- TECH-DEBT.md's 2026-10-01
-    row: this list's unbounded growth was costing a real tool-output truncation on every
-    lock-acquisition read. Keeping only the most recent ~9 entries here going forward;
-    full history (including these) stays in docs/factory/run-history.md, which
-    nothing in scripts/factory/ reads -- safe to keep trimming the same way each run."
+  - "Older next_actions entries (runs 22-47) archived to docs/factory/run-history.md
+    on 2026-10-01/02 (dev runs 44/46/47/48/50/51/52/53/54/55/56) -- TECH-DEBT.md's
+    2026-10-01 row: this list's unbounded growth was costing a real tool-output
+    truncation on every lock-acquisition read. Keeping only the most recent ~9 entries
+    here going forward; full history (including these) stays in
+    docs/factory/run-history.md, which nothing in scripts/factory/ reads -- safe to
+    keep trimming the same way each run."
 security:
   last_run: "2026-10-01T19:04:25Z"
   next_action: "Re-check SEC-001 (factory-guardrails.yml permissions gap, owner-blocked), SEC-003 (Dependabot alerts disabled, owner-blocked) and SEC-005 (branch protection on main confirmed absent, owner-blocked) each run, all tracked on issue #33. Run 10: first security run since run 9 (2026-09-29) — 15 dev/design runs landed in the gap, so reviewed the real Phase 3+ attack surface that shipped in that window (git diff --stat bc8aa60..HEAD -- src scripts .github package.json package-lock.json: 33 files, ~2,860 lines — /search, /compare/[a]/[b], /alternative/[slug], /trending, /rising, sitemap.ts/robots.ts, the newsletter signup form, and a new repository_releases ingestion path) rather than relying on dev-lane PR descriptions. No findings: SearchBox.tsx/search-match.ts do pure client-side substring matching, no server round-trip, no regex built from user input; NewsletterSignupForm.tsx confirmed to have no working submit path (no fetch, no real action) so A02 stays NEEDS-VERIFICATION rather than becoming live; the new repository_releases table (snapshots-db.ts, src/lib/releases.ts) uses parameterised queries throughout; fetch-snapshots.ts's new fetchRepoReleases reuses the already-fixed GITHUB_SLUG_PATTERN and independently constrains html_url to https://github.com/... before it's ever rendered as a link href (confirmed rel=noopener noreferrer, JSX auto-escaping, no dangerouslySetInnerHTML). Re-verified SEC-001/002/004 unchanged by reading the code directly. SEC-003 re-confirmed (dependabot/alerts still returns GitHub's real disabled message). New finding SEC-005: re-ran the branches/main/protection check every prior run (4,6,7,8,9) logged as an ambiguous 403 and got a decisive 404 'Branch not protected' instead (re-ran twice to rule out a fluke; secret-scanning/alerts checked same pass, still proxy-blocked, unchanged — ruling out a general proxy change) — main is now confirmed to have no branch-protection rule at all. Owner-blocked (repo-admin action); added to existing issue #33 via comment (not a new issue) and docs/security/PRODUCTION-HARDENING.md's existing row. Checked RG-7/8/9's Gmail thread per DECISION-PROTOCOL.md — still exactly the one original message, no owner reply, not this lane's decision. npm ci (0 vulns)/lint (clean)/test (330/330)/audit --audit-level=high (0 vulns) all run locally; build reproduced the known ADR-006 sandbox font-fetch gap, confirmed green on CI's real GitHub-hosted runner instead (main head bdec5b9, all checks green)."

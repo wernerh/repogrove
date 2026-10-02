@@ -7,6 +7,44 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-02 — Dev run 56: completed the Databases grove's pairwise comparison matrix
+  — only 3 of 6 possible cross-pairs among DuckDB/ClickHouse/SQLite/PostgreSQL existed;
+  added the 3 missing ones (`duckdb-vs-postgresql.md`, `clickhouse-vs-postgresql.md`,
+  `clickhouse-vs-sqlite.md`) and completed all 4 repos' `alternatives.open_source`
+  frontmatter to a fully mutual quartet, same shape as the git-TUI trio/AI inference
+  trio/editor cluster. 369/369 tests pass (4 new), lint/`tsc --noEmit` clean, 0
+  `npm audit` findings, all run locally; `npm run build` reproduced the known ADR-006
+  sandbox font-fetch gap, left to CI. Independent review (subagent) found a real MAJOR:
+  all 4 repos' `## Pros`/`## Cons` bullets were word-wrapped onto two physical lines,
+  which `content.ts`'s `extractListItems()` silently truncates (only captures lines
+  starting with "- ") — this PR's 3 new comparison pages would have rendered every one
+  of those bullets cut off mid-sentence. Fixed by rewrapping onto single lines
+  (content unchanged) before merging; added regression assertions on the full,
+  untruncated bullet text. PR #108 (5/5 gating checks green, including the non-gating
+  Playwright/axe-core run); post-merge CI on `main` confirmed green.
+- 2026-10-02 — Dev run 56 (continued): a full-corpus scan prompted by PR #108's own
+  truncation finding found the identical wrapped-bullet problem in 11 more repos'
+  Pros/Cons — `appwrite`, `dokploy`, `gitui`, `helix`, `lazygit`, `llamaindex`,
+  `localai`, `pocketbase`, `tig`, `vim`, `zed` — meaning most of the site's existing
+  `/compare` pages were already rendering truncated bullets, not just the 3 new ones
+  from #108. Rewrapped every affected bullet onto a single physical line (wording
+  unchanged — verified via a normalization diff, not just passing tests). Added a new
+  build-time guard, `assertNoWrappedListItems()`, wired into both `parseRepo()`
+  (Pros/Cons) and `parseAlternative()` (Open source/Free/Commercial/Best fit — the
+  file type that already suffered this exact bug once for real, per this file's own
+  run-49 entry below) — a future wrapped bullet now fails the build loudly instead of
+  truncating silently, the same "durable check over a one-off fix" approach the design
+  lane used for UX-2026-006. 375/375 tests pass (6 new) against the real, full
+  `content/` corpus, lint/`tsc --noEmit` clean, 0 `npm audit` findings, all run
+  locally; `npm run build` reproduced the known ADR-006 sandbox font-fetch gap, left to
+  CI. Independent review (subagent) wrote a normalization script confirming every
+  rewrapped file is word-for-word identical to its prior content, traced the
+  validator's edge cases against the real corpus, and caught that the first draft only
+  wired the guard into `parseRepo()` — fixed to also cover `parseAlternative()` before
+  opening the PR. PR #109 — pushed with CI still running when this run's 40-minute lock
+  window closed; CI went green shortly after (6/6 checks), merged at close-out once
+  confirmed. RG-7/8/9 re-checked this run — still no owner reply (RG-7 defaults
+  2026-10-03T13:02:34Z, ~22h off at close-out), held off Phase 4 feature work (dev)
 - 2026-10-02 — Dev run 55: added `content/repos/postgresql.md` (`postgres/postgres`,
   "PostgreSQL License") to the Databases grove, growing it from 3 to 4 repos —
   picking up run 54's own next-action pointer to continue the product spec's named

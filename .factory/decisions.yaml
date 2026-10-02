@@ -416,6 +416,16 @@
     content/comparisons/postgresql-vs-sqlite.md — PR #107) — not Phase 4 groundwork, so
     doesn't preempt either answer.
 
+    Re-checked 2026-10-02 (dev run 56, via get_thread) — thread 1a0f26990ebc1e9c still
+    exactly the one original message, no owner reply. default_due_at (2026-10-03T13:02:34Z)
+    hasn't passed (~22h off at this run's close-out — the next dev run should apply RG-7's
+    recommended default if still unanswered by then). Held off Phase 4 feature work again
+    this run; used it instead for decision-free work (completed the Databases grove's
+    comparison matrix, PR #108, merged; found and fixed a site-wide Pros/Cons/alternatives
+    bullet-truncation bug plus a build-time guard against it, PR #109 — pushed, left open
+    for the next run to verify CI and merge) — not Phase 4 groundwork, so doesn't preempt
+    either answer.
+
 - id: RG-8
   lane: dev
   question: >
@@ -496,6 +506,8 @@
 
     Re-checked 2026-10-02 (dev run 55) — no owner reply; stays open, no default applies.
 
+    Re-checked 2026-10-02 (dev run 56) — no owner reply; stays open, no default applies.
+
 - id: RG-9
   lane: dev
   question: >
@@ -570,3 +582,5 @@
     Re-checked 2026-10-02 (dev run 54) — no owner reply; stays open, no default applies.
 
     Re-checked 2026-10-02 (dev run 55) — no owner reply; stays open, no default applies.
+
+    Re-checked 2026-10-02 (dev run 56) — no owner reply; stays open, no default applies.

@@ -15,10 +15,12 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 55: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03, due tomorrow). Added
-PostgreSQL to the Databases grove (now 4 repos) + postgresql-vs-sqlite comparison,
-PR #107, merged, CI green. Next: re-check RG-7/8/9 (apply RG-7's default if due); grow
-Databases grove further (SurrealDB) or find the next content gap.
+Run 56 closed out: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03T13:02:34Z, ~22h
+off at this run's start). Completed the Databases grove's comparison matrix (#108,
+merged); found/fixed a site-wide Pros/Cons/alternatives bullet-truncation bug +
+build-time guard (#109, CI went green post-lock, merged). Next run: re-check RG-7/8/9
+(RG-7's default applies if still unanswered by 2026-10-03T13:02:34Z); find the next
+content gap.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -45,16 +47,14 @@ Phases 2 and 3 both completed within budget; no Phase 3 item needed a split.
 None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 stays stubbed until answered.
 
 ## Milestones
-- [x] 2026-09-27 — Repo bootstrapped; Phase 1 walking skeleton — #5, #6, #7
-- [x] 2026-09-27/28 — Phase 2 ingestion (ADR-005, #16/17); star-growth chart (#18); self-hosted fonts (ADR-006); contributor counts.
-- [x] 2026-09-29 — `/trending`/`/rising` (#19/#20); Grove Heat v1 (#21) — Phase 2 done.
-  Phase 3 issues filed (#61-65).
-- [x] 2026-09-29/30 — `/alternative/:slug` (#61), `/compare/:a/:b` (#62),
-  sitemap/robots (#64), `/search` (#63, ADR-008), newsletter form UI (#65, PR #71),
-  basic news widget (#72, PR #74) — Phase 3 MVP gate complete.
-- [x] 2026-09-30/10-02 — Decision-free content: dev-tools grove, +PocketBase/Appwrite,
-  commercial-slug fix, LocalAI/Dokploy/LlamaIndex/Vim/Helix/Zed/Tig/GitUI, all
-  comparisons, all /alternative/:slug pages incl. lm-studio (#81-104); commercial-chip
-  linking (#102); Databases grove added/grown (DuckDB, ClickHouse, SQLite,
-  PostgreSQL + 3 comparisons, #105-107) — 4 groves/21 repos total, dangling refs closed.
+- [x] 2026-09-27/29 — Phase 1 walking skeleton (#5-7); Phase 2 ingestion/metrics,
+  star-growth chart, trending/rising, Grove Heat v1 (#16-21, ADR-004/005/006).
+- [x] 2026-09-29/30 — Phase 3 MVP gate complete: `/alternative/:slug`, `/compare/:a/:b`,
+  sitemap/robots, `/search` (ADR-008), newsletter form UI, news widget (#61-72).
+- [x] 2026-09-30/10-02 — Decision-free content: dev-tools grove, Databases grove
+  (DuckDB/ClickHouse/SQLite/PostgreSQL), all dangling open-source/commercial
+  alternative refs closed, all mutual comparisons incl. Databases' full matrix
+  (#81-108) — 4 groves/21 repos total.
+- [x] 2026-10-02 — Found/fixed a site-wide Pros/Cons/alternatives bullet-truncation
+  bug + added a build-time guard against it (#109, merged).
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (#76-78), awaiting owner

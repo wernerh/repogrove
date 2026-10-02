@@ -12,6 +12,42 @@ context) to skim, same role the archived entries played in state.yaml before thi
 Newest-archived-first, same order they appeared in state.yaml.
 
 ```yaml
+  - "2026-10-01 (run 47): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
+    Held off Phase 4 feature work again this run, consistent with runs 33-46. Fresh scan
+    of content/ (cross-referencing every content/repos/*.md's alternatives.open_source
+    against content/comparisons/*.md, picking up run 46's own next-action pointer):
+    confirmed zero dangling alternatives.open_source references anywhere (every repo
+    slug named resolves to a real content/repos/*.md file), but found one remaining
+    fully-mutual pair with no comparison page — langchain.md and llamaindex.md have
+    listed each other since llamaindex.md was added (run 39) but had no
+    content/comparisons/*.md file, the last gap of this kind. Major task: added
+    content/comparisons/langchain-vs-llamaindex.md, prose grounded entirely in facts
+    already stated in both repos' own content files (general-purpose orchestration vs.
+    retrieval-first data framework, Python-first flagship package, LlamaParse/LlamaCloud
+    as separate paid services) — no new external research needed. Independent review
+    (subagent, skeptical-senior-engineer pass) traced every claim back to the two repo
+    files, confirmed alphabetical slug ordering and format match, and found no
+    fabricated/unverified claims or other issues. Every repo in content/repos/ now has
+    at least one comparison, so two tests that used langchain as a 'no comparisons'
+    real-repo fixture needed updating: tests/lib/content.test.ts's empty-array test
+    swapped to a synthetic non-existent slug (the function is a pure filter with no
+    repo-existence check); tests/app/repo-page.test.tsx's 'omits Compared with' test
+    moved to a new isolated file, tests/app/repo-page-no-comparisons.test.tsx, mocking
+    getComparisonsForRepo to [] rather than depending on a real repo happening to have
+    none (same isolation pattern repo-page-releases-empty.test.tsx already established).
+    Also added a real /compare/langchain/llamaindex render test and a
+    getComparisonsForRepo test for the new pair. 332/332 tests pass, lint/tsc --noEmit
+    clean; npm run build left to CI (known ADR-006 sandbox font-fetch gap) — all 3
+    gating checks (CI, Factory guardrails, scripts/factory/check.py) green on PR #98
+    before squash-merging it myself; post-merge CI on main also confirmed green
+    (lint/test/build all passed for real, including a real next build). CHANGELOG.md/
+    PROJECT_STATE.md/DECISIONS.md/.factory/decisions.yaml updated. Next: re-check
+    RG-7/8/9; content/ has no known dangling-reference or missing-comparison gaps left
+    — a future decision-free run will need a new source of work (a fresh drift pass,
+    a content-accuracy audit, or one of TECH-DEBT.md's open low-severity dev-lane rows,
+    e.g. #32's Grove Heat v1 threshold-revisit row) if RG-7/8/9 are still open by then."
   - "2026-10-01 (run 46): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
