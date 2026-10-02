@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-10-02T08:49:26Z"
-  holder: "dev"
-  last_run: "2026-10-02T07:14:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-10-02T09:09:00Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,14 +19,60 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 70
-  features_completed: 35
+  runs: 71
+  features_completed: 36
   bugs_fixed: 11
   security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
 
 next_actions:
+  - "2026-10-02 (run 53): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed (due tomorrow); RG-8/RG-9 have no default and stay open
+    regardless. Held off Phase 4 feature work again this run. A fresh cross-reference
+    audit (grove membership, related_groves, alternatives.open_source/commercial
+    references, mutual-alternative-pair comparison coverage) confirmed run 52's
+    finding — zero dangling-reference gaps remain anywhere in content/. With no
+    dangling-reference gap left to close, used the run for breadth instead: the
+    product spec (PRODUCT.md §2) names a 'Database Grove' (PostgreSQL, DuckDB,
+    SQLite, ClickHouse, SurrealDB, PocketBase) that never got built, unlike
+    AI/Self-Hosted/Developer-Tools. Major task: added content/groves/databases.md
+    with two initial repos, DuckDB (duckdb/duckdb, MIT) and ClickHouse
+    (ClickHouse/ClickHouse, Apache-2.0), cross-referencing each other under
+    alternatives.open_source (embedded/in-process vs. distributed/client-server OLAP
+    databases — a comparison already widely drawn across independent industry
+    sources, not an invented pairing). Facts (DuckDB: created by Mark Raasveldt and
+    Hannes Mühleisen at CWI; ClickHouse: built at Yandex, open-sourced 2016, now
+    developed by ClickHouse, Inc.) verified via WebSearch/WebFetch against Wikipedia
+    plus an independent industry comparison source (airbyte.com) for the
+    embedded-vs-distributed differentiation, cross-checked against several other
+    independent 'ClickHouse vs DuckDB' writeups returned by search — not scraped
+    from either project's own one-line description, per CLAUDE.md rule 4. Added
+    content/comparisons/clickhouse-vs-duckdb.md in the same PR, closing that mutual
+    pair rather than leaving it as a gap for a future run. Small related task: added
+    'databases' to content/groves/ai.md's and content/groves/self-hosted.md's
+    related_groves (frontmatter + body prose), reciprocal with databases.md's own
+    related_groves: [self-hosted, ai]; Developer Tools deliberately left out of the
+    relation in both directions. Updated/added tests across all five affected test
+    files (slug-list fixtures, parse-correctness assertions, getReposInGrove
+    (\"databases\") coverage, real-page render tests for all four new pages,
+    recomputed homepage numbers — 19 repos + 4 groves = 23 card links). 359/359
+    tests pass (16 new/updated), lint clean, tsc --noEmit clean, npm audit
+    --audit-level=high 0 vulnerabilities, all run locally; npm run build reproduced
+    the known ADR-006 sandbox font-fetch gap (the full local test suite already
+    exercises content.ts's real build-time validation against every file in this PR,
+    confirming it parses and cross-validates cleanly before that unrelated failure),
+    left to CI's GitHub-hosted runner — confirmed all 4 gating checks green on PR
+    #105 before squash-merging it myself; post-merge CI on main also confirmed
+    green. Independent review (subagent, skeptical-senior-engineer pass) found no
+    CRITICAL/MAJOR issues; one MINOR (ClickHouse's named production adopters have no
+    inline citation, but match its own publicly documented adopters list — not
+    fabricated) left as-is. ROADMAP.md needed no changes (no roadmap item touched).
+    CHANGELOG.md/PROJECT_STATE.md/DECISIONS.md/.factory/decisions.yaml updated.
+    Next: re-check RG-7/8/9 each run; grow the Databases grove further
+    (PostgreSQL/SQLite/SurrealDB/PocketBase cross-link, per the spec's own example
+    list) or find the next content gap."
   - "2026-10-02 (run 52): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03) hasn't passed (due tomorrow); RG-8/RG-9 have no default and stay open
@@ -364,52 +410,10 @@ next_actions:
     zed, fully mutual, 6 missing comparison pairs) is now the only sizeable
     missing-comparisons content gap left — every other fully-mutual trio/pair in
     content/ now has complete /compare/:a/:b coverage."
-  - "2026-10-01 (run 44): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
-    — still exactly the one original message, no owner reply. RG-7's default_due_at
-    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
-    Held off Phase 4 feature work again this run, consistent with runs 33-43. Audited
-    content/ for the next decision-free content gap (last run's dangling-reference class
-    is fully closed): cross-referenced every content/repos/*.md's alternatives.open_source
-    against content/comparisons/*.md and found the Developer Tools grove's git-TUI trio —
-    gitui, lazygit, tig — have listed each other under alternatives.open_source since
-    run 43, but had zero /compare/:a/:b pages among them, the same fully-mutual-trio
-    content gap run 36's Supabase/Appwrite/PocketBase comparisons closed for the
-    Self-Hosted grove. Major task: added content/comparisons/gitui-vs-lazygit.md,
-    gitui-vs-tig.md, lazygit-vs-tig.md, each 'How they differ' prose drawing only on
-    facts already stated in the three repos' own content files, plus one new
-    independently verified fact (LazyGit's Go implementation, confirmed via its own
-    pkg.go.dev module listing). Independent review (subagent, skeptical-senior-engineer
-    pass) flagged a real MINOR: the first draft of gitui-vs-lazygit.md and
-    lazygit-vs-tig.md both asserted LazyGit has 'the larger, longer-established
-    community' of the three projects — true in the real world but not stated in any of
-    the three repos' own content files and not independently re-verified (no star-count
-    snapshot exists yet for gitui/tig in data/repogrove.db to cross-check against) —
-    reworded both pages to drop the unverified comparison, keeping only already-sourced
-    language/architecture/feature-coupling facts. Small related task: fixed
-    TECH-DEBT.md's 2026-10-01 row — this run's own lock-acquisition read of this file's
-    next_actions list (22 entries, ~600 lines) hit a tool-output truncation, the exact
-    cost the row warned about; archived the 14 oldest entries (runs 22-35) to new
-    docs/factory/run-history.md, kept the most recent ~8 here with a pointer note
-    (nothing in scripts/factory/ reads next_actions, confirmed by grep before trimming).
-    326/326 tests pass (2 new: a getComparisonsForRepo trio-coverage test, a real
-    /compare/lazygit/tig render test), lint clean, tsc --noEmit clean, npm audit
-    --audit-level=high 0 vulnerabilities, all run locally; npm run build reproduced the
-    known ADR-006 sandbox font-fetch gap (confirmed it compiles past content loading
-    first), left to CI's GitHub-hosted runner — confirmed all 4 gating checks green on
-    PR #94 (scripts/factory/check.py, dependency scan, lint/test/build, factory
-    guardrails; the non-gating screenshot/axe-core job was still in progress at merge
-    time, consistent with its own 'does not gate merges' label) before squash-merging it
-    myself; post-merge CI on main also confirmed green (all 3 gating checks). ROADMAP.md
-    needed no changes (no roadmap item touched). CHANGELOG.md/PROJECT_STATE.md/
-    DECISIONS.md/.factory/decisions.yaml/TECH-DEBT.md updated. Next: re-check RG-7/8/9
-    each run; the editor cluster (vim/neovim/helix/zed, fully mutual, 6 missing
-    comparison pairs) is the next biggest missing-comparisons content gap; ollama/
-    localai/vllm trio has 1 remaining pair (ollama-vs-localai, localai-vs-vllm) also
-    open; coolify/dokploy pair also has no comparison yet."
-  - "Older next_actions entries (runs 22-43) archived to docs/factory/run-history.md
-    on 2026-10-01/02 (dev runs 44/46/47/48/50/51/52) -- TECH-DEBT.md's 2026-10-01 row: this
-    list's unbounded growth was costing a real tool-output truncation on every lock-
-    acquisition read. Keeping only the most recent ~9 entries here going forward;
+  - "Older next_actions entries (runs 22-44) archived to docs/factory/run-history.md
+    on 2026-10-01/02 (dev runs 44/46/47/48/50/51/52/53) -- TECH-DEBT.md's 2026-10-01 row:
+    this list's unbounded growth was costing a real tool-output truncation on every
+    lock-acquisition read. Keeping only the most recent ~9 entries here going forward;
     full history (including these) stays in docs/factory/run-history.md, which
     nothing in scripts/factory/ reads -- safe to keep trimming the same way each run."
 security:

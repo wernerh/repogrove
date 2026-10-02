@@ -15,10 +15,10 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 52: RG-7/8/9 still no reply (defaults 2026-10-03, due tomorrow). Added lm-studio
-alternative page — last known dangling content/ reference, now closed. Next: re-check
-RG-7/8/9; future decision-free runs need a new content source (audit/Grove/accuracy
-pass) — none known open.
+Run 53: RG-7/8/9 still no reply (defaults 2026-10-03, due tomorrow). Added Databases
+grove (DuckDB, ClickHouse + comparison, #105) — the spec's own Database Grove, never
+built before. Next: re-check RG-7/8/9; grow Databases grove further or find the next
+content gap.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -46,8 +46,7 @@ None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 stays stubbed u
 
 ## Milestones
 - [x] 2026-09-27 — Repo bootstrapped; Phase 1 walking skeleton — #5, #6, #7
-- [x] 2026-09-27/28 — Phase 2 ingestion (ADR-005, #16/17); star-growth chart (#18);
-  self-hosted fonts (ADR-006); contributor counts.
+- [x] 2026-09-27/28 — Phase 2 ingestion (ADR-005, #16/17); star-growth chart (#18); self-hosted fonts (ADR-006); contributor counts.
 - [x] 2026-09-29 — `/trending`/`/rising` (#19/#20); Grove Heat v1 (#21) — Phase 2 done.
   Phase 3 issues filed (#61-65).
 - [x] 2026-09-29/30 — `/alternative/:slug` (#61), `/compare/:a/:b` (#62),
@@ -56,5 +55,6 @@ None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 stays stubbed u
 - [x] 2026-09-30/10-02 — Decision-free content: dev-tools grove, +PocketBase/Appwrite,
   commercial-slug fix, LocalAI/Dokploy/LlamaIndex/Vim/Helix/Zed/Tig/GitUI, all
   comparisons, all /alternative/:slug pages incl. lm-studio (#81-104); commercial-chip
-  linking (#102) — all known dangling alternatives references now closed.
+  linking (#102); Databases grove added (DuckDB, ClickHouse + comparison, #105) —
+  4 groves/19 repos total, all known dangling references closed.
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (#76-78), awaiting owner

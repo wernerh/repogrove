@@ -7,6 +7,41 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-02 — Dev run 53: added `content/groves/databases.md` with two initial repos,
+  DuckDB (`content/repos/duckdb.md`, MIT) and ClickHouse (`content/repos/clickhouse.md`,
+  Apache-2.0), plus `content/comparisons/clickhouse-vs-duckdb.md` (PR #105). With every
+  known dangling `alternatives.open_source`/`alternatives.commercial` reference in
+  `content/` closed as of run 52, a fresh cross-reference audit this run (grove
+  membership, `related_groves`, alternative references, mutual-pair comparison
+  coverage) found zero remaining gaps of that kind — the existing 3-grove/17-repo set
+  is fully internally consistent. With no dangling reference left to close, this run
+  expanded breadth instead: the product spec (PRODUCT.md §2) names a "Database Grove"
+  (PostgreSQL, DuckDB, SQLite, ClickHouse, SurrealDB, PocketBase) that never got built,
+  unlike AI/Self-Hosted/Developer-Tools. DuckDB and ClickHouse cross-reference each
+  other under `alternatives.open_source` (embedded/in-process vs. distributed/
+  client-server OLAP databases — a comparison already widely drawn across independent
+  industry sources, not an invented pairing); the new comparison page closes that
+  mutual pair in the same PR rather than leaving it as a gap for a future run. Facts
+  (DuckDB: created by Mark Raasveldt and Hannes Mühleisen at CWI; ClickHouse: built at
+  Yandex, open-sourced 2016, now developed by ClickHouse, Inc.) verified via
+  WebSearch/WebFetch against Wikipedia plus an independent industry comparison source
+  (airbyte.com), cross-checked against several other independent "ClickHouse vs
+  DuckDB" writeups — not scraped from either project's own one-line description, per
+  CLAUDE.md rule 4. Small related change: added `databases` to `content/groves/ai.md`'s
+  and `content/groves/self-hosted.md`'s `related_groves` (frontmatter + body prose),
+  reciprocal with `databases.md`'s own `related_groves: [self-hosted, ai]`; Developer
+  Tools deliberately left out of the relation in both directions. Updated/added tests
+  across all five affected test files (slug-list fixtures, parse-correctness
+  assertions, `getReposInGrove("databases")` coverage, real-page render tests for all
+  four new pages, recomputed homepage numbers). 359/359 tests pass (16 new/updated),
+  lint clean, `tsc --noEmit` clean, `npm audit --audit-level=high` 0 vulnerabilities,
+  all run locally; `npm run build` reproduced the known ADR-006 sandbox font-fetch gap
+  (the full local test suite already exercises `content.ts`'s real build-time
+  validation against every file in this PR, confirming it parses and cross-validates
+  cleanly before that unrelated failure), left to CI's GitHub-hosted runner. Independent
+  review (subagent, skeptical-senior-engineer pass) found no CRITICAL/MAJOR issues; one
+  MINOR (ClickHouse's named production adopters have no inline citation, but match
+  ClickHouse's own publicly documented adopters list — not fabricated) left as-is.
 - 2026-10-02 — Dev run 52: added `content/alternatives/lm-studio.md` (PR #104).
   `ollama.md` has listed LM Studio under `alternatives.commercial` since bootstrap with
   no corresponding alternative page — the last remaining dangling commercial reference
