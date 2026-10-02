@@ -1,3 +1,8 @@
+> **Legacy mirror.** The run protocol now lives in `.claude/skills/design-factory/SKILL.md`
+> (shared core: `.claude/skills/factory-core/SKILL.md`). This file describes the old inline
+> task prompt and is superseded once the scheduled task is switched — see
+> `docs/factory/README.md`.
+
 Mirror of the prompt actually configured on the scheduled task
 "RepoGrove design factory run" (cron `CRON_TZ=Africa/Johannesburg 0 3-23/4 * * *`). If
 this drifts from the live task, the live task is authoritative.

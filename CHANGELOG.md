@@ -7,6 +7,13 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-02 — Factory run protocol moved into the repo: shared `factory-core` skill plus
+  `dev-factory`, `security-factory` and `design-factory` lane skills under `.claude/skills/`,
+  and three read-only reviewer subagents (`factory-reviewer-dev`, `-security`, `-design`)
+  under `.claude/agents/`, replacing prompts that existed only in scheduled-task config.
+  `.claude/**` added to `CLAUDE.md` rule 7's protected paths, `.github/CODEOWNERS` added,
+  `docs/factory/README.md` documents the cutover. Owner-authored; scheduled tasks are not
+  changed by this PR. (infra)
 - 2026-10-02 — Dev run 57: added Immich (`content/repos/immich.md`, `immich-app/immich`,
   AGPL-3.0) to the Self-Hosted grove — the next item from `PRODUCT.md` §2's own named
   example list (Coolify, Dokploy, CasaOS, Portainer, Immich, Nextcloud) not yet built.
