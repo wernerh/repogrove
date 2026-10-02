@@ -8,7 +8,12 @@ import AlternativePage, {
 describe("Alternative page (/alternative/[slug])", () => {
   it("statically generates params for every alternatives content file", async () => {
     const params = generateStaticParams();
-    expect(params.map((p) => p.slug).sort()).toEqual(["firebase", "notion"]);
+    expect(params.map((p) => p.slug).sort()).toEqual([
+      "firebase",
+      "gitkraken",
+      "notion",
+      "sourcetree",
+    ]);
   });
 
   it("renders /alternative/notion from content/alternatives/notion.md, not a hardcoded string", async () => {
@@ -57,6 +62,71 @@ describe("Alternative page (/alternative/[slug])", () => {
     // Commercial renders as a plain list, same as notion.md's Confluence/Coda/ClickUp.
     expect(screen.getByText("AWS Amplify")).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "AWS Amplify" })).not.toBeInTheDocument();
+  });
+
+  it("renders /alternative/gitkraken with every Open source item resolved to a real content/repos/*.md page", async () => {
+    // GitUI, LazyGit, Tig each already have a content/repos/*.md page (all
+    // three name GitKraken as a commercial alternative themselves) — same
+    // resolved-link branch firebase.md's test above exercises.
+    render(await AlternativePage({ params: Promise.resolve({ slug: "gitkraken" }) }));
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "GitKraken alternatives" }),
+    ).toBeInTheDocument();
+
+    for (const [name, slug] of [
+      ["GitUI", "gitui"],
+      ["LazyGit", "lazygit"],
+      ["Tig", "tig"],
+    ] as const) {
+      const link = screen.getByRole("link", { name });
+      expect(link).toHaveAttribute("href", `/repo/${slug}`);
+    }
+
+    // Free renders as a plain list, same as notion.md's free-plan entries.
+    expect(screen.getByText("Sourcetree")).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Sourcetree" })).not.toBeInTheDocument();
+
+    // Best fit renders each bullet's full text — regression coverage for a
+    // real bug caught in review: a bullet that wraps across source lines in
+    // the .md file gets silently truncated by extractListItems (only lines
+    // starting with "- " are captured), so asserting on the complete
+    // sentence here catches a truncated render the content.test.ts unit
+    // test alone wouldn't surface at this layer.
+    expect(
+      screen.getByText(
+        "Free private-repo access without a paid plan — GitKraken's free Community tier covers public repositories only, so a private repo needs a Pro-or-higher plan, while Sourcetree is free for private repos too, with no seat limit",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("renders /alternative/sourcetree with every Open source item resolved to a real content/repos/*.md page", async () => {
+    render(await AlternativePage({ params: Promise.resolve({ slug: "sourcetree" }) }));
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Sourcetree alternatives" }),
+    ).toBeInTheDocument();
+
+    for (const [name, slug] of [
+      ["GitUI", "gitui"],
+      ["LazyGit", "lazygit"],
+      ["Tig", "tig"],
+    ] as const) {
+      const link = screen.getByRole("link", { name });
+      expect(link).toHaveAttribute("href", `/repo/${slug}`);
+    }
+
+    // Commercial renders as a plain list, same as notion.md's Confluence/Coda/ClickUp.
+    expect(screen.getByText("GitKraken")).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "GitKraken" })).not.toBeInTheDocument();
+
+    // Best fit full-sentence regression check, same reasoning as gitkraken's
+    // test above.
+    expect(
+      screen.getByText(
+        "Linux support — Sourcetree only ships Mac and Windows builds, while GitKraken also builds for Linux",
+      ),
+    ).toBeInTheDocument();
   });
 
   it("resolves an Open source name against a real content/repos/*.md page when the slug matches", () => {
