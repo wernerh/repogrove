@@ -89,20 +89,74 @@ describe("ComparisonMatrix", () => {
     expect(within(table).getByRole("row", { name: /License/ })).toHaveTextContent("Apache-2.0");
   });
 
-  it("scopes cell horizontal padding down below the sm breakpoint (regression: real CI screenshot run found this table silently overflowing /repo/ollama's 390px mobile viewport by 2px with the unconditional px-3/pr-4 padding this test guards against — see issue #116)", () => {
-    render(
-      <ComparisonMatrix
-        columns={[col({}), col({ slug: "vllm", name: "vLLM", isCurrent: false, license: "Apache-2.0" })]}
-      />,
-    );
-    const table = screen.getByRole("table");
-    for (const cell of within(table).getAllByRole("columnheader")) {
-      expect(cell.className).not.toMatch(/(?<!sm:)px-3\b/);
-      expect(cell.className).not.toMatch(/(?<!sm:)pr-4\b/);
-    }
-    // The "Parameter" header/row-label column uses pr-*; the data columns use px-*.
-    expect(within(table).getByRole("columnheader", { name: "Parameter" }).className).toMatch(/\bpr-2 sm:pr-4\b/);
-    const vllmHeader = within(table).getByRole("columnheader", { name: "vLLM" });
-    expect(vllmHeader.className).toMatch(/\bpx-2 sm:px-3\b/);
-  });
+  it(
+    "forces a fixed, wrapping layout below the sm breakpoint on EVERY cell — thead " +
+      "columnheaders, tbody rowheaders, and tbody data cells alike (regression: a real " +
+      "CI screenshot run found this table silently overflowing /repo/ollama's 390px " +
+      "mobile viewport, and — after a first, padding-only fix attempt that only reduced " +
+      "but did not eliminate the overflow for real worst-case content like zed.md's " +
+      '"GPL-3.0 / AGPL-3.0" license string — a real Chromium reproduction showed only ' +
+      "table-fixed + break-words actually closes it at every content length. See " +
+      "issue #116.",
+    () => {
+      render(
+        <ComparisonMatrix
+          columns={[col({}), col({ slug: "vllm", name: "vLLM", isCurrent: false, license: "Apache-2.0" })]}
+        />,
+      );
+      const table = screen.getByRole("table");
+      // Order-independent: Tailwind's own class-merge tooling (or a future edit) can
+      // reorder a className string without changing its meaning — checking token
+      // membership rather than a fixed substring avoids a brittle, order-coupled test.
+      const classes = (el: HTMLElement) => el.className.split(/\s+/).filter(Boolean);
+      const hasClass = (el: HTMLElement, cls: string) => classes(el).includes(cls);
+      const hasNoUnscopedPadding = (el: HTMLElement) =>
+        !hasClass(el, "px-3") && !hasClass(el, "pr-4");
+
+      // table-fixed (unconditional) + sm:table-auto (restores the original
+      // content-sized columns at sm+, unchanged) — the actual mechanism that
+      // eliminates the overflow; px-3/pr-4 alone (the first fix attempt) could not.
+      expect(hasClass(table, "table-fixed")).toBe(true);
+      expect(hasClass(table, "sm:table-auto")).toBe(true);
+      expect(hasClass(table, "w-full")).toBe(true);
+
+      // columnheader: the thead's "Parameter" label + one per repo column.
+      // rowheader: tbody's per-row "Parameter" labels (Stars/Contributors/.../License).
+      // cell: every data td in tbody (repo x row).
+      const columnHeaders = within(table).getAllByRole("columnheader");
+      const rowHeaders = within(table).getAllByRole("rowheader");
+      const dataCells = within(table).getAllByRole("cell");
+      expect(columnHeaders.length).toBeGreaterThan(0);
+      expect(rowHeaders.length).toBeGreaterThan(0);
+      expect(dataCells.length).toBeGreaterThan(0);
+
+      for (const cell of [...columnHeaders, ...rowHeaders, ...dataCells]) {
+        expect(hasNoUnscopedPadding(cell)).toBe(true);
+        // Every cell must be able to wrap arbitrarily (a license slug, a large
+        // comma-formatted number) to fit table-fixed's assigned column width —
+        // without this, table-fixed alone would still force the column too narrow
+        // and clip rather than wrap.
+        expect(hasClass(cell, "break-words")).toBe(true);
+      }
+
+      // The "Parameter" column (header label cell + every row's label th) gets a
+      // fixed share of the mobile width and the original pr-4 restored at sm+.
+      const parameterHeader = within(table).getByRole("columnheader", { name: "Parameter" });
+      for (const parameterCell of [parameterHeader, ...rowHeaders]) {
+        expect(hasClass(parameterCell, "pr-2")).toBe(true);
+        expect(hasClass(parameterCell, "sm:pr-4")).toBe(true);
+        expect(hasClass(parameterCell, "w-[30%]")).toBe(true);
+        expect(hasClass(parameterCell, "sm:w-auto")).toBe(true);
+      }
+
+      // Every repo (data) column uses the scoped px-2/sm:px-3 pair, with no
+      // explicit width override — table-fixed splits the remaining space among
+      // them equally.
+      const vllmHeader = within(table).getByRole("columnheader", { name: "vLLM" });
+      for (const dataHeaderOrCell of [vllmHeader, ...dataCells]) {
+        expect(hasClass(dataHeaderOrCell, "px-2")).toBe(true);
+        expect(hasClass(dataHeaderOrCell, "sm:px-3")).toBe(true);
+      }
+    },
+  );
 });

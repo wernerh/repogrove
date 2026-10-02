@@ -33,6 +33,13 @@ const ROUTES: { path: string; name: string }[] = [
   { path: "/", name: "home" },
   { path: "/grove/ai", name: "grove-ai" },
   { path: "/repo/ollama", name: "repo-ollama" },
+  // UX-2026-007: /repo/ollama's ComparisonMatrix ("How it compares") only ever
+  // exercised short content (MIT license, "LocalAI"/"vLLM" names) — real content
+  // has meaningfully wider cells (zed.md's own `license: GPL-3.0 / AGPL-3.0` is the
+  // longest license string in content/, and it renders a full 4-column matrix
+  // against vim/neovim/helix). Added so the generic overflow guard below actually
+  // covers this component's real worst case, not just its easiest one.
+  { path: "/repo/zed", name: "repo-zed" },
   { path: "/trending", name: "trending" },
   { path: "/rising", name: "rising" },
   { path: "/alternative/notion", name: "alternative-notion" },
