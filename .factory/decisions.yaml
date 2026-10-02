@@ -435,6 +435,15 @@
     run-58 entry for the full two-stage fix/review story) — not Phase 4 groundwork, so
     doesn't preempt either answer.
 
+    Re-checked 2026-10-02 (dev run 59, via get_thread) — thread 1a0f26990ebc1e9c still
+    exactly the one original message, no owner reply. default_due_at (2026-10-03T13:02:34Z)
+    hasn't passed (~16h off at this run's start). Held off Phase 4 feature work again this
+    run; used it instead for decision-free editorial content work (Portainer added to the
+    Self-Hosted grove plus two comparison pages, PR #121 — a first review pass flagged the
+    Portainer-as-alternative cross-reference as a curation-integrity judgment call worth
+    surfacing explicitly rather than reverting; documented in TECH-DEBT.md, second review
+    pass PASS) — not Phase 4 groundwork, so doesn't preempt either answer.
+
 - id: RG-8
   lane: dev
   question: >

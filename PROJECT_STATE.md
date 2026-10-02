@@ -15,12 +15,11 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 58: RG-7/8/9 no reply (RG-7 defaults 2026-10-03T13:02:34Z). PR #115 broke CI on
-`main` (UX-2026-007 overflow); fixed — a padding-only first attempt was insufficient
-for real content, re-fixed with `table-fixed`+`break-words`, second review pass with
-no BLOCKER/MAJOR, PR #117 merged (CI green). Next: apply RG-7's default if still
-unanswered by 2026-10-03T13:02:34Z; grow Self-Hosted (Portainer/Nextcloud/CasaOS) or
-find the next content gap.
+Run 59: RG-7/8/9 no reply (RG-7 defaults 2026-10-03T13:02:34Z). Added Portainer to
+Self-Hosted (+ coolify/dokploy comparisons), PR #121 merged (CI green); a review
+flagged the alternative cross-reference as a curation judgment call, documented in
+TECH-DEBT.md rather than reverted. Next: apply RG-7's default if still unanswered;
+grow Self-Hosted (Nextcloud/CasaOS) or find the next content gap.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -56,5 +55,6 @@ None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 stays stubbed u
   alternative refs closed, all mutual comparisons incl. Databases' full matrix
   (#81-108) — 4 groves/21 repos total.
 - [x] 2026-10-02 — Pros/Cons truncation guard (#109); Immich to Self-Hosted (#111) —
-  4 groves/22 repos; ComparisonMatrix mobile-overflow fix (#116/#117, UX-2026-007).
+  4 groves/22 repos; ComparisonMatrix mobile-overflow fix (#116/#117, UX-2026-007);
+  Portainer to Self-Hosted (#121) — 4 groves/23 repos.
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (#76-78), awaiting owner

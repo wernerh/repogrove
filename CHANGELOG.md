@@ -7,6 +7,15 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-02 — Dev run 59: added Portainer (`content/repos/portainer.md`, `portainer/portainer`,
+  Zlib license) to the Self-Hosted grove — the next item from `PRODUCT.md` §2's own named
+  example list (Coolify, Dokploy, CasaOS, Portainer, Immich, Nextcloud) not yet built.
+  Cross-referenced as a mutual open-source alternative with Coolify and Dokploy, closing the
+  gap with two new comparison pages (`coolify-vs-portainer.md`, `dokploy-vs-portainer.md`) in
+  the same PR. An independent review flagged the cross-reference as a defensible but
+  worth-surfacing editorial judgment call (Portainer sits at a different layer of the stack
+  than Coolify/Dokploy's PaaS workflow) — documented in `TECH-DEBT.md` rather than reverted.
+  447 tests (7 new/updated); lint/tsc clean; CI green (PR #121). 4 groves/23 repos total. (dev)
 - 2026-10-02 — Homepage "Repositories" section is now paginated (10 per page by default,
   5 / 10 / 20 selectable) instead of one 22-card scroll. New `PaginatedCardGrid` (Client
   Component; the Server Component pre-renders the `RepoCard`s and passes them down so the
