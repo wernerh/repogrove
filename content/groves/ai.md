@@ -2,7 +2,7 @@
 slug: ai
 name: AI
 description: Open-source tools for running, building, and integrating AI models.
-related_groves: [developer-tools, self-hosted]
+related_groves: [developer-tools, self-hosted, databases]
 ---
 
 # AI
@@ -20,4 +20,4 @@ orchestrating agents.
   audio, image, and video models.
 
 ## Related Groves
-Developer Tools, Self-Hosted
+Developer Tools, Self-Hosted, Databases

@@ -19,12 +19,18 @@ describe("Homepage", () => {
       "href",
       "/grove/developer-tools",
     );
+    expect(screen.getByRole("link", { name: "Databases" })).toHaveAttribute(
+      "href",
+      "/grove/databases",
+    );
     // Grove card footer — repo count, from getReposInGrove, not hand-copied.
     // AI: Ollama, LangChain, LlamaIndex, vLLM, LocalAI (5). Self-Hosted:
     // Supabase, Coolify, Appwrite, PocketBase, Dokploy (5). Developer Tools:
-    // Neovim, LazyGit, Vim, Helix, Zed, Tig, GitUI (7).
+    // Neovim, LazyGit, Vim, Helix, Zed, Tig, GitUI (7). Databases: DuckDB,
+    // ClickHouse (2).
     expect(screen.getAllByText("5 repos").length).toBe(2);
     expect(screen.getByText("7 repos")).toBeInTheDocument();
+    expect(screen.getByText("2 repos")).toBeInTheDocument();
 
     // Repos — from content/repos/*.md, rendered as cards.
     expect(screen.getByRole("link", { name: "Ollama" })).toHaveAttribute("href", "/repo/ollama");
@@ -47,6 +53,7 @@ describe("Homepage", () => {
     expect(screen.getAllByText("ai").length).toBeGreaterThan(0);
     expect(screen.getAllByText("backend").length).toBeGreaterThan(0);
     expect(screen.getAllByText("devtools").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("database").length).toBeGreaterThan(0);
 
     // Not hardcoded strings — the tagline comes from the component, but the
     // content list must not be baked in; asserting against the real fixture
@@ -56,9 +63,9 @@ describe("Homepage", () => {
 
   it("renders each repo/Grove card as exactly one link (single focus stop, no nested interactives)", () => {
     render(<Home />);
-    // 3 Grove cards + 17 repo cards = 20 card links; the header's own "RepoGrove"
+    // 4 Grove cards + 19 repo cards = 23 card links; the header's own "RepoGrove"
     // wordmark link isn't part of this render (Home doesn't mount RootLayout).
-    expect(screen.getAllByRole("link")).toHaveLength(20);
+    expect(screen.getAllByRole("link")).toHaveLength(23);
   });
 
   it("renders the RepoGrove Weekly newsletter signup section (issue #65, form UI only)", () => {

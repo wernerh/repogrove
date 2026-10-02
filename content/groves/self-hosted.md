@@ -2,7 +2,7 @@
 slug: self-hosted
 name: Self-Hosted
 description: Software you run and own on your own infrastructure instead of a SaaS.
-related_groves: [ai, developer-tools]
+related_groves: [ai, developer-tools, databases]
 ---
 
 # Self-Hosted
@@ -21,4 +21,4 @@ Projects that let you replace a hosted SaaS with something you run and control y
   Compose stacks across your own servers, including multi-server Docker Swarm clusters.
 
 ## Related Groves
-AI, Developer Tools
+AI, Developer Tools, Databases

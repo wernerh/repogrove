@@ -7,8 +7,10 @@ describe("Repo page (/repo/[slug])", () => {
     const params = generateStaticParams();
     expect(params.map((p) => p.slug).sort()).toEqual([
       "appwrite",
+      "clickhouse",
       "coolify",
       "dokploy",
+      "duckdb",
       "gitui",
       "helix",
       "langchain",
@@ -333,6 +335,54 @@ describe("Repo page (/repo/[slug])", () => {
     // so both resolve to real links.
     expect(screen.getByRole("link", { name: "LazyGit" })).toHaveAttribute("href", "/repo/lazygit");
     expect(screen.getByRole("link", { name: "Tig" })).toHaveAttribute("href", "/repo/tig");
+  });
+
+  it("renders /repo/duckdb from content/repos/duckdb.md, not a hardcoded string", async () => {
+    render(await RepoPage({ params: Promise.resolve({ slug: "duckdb" }) }));
+
+    expect(screen.getByRole("heading", { level: 1, name: "DuckDB" })).toBeInTheDocument();
+    expect(screen.getByText(/📜 MIT/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/An in-process SQL database built for fast analytical queries/),
+    ).toBeInTheDocument();
+    // The body's own "## Related Grove" section links back to Databases —
+    // proves this new content/repos/*.md file renders through the real
+    // page, not just through generateStaticParams.
+    expect(screen.getByRole("link", { name: "Databases" })).toHaveAttribute(
+      "href",
+      "/grove/databases",
+    );
+    // Its own alternatives.open_source (clickhouse) already exists, so it
+    // resolves to a real link.
+    expect(screen.getByRole("link", { name: "ClickHouse" })).toHaveAttribute(
+      "href",
+      "/repo/clickhouse",
+    );
+  });
+
+  it("renders /repo/clickhouse from content/repos/clickhouse.md, not a hardcoded string", async () => {
+    render(await RepoPage({ params: Promise.resolve({ slug: "clickhouse" }) }));
+
+    expect(screen.getByRole("heading", { level: 1, name: "ClickHouse" })).toBeInTheDocument();
+    expect(screen.getByText(/📜 Apache-2.0/)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /A distributed, column-oriented database built for real-time analytics at scale/,
+      ),
+    ).toBeInTheDocument();
+    // The body's own "## Related Grove" section links back to Databases —
+    // proves this new content/repos/*.md file renders through the real
+    // page, not just through generateStaticParams.
+    expect(screen.getByRole("link", { name: "Databases" })).toHaveAttribute(
+      "href",
+      "/grove/databases",
+    );
+    // Its own alternatives.open_source (duckdb) already exists, so it
+    // resolves to a real link.
+    expect(screen.getByRole("link", { name: "DuckDB" })).toHaveAttribute(
+      "href",
+      "/repo/duckdb",
+    );
   });
 
   it("renders /repo/localai from content/repos/localai.md, not a hardcoded string", async () => {

@@ -173,6 +173,37 @@ describe("Compare page (/compare/[a]/[b])", () => {
     ).toBeInTheDocument();
   });
 
+  it("renders /compare/clickhouse/duckdb from content/comparisons/clickhouse-vs-duckdb.md", async () => {
+    // clickhouse.md and duckdb.md list each other under
+    // alternatives.open_source since both were added this run — this
+    // comparison page closes that pair out in the same PR, rather than
+    // leaving a dangling-mutual-pair gap for a future run to find.
+    const { container } = render(
+      await ComparePage({ params: Promise.resolve({ a: "clickhouse", b: "duckdb" }) }),
+    );
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "ClickHouse vs DuckDB" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "ClickHouse" })).toHaveAttribute(
+      "href",
+      "/repo/clickhouse",
+    );
+    expect(screen.getByRole("link", { name: "DuckDB" })).toHaveAttribute(
+      "href",
+      "/repo/duckdb",
+    );
+
+    const table = container.querySelector("table")!;
+    expect(within(table).getAllByText(/Apache-2.0/).length).toBeGreaterThan(0);
+    expect(within(table).getAllByText(/MIT/).length).toBeGreaterThan(0);
+
+    expect(screen.getByRole("heading", { level: 2, name: "How they differ" })).toBeInTheDocument();
+    expect(
+      screen.getByText(/ClickHouse is a distributed, client-server database/),
+    ).toBeInTheDocument();
+  });
+
   it("resolves the reverse URL order (/compare/vllm/ollama) to the same content, rendered in canonical order", async () => {
     const { container: forward } = render(
       await ComparePage({ params: Promise.resolve({ a: "ollama", b: "vllm" }) }),
