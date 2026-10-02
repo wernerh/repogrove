@@ -27,10 +27,10 @@ describe("Homepage", () => {
     // AI: Ollama, LangChain, LlamaIndex, vLLM, LocalAI (5). Self-Hosted:
     // Supabase, Coolify, Appwrite, PocketBase, Dokploy (5). Developer Tools:
     // Neovim, LazyGit, Vim, Helix, Zed, Tig, GitUI (7). Databases: DuckDB,
-    // ClickHouse, SQLite (3).
+    // ClickHouse, SQLite, PostgreSQL (4).
     expect(screen.getAllByText("5 repos").length).toBe(2);
     expect(screen.getByText("7 repos")).toBeInTheDocument();
-    expect(screen.getByText("3 repos")).toBeInTheDocument();
+    expect(screen.getByText("4 repos")).toBeInTheDocument();
 
     // Repos — from content/repos/*.md, rendered as cards.
     expect(screen.getByRole("link", { name: "Ollama" })).toHaveAttribute("href", "/repo/ollama");
@@ -63,9 +63,9 @@ describe("Homepage", () => {
 
   it("renders each repo/Grove card as exactly one link (single focus stop, no nested interactives)", () => {
     render(<Home />);
-    // 4 Grove cards + 20 repo cards = 24 card links; the header's own "RepoGrove"
+    // 4 Grove cards + 21 repo cards = 25 card links; the header's own "RepoGrove"
     // wordmark link isn't part of this render (Home doesn't mount RootLayout).
-    expect(screen.getAllByRole("link")).toHaveLength(24);
+    expect(screen.getAllByRole("link")).toHaveLength(25);
   });
 
   it("renders the RepoGrove Weekly newsletter signup section (issue #65, form UI only)", () => {

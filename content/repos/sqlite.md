@@ -7,7 +7,7 @@ status: active
 featured: false
 groves: [databases]
 alternatives:
-  open_source: [duckdb]
+  open_source: [duckdb, postgresql]
   commercial: []
 ---
 
@@ -52,7 +52,9 @@ stable across two decades of releases.
 
 ## Alternatives
 **Open-source:** DuckDB (also embedded/serverless, but built for analytical queries over
-row-level transactional ones — see the comparison for which fits your workload).
+row-level transactional ones — see the comparison for which fits your workload);
+PostgreSQL (a full client-server database rather than an embedded library — see the
+comparison for when that trade-off is worth it).
 **Commercial:** none tracked yet.
 
 ## Related Grove

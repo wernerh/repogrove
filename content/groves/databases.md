@@ -17,6 +17,8 @@ yourself, from a single embedded file to a distributed cluster.
   real-time analytics at very large scale.
 - [SQLite](/repo/sqlite) — an embedded, serverless SQL database built for everyday
   transactional reads and writes, not analytical aggregations.
+- [PostgreSQL](/repo/postgresql) — a general-purpose, client-server relational
+  database with mature concurrency control and a large extension ecosystem.
 
 ## Related Groves
 Self-Hosted, AI
