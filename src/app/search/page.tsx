@@ -19,9 +19,9 @@ export default function SearchPage() {
   const index = buildSearchIndex();
 
   return (
-    <div>
+    <div className="max-w-3xl">
       <h1 className="font-sans text-2xl font-semibold tracking-tight text-text-default">Search</h1>
-      <p className="mt-2 font-serif text-lg text-text-secondary">
+      <p className="mt-2 text-lg text-text-secondary">
         Find repositories, Groves, and open-source alternatives by name or category.
       </p>
 

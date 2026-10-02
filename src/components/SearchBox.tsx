@@ -77,7 +77,7 @@ function SearchResultRow({ result }: { result: SearchEntry }) {
         </span>
       </div>
       {result.description && (
-        <p className="line-clamp-2 font-serif text-sm text-text-secondary">{result.description}</p>
+        <p className="line-clamp-2 text-sm text-text-secondary">{result.description}</p>
       )}
     </li>
   );

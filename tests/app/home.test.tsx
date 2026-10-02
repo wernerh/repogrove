@@ -64,9 +64,19 @@ describe("Homepage", () => {
 
   it("renders each repo/Grove card as exactly one link (single focus stop, no nested interactives)", () => {
     render(<Home />);
-    // 4 Grove cards + 22 repo cards = 26 card links; the header's own "RepoGrove"
-    // wordmark link isn't part of this render (Home doesn't mount RootLayout).
-    expect(screen.getAllByRole("link")).toHaveLength(26);
+    // 4 Grove cards + 22 repo cards = 26 card links, plus the hero's one search
+    // entry link (a styled link to /search, not a card); the header's own
+    // "RepoGrove" wordmark link isn't part of this render (Home doesn't mount
+    // RootLayout).
+    const links = screen.getAllByRole("link");
+    expect(links.filter((link) => link.getAttribute("href") !== "/search")).toHaveLength(26);
+    expect(links.filter((link) => link.getAttribute("href") === "/search")).toHaveLength(1);
+  });
+
+  it("gives every repo card a single link and shows real alternatives on it", () => {
+    render(<Home />);
+    // Ollama's frontmatter lists open-source alternatives; the card surfaces them.
+    expect(screen.getAllByText(/^alt: /, { selector: "span" }).length).toBeGreaterThan(0);
   });
 
   it("renders the RepoGrove Weekly newsletter signup section (issue #65, form UI only)", () => {

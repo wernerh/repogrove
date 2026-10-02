@@ -1346,3 +1346,11 @@ entries.
   time, and the refreshed `compare-ollama-vllm__mobile-*.png` screenshots were
   reviewed directly this same run — vLLM's full "ai, llm, inference" now renders
   with clear margin before the viewport edge, no clipping. (design)
+
+- 2026-10-02 — **design:** Precision Editorial look-and-feel refresh. New teal/slate/amber
+  tokens (all pairings re-validated, `generate_palette.py` updated), serif retired
+  (Inter + IBM Plex Mono only), sticky header + 6xl frame, homepage hero/search entry,
+  richer Grove and repo cards (category badge, amber `StarIcon`, `alt:` line, member
+  preview), repo page hero card + sidebar, stray chip-list bullets removed. Mock-only
+  elements with no backing data were not built (listed in DESIGN-SYSTEM.md). 376/376
+  tests; screenshot harness 48/48 with 0 axe violations. (design)

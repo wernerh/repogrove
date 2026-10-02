@@ -1,6 +1,6 @@
 # DESIGN-SYSTEM.md
 
-**Status:** v1.1 — tokens (color, type scale, radius, elevation, motion) are wired into
+**Status:** v2.0 (Precision Editorial refresh, 2026-10-02 — see "Precision Editorial refresh" below; v1.1 history follows) — tokens (color, type scale, radius, elevation, motion) are wired into
 code as of 2026-09-28, in `src/app/globals.css`'s Tailwind v4 `@theme`/`@theme inline`
 blocks (Tailwind v4 has no `tailwind.config.js` `theme.extend`; config is CSS-first —
 the values below are ported verbatim into that file's custom properties instead). The
@@ -60,41 +60,47 @@ disabled derivations later, and regenerating a scale after the fact (once real
 components depend on specific steps) is a breaking token change — cheaper to have the
 full ramp now, when nothing yet depends on it, than to insert a step later.
 
-### Neutral scale (hue 220 — cool, near-desaturated)
+### Neutral scale (hue 250 — cool slate, from the Precision Editorial board's `#111827`/`#6B7280` family)
 
 | Token | OKLCH | Hex |
 |---|---|---|
-| `neutral-0` | oklch(99% 0.001 220) | `#fbfcfc` |
-| `neutral-10` | oklch(96% 0.003 220) | `#f0f2f3` |
-| `neutral-20` | oklch(91% 0.004 220) | `#dee2e3` |
-| `neutral-30` | oklch(84% 0.006 220) | `#c6cbcd` |
-| `neutral-40` | oklch(74% 0.008 220) | `#a6acae` |
-| `neutral-50` | oklch(62% 0.010 220) | `#80888a` |
-| `neutral-60` | oklch(50% 0.010 220) | `#5d6567` |
-| `neutral-70` | oklch(40% 0.009 220) | `#43494b` |
-| `neutral-80` | oklch(30% 0.008 220) | `#2a2f31` |
-| `neutral-90` | oklch(20% 0.006 220) | `#131718` |
-| `neutral-100` | oklch(12% 0.004 220) | `#050607` |
+| `neutral-0` | oklch(99% 0.002 250) | `#fbfcfd` |
+| `neutral-10` | oklch(96% 0.004 250) | `#f0f2f4` |
+| `neutral-20` | oklch(91% 0.006 250) | `#dee2e5` |
+| `neutral-30` | oklch(84% 0.009 250) | `#c6cbd0` |
+| `neutral-40` | oklch(74% 0.012 250) | `#a5acb2` |
+| `neutral-50` | oklch(62% 0.016 250) | `#7f8790` |
+| `neutral-60` | oklch(50% 0.018 250) | `#5c646d` |
+| `neutral-70` | oklch(40% 0.018 250) | `#414951` |
+| `neutral-80` | oklch(30% 0.018 250) | `#272f37` |
+| `neutral-90` | oklch(20% 0.020 250) | `#0f171f` |
+| `neutral-100` | oklch(12% 0.015 250) | `#03060b` |
 
-### Brand scale (hue 205 — "deep pond" blue-teal)
+### Brand scale (hue 189.5 — deep teal, anchored on the board's Primary `#0B5C58` = `brand-60`)
 
-Deliberately not literal foliage-green (avoids the "Sustainability/Eco" cliché the
-`style-contexts.csv` AVOID list warns off, and avoids reading as a slow-living wellness
-brand) and not GitHub's blue (`#0969da`, hue ~255) — a distinct, cooler, deeper teal so
-RepoGrove reads as its own product per spec §29, with a quiet nod to "Grove" without an
-illustrated leaf anywhere.
+Still deliberately not literal foliage-green and not GitHub's blue. v2.0 moved the hue from
+205 ("deep pond" blue-teal, `brand-60` `#006b74`) to 189.5 so the primary CTA is exactly
+the owner-supplied board color.
 
 | Token | OKLCH | Hex | Typical use |
 |---|---|---|---|
-| `brand-10` | oklch(95% 0.03 205) | `#d8f5f8` | tinted surfaces (selected row, info banner bg) |
-| `brand-20` | oklch(88% 0.05 205) | `#b2e2e7` | hover surface on brand-tinted components |
-| `brand-30` | oklch(80% 0.07 205) | `#86cbd3` | dark-mode link/accent text |
-| `brand-40` | oklch(70% 0.10 205) | `#41b0bc` | dark-mode CTA fill |
-| `brand-50` | oklch(58% 0.13 205) | `#008b96` | key hue — illustrative reference, rarely used raw |
-| `brand-60` | oklch(48% 0.13 205) | `#006b74` | **primary CTA fill (light mode)**, active nav indicator |
-| `brand-70` | oklch(38% 0.11 205) | `#004c53` | CTA hover/active, link text on light bg |
-| `brand-80` | oklch(28% 0.09 205) | `#002f34` | rarely used — high-emphasis dark accents |
-| `brand-90` | oklch(18% 0.06 205) | `#001518` | rarely used |
+| `brand-10` | oklch(95% 0.03 189.5) | `#d9f5f3` | tinted surfaces — category/count badges, comparison chips (light) |
+| `brand-20` | oklch(88% 0.045 189.5) | `#b7e2de` | hover surface on brand-tinted components |
+| `brand-30` | oklch(80% 0.06 189.5) | `#91cbc6` | dark-mode link/accent text |
+| `brand-40` | oklch(70% 0.075 189.5) | `#63aea8` | dark-mode CTA fill |
+| `brand-50` | oklch(56% 0.082 189.5) | `#2c847f` | illustrative reference, rarely used raw |
+| `brand-60` | oklch(43% 0.071 189.5) | `#0b5c58` | **primary CTA fill (light mode)**, brand mark tile |
+| `brand-70` | oklch(35% 0.06 189.5) | `#014441` | CTA hover/active, link text on light bg |
+| `brand-80` | oklch(26% 0.048 189.5) | `#002b29` | dark-mode tinted surfaces (badges) |
+| `brand-90` | oklch(17% 0.035 189.5) | `#001312` | rarely used |
+
+### Amber scale (hue 70 — tertiary, from the board's Tertiary `#F59E0B` = `amber-50`)
+
+Used **only** for star marks (`accent.star`: `amber-60` light = 3.65:1, `amber-50` dark =
+8.44:1 — both over the 3:1 UI-graphic floor, and always beside the numeric count, which
+carries the information). Never body text, never a status color: Momentum "Rising" keeps its
+own independently solved `momentum-rising` token. Steps `10`–`90`: `#ffefdd #ffd6a8 #fdbc6f
+#faab3f #f69e0b #b97500 #8a5600 #5e3900 #3b2301`.
 
 ### Semantic colors
 
@@ -128,7 +134,7 @@ colors above (not a reused light-mode hex):
 | Rising | 🔥 | "Rising" | `#b84b00` (oklch 55% 0.17 45) — 5.05:1 | `#d06127` (oklch 62% 0.156 45) — 4.66:1 |
 | Active | 🟢 | "Active" | `#006818` (oklch 45% 0.15 145) — 6.83:1 | `#3f9246` (oklch 59% 0.138 145) — 4.65:1 |
 | Slowing | 🟡 | "Slowing" | `#986600` (oklch 55% 0.16 75) — 4.82:1 (shares `warning`'s hue — both mean "caution/deceleration", intentional) | `#af7600` — 4.65:1 |
-| Dormant | ⚪ | "Dormant" | `neutral-60` `#5d6567` — 5.80:1 | `neutral-40` `#a6acae` — 7.85:1 |
+| Dormant | ⚪ | "Dormant" | `neutral-60` `#5d6567` — 5.84:1 | `neutral-40` `#a6acae` — 7.86:1 |
 
 A momentum chip's underlying signals (star growth, commit recency, release frequency,
 etc. — spec §7) must be inspectable on hover/expand, never just the badge alone — this is
@@ -147,13 +153,13 @@ writeup of why the original tooltip-only version didn't satisfy "inspectable," n
 
 `border.default` needs to clear WCAG's 3:1 **UI component** contrast minimum against
 `bg.default`, which `neutral-30`/`neutral-40` do not (1.59:1 / 2.24:1 measured) — use
-`neutral-50` (3.52:1) instead. `border.subtle` (decorative dividers, e.g. table row
+`neutral-50` (3.54:1) instead. `border.subtle` (decorative dividers, e.g. table row
 separators) can use `neutral-20`/`neutral-30` since it's reinforced by spacing, never the
 sole boundary signal for an interactive element.
 
 | Token | Light | Dark |
 |---|---|---|
-| `border.default` (inputs, focus-adjacent, card outlines) | `neutral-50` (3.52:1 on `neutral-0`) | `neutral-60` (3.03:1 on `neutral-90`) |
+| `border.default` (inputs, focus-adjacent, card outlines) | `neutral-50` (3.54:1 on `neutral-0`) | `neutral-60` (3.01:1 on `neutral-90`) |
 | `border.subtle` (dividers, table rows) | `neutral-20` | `neutral-70` |
 
 ### Surfaces & text (semantic layer)
@@ -165,13 +171,13 @@ against dark `bg.default` (`neutral-90` / `#131718`), never mixed across themes.
 | Token | Light | Dark |
 |---|---|---|
 | `bg.default` | `neutral-0` (`#fbfcfc`) | `neutral-90` (`#131718`) |
-| `bg.subtle` (page background behind cards) | `neutral-10` | `neutral-100` |
+| `bg.subtle` (**page background** behind cards — text on it re-validated: secondary 5.35:1 / 8.84:1, link 9.83:1 / 11.17:1) | `neutral-10` | `neutral-100` |
 | `bg.elevated` (cards, popovers) | `neutral-0` | `neutral-80` (stacks *upward* in dark mode per convention — elevated = lighter, not darker) |
-| `text.default` | `neutral-90`, 17.56:1 vs. light `bg.default` | `neutral-10`, 16.07:1 vs. dark `bg.default` |
-| `text.secondary` | `neutral-60`, 5.80:1 vs. light `bg.default` | `neutral-40`, 7.85:1 vs. dark `bg.default` |
-| `text.link` / `text.brand` | `brand-70`, 9.47:1 vs. light `bg.default` | `brand-30`, 9.88:1 vs. dark `bg.default` |
-| `cta.fill` | `brand-60` fill, white text, 6.26:1 | `brand-40` fill, `neutral-90` (dark) text, 7.01:1 — white text would fail on this lighter dark-mode fill, so the CTA text flips to dark, not white |
-| `cta.fill.hover` | `brand-70` fill, white text, 9.73:1 | `brand-30` fill, `neutral-90` text |
+| `text.default` | `neutral-90`, 17.58:1 vs. light `bg.default` | `neutral-10`, 16.09:1 vs. dark `bg.default` |
+| `text.secondary` | `neutral-60`, 5.84:1 vs. light `bg.default` | `neutral-40`, 7.86:1 vs. dark `bg.default` |
+| `text.link` / `text.brand` | `brand-70`, 10.74:1 vs. light `bg.default` | `brand-30`, 9.94:1 vs. dark `bg.default` |
+| `cta.fill` | `brand-60` fill, white text, 7.61:1 | `brand-40` fill, `neutral-90` (dark) text, 7.01:1 — white text would fail on this lighter dark-mode fill, so the CTA text flips to dark, not white |
+| `cta.fill.hover` | `brand-70` fill, white text, 10.74:1 | `brand-30` fill, `neutral-90` text |
 
 Dark mode is a second theme remapping semantics to different primitive steps — primitives
 themselves never change (per method: invert lightness, preserve hue, reduce chroma
@@ -179,26 +185,18 @@ slightly at dark surfaces, elevate *lighter* not darker).
 
 ## Typography
 
-**Pairing — "Technical / precise" base, with one editorial exception for long-form
-prose**, per the blended theme statement above:
+**Pairing (v2.0, Precision Editorial):** two faces, both SIL OFL, self-hosted via `next/font`
+(ADR-006):
 
-- **UI / chrome / labels / tables / nav:** Inter (variable, SIL OFL, free) — geometric
-  grotesque, the "built by engineers" signal `Developer Tools Technical B2B` calls for.
-  Fallback stack: `Inter, "Helvetica Neue", Arial, sans-serif`.
-- **Long-form editorial prose only** (Grove essays, repo "why it matters"/pros-cons
-  write-ups, newsletter body) — Source Serif 4 (SIL OFL, free, pairs cleanly with Inter's
-  x-height) for the credibility/authority signal `News Editorial Publishing` calls for,
-  and to visually mark "this is curated editorial content" vs. "this is UI chrome" as the
-  reader scans a page. Fallback stack: `"Source Serif 4", Georgia, "Times New Roman",
-  serif`.
-- **Stats, dates, star counts, code, repo slugs:** IBM Plex Mono (SIL OFL, free) — used
-  sparingly, as texture/precision signal, never for body paragraphs.
-- All three are open-license and free — no paid-vendor decision needed. Load via
-  `next/font` (self-hosted at build time, ships with Next.js, not an added runtime
-  dependency and not a CDN request) once the app exists — that's still "a web font," so
-  per CLAUDE.md §6/rule 7 the dev lane should add a one-line ADR note (append to
-  ADR-001 or a short ADR-005) when wiring this in, naming the three faces and the
-  self-hosted/no-CDN method.
+- **Inter** — headlines, body, UI chrome, tables, nav. The serif prose face (Source Serif 4)
+  was **retired** in v2.0: the owner's board specifies Inter for both Headline and Body, and
+  editorial prose is now set apart by measure (65ch on text blocks) and heading rhythm
+  instead of a second family.
+- **IBM Plex Mono** — labels, stats, dates, slugs, badges, the "alt:" line. Sparingly:
+  never for paragraphs (the v1 failure mode this refresh corrects is mono creeping into
+  body-weight copy).
+
+Scale additions: `text-4xl` (49px / 1.05) is the homepage hero headline only.
 
 **Scale:** ratio 1.25 ("Major Third" — editorial-leaning product, matches the blended
 tone), base 16px.
@@ -222,6 +220,41 @@ informational, not decorative.
 
 Body prose max-width: `65ch` (Grove/repo write-up text columns). Tables, the alternatives
 comparison grid, and card grids are exempt — sized to content, not prose measure.
+
+## Precision Editorial refresh (v2.0, 2026-10-02)
+
+**Source:** owner-supplied "RepoGrove Precision Editorial" board (primary `#0B5C58`,
+secondary `#111827`, tertiary `#F59E0B`, neutral `#6B7280`; Inter + IBM Plex Mono) plus two
+reference page mockups (homepage, repo page). Owner direction was "straight to code" and
+"open to evolving the direction"; this **supersedes RG-4's defaulted** editorial/content-
+forward choice only in look (the editorial, content-first intent is unchanged).
+
+What changed: teal/slate/amber primitives (above); serif retired; wider 6xl frame with a
+sticky, blurred header (wordmark tile = three linked nodes, not a leaf — UX-2026-001) and a
+search affordance; page background `bg.subtle` with `bg.elevated` cards; homepage hero with
+a large headline and a search entry (a link to `/search`, not a second search
+implementation), Grove cards with a repo-count badge and a member-name preview, repo cards
+with a category badge, amber star count and an `alt:` line drawn from the real
+`alternatives.open_source` frontmatter; repo page = hero card + two-column layout (chart ->
+editorial body -> alternatives -> related Grove in the main column; "Compared with" and
+"Latest" in a sidebar that stacks last on narrow screens, preserving UX-2026-004's rule that
+Latest never sits above the lede); ⭐ emoji replaced by an amber `StarIcon` everywhere; list
+bullets removed from chip lists.
+
+**Deliberately not built from the mockups (no backing data — not fabricated; file dev-lane
+issues if wanted):** "Health Index 98/100", "Maintainer velocity / releases last 90d" tiles,
+"Architectural Anatomy", Quick Start tabs, Language Composition bar, "Community Pulse"
+(Discord/Reddit), commit-density chart, "Recent Project Milestones", an "Editorial Curator
+Verdict" block, "Track this Grove", a Most-Stars/Name sort toggle, an "Index 2025.04"
+stamp, and ⌘K shortcuts. Homepage "Explore:" chips were prototyped and removed — they
+duplicated the Groves grid and broke the one-link-per-card invariant.
+
+**Verification:** 376/376 unit tests; the screenshot harness ran 48/48 (0 axe-core WCAG 2.1
+A/AA violations, no horizontally overflowing scroller) across desktop/tablet/mobile ×
+light/dark. It caught one real regression during this work (mobile alternatives table
+overflowing its new card padding) — fixed by tightening mobile gutters (`px-4`, card `p-4`).
+Local screenshots used system Inter (Google Fonts unreachable here, ADR-006); real-font
+screenshots come from CI.
 
 ## Spacing & layout
 
@@ -448,7 +481,7 @@ PR, not just described in a PR body — run it yourself, don't take the numbers 
 regenerates every scale and re-validates every pairing above. Two candidate values from
 earlier in this run failed and are worth recording so the reasoning survives: a first
 `border.default` candidate at `neutral-30` measured 1.59:1 against the 3:1 UI minimum
-(replaced with `neutral-50`, 3.52:1), and a first `warning` light-mode text candidate at
+(replaced with `neutral-50`, 3.54:1), and a first `warning` light-mode text candidate at
 `oklch(62% 0.16 75)` measured 3.61:1 against the 4.5:1 text minimum (replaced with
 `oklch(55% 0.16 75)`, 4.82:1).
 

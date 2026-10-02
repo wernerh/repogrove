@@ -33,12 +33,12 @@ describe("RepoCard", () => {
 
   it("shows the formatted star count when history exists", () => {
     render(<RepoCard repo={baseRepo} stars={181843} />);
-    expect(screen.getByText("⭐ 181,843")).toBeInTheDocument();
+    expect(screen.getByText("181,843")).toBeInTheDocument();
   });
 
   it("omits the star count rather than showing a fabricated 0 when there's no history yet", () => {
     render(<RepoCard repo={baseRepo} stars={null} />);
-    expect(screen.queryByText(/⭐/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/^[0-9,]+$/)).not.toBeInTheDocument();
   });
 
   it("shows the primary category as a tag", () => {

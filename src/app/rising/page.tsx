@@ -51,11 +51,11 @@ export default function RisingPage() {
   const ranked = rankByRelativeGrowth(repos, summaries);
 
   return (
-    <div>
+    <div className="max-w-3xl">
       <h1 className="font-sans text-2xl font-semibold tracking-tight text-text-default">
         🌱 Rising
       </h1>
-      <p className="mt-2 font-serif text-lg text-text-secondary">
+      <p className="mt-2 text-lg text-text-secondary">
         Tracked repositories ranked by star growth relative to their own size —
         surfacing fast movers, not just the biggest.
       </p>
