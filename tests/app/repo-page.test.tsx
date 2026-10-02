@@ -21,6 +21,7 @@ describe("Repo page (/repo/[slug])", () => {
       "neovim",
       "ollama",
       "pocketbase",
+      "portainer",
       "postgresql",
       "sqlite",
       "supabase",
@@ -498,6 +499,47 @@ describe("Repo page (/repo/[slug])", () => {
     // Its own alternatives.open_source (coolify) already existed before this
     // repo did, so it resolves to a real link rather than "Not yet profiled".
     expect(screen.getAllByRole("link", { name: "Coolify" })[0]).toHaveAttribute("href", "/repo/coolify");
+  });
+
+  it("renders /repo/portainer from content/repos/portainer.md, not a hardcoded string", async () => {
+    render(await RepoPage({ params: Promise.resolve({ slug: "portainer" }) }));
+
+    expect(screen.getByRole("heading", { level: 1, name: "Portainer" })).toBeInTheDocument();
+    expect(screen.getAllByText(/Zlib/, { selector: "dd" })[0]).toBeInTheDocument();
+    expect(screen.getByText(/Portainer deploys as a single container/)).toBeInTheDocument();
+    // The body's own "## Related Grove" section links back to Self-Hosted —
+    // proves this new content/repos/*.md file renders through the real page,
+    // not just through generateStaticParams.
+    expect(screen.getAllByRole("link", { name: "Self-Hosted" })[0]).toHaveAttribute(
+      "href",
+      "/grove/self-hosted",
+    );
+    // Its own alternatives.open_source (coolify, dokploy) already existed
+    // before this repo did, so both resolve to real links rather than
+    // "Not yet profiled".
+    expect(screen.getAllByRole("link", { name: "Coolify" })[0]).toHaveAttribute("href", "/repo/coolify");
+    expect(screen.getAllByRole("link", { name: "Dokploy" })[0]).toHaveAttribute("href", "/repo/dokploy");
+  });
+
+  it("resolves Coolify's own alternatives.open_source (portainer) now that it has a profile", async () => {
+    // coolify.md was updated to list portainer under alternatives.open_source
+    // in the same change that added content/repos/portainer.md — this proves
+    // it doesn't render a dangling "Not yet profiled" row for it.
+    render(await RepoPage({ params: Promise.resolve({ slug: "coolify" }) }));
+    expect(screen.getAllByRole("link", { name: "Portainer" })[0]).toHaveAttribute(
+      "href",
+      "/repo/portainer",
+    );
+    expect(screen.queryByText("Not yet profiled")).not.toBeInTheDocument();
+  });
+
+  it("resolves Dokploy's own alternatives.open_source (portainer) now that it has a profile", async () => {
+    render(await RepoPage({ params: Promise.resolve({ slug: "dokploy" }) }));
+    expect(screen.getAllByRole("link", { name: "Portainer" })[0]).toHaveAttribute(
+      "href",
+      "/repo/portainer",
+    );
+    expect(screen.queryByText("Not yet profiled")).not.toBeInTheDocument();
   });
 
   it("resolves Coolify's own alternatives.open_source (dokploy) now that it has a profile", async () => {

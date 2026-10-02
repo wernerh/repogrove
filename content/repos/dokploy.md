@@ -7,7 +7,7 @@ status: active
 featured: false
 groves: [self-hosted]
 alternatives:
-  open_source: [coolify]
+  open_source: [coolify, portainer]
   commercial: [Vercel, Heroku, Netlify]
 ---
 
@@ -43,7 +43,7 @@ one server or a multi-node Swarm cluster.
 - Self-hosting it means you're also responsible for its own security posture and uptime
 
 ## Alternatives
-**Open-source:** Coolify.
+**Open-source:** Coolify, Portainer.
 **Commercial:** Vercel, Heroku, Netlify.
 
 ## Related Grove

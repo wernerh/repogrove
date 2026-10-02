@@ -46,6 +46,7 @@ describe("getAllRepos (real /content fixtures)", () => {
       "neovim",
       "ollama",
       "pocketbase",
+      "portainer",
       "postgresql",
       "sqlite",
       "supabase",
@@ -125,6 +126,29 @@ describe("getAllRepos (real /content fixtures)", () => {
     expect(postgresql?.alternatives.commercial).toEqual([]);
   });
 
+  it("parses Portainer's frontmatter correctly", () => {
+    const portainer = getRepo("portainer");
+    expect(portainer).toBeDefined();
+    expect(portainer?.github).toBe("portainer/portainer");
+    expect(portainer?.name).toBe("Portainer");
+    expect(portainer?.license).toBe("Zlib");
+    expect(portainer?.status).toBe("active");
+    expect(portainer?.groves).toEqual(["self-hosted"]);
+    // Cross-referenced with Coolify and Dokploy as open-source alternatives
+    // (2026-10-02) — a real-world "Portainer vs Coolify"/"Dokploy vs
+    // Portainer" comparison multiple independent sources draw, not an
+    // invented pairing, even though Portainer (generic container/Kubernetes
+    // management) and Coolify/Dokploy (Git-push PaaS) sit at different
+    // layers of the stack.
+    expect(portainer?.alternatives.open_source).toEqual(["coolify", "dokploy"]);
+    expect(portainer?.alternatives.commercial).toEqual([]);
+  });
+
+  it("reciprocally cross-references Portainer from Coolify and Dokploy", () => {
+    expect(getRepo("coolify")?.alternatives.open_source).toEqual(["dokploy", "portainer"]);
+    expect(getRepo("dokploy")?.alternatives.open_source).toEqual(["coolify", "portainer"]);
+  });
+
   it("returns undefined for a repo that doesn't exist", () => {
     expect(getRepo("does-not-exist")).toBeUndefined();
   });
@@ -170,6 +194,7 @@ describe("getReposInGrove (derived from repo frontmatter, per ADR-003)", () => {
       "dokploy",
       "immich",
       "pocketbase",
+      "portainer",
       "supabase",
     ]);
   });
@@ -885,6 +910,8 @@ describe("getAllComparisons (real /content fixtures)", () => {
       "clickhouse-vs-postgresql",
       "clickhouse-vs-sqlite",
       "coolify-vs-dokploy",
+      "coolify-vs-portainer",
+      "dokploy-vs-portainer",
       "duckdb-vs-postgresql",
       "duckdb-vs-sqlite",
       "gitui-vs-lazygit",
@@ -929,12 +956,21 @@ describe("getComparison (order-independent lookup)", () => {
 });
 
 describe("getComparisonsForRepo", () => {
-  it("finds the comparison for a repo named on either side of a pair", () => {
-    // coolify-vs-dokploy is the real single-comparison fixture now (ollama
-    // and vllm each gained a second comparison this run — see the
-    // fully-mutual-trio test below for those).
-    expect(getComparisonsForRepo("coolify").map((c) => c.slug)).toEqual(["coolify-vs-dokploy"]);
-    expect(getComparisonsForRepo("dokploy").map((c) => c.slug)).toEqual(["coolify-vs-dokploy"]);
+  it("finds every comparison for a repo named on either side of a pair", () => {
+    // Coolify and Dokploy each gained a second comparison (vs. Portainer,
+    // 2026-10-02) alongside their existing mutual coolify-vs-dokploy page.
+    expect(getComparisonsForRepo("coolify").map((c) => c.slug)).toEqual([
+      "coolify-vs-dokploy",
+      "coolify-vs-portainer",
+    ]);
+    expect(getComparisonsForRepo("dokploy").map((c) => c.slug)).toEqual([
+      "coolify-vs-dokploy",
+      "dokploy-vs-portainer",
+    ]);
+    expect(getComparisonsForRepo("portainer").map((c) => c.slug)).toEqual([
+      "coolify-vs-portainer",
+      "dokploy-vs-portainer",
+    ]);
   });
 
   it("returns an empty array for a repo with no comparisons", () => {

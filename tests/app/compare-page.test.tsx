@@ -116,6 +116,55 @@ describe("Compare page (/compare/[a]/[b])", () => {
     expect(screen.getByText(/Dokploy builds multi-server deployment on Docker Swarm/)).toBeInTheDocument();
   });
 
+  it("renders /compare/coolify/portainer from content/comparisons/coolify-vs-portainer.md", async () => {
+    // coolify.md and portainer.md have listed each other under
+    // alternatives.open_source since portainer.md was added (2026-10-02) —
+    // this is the comparison page that closes that pair out.
+    const { container } = render(
+      await ComparePage({ params: Promise.resolve({ a: "coolify", b: "portainer" }) }),
+    );
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Coolify vs Portainer" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Coolify" })).toHaveAttribute("href", "/repo/coolify");
+    expect(screen.getByRole("link", { name: "Portainer" })).toHaveAttribute(
+      "href",
+      "/repo/portainer",
+    );
+
+    const table = container.querySelector("table")!;
+    expect(within(table).getByText(/Apache-2.0/)).toBeInTheDocument();
+    expect(within(table).getByText(/Zlib/)).toBeInTheDocument();
+
+    expect(screen.getByRole("heading", { level: 2, name: "How they differ" })).toBeInTheDocument();
+    expect(screen.getByText(/Coolify is a Heroku\/Vercel-style PaaS/)).toBeInTheDocument();
+  });
+
+  it("renders /compare/dokploy/portainer from content/comparisons/dokploy-vs-portainer.md", async () => {
+    const { container } = render(
+      await ComparePage({ params: Promise.resolve({ a: "dokploy", b: "portainer" }) }),
+    );
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Dokploy vs Portainer" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Dokploy" })).toHaveAttribute("href", "/repo/dokploy");
+    expect(screen.getByRole("link", { name: "Portainer" })).toHaveAttribute(
+      "href",
+      "/repo/portainer",
+    );
+
+    const table = container.querySelector("table")!;
+    expect(within(table).getByText(/Apache-2.0/)).toBeInTheDocument();
+    expect(within(table).getByText(/Zlib/)).toBeInTheDocument();
+
+    expect(screen.getByRole("heading", { level: 2, name: "How they differ" })).toBeInTheDocument();
+    expect(
+      screen.getByText(/Dokploy wraps Docker and Docker Swarm behind a Git-push deploy workflow/),
+    ).toBeInTheDocument();
+  });
+
   it("renders /compare/ollama/localai from content/comparisons/localai-vs-ollama.md, part of the fully-mutual AI inference trio", async () => {
     // ollama, localai, and vllm each list the other two under
     // alternatives.open_source — localai-vs-ollama and localai-vs-vllm are
