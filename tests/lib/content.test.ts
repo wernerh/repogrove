@@ -32,8 +32,10 @@ describe("getAllRepos (real /content fixtures)", () => {
     const slugs = repos.map((r) => r.slug).sort();
     expect(slugs).toEqual([
       "appwrite",
+      "clickhouse",
       "coolify",
       "dokploy",
+      "duckdb",
       "gitui",
       "helix",
       "langchain",
@@ -64,6 +66,30 @@ describe("getAllRepos (real /content fixtures)", () => {
     expect(ollama?.alternatives.commercial).toEqual(["LM Studio"]);
   });
 
+  it("parses DuckDB's frontmatter correctly", () => {
+    const duckdb = getRepo("duckdb");
+    expect(duckdb).toBeDefined();
+    expect(duckdb?.github).toBe("duckdb/duckdb");
+    expect(duckdb?.name).toBe("DuckDB");
+    expect(duckdb?.license).toBe("MIT");
+    expect(duckdb?.status).toBe("active");
+    expect(duckdb?.groves).toEqual(["databases"]);
+    expect(duckdb?.alternatives.open_source).toEqual(["clickhouse"]);
+    expect(duckdb?.alternatives.commercial).toEqual([]);
+  });
+
+  it("parses ClickHouse's frontmatter correctly", () => {
+    const clickhouse = getRepo("clickhouse");
+    expect(clickhouse).toBeDefined();
+    expect(clickhouse?.github).toBe("ClickHouse/ClickHouse");
+    expect(clickhouse?.name).toBe("ClickHouse");
+    expect(clickhouse?.license).toBe("Apache-2.0");
+    expect(clickhouse?.status).toBe("active");
+    expect(clickhouse?.groves).toEqual(["databases"]);
+    expect(clickhouse?.alternatives.open_source).toEqual(["duckdb"]);
+    expect(clickhouse?.alternatives.commercial).toEqual([]);
+  });
+
   it("returns undefined for a repo that doesn't exist", () => {
     expect(getRepo("does-not-exist")).toBeUndefined();
   });
@@ -79,13 +105,13 @@ describe("getAllGroves (real /content fixtures)", () => {
   it("loads every example grove", () => {
     const groves = getAllGroves();
     const slugs = groves.map((g) => g.slug).sort();
-    expect(slugs).toEqual(["ai", "developer-tools", "self-hosted"]);
+    expect(slugs).toEqual(["ai", "databases", "developer-tools", "self-hosted"]);
   });
 
   it("parses the AI grove's frontmatter correctly", () => {
     const ai = getGrove("ai");
     expect(ai?.name).toBe("AI");
-    expect(ai?.relatedGroves).toEqual(["developer-tools", "self-hosted"]);
+    expect(ai?.relatedGroves).toEqual(["developer-tools", "self-hosted", "databases"]);
   });
 });
 
@@ -123,6 +149,11 @@ describe("getReposInGrove (derived from repo frontmatter, per ADR-003)", () => {
       "vim",
       "zed",
     ]);
+  });
+
+  it("finds every databases-grove repo under the databases grove", () => {
+    const reposInDatabases = getReposInGrove("databases");
+    expect(reposInDatabases.map((r) => r.slug).sort()).toEqual(["clickhouse", "duckdb"]);
   });
 
   it("returns an empty array for a grove with no member repos", () => {
@@ -668,6 +699,7 @@ describe("getAllComparisons (real /content fixtures)", () => {
     expect(comparisons.map((c) => c.slug).sort()).toEqual([
       "appwrite-vs-pocketbase",
       "appwrite-vs-supabase",
+      "clickhouse-vs-duckdb",
       "coolify-vs-dokploy",
       "gitui-vs-lazygit",
       "gitui-vs-tig",
