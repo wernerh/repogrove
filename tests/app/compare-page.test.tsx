@@ -266,6 +266,132 @@ describe("Compare page (/compare/[a]/[b])", () => {
     ).toBeInTheDocument();
   });
 
+  it("renders /compare/duckdb/postgresql from content/comparisons/duckdb-vs-postgresql.md", async () => {
+    // duckdb.md and postgresql.md now list each other under
+    // alternatives.open_source, completing the Databases grove's fully
+    // mutual quartet (duckdb/clickhouse/sqlite/postgresql) — this comparison
+    // page closes that pair out in the same PR as the other two remaining
+    // cross-pairs, rather than leaving dangling-mutual-pair gaps behind.
+    const { container } = render(
+      await ComparePage({ params: Promise.resolve({ a: "duckdb", b: "postgresql" }) }),
+    );
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "DuckDB vs PostgreSQL" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "DuckDB" })).toHaveAttribute(
+      "href",
+      "/repo/duckdb",
+    );
+    expect(screen.getByRole("link", { name: "PostgreSQL" })).toHaveAttribute(
+      "href",
+      "/repo/postgresql",
+    );
+
+    const table = container.querySelector("table")!;
+    expect(within(table).getAllByText(/MIT/).length).toBeGreaterThan(0);
+    expect(within(table).getAllByText(/PostgreSQL License/).length).toBeGreaterThan(0);
+
+    expect(screen.getByRole("heading", { level: 2, name: "How they differ" })).toBeInTheDocument();
+    expect(
+      screen.getByText(/PostgreSQL is a general-purpose, client-server database/),
+    ).toBeInTheDocument();
+
+    // Regression check (content.ts's extractListItems only captures lines
+    // literally starting with "- ", silently dropping a wrapped continuation
+    // line — the exact bug CHANGELOG.md documents being caught and fixed for
+    // content/alternatives/*.md previously, and found again in content/repos/
+    // duckdb.md's/postgresql.md's own Pros/Cons during this PR's review,
+    // since both repos' Pros/Cons bullets were wrapped across two lines).
+    // Asserting the full, untruncated bullet text here locks the fix in: a
+    // future wrapped bullet fails this assertion instead of silently
+    // truncating on the live page.
+    expect(
+      screen.getByText(
+        "Genuinely zero-dependency: builds and runs with just a C++17 compiler, no external services",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Needs a server process to install, configure, tune, and keep running — real operational overhead compared to an embedded database with no service to manage",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("renders /compare/clickhouse/postgresql from content/comparisons/clickhouse-vs-postgresql.md", async () => {
+    // clickhouse.md and postgresql.md now list each other under
+    // alternatives.open_source, completing the Databases grove's fully
+    // mutual quartet — see the duckdb-vs-postgresql test above.
+    const { container } = render(
+      await ComparePage({ params: Promise.resolve({ a: "clickhouse", b: "postgresql" }) }),
+    );
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "ClickHouse vs PostgreSQL" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "ClickHouse" })).toHaveAttribute(
+      "href",
+      "/repo/clickhouse",
+    );
+    expect(screen.getByRole("link", { name: "PostgreSQL" })).toHaveAttribute(
+      "href",
+      "/repo/postgresql",
+    );
+
+    const table = container.querySelector("table")!;
+    expect(within(table).getAllByText(/Apache-2.0/).length).toBeGreaterThan(0);
+    expect(within(table).getAllByText(/PostgreSQL License/).length).toBeGreaterThan(0);
+
+    expect(screen.getByRole("heading", { level: 2, name: "How they differ" })).toBeInTheDocument();
+    expect(
+      screen.getByText(/PostgreSQL is row-oriented and built for OLTP/),
+    ).toBeInTheDocument();
+  });
+
+  it("renders /compare/clickhouse/sqlite from content/comparisons/clickhouse-vs-sqlite.md", async () => {
+    // clickhouse.md and sqlite.md now list each other under
+    // alternatives.open_source, completing the Databases grove's fully
+    // mutual quartet — see the duckdb-vs-postgresql test above.
+    const { container } = render(
+      await ComparePage({ params: Promise.resolve({ a: "clickhouse", b: "sqlite" }) }),
+    );
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "ClickHouse vs SQLite" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "ClickHouse" })).toHaveAttribute(
+      "href",
+      "/repo/clickhouse",
+    );
+    expect(screen.getByRole("link", { name: "SQLite" })).toHaveAttribute(
+      "href",
+      "/repo/sqlite",
+    );
+
+    const table = container.querySelector("table")!;
+    expect(within(table).getAllByText(/Apache-2.0/).length).toBeGreaterThan(0);
+    expect(within(table).getAllByText(/Public Domain/).length).toBeGreaterThan(0);
+
+    expect(screen.getByRole("heading", { level: 2, name: "How they differ" })).toBeInTheDocument();
+    expect(
+      screen.getByText(/SQLite is an embedded, serverless, row-oriented database/),
+    ).toBeInTheDocument();
+
+    // Regression check — see the duckdb-vs-postgresql test above for why:
+    // locks in ClickHouse's and SQLite's own previously-wrapped Pros/Cons
+    // bullets rendering in full, untruncated, on the compare page.
+    expect(
+      screen.getByText(
+        "Proven at very large scale — in production at companies including Uber, eBay, and Comcast for analytics and reporting workloads",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Row-oriented storage tuned for transactional (OLTP) access patterns, not for large-scale analytical aggregations — see DuckDB below for that workload instead",
+      ),
+    ).toBeInTheDocument();
+  });
+
   it("resolves the reverse URL order (/compare/vllm/ollama) to the same content, rendered in canonical order", async () => {
     const { container: forward } = render(
       await ComparePage({ params: Promise.resolve({ a: "ollama", b: "vllm" }) }),

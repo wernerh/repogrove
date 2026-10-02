@@ -7,7 +7,7 @@ status: active
 featured: false
 groves: [databases]
 alternatives:
-  open_source: [sqlite]
+  open_source: [sqlite, duckdb, clickhouse]
   commercial: []
 ---
 
@@ -38,24 +38,22 @@ can be added without forking the database itself.
   operational tooling, drivers, and hosting options broad
 
 ## Pros
-- Decades of production hardening across every major workload shape, from small apps to
-  very large multi-tenant systems
-- Genuinely extensible at the SQL and type-system level, not just through plugins
-  bolted on from outside
-- Strong data-integrity guarantees (constraints, foreign keys, strict typing) enforced
-  by the database itself, not left to the application
+- Decades of production hardening across every major workload shape, from small apps to very large multi-tenant systems
+- Genuinely extensible at the SQL and type-system level, not just through plugins bolted on from outside
+- Strong data-integrity guarantees (constraints, foreign keys, strict typing) enforced by the database itself, not left to the application
 
 ## Cons
-- Needs a server process to install, configure, tune, and keep running — real
-  operational overhead compared to an embedded database with no service to manage
-- Vertical scaling (one larger machine) is the primary scaling path; horizontal
-  write-scaling across nodes isn't built in the way some distributed databases offer
-- Heavier to spin up for a quick script, a mobile app, or a single-file local
-  datastore — see SQLite below when a server isn't worth running
+- Needs a server process to install, configure, tune, and keep running — real operational overhead compared to an embedded database with no service to manage
+- Vertical scaling (one larger machine) is the primary scaling path; horizontal write-scaling across nodes isn't built in the way some distributed databases offer
+- Heavier to spin up for a quick script, a mobile app, or a single-file local datastore — see SQLite below when a server isn't worth running
 
 ## Alternatives
 **Open-source:** SQLite (embedded/serverless rather than client-server — see the
-comparison for which fits a given workload and deployment shape).
+comparison for which fits a given workload and deployment shape); DuckDB (embedded
+and built for analytical queries rather than a general-purpose transactional
+server — see the comparison for the workload split); ClickHouse (a distributed,
+column-oriented database built specifically for large-scale analytics — see the
+comparison for when that specialization is worth the added operational overhead).
 **Commercial:** none tracked yet.
 
 ## Related Grove

@@ -354,8 +354,8 @@ describe("Repo page (/repo/[slug])", () => {
       "href",
       "/grove/databases",
     );
-    // Its own alternatives.open_source (clickhouse, sqlite) already exist, so
-    // both resolve to real links.
+    // Its own alternatives.open_source (clickhouse, sqlite, postgresql)
+    // already exist, so all three resolve to real links.
     expect(screen.getByRole("link", { name: "ClickHouse" })).toHaveAttribute(
       "href",
       "/repo/clickhouse",
@@ -363,6 +363,10 @@ describe("Repo page (/repo/[slug])", () => {
     expect(screen.getByRole("link", { name: "SQLite" })).toHaveAttribute(
       "href",
       "/repo/sqlite",
+    );
+    expect(screen.getByRole("link", { name: "PostgreSQL" })).toHaveAttribute(
+      "href",
+      "/repo/postgresql",
     );
   });
 
@@ -383,11 +387,19 @@ describe("Repo page (/repo/[slug])", () => {
       "href",
       "/grove/databases",
     );
-    // Its own alternatives.open_source (duckdb) already exists, so it
-    // resolves to a real link.
+    // Its own alternatives.open_source (duckdb, sqlite, postgresql) already
+    // exist, so all three resolve to real links.
     expect(screen.getByRole("link", { name: "DuckDB" })).toHaveAttribute(
       "href",
       "/repo/duckdb",
+    );
+    expect(screen.getByRole("link", { name: "SQLite" })).toHaveAttribute(
+      "href",
+      "/repo/sqlite",
+    );
+    expect(screen.getByRole("link", { name: "PostgreSQL" })).toHaveAttribute(
+      "href",
+      "/repo/postgresql",
     );
   });
 
@@ -406,8 +418,8 @@ describe("Repo page (/repo/[slug])", () => {
       "href",
       "/grove/databases",
     );
-    // Its own alternatives.open_source (duckdb, postgresql) already exist,
-    // so both resolve to real links.
+    // Its own alternatives.open_source (duckdb, postgresql, clickhouse)
+    // already exist, so all three resolve to real links.
     expect(screen.getByRole("link", { name: "DuckDB" })).toHaveAttribute(
       "href",
       "/repo/duckdb",
@@ -415,6 +427,10 @@ describe("Repo page (/repo/[slug])", () => {
     expect(screen.getByRole("link", { name: "PostgreSQL" })).toHaveAttribute(
       "href",
       "/repo/postgresql",
+    );
+    expect(screen.getByRole("link", { name: "ClickHouse" })).toHaveAttribute(
+      "href",
+      "/repo/clickhouse",
     );
   });
 
@@ -433,11 +449,19 @@ describe("Repo page (/repo/[slug])", () => {
       "href",
       "/grove/databases",
     );
-    // Its own alternatives.open_source (sqlite) already exists, so it
-    // resolves to a real link.
+    // Its own alternatives.open_source (sqlite, duckdb, clickhouse) already
+    // exist, so all three resolve to real links.
     expect(screen.getByRole("link", { name: "SQLite" })).toHaveAttribute(
       "href",
       "/repo/sqlite",
+    );
+    expect(screen.getByRole("link", { name: "DuckDB" })).toHaveAttribute(
+      "href",
+      "/repo/duckdb",
+    );
+    expect(screen.getByRole("link", { name: "ClickHouse" })).toHaveAttribute(
+      "href",
+      "/repo/clickhouse",
     );
   });
 

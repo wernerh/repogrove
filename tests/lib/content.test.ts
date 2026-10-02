@@ -76,7 +76,9 @@ describe("getAllRepos (real /content fixtures)", () => {
     expect(duckdb?.license).toBe("MIT");
     expect(duckdb?.status).toBe("active");
     expect(duckdb?.groves).toEqual(["databases"]);
-    expect(duckdb?.alternatives.open_source).toEqual(["clickhouse", "sqlite"]);
+    // PostgreSQL added as a mutual alternative this run, completing the
+    // Databases grove's fully mutual quartet alongside ClickHouse and SQLite.
+    expect(duckdb?.alternatives.open_source).toEqual(["clickhouse", "sqlite", "postgresql"]);
     expect(duckdb?.alternatives.commercial).toEqual([]);
   });
 
@@ -88,7 +90,9 @@ describe("getAllRepos (real /content fixtures)", () => {
     expect(clickhouse?.license).toBe("Apache-2.0");
     expect(clickhouse?.status).toBe("active");
     expect(clickhouse?.groves).toEqual(["databases"]);
-    expect(clickhouse?.alternatives.open_source).toEqual(["duckdb"]);
+    // SQLite and PostgreSQL added as mutual alternatives this run, completing
+    // the Databases grove's fully mutual quartet alongside DuckDB.
+    expect(clickhouse?.alternatives.open_source).toEqual(["duckdb", "sqlite", "postgresql"]);
     expect(clickhouse?.alternatives.commercial).toEqual([]);
   });
 
@@ -100,9 +104,9 @@ describe("getAllRepos (real /content fixtures)", () => {
     expect(sqlite?.license).toBe("Public Domain");
     expect(sqlite?.status).toBe("active");
     expect(sqlite?.groves).toEqual(["databases"]);
-    // PostgreSQL added as a mutual alternative this run (postgresql.md lists
-    // sqlite back) alongside the existing DuckDB pairing.
-    expect(sqlite?.alternatives.open_source).toEqual(["duckdb", "postgresql"]);
+    // ClickHouse added as a mutual alternative this run, completing the
+    // Databases grove's fully mutual quartet alongside DuckDB and PostgreSQL.
+    expect(sqlite?.alternatives.open_source).toEqual(["duckdb", "postgresql", "clickhouse"]);
     expect(sqlite?.alternatives.commercial).toEqual([]);
   });
 
@@ -114,7 +118,9 @@ describe("getAllRepos (real /content fixtures)", () => {
     expect(postgresql?.license).toBe("PostgreSQL License");
     expect(postgresql?.status).toBe("active");
     expect(postgresql?.groves).toEqual(["databases"]);
-    expect(postgresql?.alternatives.open_source).toEqual(["sqlite"]);
+    // DuckDB and ClickHouse added as mutual alternatives this run, completing
+    // the Databases grove's fully mutual quartet alongside SQLite.
+    expect(postgresql?.alternatives.open_source).toEqual(["sqlite", "duckdb", "clickhouse"]);
     expect(postgresql?.alternatives.commercial).toEqual([]);
   });
 
@@ -733,7 +739,10 @@ describe("getAllComparisons (real /content fixtures)", () => {
       "appwrite-vs-pocketbase",
       "appwrite-vs-supabase",
       "clickhouse-vs-duckdb",
+      "clickhouse-vs-postgresql",
+      "clickhouse-vs-sqlite",
       "coolify-vs-dokploy",
+      "duckdb-vs-postgresql",
       "duckdb-vs-sqlite",
       "gitui-vs-lazygit",
       "gitui-vs-tig",
@@ -856,6 +865,36 @@ describe("getComparisonsForRepo", () => {
     expect(getComparisonsForRepo("vllm").map((c) => c.slug).sort()).toEqual([
       "localai-vs-vllm",
       "ollama-vs-vllm",
+    ]);
+  });
+
+  it("finds all three comparisons for each repo in the Databases grove's fully mutual quartet", () => {
+    // duckdb, clickhouse, sqlite, and postgresql each list the other three
+    // under alternatives.open_source, and all six cross-pairs now have their
+    // own comparison file (clickhouse-vs-duckdb, duckdb-vs-sqlite, and
+    // postgresql-vs-sqlite pre-dated this run; clickhouse-vs-postgresql,
+    // clickhouse-vs-sqlite, and duckdb-vs-postgresql complete the quartet) —
+    // the same fully-mutual shape as the trios above, just for four repos
+    // (3 comparisons per repo instead of 2).
+    expect(getComparisonsForRepo("duckdb").map((c) => c.slug).sort()).toEqual([
+      "clickhouse-vs-duckdb",
+      "duckdb-vs-postgresql",
+      "duckdb-vs-sqlite",
+    ]);
+    expect(getComparisonsForRepo("clickhouse").map((c) => c.slug).sort()).toEqual([
+      "clickhouse-vs-duckdb",
+      "clickhouse-vs-postgresql",
+      "clickhouse-vs-sqlite",
+    ]);
+    expect(getComparisonsForRepo("sqlite").map((c) => c.slug).sort()).toEqual([
+      "clickhouse-vs-sqlite",
+      "duckdb-vs-sqlite",
+      "postgresql-vs-sqlite",
+    ]);
+    expect(getComparisonsForRepo("postgresql").map((c) => c.slug).sort()).toEqual([
+      "clickhouse-vs-postgresql",
+      "duckdb-vs-postgresql",
+      "postgresql-vs-sqlite",
     ]);
   });
 });
