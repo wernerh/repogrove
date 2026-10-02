@@ -7,7 +7,7 @@ status: active
 featured: false
 groves: [databases]
 alternatives:
-  open_source: [duckdb, postgresql]
+  open_source: [duckdb, postgresql, clickhouse]
   commercial: []
 ---
 
@@ -37,24 +37,21 @@ stable across two decades of releases.
 
 ## Pros
 - Extremely low operational overhead: a backup is a file copy, not a service restore
-- Battle-tested at enormous deployment scale (phones, browsers, countless apps) and
-  known for strong backward and forward file-format compatibility
-- Great fit for mobile/desktop apps, local caches, and lower-traffic sites that don't
-  need a dedicated database server
+- Battle-tested at enormous deployment scale (phones, browsers, countless apps) and known for strong backward and forward file-format compatibility
+- Great fit for mobile/desktop apps, local caches, and lower-traffic sites that don't need a dedicated database server
 
 ## Cons
-- Row-oriented storage tuned for transactional (OLTP) access patterns, not for
-  large-scale analytical aggregations — see DuckDB below for that workload instead
-- A single writer at a time per database file: concurrent multi-process writes don't
-  scale the way a client-server database's connection pool does
-- No built-in network access control or multi-node replication — scaling beyond one
-  machine/file means reaching for a different database
+- Row-oriented storage tuned for transactional (OLTP) access patterns, not for large-scale analytical aggregations — see DuckDB below for that workload instead
+- A single writer at a time per database file: concurrent multi-process writes don't scale the way a client-server database's connection pool does
+- No built-in network access control or multi-node replication — scaling beyond one machine/file means reaching for a different database
 
 ## Alternatives
 **Open-source:** DuckDB (also embedded/serverless, but built for analytical queries over
 row-level transactional ones — see the comparison for which fits your workload);
 PostgreSQL (a full client-server database rather than an embedded library — see the
-comparison for when that trade-off is worth it).
+comparison for when that trade-off is worth it); ClickHouse (a distributed,
+server-based analytical database — see the comparison for how little overlap there
+actually is between the two).
 **Commercial:** none tracked yet.
 
 ## Related Grove
