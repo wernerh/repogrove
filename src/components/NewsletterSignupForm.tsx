@@ -42,7 +42,9 @@ export default function NewsletterSignupForm() {
   }
 
   return (
-    <div>
+    // `@container`: the form lays out by its own width (stacked in the Grove
+    // sidebar, inline on the homepage), not the viewport's.
+    <div className="@container">
       <p className="font-sans text-sm text-text-secondary">
         The 10 open-source projects worth knowing about this week.{" "}
         <span className="font-medium text-text-default">Coming soon</span> — sign up to
@@ -53,7 +55,7 @@ export default function NewsletterSignupForm() {
         aria-label="Newsletter signup"
         onSubmit={handleSubmit}
         noValidate
-        className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-start"
+        className="mt-4 flex flex-col gap-3 @md:flex-row @md:items-start"
       >
         <div className="flex-1">
           <label htmlFor="newsletter-email" className="sr-only">

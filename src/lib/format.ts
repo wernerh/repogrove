@@ -9,6 +9,23 @@
  */
 export const numberFormatter = new Intl.NumberFormat("en-US");
 
+/** "380K", "1.2M" — compact form for aggregate figures where the exact digits
+ * add noise (a Grove's collective star count). */
+export const compactNumberFormatter = new Intl.NumberFormat("en-US", {
+  notation: "compact",
+  maximumFractionDigits: 1,
+});
+
+/**
+ * Signed star delta: "+1,240", "-35", "±0". Extracted from `StarGrowthChart`
+ * when the Grove page's repo rows needed the same figure (second caller).
+ */
+export function formatDelta(delta: number): string {
+  if (delta > 0) return `+${numberFormatter.format(delta)}`;
+  if (delta < 0) return numberFormatter.format(delta); // already carries "-"
+  return "±0";
+}
+
 /**
  * Shared date formatting for a release's `publishedAt` (issue #72, "Latest" section
  * on `/repo/[slug]`) — "Sep 20, 2026" rather than a raw ISO timestamp.

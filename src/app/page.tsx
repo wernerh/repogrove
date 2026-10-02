@@ -47,7 +47,7 @@ export default function Home() {
         </Link>
       </section>
 
-      <section>
+      <section id="groves">
         <p className="font-mono text-sm text-text-secondary">
           Taxonomy · {groves.length} collections
         </p>
