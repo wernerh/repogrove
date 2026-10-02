@@ -45,6 +45,7 @@ describe("getAllRepos (real /content fixtures)", () => {
       "neovim",
       "ollama",
       "pocketbase",
+      "sqlite",
       "supabase",
       "tig",
       "vim",
@@ -74,7 +75,7 @@ describe("getAllRepos (real /content fixtures)", () => {
     expect(duckdb?.license).toBe("MIT");
     expect(duckdb?.status).toBe("active");
     expect(duckdb?.groves).toEqual(["databases"]);
-    expect(duckdb?.alternatives.open_source).toEqual(["clickhouse"]);
+    expect(duckdb?.alternatives.open_source).toEqual(["clickhouse", "sqlite"]);
     expect(duckdb?.alternatives.commercial).toEqual([]);
   });
 
@@ -88,6 +89,18 @@ describe("getAllRepos (real /content fixtures)", () => {
     expect(clickhouse?.groves).toEqual(["databases"]);
     expect(clickhouse?.alternatives.open_source).toEqual(["duckdb"]);
     expect(clickhouse?.alternatives.commercial).toEqual([]);
+  });
+
+  it("parses SQLite's frontmatter correctly", () => {
+    const sqlite = getRepo("sqlite");
+    expect(sqlite).toBeDefined();
+    expect(sqlite?.github).toBe("sqlite/sqlite");
+    expect(sqlite?.name).toBe("SQLite");
+    expect(sqlite?.license).toBe("Public Domain");
+    expect(sqlite?.status).toBe("active");
+    expect(sqlite?.groves).toEqual(["databases"]);
+    expect(sqlite?.alternatives.open_source).toEqual(["duckdb"]);
+    expect(sqlite?.alternatives.commercial).toEqual([]);
   });
 
   it("returns undefined for a repo that doesn't exist", () => {
@@ -153,7 +166,11 @@ describe("getReposInGrove (derived from repo frontmatter, per ADR-003)", () => {
 
   it("finds every databases-grove repo under the databases grove", () => {
     const reposInDatabases = getReposInGrove("databases");
-    expect(reposInDatabases.map((r) => r.slug).sort()).toEqual(["clickhouse", "duckdb"]);
+    expect(reposInDatabases.map((r) => r.slug).sort()).toEqual([
+      "clickhouse",
+      "duckdb",
+      "sqlite",
+    ]);
   });
 
   it("returns an empty array for a grove with no member repos", () => {
@@ -701,6 +718,7 @@ describe("getAllComparisons (real /content fixtures)", () => {
       "appwrite-vs-supabase",
       "clickhouse-vs-duckdb",
       "coolify-vs-dokploy",
+      "duckdb-vs-sqlite",
       "gitui-vs-lazygit",
       "gitui-vs-tig",
       "helix-vs-neovim",

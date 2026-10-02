@@ -20,6 +20,7 @@ describe("Repo page (/repo/[slug])", () => {
       "neovim",
       "ollama",
       "pocketbase",
+      "sqlite",
       "supabase",
       "tig",
       "vim",
@@ -352,11 +353,15 @@ describe("Repo page (/repo/[slug])", () => {
       "href",
       "/grove/databases",
     );
-    // Its own alternatives.open_source (clickhouse) already exists, so it
-    // resolves to a real link.
+    // Its own alternatives.open_source (clickhouse, sqlite) already exist, so
+    // both resolve to real links.
     expect(screen.getByRole("link", { name: "ClickHouse" })).toHaveAttribute(
       "href",
       "/repo/clickhouse",
+    );
+    expect(screen.getByRole("link", { name: "SQLite" })).toHaveAttribute(
+      "href",
+      "/repo/sqlite",
     );
   });
 
@@ -369,6 +374,29 @@ describe("Repo page (/repo/[slug])", () => {
       screen.getByText(
         /A distributed, column-oriented database built for real-time analytics at scale/,
       ),
+    ).toBeInTheDocument();
+    // The body's own "## Related Grove" section links back to Databases —
+    // proves this new content/repos/*.md file renders through the real
+    // page, not just through generateStaticParams.
+    expect(screen.getByRole("link", { name: "Databases" })).toHaveAttribute(
+      "href",
+      "/grove/databases",
+    );
+    // Its own alternatives.open_source (duckdb) already exists, so it
+    // resolves to a real link.
+    expect(screen.getByRole("link", { name: "DuckDB" })).toHaveAttribute(
+      "href",
+      "/repo/duckdb",
+    );
+  });
+
+  it("renders /repo/sqlite from content/repos/sqlite.md, not a hardcoded string", async () => {
+    render(await RepoPage({ params: Promise.resolve({ slug: "sqlite" }) }));
+
+    expect(screen.getByRole("heading", { level: 1, name: "SQLite" })).toBeInTheDocument();
+    expect(screen.getByText(/📜 Public Domain/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/An embedded, serverless SQL database/),
     ).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to Databases —
     // proves this new content/repos/*.md file renders through the real

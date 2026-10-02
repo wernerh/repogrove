@@ -7,7 +7,7 @@ status: active
 featured: false
 groves: [databases]
 alternatives:
-  open_source: [clickhouse]
+  open_source: [clickhouse, sqlite]
   commercial: []
 ---
 
@@ -47,7 +47,9 @@ institute in the Netherlands.
 
 ## Alternatives
 **Open-source:** ClickHouse (distributed, server-based OLAP rather than embedded —
-see the comparison for which fits your scale).
+see the comparison for which fits your scale); SQLite (also embedded, but built for
+transactional row-level access rather than analytical aggregations — see the
+comparison for which fits your workload).
 **Commercial:** none tracked yet.
 
 ## Related Grove
