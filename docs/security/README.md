@@ -10,11 +10,11 @@ PASS / FINDING / NOT APPLICABLE / NEEDS-VERIFICATION.
 | A02 Cryptographic Failures | NEEDS-VERIFICATION | Phase 3's newsletter signup form landed since the last review (`src/components/NewsletterSignupForm.tsx`, PR #71) but, per its own doc comment and `tests/components/newsletter-signup-form.test.tsx`, deliberately ships with **no working submit path** — no `fetch`, no real `action`/`method`, no PII stored or transmitted anywhere; a submission just flips local UI state to a "coming soon" message. Re-confirmed 2026-10-01 (security run 10) by reading the component directly: still no `fetch`/`action=` targeting anything. Stays NEEDS-VERIFICATION until a real backend exists to collect subscriber emails — this run found no such backend |
 | A03 Injection | PASS | Reviewed 2026-09-27 (security run 1): repo/Grove body Markdown is rendered via `react-markdown` (`src/app/repo/[slug]/page.tsx`, `src/app/grove/[slug]/page.tsx`) with no `rehype-raw`/`remark-html`/`dangerouslySetInnerHTML` anywhere in `src/` — raw HTML in content is dropped by default, not executed. No API/DB query surface exists yet (SQLite ingestion writer uses parameterised upserts — see `scripts/ingestion/snapshots-db.mjs`); revisit when Phase 3 adds search/API routes with external input. Re-confirmed 2026-10-01 (security run 10) against the real Phase 3 surface that landed since run 9: `/search` (`src/lib/search-match.ts`) does pure in-memory `.includes()`/`.startsWith()` substring matching over a build-time index — no regex built from user input (no ReDoS vector), no query ever leaves the browser; the new `repository_releases` SQLite table (`scripts/ingestion/snapshots-db.ts`'s `upsertRelease`/`getReleases`, `src/lib/releases.ts`'s `getRecentReleases`) uses parameterised `?`-placeholder queries throughout, same pattern as every existing table — no string-built SQL anywhere |
 | A04 Insecure Design | PASS | Hybrid architecture keeps agent output non-authoritative by construction (ADR-003) |
-| A05 Security Misconfiguration | FINDING (LOW) — partially fixed; SEC-004 fixed+verified; SEC-005 confirmed this run | SEC-001: CI workflows ran with the default (unverifiable) `GITHUB_TOKEN` permission set rather than an explicit least-privilege grant. Fixed in `ci.yml` this run; `factory-guardrails.yml` has the identical gap but is locked from all-lane edits by CLAUDE.md rule 7 — stays open, needs the owner. `ingestion.yml` was already correctly scoped (`contents: write`, the one job that needs it). See `docs/security/findings/SEC-001-ci-workflow-permissions.md`. Re-checked 2026-09-28 (run 5): `factory-guardrails.yml` still has no `permissions:` block — unchanged, still owner-blocked; the new `design-screenshots.yml` workflow (PR #39) already carries a correct `permissions: contents: read` block, reviewed and confirmed least-privilege. SEC-004 (LOW, FIXED+VERIFIED): the design lane's new local test-harness server (`scripts/design/static-server.mjs`, PR #36/#39) crashed its whole process on a single malformed-percent-encoding request (unhandled rejection from an uncaught `URIError`) — reproduced, fixed (handler now catches and answers 400/500 instead of crashing), regression-tested. See `docs/security/findings/SEC-004-static-server-malformed-uri-dos.md`. Reviewed 2026-09-28 (run 7): `design-screenshots.yml` gained a `commit-screenshots` job with a job-scoped `contents: write` override (RG-6, applied directly by the owner — commit `517c8e4`, not self-granted by any lane). Confirmed the job is unreachable from the workflow's `pull_request` trigger (its `if` requires `github.event_name == 'push'`), every other job in the file keeps `contents: read`, and `download-artifact@v4` can only pull the current run's own artifact — least-privilege, no finding. Re-checked 2026-10-01 (run 10): `ci.yml`/`ingestion.yml`/`design-screenshots.yml` permissions all unchanged; `factory-guardrails.yml` still has none, still owner-blocked. New this run: SEC-005 (LOW) — `main` has no branch-protection rule at all, confirmed via a real GitHub `404 "Branch not protected"` (every prior run only got an ambiguous `403`). See `docs/security/findings/SEC-005-branch-protection-not-enabled.md` |
+| A05 Security Misconfiguration | FINDING (LOW) — partially fixed; SEC-004/SEC-006 fixed+verified; SEC-005 confirmed this run | SEC-001: CI workflows ran with the default (unverifiable) `GITHUB_TOKEN` permission set rather than an explicit least-privilege grant. Fixed in `ci.yml` this run; `factory-guardrails.yml` has the identical gap but is locked from all-lane edits by CLAUDE.md rule 7 — stays open, needs the owner. `ingestion.yml` was already correctly scoped (`contents: write`, the one job that needs it). See `docs/security/findings/SEC-001-ci-workflow-permissions.md`. Re-checked 2026-09-28 (run 5): `factory-guardrails.yml` still has no `permissions:` block — unchanged, still owner-blocked; the new `design-screenshots.yml` workflow (PR #39) already carries a correct `permissions: contents: read` block, reviewed and confirmed least-privilege. SEC-004 (LOW, FIXED+VERIFIED): the design lane's new local test-harness server (`scripts/design/static-server.mjs`, PR #36/#39) crashed its whole process on a single malformed-percent-encoding request (unhandled rejection from an uncaught `URIError`) — reproduced, fixed (handler now catches and answers 400/500 instead of crashing), regression-tested. See `docs/security/findings/SEC-004-static-server-malformed-uri-dos.md`. Reviewed 2026-09-28 (run 7): `design-screenshots.yml` gained a `commit-screenshots` job with a job-scoped `contents: write` override (RG-6, applied directly by the owner — commit `517c8e4`, not self-granted by any lane). Confirmed the job is unreachable from the workflow's `pull_request` trigger (its `if` requires `github.event_name == 'push'`), every other job in the file keeps `contents: read`, and `download-artifact@v4` can only pull the current run's own artifact — least-privilege, no finding. Re-checked 2026-10-01 (run 10): `ci.yml`/`ingestion.yml`/`design-screenshots.yml` permissions all unchanged; `factory-guardrails.yml` still has none, still owner-blocked. SEC-005 (LOW) — `main` has no branch-protection rule at all, confirmed via a real GitHub `404 "Branch not protected"` (every prior run only got an ambiguous `403`). See `docs/security/findings/SEC-005-branch-protection-not-enabled.md`. New this run (run 11): **SEC-006** (LOW, FIXED partial) — the site is now actually deployed (Azure Static Web Apps, owner-provisioned `c0a5938`/`c6e47df`, `push`-to-`main` deploys confirmed green) with no `staticwebapp.config.json` anywhere, so the live site had zero explicit security-response-headers configuration. Added `public/staticwebapp.config.json` with `X-Content-Type-Options`/`X-Frame-Options`/`Referrer-Policy`/`Permissions-Policy` (headers-only, no routing change, regression-tested). CSP deliberately deferred — see `docs/security/findings/SEC-006-missing-security-headers.md` |
 | A06 Vulnerable Components | PASS (defense-in-depth gap noted — SEC-003) | `npm audit` re-run 2026-09-28 (security run 4): **0 vulnerabilities at any level**, unchanged since run 3. CI's `dependency-audit` job gates on `--audit-level=high`; `dependabot.yml` covers both `npm` and `github-actions` ecosystems weekly (version-update PRs #28/#29/#30 open on `main` today). Run 4 additionally checked the repo's GitHub-side Dependabot **alerts** feature (real-time CVE alerts, separate from `dependabot.yml`'s scheduled version-update PRs) — confirmed disabled via the GitHub API itself; the factory can't enable it — the enabling endpoint is blocked by this sandbox's own egress proxy before it reaches GitHub, so whether the installed GitHub App also lacks admin scope for it was never directly tested. See SEC-003 — LOW, owner-actionable, doesn't downgrade this PASS since existing scheduled/CI coverage already catches the same class of issue, just not immediately on CVE publication. Prior note: `main` briefly failed a clean `npm ci` for an unrelated reason (issue #26, `react`/`react-dom` peer mismatch from PR #11 — a build-breaking bug, not a vulnerability); dev lane's PR #27 fixed it same-run as security run 3 |
 | A07 Auth Failures | NOT APPLICABLE | No auth in MVP. Re-confirmed 2026-10-01 (run 10) with fresh greps across the full tree, including everything Phase 3 added since run 9 (`search/`, `compare/`, `alternative/`): still no auth/session/cookie/JWT code anywhere in `src/`/`scripts/`; the one `Authorization` grep hit is still the ingestion job's GitHub API token forwarding, not user-facing auth |
 | A08 Data Integrity Failures | PASS (defense-in-depth noted) | Dependabot is configured for both ecosystems (weekly); lockfile (`package-lock.json`) is committed and `npm ci` (not `npm install`) is used in every workflow. GitHub Actions are pinned by major-version tag (`@v4`/`@v7`/`@v8`), not by commit SHA — stricter SHA-pinning would be more defensive but isn't a gap given Dependabot's action-update coverage; noted as informational, not a blocking finding |
-| A09 Logging/Monitoring Failures | NEEDS-VERIFICATION | No logging/observability infra exists yet — nothing to configure until there's a live deployment (ADR-002) or a server-side API surface (Phase 3). Re-confirmed 2026-10-01 (run 10): RG-2/ADR-002 answered (Azure Storage) but still no deploy job enabled (CLAUDE.md rule 6 human gate, RG-7 still open) |
+| A09 Logging/Monitoring Failures | NEEDS-VERIFICATION | No logging/observability infra exists in-repo. Updated 2026-10-02 (run 11): the premise changed — a real deploy pipeline now exists and is live (see SEC-006), so "no live deployment yet" no longer applies; what's still true is there's no server-side API surface generating logs to configure (static export, no `src/app/**/api`/`middleware.ts`), and this lane doesn't inspect the live Azure resource itself to check what platform-level request logging/alerting it may or may not have on by default — stays NEEDS-VERIFICATION, now for a different reason than before |
 | A10 SSRF | PASS (fixed a real bypass — SEC-002) | Reviewed 2026-09-27: `scripts/ingestion/fetch-snapshots.mjs` fetches `https://api.github.com/repos/${github}` where `github` is drawn from `/content/repos/*.md` frontmatter. Host is hardcoded (never derived from the value) so this was never a cross-host SSRF vector, but the independent review of this run's own PR (SEC-001) found the `GITHUB_SLUG_PATTERN` allowlist's owner-segment guard was dead code — `../rate_limit` passed validation and resolved (`new URL(...)`) to a same-host path-traversal-shaped request (`/repos/../rate_limit` → `/rate_limit`), letting the ingestion job's token probe arbitrary single-segment `api.github.com` paths. Fixed same run: each segment (owner and name) is now anchored to its own boundary rather than sharing one end-of-string anchor; regression tests added (`tests/ingestion/fetch-snapshots.test.ts`). See SEC-002 for detail. Re-verified 2026-09-28: `GITHUB_SLUG_PATTERN` in `scripts/ingestion/fetch-snapshots.mjs` still carries the fixed pattern, and both regression tests (`rejects a bare-dot-segment OWNER slug`, `still accepts a real owner/name slug that merely contains dots`) are still present in `tests/ingestion/fetch-snapshots.test.ts` |
 
 ## OWASP API Security Top 10
@@ -37,14 +37,78 @@ See `docs/security/PRODUCTION-HARDENING.md`.
 | SEC-003 | LOW | OPEN, owner-blocked | GitHub repo security settings (Dependabot alerts) | A06 | issue #33 |
 | SEC-004 | LOW | FIXED, VERIFIED | `scripts/design/static-server.mjs` | A05 | (this run, no PR yet) |
 | SEC-005 | LOW | OPEN, owner-blocked, confirmed 2026-10-01 | GitHub repo security settings (branch protection on `main`) | A05 | issue #33 |
+| SEC-006 | LOW | FIXED (partial — CSP deferred, see finding) | `public/staticwebapp.config.json` (new) | A05 | (this run, no PR yet) |
 
 Full detail: `docs/security/findings/SEC-001-ci-workflow-permissions.md`,
 `docs/security/findings/SEC-002-ingestion-slug-traversal-regex.md`,
 `docs/security/findings/SEC-003-dependabot-alerts-disabled.md`,
 `docs/security/findings/SEC-004-static-server-malformed-uri-dos.md`,
-`docs/security/findings/SEC-005-branch-protection-not-enabled.md`.
+`docs/security/findings/SEC-005-branch-protection-not-enabled.md`,
+`docs/security/findings/SEC-006-missing-security-headers.md`.
 
 ## Review log
+- **2026-10-02 (run 11):** first security run since run 10 — a 1-day, ~40-run gap on the
+  dev/design side, so reviewed the real surface that shipped (`git diff --stat
+  b26eed5..HEAD -- src scripts .github package.json package-lock.json tests`, `b26eed5`
+  = run 10's own close-out commit — the prior session's shallow clone had to be
+  unshallowed first, `git fetch --unshallow`, to even reach that commit): 58 files,
+  ~5,150 insertions. The large majority is dev/design content and component work
+  (`TrendBoard`/`TrendHeader`/`GroveHeader`/`GroveRepoList`/`GroveSidebar`/etc., the
+  `/trending`/`/rising` redesign, a new `assertNoWrappedListItems` content-validation
+  guard) — read directly rather than trusted from PR descriptions, came back clean: no
+  `dangerouslySetInnerHTML` outside the pre-reviewed explanatory comment in
+  `src/lib/content.ts`, no new `eval`/`new Function`, every new `<Link href=...>` builds
+  from build-time-validated slugs, `react-markdown` still has no raw-HTML plugin, the
+  one `child_process`-shaped grep hit is `node:sqlite`'s own `Database.exec` on a
+  hardcoded DDL string (false positive, not shell exec). One genuinely new, material
+  piece of attack surface: `.github/workflows/azure-static-web-apps-orange-sea-032472e10.yml`
+  — the owner provisioned a real Azure Static Web App directly (`c0a5938`, Azure's own
+  "on-behalf-of: @Azure" portal-integration commit, plus a path fix `c6e47df`) and
+  `push`-to-`main` now deploys for real (`GET .../actions/workflows/373247078/runs`
+  confirms multiple green `push` runs today; `GET .../commits/main/check-runs` confirms
+  "Build and Deploy Job" green on the current head). Reviewed the workflow line by line:
+  job-scoped `permissions: {id-token: write, contents: read}`, the deploy token
+  referenced only via the `secrets.*` context, `close_pull_request_job` correctly scoped
+  to `pull_request: closed` only. Considered and ruled out a fork-PR secret-exfiltration
+  concern — this uses `pull_request`, not `pull_request_target`, and GitHub withholds
+  repo secrets from fork-triggered `pull_request` runs regardless of repo settings; the
+  separate "does a first-time contributor's run need maintainer approval" setting
+  couldn't be read (`GET .../actions/permissions*` blocked by this sandbox's proxy, same
+  as every prior run's adjacent attempts) — left NEEDS-VERIFICATION, not claimed either
+  way. With the pipeline itself clean, the real finding was what it unblocks: this is
+  the site's first real live deployment, and `docs/security/PRODUCTION-HARDENING.md`'s
+  "CSP / security headers" row had been `NOT VERIFIED` specifically because it was
+  "genuinely blocked on a live deployment target" — checked for `staticwebapp.config.json`
+  (Azure Static Web Apps' mechanism for response headers on a static-export app with no
+  server/middleware available) and found none anywhere in the repo. New finding:
+  **SEC-006** (LOW) — fixed the headers-only part this run (`X-Content-Type-Options`,
+  `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, all confirmed safe against
+  this site's actual code — no `next/image`, no `<script>`/analytics, no
+  camera/mic/geolocation use anywhere in `src/`), written test-first (confirmed failing
+  pre-fix, passing post-fix), scoped to `globalHeaders` only so it can't silently change
+  routing. Deliberately deferred `Content-Security-Policy` rather than guess at one — see
+  the finding for the specific reasons (no server/middleware for nonces on a static
+  export, two files with inline `style={{ width }}` needing `style-src 'unsafe-inline'`
+  either way, and no way to inspect a real `out/` build this run: `npm run build`
+  reproduced the known ADR-006 `fonts.googleapis.com` proxy gap again, and this lane
+  doesn't inspect the live deployment directly). Flagged the ADR-002-vs-actual-deployed-product
+  discrepancy (owner answered RG-2 as "Azure Storage static-website hosting"; what's
+  live is Azure *Static Web Apps*, a related but distinct product ADR-002's own text had
+  already flagged as a risk) to the dev lane via one `PROJECT_STATE.md` Blockers line
+  (CLAUDE.md §5) — not this lane's ADR/decision to adjudicate. Re-verified all 5 existing
+  findings by reading the code/API responses directly: SEC-001 (`ci.yml`/`ingestion.yml`/
+  `design-screenshots.yml` permissions unchanged; `factory-guardrails.yml` still has
+  none, still owner-blocked), SEC-002 (`GITHUB_SLUG_PATTERN` and both regression tests
+  unmodified), SEC-003 (`dependabot/alerts` still returns GitHub's real disabled
+  message), SEC-004 (`static-server.mjs`'s try/catch and its regression test
+  unmodified), SEC-005 (`branches/main/protection` still a real `404`, main still
+  unprotected). Checked the RG-7/8/9 Gmail thread (`get_thread`, `1a0f26990ebc1e9c`) per
+  the decision protocol — still exactly the one original message, no owner reply; not
+  this lane's decision either way. `npm ci` (0 vulnerabilities), `npm run lint` (clean),
+  `npm test` (463/463, up from 457 — SEC-006's 6 new tests), `tsc --noEmit` (clean),
+  `npm audit --audit-level=high` (0 vulnerabilities) all run locally; `npm run build`
+  reproduced the known ADR-006 sandbox font-fetch gap (confirmed it compiles past
+  content loading first), left to CI's real GitHub-hosted runner.
 - **2026-10-01 (run 10):** first security run since run 9 (2026-09-29) — a 15-run gap on
   the dev/design side, so the biggest task this run was reviewing the real Phase 3+
   attack surface that landed in that window rather than another "nothing changed" quiet
