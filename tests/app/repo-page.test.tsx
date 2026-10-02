@@ -55,22 +55,22 @@ describe("Repo page (/repo/[slug])", () => {
     const statusRow = within(metadata!).getByText("Status:").closest("div")!;
     expect(within(statusRow).getByText("Active")).toBeInTheDocument();
     expect(within(statusRow).getByTestId("status-chip-swatch")).toBeInTheDocument();
-    expect(screen.getByText(/📜 MIT/)).toBeInTheDocument();
+    expect(screen.getAllByText(/MIT/, { selector: "dd" })[0]).toBeInTheDocument();
     expect(screen.getByText(/Ollama packages open-weight LLMs/)).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to the Grove.
-    expect(screen.getByRole("link", { name: "AI" })).toHaveAttribute("href", "/grove/ai");
+    expect(screen.getAllByRole("link", { name: "AI" })[0]).toHaveAttribute("href", "/grove/ai");
   });
 
   it("renders /repo/neovim from content/repos/neovim.md, not a hardcoded string", async () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "neovim" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "Neovim" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 Apache-2\.0/)).toBeInTheDocument();
+    expect(screen.getAllByText(/Apache-2\.0/, { selector: "dd" })[0]).toBeInTheDocument();
     expect(screen.getByText(/Neovim keeps Vim's modal editing model/)).toBeInTheDocument();
     // The body's own "## Related Grove" section links to the new Developer
     // Tools grove — proves the new content/repos/*.md file actually renders
     // through the real page, not just through generateStaticParams.
-    expect(screen.getByRole("link", { name: "Developer Tools" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "Developer Tools" })[0]).toHaveAttribute(
       "href",
       "/grove/developer-tools",
     );
@@ -80,12 +80,12 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "pocketbase" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "PocketBase" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 MIT/)).toBeInTheDocument();
+    expect(screen.getAllByText(/MIT/, { selector: "dd" })[0]).toBeInTheDocument();
     expect(screen.getByText(/PocketBase ships as one small Go binary/)).toBeInTheDocument();
     // The body's own "## Related Grove" section links to Self-Hosted — proves
     // the new content/repos/*.md file actually renders through the real
     // page, not just through generateStaticParams.
-    expect(screen.getByRole("link", { name: "Self-Hosted" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "Self-Hosted" })[0]).toHaveAttribute(
       "href",
       "/grove/self-hosted",
     );
@@ -93,11 +93,11 @@ describe("Repo page (/repo/[slug])", () => {
     // resolves against real content/repos/*.md files (this PR's own point —
     // supabase.md already listed both slugs before either existed) rather
     // than rendering "Not yet profiled".
-    expect(screen.getByRole("link", { name: "Supabase" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "Supabase" })[0]).toHaveAttribute(
       "href",
       "/repo/supabase",
     );
-    expect(screen.getByRole("link", { name: "Appwrite" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "Appwrite" })[0]).toHaveAttribute(
       "href",
       "/repo/appwrite",
     );
@@ -153,11 +153,11 @@ describe("Repo page (/repo/[slug])", () => {
     render(element);
 
     expect(screen.getByRole("heading", { level: 2, name: "Alternatives" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "vLLM" })).toHaveAttribute("href", "/repo/vllm");
-    expect(screen.getByRole("link", { name: "LocalAI" })).toHaveAttribute("href", "/repo/localai");
+    expect(screen.getAllByRole("link", { name: "vLLM" })[0]).toHaveAttribute("href", "/repo/vllm");
+    expect(screen.getAllByRole("link", { name: "LocalAI" })[0]).toHaveAttribute("href", "/repo/localai");
     expect(screen.queryByText("Not yet profiled")).not.toBeInTheDocument();
     expect(screen.getByText("Commercial alternatives")).toBeInTheDocument();
-    expect(screen.getByText("LM Studio")).toBeInTheDocument();
+    expect(screen.getAllByText("LM Studio")[0]).toBeInTheDocument();
     // The hand-authored "## Alternatives" placeholder prose from
     // content/repos/ollama.md is replaced, not duplicated alongside the
     // table — see src/lib/content.ts's splitOutSection.
@@ -175,7 +175,7 @@ describe("Repo page (/repo/[slug])", () => {
     render(element);
 
     expect(screen.getByRole("heading", { level: 2, name: "Alternatives" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "LlamaIndex" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "LlamaIndex" })[0]).toHaveAttribute(
       "href",
       "/repo/llamaindex",
     );
@@ -186,15 +186,15 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "llamaindex" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "LlamaIndex" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 MIT/)).toBeInTheDocument();
+    expect(screen.getAllByText(/MIT/, { selector: "dd" })[0]).toBeInTheDocument();
     expect(screen.getByText(/Open-source data framework for connecting large language models/)).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to the AI grove —
     // proves this new content/repos/*.md file renders through the real page,
     // not just through generateStaticParams.
-    expect(screen.getByRole("link", { name: "AI" })).toHaveAttribute("href", "/grove/ai");
+    expect(screen.getAllByRole("link", { name: "AI" })[0]).toHaveAttribute("href", "/grove/ai");
     // Its own alternatives.open_source (langchain) already exists, so it
     // resolves to a real link rather than "Not yet profiled".
-    expect(screen.getByRole("link", { name: "LangChain" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "LangChain" })[0]).toHaveAttribute(
       "href",
       "/repo/langchain",
     );
@@ -204,20 +204,20 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "vim" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "Vim" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 Vim License/)).toBeInTheDocument();
+    expect(screen.getAllByText(/Vim License/, { selector: "dd" })[0]).toBeInTheDocument();
     expect(screen.getByText(/A modal, keyboard-driven text editor descended from vi/)).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to Developer
     // Tools — proves this new content/repos/*.md file renders through the
     // real page, not just through generateStaticParams.
-    expect(screen.getByRole("link", { name: "Developer Tools" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "Developer Tools" })[0]).toHaveAttribute(
       "href",
       "/grove/developer-tools",
     );
     // Its own alternatives.open_source (neovim, helix, zed) now all resolve
     // to real links — zed.md closed the last dangling reference this run.
-    expect(screen.getByRole("link", { name: "Neovim" })).toHaveAttribute("href", "/repo/neovim");
-    expect(screen.getByRole("link", { name: "Helix" })).toHaveAttribute("href", "/repo/helix");
-    expect(screen.getByRole("link", { name: "Zed" })).toHaveAttribute("href", "/repo/zed");
+    expect(screen.getAllByRole("link", { name: "Neovim" })[0]).toHaveAttribute("href", "/repo/neovim");
+    expect(screen.getAllByRole("link", { name: "Helix" })[0]).toHaveAttribute("href", "/repo/helix");
+    expect(screen.getAllByRole("link", { name: "Zed" })[0]).toHaveAttribute("href", "/repo/zed");
   });
 
   it("resolves Neovim's own alternatives.open_source (vim, helix, zed) now that all three have profiles", async () => {
@@ -229,9 +229,9 @@ describe("Repo page (/repo/[slug])", () => {
     const element = await RepoPage({ params: Promise.resolve({ slug: "neovim" }) });
     render(element);
 
-    expect(screen.getByRole("link", { name: "Vim" })).toHaveAttribute("href", "/repo/vim");
-    expect(screen.getByRole("link", { name: "Helix" })).toHaveAttribute("href", "/repo/helix");
-    expect(screen.getByRole("link", { name: "Zed" })).toHaveAttribute("href", "/repo/zed");
+    expect(screen.getAllByRole("link", { name: "Vim" })[0]).toHaveAttribute("href", "/repo/vim");
+    expect(screen.getAllByRole("link", { name: "Helix" })[0]).toHaveAttribute("href", "/repo/helix");
+    expect(screen.getAllByRole("link", { name: "Zed" })[0]).toHaveAttribute("href", "/repo/zed");
     // No unresolved rows left — zed.md was the last dangling reference.
     expect(screen.queryByText("Not yet profiled")).not.toBeInTheDocument();
   });
@@ -240,44 +240,44 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "helix" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "Helix" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 MPL-2.0/)).toBeInTheDocument();
+    expect(screen.getAllByText(/MPL-2.0/, { selector: "dd" })[0]).toBeInTheDocument();
     expect(
       screen.getByText(/A modal terminal text editor built in Rust/),
     ).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to Developer
     // Tools — proves this new content/repos/*.md file renders through the
     // real page, not just through generateStaticParams.
-    expect(screen.getByRole("link", { name: "Developer Tools" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "Developer Tools" })[0]).toHaveAttribute(
       "href",
       "/grove/developer-tools",
     );
     // Its own alternatives.open_source (vim, neovim, zed) now all resolve to
     // real links — zed.md closed the last dangling reference this run.
-    expect(screen.getByRole("link", { name: "Vim" })).toHaveAttribute("href", "/repo/vim");
-    expect(screen.getByRole("link", { name: "Neovim" })).toHaveAttribute("href", "/repo/neovim");
-    expect(screen.getByRole("link", { name: "Zed" })).toHaveAttribute("href", "/repo/zed");
+    expect(screen.getAllByRole("link", { name: "Vim" })[0]).toHaveAttribute("href", "/repo/vim");
+    expect(screen.getAllByRole("link", { name: "Neovim" })[0]).toHaveAttribute("href", "/repo/neovim");
+    expect(screen.getAllByRole("link", { name: "Zed" })[0]).toHaveAttribute("href", "/repo/zed");
   });
 
   it("renders /repo/zed from content/repos/zed.md, not a hardcoded string", async () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "zed" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "Zed" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 GPL-3.0 \/ AGPL-3.0/)).toBeInTheDocument();
+    expect(screen.getAllByText(/GPL-3.0 \/ AGPL-3.0/, { selector: "dd" })[0]).toBeInTheDocument();
     expect(
       screen.getByText(/A GPU-accelerated code editor built from scratch in Rust/),
     ).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to Developer
     // Tools — proves this new content/repos/*.md file renders through the
     // real page, not just through generateStaticParams.
-    expect(screen.getByRole("link", { name: "Developer Tools" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "Developer Tools" })[0]).toHaveAttribute(
       "href",
       "/grove/developer-tools",
     );
     // Its own alternatives.open_source (vim, neovim, helix) all already
     // exist, so all three resolve to real links.
-    expect(screen.getByRole("link", { name: "Vim" })).toHaveAttribute("href", "/repo/vim");
-    expect(screen.getByRole("link", { name: "Neovim" })).toHaveAttribute("href", "/repo/neovim");
-    expect(screen.getByRole("link", { name: "Helix" })).toHaveAttribute("href", "/repo/helix");
+    expect(screen.getAllByRole("link", { name: "Vim" })[0]).toHaveAttribute("href", "/repo/vim");
+    expect(screen.getAllByRole("link", { name: "Neovim" })[0]).toHaveAttribute("href", "/repo/neovim");
+    expect(screen.getAllByRole("link", { name: "Helix" })[0]).toHaveAttribute("href", "/repo/helix");
   });
 
   it("resolves lazygit's own alternatives.open_source (tig, gitui) now that both have profiles", async () => {
@@ -290,82 +290,82 @@ describe("Repo page (/repo/[slug])", () => {
     render(element);
 
     expect(screen.getByRole("heading", { level: 2, name: "Alternatives" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Tig" })).toHaveAttribute("href", "/repo/tig");
-    expect(screen.getByRole("link", { name: "GitUI" })).toHaveAttribute("href", "/repo/gitui");
+    expect(screen.getAllByRole("link", { name: "Tig" })[0]).toHaveAttribute("href", "/repo/tig");
+    expect(screen.getAllByRole("link", { name: "GitUI" })[0]).toHaveAttribute("href", "/repo/gitui");
     expect(screen.queryByText("Not yet profiled")).not.toBeInTheDocument();
     expect(screen.getByText("Commercial alternatives")).toBeInTheDocument();
-    expect(screen.getByText("GitKraken")).toBeInTheDocument();
-    expect(screen.getByText("Sourcetree")).toBeInTheDocument();
+    expect(screen.getAllByText("GitKraken")[0]).toBeInTheDocument();
+    expect(screen.getAllByText("Sourcetree")[0]).toBeInTheDocument();
   });
 
   it("renders /repo/tig from content/repos/tig.md, not a hardcoded string", async () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "tig" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "Tig" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 GPL-2.0/)).toBeInTheDocument();
+    expect(screen.getAllByText(/GPL-2.0/, { selector: "dd" })[0]).toBeInTheDocument();
     expect(
       screen.getByText(/An ncurses-based text-mode interface for exploring a Git repository's history/),
     ).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to Developer
     // Tools — proves this new content/repos/*.md file renders through the
     // real page, not just through generateStaticParams.
-    expect(screen.getByRole("link", { name: "Developer Tools" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "Developer Tools" })[0]).toHaveAttribute(
       "href",
       "/grove/developer-tools",
     );
     // Its own alternatives.open_source (lazygit, gitui) both already exist,
     // so both resolve to real links.
-    expect(screen.getByRole("link", { name: "LazyGit" })).toHaveAttribute("href", "/repo/lazygit");
-    expect(screen.getByRole("link", { name: "GitUI" })).toHaveAttribute("href", "/repo/gitui");
+    expect(screen.getAllByRole("link", { name: "LazyGit" })[0]).toHaveAttribute("href", "/repo/lazygit");
+    expect(screen.getAllByRole("link", { name: "GitUI" })[0]).toHaveAttribute("href", "/repo/gitui");
   });
 
   it("renders /repo/gitui from content/repos/gitui.md, not a hardcoded string", async () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "gitui" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "GitUI" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 MIT/)).toBeInTheDocument();
+    expect(screen.getAllByText(/MIT/, { selector: "dd" })[0]).toBeInTheDocument();
     expect(
       screen.getByText(/A terminal UI for git written in Rust, built for speed on very large repositories/),
     ).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to Developer
     // Tools — proves this new content/repos/*.md file renders through the
     // real page, not just through generateStaticParams.
-    expect(screen.getByRole("link", { name: "Developer Tools" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "Developer Tools" })[0]).toHaveAttribute(
       "href",
       "/grove/developer-tools",
     );
     // Its own alternatives.open_source (lazygit, tig) both already exist,
     // so both resolve to real links.
-    expect(screen.getByRole("link", { name: "LazyGit" })).toHaveAttribute("href", "/repo/lazygit");
-    expect(screen.getByRole("link", { name: "Tig" })).toHaveAttribute("href", "/repo/tig");
+    expect(screen.getAllByRole("link", { name: "LazyGit" })[0]).toHaveAttribute("href", "/repo/lazygit");
+    expect(screen.getAllByRole("link", { name: "Tig" })[0]).toHaveAttribute("href", "/repo/tig");
   });
 
   it("renders /repo/duckdb from content/repos/duckdb.md, not a hardcoded string", async () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "duckdb" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "DuckDB" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 MIT/)).toBeInTheDocument();
+    expect(screen.getAllByText(/MIT/, { selector: "dd" })[0]).toBeInTheDocument();
     expect(
       screen.getByText(/An in-process SQL database built for fast analytical queries/),
     ).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to Databases —
     // proves this new content/repos/*.md file renders through the real
     // page, not just through generateStaticParams.
-    expect(screen.getByRole("link", { name: "Databases" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "Databases" })[0]).toHaveAttribute(
       "href",
       "/grove/databases",
     );
     // Its own alternatives.open_source (clickhouse, sqlite, postgresql)
     // already exist, so all three resolve to real links.
-    expect(screen.getByRole("link", { name: "ClickHouse" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "ClickHouse" })[0]).toHaveAttribute(
       "href",
       "/repo/clickhouse",
     );
-    expect(screen.getByRole("link", { name: "SQLite" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "SQLite" })[0]).toHaveAttribute(
       "href",
       "/repo/sqlite",
     );
-    expect(screen.getByRole("link", { name: "PostgreSQL" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "PostgreSQL" })[0]).toHaveAttribute(
       "href",
       "/repo/postgresql",
     );
@@ -375,7 +375,7 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "clickhouse" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "ClickHouse" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 Apache-2.0/)).toBeInTheDocument();
+    expect(screen.getAllByText(/Apache-2.0/, { selector: "dd" })[0]).toBeInTheDocument();
     expect(
       screen.getByText(
         /A distributed, column-oriented database built for real-time analytics at scale/,
@@ -384,21 +384,21 @@ describe("Repo page (/repo/[slug])", () => {
     // The body's own "## Related Grove" section links back to Databases —
     // proves this new content/repos/*.md file renders through the real
     // page, not just through generateStaticParams.
-    expect(screen.getByRole("link", { name: "Databases" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "Databases" })[0]).toHaveAttribute(
       "href",
       "/grove/databases",
     );
     // Its own alternatives.open_source (duckdb, sqlite, postgresql) already
     // exist, so all three resolve to real links.
-    expect(screen.getByRole("link", { name: "DuckDB" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "DuckDB" })[0]).toHaveAttribute(
       "href",
       "/repo/duckdb",
     );
-    expect(screen.getByRole("link", { name: "SQLite" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "SQLite" })[0]).toHaveAttribute(
       "href",
       "/repo/sqlite",
     );
-    expect(screen.getByRole("link", { name: "PostgreSQL" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "PostgreSQL" })[0]).toHaveAttribute(
       "href",
       "/repo/postgresql",
     );
@@ -408,28 +408,28 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "sqlite" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "SQLite" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 Public Domain/)).toBeInTheDocument();
+    expect(screen.getAllByText(/Public Domain/, { selector: "dd" })[0]).toBeInTheDocument();
     expect(
       screen.getByText(/An embedded, serverless SQL database/),
     ).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to Databases —
     // proves this new content/repos/*.md file renders through the real
     // page, not just through generateStaticParams.
-    expect(screen.getByRole("link", { name: "Databases" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "Databases" })[0]).toHaveAttribute(
       "href",
       "/grove/databases",
     );
     // Its own alternatives.open_source (duckdb, postgresql, clickhouse)
     // already exist, so all three resolve to real links.
-    expect(screen.getByRole("link", { name: "DuckDB" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "DuckDB" })[0]).toHaveAttribute(
       "href",
       "/repo/duckdb",
     );
-    expect(screen.getByRole("link", { name: "PostgreSQL" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "PostgreSQL" })[0]).toHaveAttribute(
       "href",
       "/repo/postgresql",
     );
-    expect(screen.getByRole("link", { name: "ClickHouse" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "ClickHouse" })[0]).toHaveAttribute(
       "href",
       "/repo/clickhouse",
     );
@@ -439,28 +439,28 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "postgresql" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "PostgreSQL" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 PostgreSQL License/)).toBeInTheDocument();
+    expect(screen.getAllByText(/PostgreSQL License/, { selector: "dd" })[0]).toBeInTheDocument();
     expect(
       screen.getByText(/A general-purpose, client-server relational database/),
     ).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to Databases —
     // proves this new content/repos/*.md file renders through the real
     // page, not just through generateStaticParams.
-    expect(screen.getByRole("link", { name: "Databases" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "Databases" })[0]).toHaveAttribute(
       "href",
       "/grove/databases",
     );
     // Its own alternatives.open_source (sqlite, duckdb, clickhouse) already
     // exist, so all three resolve to real links.
-    expect(screen.getByRole("link", { name: "SQLite" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "SQLite" })[0]).toHaveAttribute(
       "href",
       "/repo/sqlite",
     );
-    expect(screen.getByRole("link", { name: "DuckDB" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "DuckDB" })[0]).toHaveAttribute(
       "href",
       "/repo/duckdb",
     );
-    expect(screen.getByRole("link", { name: "ClickHouse" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "ClickHouse" })[0]).toHaveAttribute(
       "href",
       "/repo/clickhouse",
     );
@@ -470,34 +470,34 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "localai" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "LocalAI" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 MIT/)).toBeInTheDocument();
+    expect(screen.getAllByText(/MIT/, { selector: "dd" })[0]).toBeInTheDocument();
     expect(screen.getByText(/LocalAI runs open-weight models/)).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to the AI grove —
     // proves this new content/repos/*.md file renders through the real page,
     // not just through generateStaticParams.
-    expect(screen.getByRole("link", { name: "AI" })).toHaveAttribute("href", "/grove/ai");
+    expect(screen.getAllByRole("link", { name: "AI" })[0]).toHaveAttribute("href", "/grove/ai");
     // Its own alternatives.open_source (ollama, vllm) both already exist, so
     // both resolve to real links rather than "Not yet profiled".
-    expect(screen.getByRole("link", { name: "Ollama" })).toHaveAttribute("href", "/repo/ollama");
-    expect(screen.getByRole("link", { name: "vLLM" })).toHaveAttribute("href", "/repo/vllm");
+    expect(screen.getAllByRole("link", { name: "Ollama" })[0]).toHaveAttribute("href", "/repo/ollama");
+    expect(screen.getAllByRole("link", { name: "vLLM" })[0]).toHaveAttribute("href", "/repo/vllm");
   });
 
   it("renders /repo/dokploy from content/repos/dokploy.md, not a hardcoded string", async () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "dokploy" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "Dokploy" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 Apache-2\.0/)).toBeInTheDocument();
+    expect(screen.getAllByText(/Apache-2\.0/, { selector: "dd" })[0]).toBeInTheDocument();
     expect(screen.getByText(/Dokploy wraps Docker and Docker Swarm/)).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to Self-Hosted —
     // proves this new content/repos/*.md file renders through the real page,
     // not just through generateStaticParams.
-    expect(screen.getByRole("link", { name: "Self-Hosted" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "Self-Hosted" })[0]).toHaveAttribute(
       "href",
       "/grove/self-hosted",
     );
     // Its own alternatives.open_source (coolify) already existed before this
     // repo did, so it resolves to a real link rather than "Not yet profiled".
-    expect(screen.getByRole("link", { name: "Coolify" })).toHaveAttribute("href", "/repo/coolify");
+    expect(screen.getAllByRole("link", { name: "Coolify" })[0]).toHaveAttribute("href", "/repo/coolify");
   });
 
   it("resolves Coolify's own alternatives.open_source (dokploy) now that it has a profile", async () => {
@@ -509,7 +509,7 @@ describe("Repo page (/repo/[slug])", () => {
     const element = await RepoPage({ params: Promise.resolve({ slug: "coolify" }) });
     render(element);
 
-    expect(screen.getByRole("link", { name: "Dokploy" })).toHaveAttribute("href", "/repo/dokploy");
+    expect(screen.getAllByRole("link", { name: "Dokploy" })[0]).toHaveAttribute("href", "/repo/dokploy");
     expect(screen.queryByText("Not yet profiled")).not.toBeInTheDocument();
   });
 
@@ -564,7 +564,7 @@ describe("Repo page (/repo/[slug])", () => {
     const element = await RepoPage({ params: Promise.resolve({ slug: "ollama" }) });
     render(element);
 
-    expect(screen.getByRole("link", { name: "LM Studio" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "LM Studio" })[0]).toHaveAttribute(
       "href",
       "/alternative/lm-studio",
     );
@@ -576,7 +576,7 @@ describe("Repo page (/repo/[slug])", () => {
     render(element);
 
     expect(screen.getByRole("heading", { level: 2, name: "Compared with" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "vs vLLM" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "vs vLLM" })[0]).toHaveAttribute(
       "href",
       "/compare/ollama/vllm",
     );
@@ -619,5 +619,22 @@ describe("Repo page (/repo/[slug])", () => {
     const emptyState = withinSection.queryByText("No recent releases.");
     const releaseLinks = withinSection.queryAllByRole("link");
     expect(emptyState !== null || releaseLinks.length > 0).toBe(true);
+  });
+});
+
+describe("Repo page details widgets (Precision Editorial)", () => {
+  it("shows the hero GitHub button, stat tiles, ledger, comparison matrix and Grove neighbors for ollama", async () => {
+    const element = await RepoPage({ params: Promise.resolve({ slug: "ollama" }) });
+    render(element);
+
+    expect(screen.getByRole("link", { name: /Visit on GitHub/ })).toHaveAttribute(
+      "href",
+      "https://github.com/ollama/ollama",
+    );
+    expect(screen.getByText("Stargazers")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 2, name: "Repository ledger" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 2, name: "How it compares" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 2, name: "Grove neighbors" })).toBeInTheDocument();
+    expect(screen.getByText(/Direct alternative to:/)).toBeInTheDocument();
   });
 });

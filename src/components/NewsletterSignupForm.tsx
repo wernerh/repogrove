@@ -84,7 +84,7 @@ export default function NewsletterSignupForm() {
         </div>
         <button
           type="submit"
-          className="rounded-md bg-cta-fill px-6 py-3 font-sans text-sm font-medium text-cta-text hover:bg-cta-fill-hover focus:outline-none focus:ring-2 focus:ring-cta-fill focus:ring-offset-2 focus:ring-offset-bg-default"
+          className="rounded-md bg-cta-fill px-6 py-3 font-sans text-sm font-medium text-cta-text hover:bg-cta-fill-hover focus:outline-none focus:ring-2 focus:ring-cta-fill focus:ring-offset-2 focus:ring-offset-bg-elevated"
         >
           Notify me
         </button>

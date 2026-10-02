@@ -1,0 +1,10 @@
+# Factory control plane: lane skills, reviewer agents, guardrail scripts and the operating
+# manual. Lanes must never edit these (CLAUDE.md rule 7); only the owner changes them.
+#
+# NOTE: this only blocks a merge once branch protection on `main` requires review from
+# code owners. SEC-005 records that branch protection is currently absent, so until the
+# owner enables it this file is advisory.
+/.claude/                                   @wernerh
+/scripts/factory/                           @wernerh
+/.github/workflows/factory-guardrails.yml   @wernerh
+/CLAUDE.md                                  @wernerh

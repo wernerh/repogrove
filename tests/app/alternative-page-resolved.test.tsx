@@ -55,7 +55,7 @@ describe("Alternative page (/alternative/[slug]) — resolved Open source item",
 
     const link = screen.getByRole("link", { name: "Ollama" });
     expect(link).toHaveAttribute("href", "/repo/ollama");
-    expect(screen.getByText("⭐ 24,200")).toBeInTheDocument();
+    expect(screen.getByText("24,200")).toBeInTheDocument();
 
     expect(screen.getByText("Definitely Not A Repo")).toBeInTheDocument();
     expect(screen.getByText("Not yet profiled")).toBeInTheDocument();

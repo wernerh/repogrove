@@ -65,16 +65,23 @@ conflicts with a Project doc, **this file wins**.
    (auth provider, data model, hosting, framework, paid vendor, public API shape).
 7. One major task (+ up to 2 small related ones) per run. Never disable tests, lint, or
    CI checks to get green. Never bypass branch protection. Never edit
-   `scripts/factory/*`, `.github/workflows/factory-guardrails.yml`, or checker thresholds.
+   `scripts/factory/*`, `.github/workflows/factory-guardrails.yml`, checker thresholds, or
+   `.claude/**` (the lane skills and reviewer agents — a lane must not be able to weaken
+   its own reviewer or protocol; only the owner changes these, via a `needs-human` PR).
 8. A quiet run with no safe work to do is a **successful** run.
 
 ## 4. Run loop
 
 lock → observe → diagnose/prioritise → plan → implement → validate → review → PR → merge
-→ update memory → report. See the scheduled-task prompts (`docs/factory/*.md` mirrors the
-prompt actually configured on each task) for the exact per-run protocol, lock schema, and
-report format — they are authoritative for *how* a run behaves; this file is authoritative
-for *what the product is and the rules that never change*.
+→ update memory → report. The exact per-run protocol, lock schema, and report format live
+in version-controlled skills: `.claude/skills/factory-core/SKILL.md` (shared) plus
+`dev-factory`, `security-factory` and `design-factory` (per lane). Each lane's independent
+reviewer is a read-only subagent in `.claude/agents/` (`factory-reviewer-dev`,
+`-security`, `-design`). Scheduled tasks are thin wrappers that invoke the lane skill —
+see `docs/factory/README.md`. `docs/factory/*-run.md` are legacy mirrors of the old
+inline task prompts and are superseded once a task is switched. The skills are
+authoritative for *how* a run behaves; this file is authoritative for *what the product is
+and the rules that never change*.
 
 **Local validation vs CI:** this environment can run `npm ci`, `npm run lint`, `npm test`,
 `npm run build` for the Next.js app locally. GitHub Actions is the source of truth for

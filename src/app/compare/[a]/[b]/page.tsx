@@ -8,6 +8,7 @@ import { numberFormatter } from "@/lib/format";
 import StatusChip from "@/components/StatusChip";
 import MomentumChip from "@/components/MomentumChip";
 import type { Metadata } from "next";
+import StarIcon from "@/components/StarIcon";
 
 interface PageProps {
   params: Promise<{ a: string; b: string }>;
@@ -112,13 +113,13 @@ export default async function ComparePage({ params }: PageProps) {
   );
 
   return (
-    <article>
+    <article className="max-w-3xl">
       <p className="font-sans text-sm font-medium text-text-link">Comparison</p>
       <h1 className="font-sans text-2xl font-semibold tracking-tight text-text-default">
         {repoA.name} vs {repoB.name}
       </h1>
 
-      <div className="mt-6 overflow-x-auto">
+      <div className="mt-6 overflow-x-auto rounded-md border border-border-subtle bg-bg-elevated shadow-elevation-1">
         {/* UX-2026-006 (re-diagnosed): `min-w-[24rem]` (384px) used to apply
             unconditionally, including below `sm`. On the project's own 390px
             mobile screenshot viewport, `main`'s `max-w-3xl px-6` leaves only
@@ -168,7 +169,14 @@ export default async function ComparePage({ params }: PageProps) {
                 const stars = starsByGithub.get(repo.github)?.currentStars ?? null;
                 return (
                   <span className="font-mono text-text-secondary">
-                    {stars !== null ? `⭐ ${numberFormatter.format(stars)}` : "—"}
+                    {stars !== null ? (
+                      <span className="inline-flex items-center gap-1">
+                        <StarIcon />
+                        {numberFormatter.format(stars)}
+                      </span>
+                    ) : (
+                      "—"
+                    )}
                   </span>
                 );
               }}
@@ -237,7 +245,7 @@ export default async function ComparePage({ params }: PageProps) {
               {pros.length > 0 && (
                 <div>
                   <h3 className="font-sans text-sm font-medium text-text-secondary">Pros</h3>
-                  <ul className="mt-2 flex flex-col gap-1 font-serif text-sm text-text-secondary">
+                  <ul className="mt-2 flex flex-col gap-1 text-sm text-text-secondary">
                     {pros.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
@@ -247,7 +255,7 @@ export default async function ComparePage({ params }: PageProps) {
               {cons.length > 0 && (
                 <div>
                   <h3 className="font-sans text-sm font-medium text-text-secondary">Cons</h3>
-                  <ul className="mt-2 flex flex-col gap-1 font-serif text-sm text-text-secondary">
+                  <ul className="mt-2 flex flex-col gap-1 text-sm text-text-secondary">
                     {cons.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
@@ -261,7 +269,7 @@ export default async function ComparePage({ params }: PageProps) {
 
       <section className="mt-6">
         <h2 className="font-sans text-xl font-semibold text-text-default">How they differ</h2>
-        <div className="mt-3 font-serif text-sm text-text-secondary">
+        <div className="mt-3 text-sm text-text-secondary">
           <Markdown>{comparison.howTheyDiffer}</Markdown>
         </div>
       </section>

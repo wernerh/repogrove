@@ -108,6 +108,6 @@ describe("MomentumChip", () => {
     render(<MomentumChip heat={heat()} />);
     const button = screen.getByRole("button", { name: /active/i });
     expect(button.className).toContain("focus:ring-offset-2");
-    expect(button.className).toContain("focus:ring-offset-bg-default");
+    expect(button.className).toContain("focus:ring-offset-bg-elevated");
   });
 });

@@ -36,11 +36,11 @@ export default function TrendingPage() {
   const ranked = rankByAbsoluteGrowth(repos, summaries);
 
   return (
-    <div>
+    <div className="max-w-3xl">
       <h1 className="font-sans text-2xl font-semibold tracking-tight text-text-default">
         🔥 Hot Right Now
       </h1>
-      <p className="mt-2 font-serif text-lg text-text-secondary">
+      <p className="mt-2 text-lg text-text-secondary">
         Tracked repositories ranked by absolute GitHub star growth.
       </p>
 

@@ -67,6 +67,6 @@ describe("NewsletterSignupForm", () => {
     render(<NewsletterSignupForm />);
     const button = screen.getByRole("button", { name: /notify me/i });
     expect(button.className).toContain("focus:ring-offset-2");
-    expect(button.className).toContain("focus:ring-offset-bg-default");
+    expect(button.className).toContain("focus:ring-offset-bg-elevated");
   });
 });

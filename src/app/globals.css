@@ -14,7 +14,7 @@
  *        per theme below)
  *   Components must only ever use the semantic layer.
  *
- * Font faces: Inter / Source Serif 4 / IBM Plex Mono are loaded and
+ * Font faces: Inter / IBM Plex Mono are loaded and
  * self-hosted at build time via `next/font/google` in src/app/layout.tsx
  * (each exposed as a CSS variable — --font-inter etc. — applied to <html>).
  * The tokens below reference those variables first, falling back to the
@@ -23,45 +23,52 @@
  */
 
 @theme {
-  /* ---- Primitives: neutral scale (hue 220, cool/near-desaturated) ---- */
-  --color-neutral-0: #fbfcfc;
-  --color-neutral-10: #f0f2f3;
-  --color-neutral-20: #dee2e3;
-  --color-neutral-30: #c6cbcd;
-  --color-neutral-40: #a6acae;
-  --color-neutral-50: #80888a;
-  --color-neutral-60: #5d6567;
-  --color-neutral-70: #43494b;
-  --color-neutral-80: #2a2f31;
-  --color-neutral-90: #131718;
-  --color-neutral-100: #050607;
+  /* ---- Primitives: neutral scale (hue 250, cool slate — "Precision Editorial") ---- */
+  --color-neutral-0: #fbfcfd;
+  --color-neutral-10: #f0f2f4;
+  --color-neutral-20: #dee2e5;
+  --color-neutral-30: #c6cbd0;
+  --color-neutral-40: #a5acb2;
+  --color-neutral-50: #7f8790;
+  --color-neutral-60: #5c646d;
+  --color-neutral-70: #414951;
+  --color-neutral-80: #272f37;
+  --color-neutral-90: #0f171f;
+  --color-neutral-100: #03060b;
 
-  /* ---- Primitives: brand scale (hue 205, "deep pond" blue-teal) ---- */
-  --color-brand-10: #d8f5f8;
-  --color-brand-20: #b2e2e7;
-  --color-brand-30: #86cbd3;
-  --color-brand-40: #41b0bc;
-  --color-brand-50: #008b96;
-  --color-brand-60: #006b74;
-  --color-brand-70: #004c53;
-  --color-brand-80: #002f34;
-  --color-brand-90: #001518;
+  /* ---- Primitives: brand scale (hue 189.5, deep teal; brand-60 = #0B5C58) ---- */
+  --color-brand-10: #d9f5f3;
+  --color-brand-20: #b7e2de;
+  --color-brand-30: #91cbc6;
+  --color-brand-40: #63aea8;
+  --color-brand-50: #2c847f;
+  --color-brand-60: #0b5c58;
+  --color-brand-70: #014441;
+  --color-brand-80: #002b29;
+  --color-brand-90: #001312;
+
+  /* ---- Primitives: amber scale (hue 70, tertiary — star/accent marks; amber-50 = #F59E0B-family) ---- */
+  --color-amber-10: #ffefdd;
+  --color-amber-20: #ffd6a8;
+  --color-amber-30: #fdbc6f;
+  --color-amber-40: #faab3f;
+  --color-amber-50: #f69e0b;
+  --color-amber-60: #b97500;
+  --color-amber-70: #8a5600;
+  --color-amber-80: #5e3900;
+  --color-amber-90: #3b2301;
 
   /* ---- Typography ---- */
-  /* "Technical / precise" base (Inter) with a serif exception for
-     long-form editorial prose (Source Serif 4); mono for stats/dates/
-     code/slugs (IBM Plex Mono). --font-inter/--font-source-serif-4/
-     --font-ibm-plex-mono come from next/font/google (see file header).
-     The fallback lives INSIDE each var() call (var(--x, fallback)), not
-     appended after a comma: a bare var(--unset-property) with no
-     in-call fallback makes the whole containing declaration invalid at
-     computed-value time (CSS Custom Properties spec), not just that one
-     comma-list item — so a render path that never mounts RootLayout
-     (and so never sets --font-inter etc.) would otherwise lose the
-     entire stack, not just the loaded face. */
+  /* "Precision Editorial": Inter for headlines AND body (the serif prose
+     face was retired in this refresh), IBM Plex Mono for labels, stats,
+     dates, slugs. --font-inter/--font-ibm-plex-mono come from
+     next/font/google (see file header). The fallback lives INSIDE each
+     var() call (var(--x, fallback)), not appended after a comma: a bare
+     var(--unset-property) with no in-call fallback makes the whole
+     containing declaration invalid at computed-value time (CSS Custom
+     Properties spec), so a render path that never mounts RootLayout would
+     otherwise lose the entire stack. */
   --font-sans: var(--font-inter, Inter), "Helvetica Neue", Arial, sans-serif;
-  --font-serif: var(--font-source-serif-4, "Source Serif 4"), Georgia,
-    "Times New Roman", serif;
   --font-mono: var(--font-ibm-plex-mono, "IBM Plex Mono"), ui-monospace,
     SFMono-Regular, Menlo, monospace;
 
@@ -81,6 +88,8 @@
   --text-2xl--line-height: 1.15;
   --text-3xl: 2.4375rem; /* 39px — h1, display (homepage hero only) */
   --text-3xl--line-height: 1.1;
+  --text-4xl: 3.0625rem; /* 49px — homepage hero headline only */
+  --text-4xl--line-height: 1.05;
 
   /* ---- Radius ---- */
   --radius-sm: 4px; /* chips, badges, inputs */
@@ -131,6 +140,11 @@
   --color-cta-fill-hover: var(--color-brand-70);
   --color-cta-text: var(--color-neutral-0);
 
+  /* Tertiary amber: star marks and highlights only (never body text). */
+  --color-accent-star: var(--color-amber-60); /* 3.65:1 on bg.default — UI-graphic floor is 3:1 */
+  --color-bg-brand-subtle: var(--color-brand-10);
+  --color-text-on-brand-subtle: var(--color-brand-70);
+
   --color-success-text: #00791e;
   --color-warning-text: #986600;
   --color-error-text: #ba2b2e;
@@ -163,6 +177,10 @@
     /* White text would fail contrast on this lighter dark-mode fill. */
     --color-cta-text: var(--color-neutral-90);
 
+    --color-accent-star: var(--color-amber-50);
+    --color-bg-brand-subtle: var(--color-brand-80);
+    --color-text-on-brand-subtle: var(--color-brand-30);
+
     --color-success-text: #399341;
     --color-warning-text: #af7600;
     --color-error-text: #db5853;
@@ -190,6 +208,10 @@
   --color-cta-fill: var(--color-cta-fill);
   --color-cta-fill-hover: var(--color-cta-fill-hover);
   --color-cta-text: var(--color-cta-text);
+
+  --color-accent-star: var(--color-accent-star);
+  --color-bg-brand-subtle: var(--color-bg-brand-subtle);
+  --color-text-on-brand-subtle: var(--color-text-on-brand-subtle);
 
   --color-success-text: var(--color-success-text);
   --color-warning-text: var(--color-warning-text);
@@ -221,13 +243,11 @@
     font-family: var(--font-sans);
   }
 
-  /* Long-form editorial prose (Grove/repo write-ups) reads as serif, per
-     the blended "structured, trustworthy, technical-editorial" theme
-     statement — this visually marks curated editorial content vs. UI
-     chrome as the reader scans a page. Prose measure capped at 65ch;
-     tables/grids are exempt. */
-  article {
-    font-family: var(--font-serif);
+  /* Long-form editorial prose (Grove/repo write-ups). The serif face was
+     retired in the Precision Editorial refresh: prose is Inter, set apart
+     by measure (65ch for text blocks) and heading rhythm. Tables/grids
+     are exempt from the measure. */
+  article :where(p, ul, ol) {
     max-width: 65ch;
   }
 

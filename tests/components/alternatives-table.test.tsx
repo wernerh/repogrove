@@ -35,7 +35,7 @@ describe("AlternativesTable", () => {
     const link = screen.getByRole("link", { name: "vLLM" });
     expect(link).toHaveAttribute("href", "/repo/vllm");
     expect(screen.getByText("Active")).toBeInTheDocument();
-    expect(screen.getByText("⭐ 24,200")).toBeInTheDocument();
+    expect(screen.getByText("24,200")).toBeInTheDocument();
     expect(screen.getByText("ai")).toBeInTheDocument();
   });
 

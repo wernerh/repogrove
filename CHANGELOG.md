@@ -15,6 +15,13 @@ entries.
   `TECH-DEBT.md` (5 rows), `ROADMAP.md`, `docs/security/PRODUCTION-HARDENING.md`, the PR
   template, `docs/factory/dev-run.md`, and comments in `src/lib/site.ts`, `next.config.ts`,
   `src/app/sitemap.ts`. No behaviour change.
+- 2026-10-02 — Factory run protocol moved into the repo: shared `factory-core` skill plus
+  `dev-factory`, `security-factory` and `design-factory` lane skills under `.claude/skills/`,
+  and three read-only reviewer subagents (`factory-reviewer-dev`, `-security`, `-design`)
+  under `.claude/agents/`, replacing prompts that existed only in scheduled-task config.
+  `.claude/**` added to `CLAUDE.md` rule 7's protected paths, `.github/CODEOWNERS` added,
+  `docs/factory/README.md` documents the cutover. Owner-authored; scheduled tasks are not
+  changed by this PR. (infra)
 - 2026-10-02 — Dev run 57: added Immich (`content/repos/immich.md`, `immich-app/immich`,
   AGPL-3.0) to the Self-Hosted grove — the next item from `PRODUCT.md` §2's own named
   example list (Coolify, Dokploy, CasaOS, Portainer, Immich, Nextcloud) not yet built.
@@ -1354,3 +1361,16 @@ entries.
   time, and the refreshed `compare-ollama-vllm__mobile-*.png` screenshots were
   reviewed directly this same run — vLLM's full "ai, llm, inference" now renders
   with clear margin before the viewport edge, no clipping. (design)
+
+- 2026-10-02 — **design:** Precision Editorial look-and-feel refresh. New teal/slate/amber
+  tokens (all pairings re-validated, `generate_palette.py` updated), serif retired
+  (Inter + IBM Plex Mono only), sticky header + 6xl frame, homepage hero/search entry,
+  richer Grove and repo cards (category badge, amber `StarIcon`, `alt:` line, member
+  preview), repo page hero card + sidebar, stray chip-list bullets removed. Mock-only
+  elements with no backing data were not built (listed in DESIGN-SYSTEM.md). 376/376
+  tests; screenshot harness 48/48 with 0 axe violations. (design)
+- 2026-10-02 — **design:** repo page details widgets from real data — hero GitHub button +
+  stat tiles + "Direct alternative to" chips, Repository ledger, Grove neighbors, "How it
+  compares" matrix. Data-less mock widgets (Health Index, Quick Start, Language
+  Composition, Community Pulse, commit density) left unbuilt, listed in DESIGN-SYSTEM.md. 383/383 tests;
+  harness 48/48, 0 axe violations. (design)
