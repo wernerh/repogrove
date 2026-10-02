@@ -70,13 +70,42 @@ describe("AlternativesTable", () => {
     expect(firstCellText).toEqual(["High Stars", "Low Stars", "No History", "unresolved"]);
   });
 
-  it("renders commercial alternatives as plain, unlinked names", () => {
-    render(<AlternativesTable openSource={[]} commercial={["Firebase", "AWS Amplify"]} />);
+  it("renders an unresolved commercial alternative as a plain, unlinked name", () => {
+    // TECH-DEBT.md 2026-10-01 row: no content/alternatives/*.md page exists
+    // for either name here, so both stay plain text — the same "omit, don't
+    // fabricate a link" convention the open-source rows already follow.
+    render(
+      <AlternativesTable
+        openSource={[]}
+        commercial={[
+          { name: "LM Studio", alternativeSlug: null },
+          { name: "AWS Amplify", alternativeSlug: null },
+        ]}
+      />,
+    );
 
     expect(screen.getByText("Commercial alternatives")).toBeInTheDocument();
-    expect(screen.getByText("Firebase")).toBeInTheDocument();
+    expect(screen.getByText("LM Studio")).toBeInTheDocument();
     expect(screen.getByText("AWS Amplify")).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Firebase" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "LM Studio" })).not.toBeInTheDocument();
+  });
+
+  it("renders a resolved commercial alternative as a link to its /alternative/:slug page", () => {
+    // TECH-DEBT.md 2026-10-01 row: AlternativesTable's commercial chips never
+    // linked forward to a matching content/alternatives/*.md page even once
+    // one existed (e.g. content/alternatives/firebase.md, dev run 48) — the
+    // reverse direction (that page's own Open source list resolving back to
+    // a repo) already worked. Fixed by resolving each commercial name the
+    // same way the Open source column already resolves repo slugs.
+    render(
+      <AlternativesTable
+        openSource={[]}
+        commercial={[{ name: "Firebase", alternativeSlug: "firebase" }]}
+      />,
+    );
+
+    const link = screen.getByRole("link", { name: "Firebase" });
+    expect(link).toHaveAttribute("href", "/alternative/firebase");
   });
 
   it("omits the commercial-alternatives heading entirely when there are none", () => {

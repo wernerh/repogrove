@@ -381,6 +381,29 @@ describe("Repo page (/repo/[slug])", () => {
     expect(screen.queryByText("Not yet profiled")).not.toBeInTheDocument();
   });
 
+  it("links Coolify's commercial chips to their own /alternative/:slug pages now that they exist", async () => {
+    // TECH-DEBT.md's 2026-10-01 row: coolify.md's alternatives.commercial
+    // ([Vercel, Heroku, Netlify]) predates this run, but none of the three
+    // had a content/alternatives/*.md page until this run added vercel.md/
+    // heroku.md/netlify.md — before that, AlternativesTable.tsx's commercial
+    // chips never linked forward even when a matching page did exist
+    // elsewhere (e.g. Firebase on /repo/appwrite). This is the real-page
+    // integration test for that fix: /repo/coolify (an already-published
+    // page whose frontmatter this PR doesn't touch) rendering its commercial
+    // chips as real links, not just the isolated component/alternative-page
+    // unit tests covering each half of the resolution separately.
+    const element = await RepoPage({ params: Promise.resolve({ slug: "coolify" }) });
+    render(element);
+
+    for (const [name, slug] of [
+      ["Vercel", "vercel"],
+      ["Heroku", "heroku"],
+      ["Netlify", "netlify"],
+    ] as const) {
+      expect(screen.getByRole("link", { name })).toHaveAttribute("href", `/alternative/${slug}`);
+    }
+  });
+
   it("renders a 'Compared with' cross-link for a repo named in a /compare/:a/:b content file (issue #62)", async () => {
     // content/comparisons/ollama-vs-vllm.md names both ollama and vllm.
     const element = await RepoPage({ params: Promise.resolve({ slug: "ollama" }) });

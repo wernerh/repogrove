@@ -415,8 +415,11 @@ describe("getAllAlternatives (real /content fixtures)", () => {
     expect(alternatives.map((a) => a.slug).sort()).toEqual([
       "firebase",
       "gitkraken",
+      "heroku",
+      "netlify",
       "notion",
       "sourcetree",
+      "vercel",
     ]);
   });
 
@@ -460,6 +463,53 @@ describe("getAllAlternatives (real /content fixtures)", () => {
       "A terminal-first, keyboard-driven workflow with no GUI overhead (GitUI, LazyGit, Tig)",
       "Advanced visual tooling on a paid plan — interactive rebase with drag-and-drop, built-in AI assistance, and PR/code-review management across hosting providers (GitKraken)",
       "Linux support — Sourcetree only ships Mac and Windows builds, while GitKraken also builds for Linux",
+    ]);
+  });
+
+  it("parses Vercel's frontmatter and body sections correctly", () => {
+    const vercel = getAlternative("vercel");
+    expect(vercel).toBeDefined();
+    expect(vercel?.product).toBe("Vercel");
+    expect(vercel?.category).toBe("paas");
+    expect(vercel?.openSource).toEqual(["Coolify", "Dokploy"]);
+    expect(vercel?.commercial).toEqual(["Heroku", "Netlify"]);
+    // Full-array assertion (not just `toContain`) so a bullet that wraps
+    // across source lines — which `extractListItems` silently truncates at
+    // the first line lacking its own "- " marker — would fail here instead
+    // of shipping a truncated sentence to the live page (same lesson as
+    // gitkraken.md/sourcetree.md's tests above).
+    expect(vercel?.bestFit).toEqual([
+      "Running a commercial or for-profit app for free — Vercel's free Hobby plan is contractually restricted to personal, non-commercial use under its own Terms of Service, while Coolify and Dokploy cost only whatever server you already run them on, commercial or not",
+      "Hosting more than a frontend and its serverless functions — Vercel is built around front-end frameworks and its own Functions runtime, while Coolify and Dokploy also provision and manage backend services and databases (MySQL, PostgreSQL, MongoDB, MariaDB, Redis via Dokploy) on the same platform",
+      "Avoiding a usage ceiling that pauses your deployments — Vercel's own docs say Hobby plans are paused once they exceed the included free-tier usage, while a self-hosted Coolify or Dokploy instance keeps running on whatever capacity its own server has",
+    ]);
+  });
+
+  it("parses Heroku's frontmatter and body sections correctly", () => {
+    const heroku = getAlternative("heroku");
+    expect(heroku).toBeDefined();
+    expect(heroku?.product).toBe("Heroku");
+    expect(heroku?.category).toBe("paas");
+    expect(heroku?.openSource).toEqual(["Coolify", "Dokploy"]);
+    expect(heroku?.commercial).toEqual(["Vercel", "Netlify"]);
+    expect(heroku?.bestFit).toEqual([
+      "Avoiding a monthly bill just to keep an app running — Heroku removed its free dyno, Postgres, and Key-Value Store plans in November 2022, so even a minimal app now costs at least a few dollars a month (usage-based Eco dynos, $5/month Mini Postgres, $3/month Mini Key-Value Store); Coolify and Dokploy cost only whatever server you already run them on",
+      "Keeping Heroku's own \"push to Git, get a build and a running service\" workflow without paying Heroku for it — both still build on the buildpack-driven deploy model Heroku popularized (Dokploy deploys via Heroku-style buildpacks directly; Coolify offers the same Git-push experience)",
+      "Self-managed backing services instead of Heroku's paid add-ons — Dokploy provisions and backs up MySQL, PostgreSQL, MongoDB, MariaDB, and Redis itself, on the same servers as your app",
+    ]);
+  });
+
+  it("parses Netlify's frontmatter and body sections correctly", () => {
+    const netlify = getAlternative("netlify");
+    expect(netlify).toBeDefined();
+    expect(netlify?.product).toBe("Netlify");
+    expect(netlify?.category).toBe("paas");
+    expect(netlify?.openSource).toEqual(["Coolify", "Dokploy"]);
+    expect(netlify?.commercial).toEqual(["Vercel", "Heroku"]);
+    expect(netlify?.bestFit).toEqual([
+      "Running backend services and databases alongside your app, not just a frontend and its functions — Netlify's free plan is scoped to 125,000 function invocations and 1 million edge function invocations a month, while Coolify and Dokploy run arbitrary backend services and provision databases (MySQL, PostgreSQL, MongoDB, MariaDB, Redis via Dokploy) on hardware you control, with no invocation ceiling",
+      "Avoiding a monthly allowance that suspends your site — Netlify's own announcement of its free plan says a site suspends for the rest of the calendar month once its usage allowance (100 GB bandwidth, 300 build minutes) is exceeded, while a self-hosted Coolify or Dokploy instance keeps running on whatever capacity its own server has",
+      "Building without a per-minute build-time budget — Netlify's free plan includes 300 build minutes a month, while Coolify and Dokploy build on your own server with no per-minute metering",
     ]);
   });
 
