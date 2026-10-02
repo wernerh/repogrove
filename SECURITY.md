@@ -14,13 +14,14 @@
 ## Reporting a vulnerability
 Open a GitHub issue labelled `security`, or if it's sensitive, email the owner directly
 (whurter5@gmail.com). Do not open a public issue for an active exploit against a live
-deployment (none exists yet — this is a placeholder for when one does).
+deployment (https://www.repogrove.com).
 
 ## Scope for the security factory lane
 Frontend (XSS/sanitiser bypasses, secrets in bundles, CSP/headers), ingestion
 API/jobs (SSRF via user-controlled GitHub URLs, injection, rate limiting, error
 leakage), repository-controlled CI/CD (workflow permissions, supply chain, secret
-scanning). Live cloud resources are out of scope until hosting exists (ADR-002) — see
+scanning). The live Azure resources (ADR-002) are owner-managed and out of scope; the
+repo-controlled deploy workflow is in scope — see
 `docs/security/README.md` for the full methodology and OWASP coverage table.
 
 ## Principles

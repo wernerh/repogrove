@@ -6,8 +6,8 @@
 Build RepoGrove: a curated discovery platform for OSS repos (Groves, repo intelligence,
 alternatives, momentum, newsletter). MVP success test: a stranger lands on the
 homepage, finds a repo or "alternative to X" page, and leaves knowing what it is,
-whether it's active, what else they could use, and why they'd care — no account, DB
-migration, or deploy target needed yet.
+whether it's active, what else they could use, and why they'd care — no account or DB
+migration needed (live at www.repogrove.com since 2026-10-02).
 
 ## Current phase
 **Phase 3 — Search, SEO, alternatives, newsletter signup — COMPLETE (run 30).**
@@ -24,7 +24,7 @@ Self-Hosted further (Portainer/Nextcloud/CasaOS) or find the next content gap.
 | Date | Decision | Why | Status | Reversibility |
 |---|---|---|---|---|
 | 2026-09-27 | Stack: Next.js/React/TS + Tailwind, Git-native MD content + Postgres/SQLite for volatile data | Owner spec + ADR-001 | LOCKED | expensive |
-| 2026-09-27 | Hosting: Azure Storage static-website hosting (owner answered RG-2); app built with `output: "export"` from Phase 1 on | Owner reply + ADR-002 | ANSWERED | expensive |
+| 2026-10-02 | Hosting: LIVE at https://www.repogrove.com on Azure Static Web Apps (RG-2 said Azure Storage); `output: "export"`; merge to `main` = prod deploy | ADR-002 addendum | DEPLOYED | expensive |
 | 2026-09-27 | Repo visibility: public | Owner confirmed ("happy with public") | ANSWERED | cheap |
 | 2026-09-27 | RepositorySnapshot: committed SQLite (`data/repogrove.db`), not build-time regen | ADR-005 | LOCKED | cheap |
 | 2026-09-29 | Grove Heat v1: star-growth-rate-only label, thresholds provisional | ADR-004 — other issue #21 inputs need new ingestion | PROVISIONAL | cheap |
@@ -36,13 +36,13 @@ Self-Hosted further (Portainer/Nextcloud/CasaOS) or find the next content gap.
 - A2: No pilot customer — general public product; no contractual obligations to model.
 
 ## Not doing (yet)
-Accounts, paid subscriptions, watchlists/alerts, recommendation engine, massive crawling infra, admin CMS, live deploy — spec §30, §33, ADR-002.
+Accounts, paid subscriptions, watchlists/alerts, recommendation engine, massive crawling infra, admin CMS — spec §30, §33.
 
 ## Timebox
 Phases 2 and 3 both completed within budget; no Phase 3 item needed a split.
 
 ## Blockers and attempts
-None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 stays stubbed until answered.
+None blocking (rule 8). RG-7/8/9 open; Phase 4 stays stubbed. RG-7's premise changed: site is now deployed.
 
 ## Milestones
 - [x] 2026-09-27/29 — Phase 1 walking skeleton (#5-7); Phase 2 ingestion/metrics,
@@ -56,4 +56,5 @@ None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 stays stubbed u
 - [x] 2026-10-02 — Found/fixed a site-wide Pros/Cons/alternatives bullet-truncation
   bug + added a build-time guard against it (#109, merged); added Immich to
   Self-Hosted (#111) — 4 groves/22 repos total.
+- [x] 2026-10-02 — Owner deployed the site: https://www.repogrove.com (Azure Static Web Apps).
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (#76-78), awaiting owner

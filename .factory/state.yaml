@@ -15,8 +15,8 @@ execution:
 health:
   ci: green
   security: green
-  production: not_deployed
-  infrastructure: none
+  production: deployed # https://www.repogrove.com, Azure Static Web Apps, owner-provisioned 2026-10-02
+  infrastructure: azure_static_web_apps
 
 metrics:
   runs: 75
@@ -27,6 +27,16 @@ metrics:
   failed_runs: 0
 
 next_actions:
+  - "2026-10-02 (owner-requested docs update, not a factory run): the owner deployed the
+    site to https://www.repogrove.com on Azure Static Web Apps. Docs updated: CLAUDE.md
+    rule 5, ADR-002 addendum, OPERATIONS.md, README, ARCHITECTURE, PRODUCT, SECURITY,
+    PRODUCTION-HARDENING, PR template, dev-run.md. Things the next dev run should know:
+    (1) a merge to main is now a production deploy; (2) RG-7's premise changed (see its
+    note in decisions.yaml) — mention it when applying or re-checking RG-7's default;
+    (3) TECH-DEBT.md has new rows for ingestion commits possibly not redeploying, no
+    staticwebapp.config.json, and apex/www canonical origin; (4) the configured scheduled
+    task prompts may still say hosting is undecided — CLAUDE.md wins. PROJECT_STATE.md is
+    exactly at the 60-line cap; trim it first if a run adds lines."
   - "2026-10-02 (run 57): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03T13:02:34Z) hasn't passed (~20h off at this run's start). RG-8/RG-9 have

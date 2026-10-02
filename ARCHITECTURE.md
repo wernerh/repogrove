@@ -15,21 +15,23 @@ Git-as-CMS (Option B):
 ```
 GitHub API ──▶ scheduled ingestion (GitHub Actions) ──▶ SQLite/Postgres (metrics)
 Markdown (/content, PR-reviewed) ────────────────────▶ Next.js (build/runtime read)
-                                    Next.js ──▶ RepoGrove.com
+                                    Next.js (static export) ──▶ Azure Static Web Apps ──▶ www.repogrove.com
 ```
 
 ## Stack (ADR-001)
 - **Frontend:** Next.js / React / TypeScript
 - **Styling:** Tailwind CSS
 - **Content:** Markdown/MDX under `/content`, Git-versioned
-- **Database:** SQLite pre-launch, PostgreSQL when scale/hosting is decided
+- **Database:** SQLite (committed `data/repogrove.db`, ADR-005) today; PostgreSQL only if a
+  live server is ever added (static hosting has none)
 - **Search:** Postgres/SQLite full-text search initially; Typesense/Meilisearch is a
   Phase 2+ option, not MVP
 - **Data source:** GitHub REST/GraphQL API
 - **Scheduled jobs:** GitHub Actions (ingestion), moving to dedicated workers only if
   GitHub Actions can't keep up
-- **Deployment:** undecided (ADR-002) — Cloudflare + a modern cloud host is the stated
-  target once the owner provisions an account
+- **Deployment:** Azure Static Web Apps, live at https://www.repogrove.com since
+  2026-10-02 (ADR-002 addendum). Static export only (`out/`): no SSR, API routes or
+  middleware. Deploys on push to `main`; PRs get preview builds. See `OPERATIONS.md`.
 - **Analytics:** privacy-conscious (no third-party ad-tracking pixels); provider TBD via
   ADR when Phase 3 needs it
 

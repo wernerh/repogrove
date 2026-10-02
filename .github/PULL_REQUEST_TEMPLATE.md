@@ -20,7 +20,7 @@
 
 
 ## Deployment Notes
-<!-- N/A — no deploy target exists yet (ADR-002) -->
+<!-- Merging to main deploys to production (https://www.repogrove.com, Azure Static Web Apps, ADR-002). Note anything affecting the deploy, or N/A. -->
 
 ## Documentation
 <!-- Which docs were updated: CHANGELOG.md, TECH-DEBT.md, ROADMAP.md, DECISIONS.md, etc. -->

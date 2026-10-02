@@ -1,8 +1,9 @@
 # ADR-002: Hosting
 
-**Status:** Accepted — target chosen (RG-2 answered); deploy jobs stay stubbed/disabled
-pending provisioning (hard human gate, `CLAUDE.md` rule 6)
-**Date:** 2026-09-27 (proposed); updated 2026-09-27 (owner answered)
+**Status:** Accepted and **deployed** — live at https://www.repogrove.com on Azure Static
+Web Apps since 2026-10-02 (see the addendum at the end; sections above it are the
+historical record up to the owner's answer)
+**Date:** 2026-09-27 (proposed); updated 2026-09-27 (owner answered); addendum 2026-10-02
 
 ## Context
 The spec (§28) names "Cloudflare + modern cloud hosting" as a target, but no account is
@@ -62,3 +63,38 @@ a future decision) says the account exists and is ready to receive a build.
   workflow, or simply absent) rather than half-built against unconfirmed credentials.
 - `.factory/decisions.yaml` RG-2 is `ANSWERED`; `TECH-DEBT.md` carries the Phase 3
   search/newsletter caveat above as an open item.
+
+## Addendum — Deployed (2026-10-02)
+The owner provisioned the Azure resources (the hard human gate, `CLAUDE.md` rule 6) and the
+site is live at **https://www.repogrove.com**.
+
+**Deviation from RG-2's answer.** RG-2 asked for *Azure Storage static-website hosting*;
+what was provisioned is **Azure Static Web Apps** (`.github/workflows/azure-static-web-apps-orange-sea-032472e10.yml`).
+Both serve pre-built static files, so nothing in the app changes: `output: "export"` and the
+"no server runtime" constraints in ADR-005/006/007/008 still hold. Static Web Apps is the
+option this ADR already named as the escape hatch, since it can pair static hosting with
+managed Azure Functions. No Functions are in use, and adding any is a new decision
+(CLAUDE.md rule 6), not implied by this deployment.
+
+**How it deploys**
+- Trigger: push to `main` builds and deploys to production; PRs against `main` get a preview
+  environment that is closed when the PR closes.
+- Build: the Azure action builds the app itself (`app_location: "/"`, no `skip_app_build`) and
+  publishes `out/` (`output_location: "out"`). CI (`ci.yml`) still runs lint/test/build separately.
+- Auth: OIDC id-token plus the repo secret `AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_SEA_032472E10`
+  (owner-managed; never committed).
+- Domain: `www.repogrove.com` (registered at GoDaddy). Verified 2026-10-02 that it serves the
+  RepoGrove homepage. Not verified: apex `repogrove.com` handling, HTTP-to-HTTPS redirect,
+  security headers.
+
+**Consequences**
+- A merge to `main` is a production deploy (see `CLAUDE.md` rule 5, `OPERATIONS.md`).
+- Commits pushed by `ingestion.yml` and `design-screenshots.yml` use the workflow
+  `GITHUB_TOKEN`, which does not trigger other workflows, so they may not redeploy the site.
+  Open item in `TECH-DEBT.md`; the daily metrics refresh may only reach production when
+  something else deploys.
+- Headers/CSP and routing can now be set via `staticwebapp.config.json` (none in the repo yet;
+  `docs/security/PRODUCTION-HARDENING.md`).
+- The Phase 3 newsletter-signup backend and any public API (RG-9) keep their own pending
+  decisions; managed Functions is one option that stays inside the same Azure service.
+- RG-2 stays `ANSWERED`; the RG-7 premise ("not deployed") changed (`.factory/decisions.yaml`).

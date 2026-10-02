@@ -12,6 +12,7 @@ conflicts with a Project doc, **this file wins**.
 - **Owner / sole approver:** Werner Hurter (GitHub: `wernerh`) — whurter5@gmail.com
 - **Pilot customer:** none — this is a public product, not built for a specific customer.
 - **Repo:** `wernerh/repogrove` (this repo is the source of truth)
+- **Live site:** https://www.repogrove.com (Azure Static Web Apps, deployed 2026-10-02)
 - **Scheduled tasks (by name):**
   - `RepoGrove dev factory run` — every 2h
   - `RepoGrove security factory run` — every 4h, offset
@@ -48,9 +49,15 @@ conflicts with a Project doc, **this file wins**.
    - RepoGrove must not simply mirror GitHub descriptions — every published repo/alternative
      page needs a human-readable (or agent-drafted-and-reviewed) interpretation, not a raw
      scrape.
-5. **Hosting is undecided.** No cloud resources, no domain purchase, no deploy target
-   configured. CI validates (lint/test/build) only. Deploy jobs stay stubbed/disabled until
-   the owner answers RG-2 (see `.factory/decisions.yaml`). See ADR-002.
+5. **Hosting is decided and live.** RepoGrove is deployed as a static export
+   (`output: "export"`) on Azure Static Web Apps at https://www.repogrove.com
+   (owner-provisioned, 2026-10-02; see ADR-002 and its addendum, `OPERATIONS.md`).
+   `.github/workflows/azure-static-web-apps-*.yml` deploys on every push to `main` and
+   builds a preview per PR, so **a merge to `main` is a production deploy**: merge only
+   green PRs and treat merge as publish. The deploy workflow, its secret, the custom
+   domain/DNS and every Azure resource are owner-managed: never edit them, create cloud
+   resources, or add a second deploy target without a `needs-human` issue (rule 6).
+   There is no server runtime: no API routes, middleware or SSR.
 6. Human gates (stop, open a `needs-human` issue, email the owner): spending money,
    creating cloud resources, registering identity-provider apps or secrets, production
    deploys, contacting anyone but the owner, publishing externally (newsletter sends,

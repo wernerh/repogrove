@@ -47,6 +47,8 @@ No issues filed yet — three of these items each need an owner decision before 
 work starts (RG-7/RG-8/RG-9, `.factory/decisions.yaml`, asked 2026-09-30, issues
 #76/#77/#78); the other two don't and can be picked up once Phase 4 formally starts.
 - [ ] Is the site deployed and live yet, or should Phase 4 hold until it is? (RG-7 — OPEN)
+  - 2026-10-02: the site is now deployed (https://www.repogrove.com, Azure Static Web Apps).
+    Whether to hold or build Phase 4 anyway is still the owner's call.
 - [ ] Historical charts, watchlists/alerts (Phase 2 of product) — blocked on RG-8 (accounts/auth)
 - [ ] Community submission workflow (issue → AI research → draft PR → approval) — no
   decision needed, not yet started
@@ -56,6 +58,8 @@ work starts (RG-7/RG-8/RG-9, `.factory/decisions.yaml`, asked 2026-09-30, issues
   decision needed, not yet started
 - [ ] Public API (`api.repogrove.com`) — blocked on RG-9 (scope) and, if scoped, a
   further hosting decision (ADR-002's static hosting can't run an API)
+  - 2026-10-02: hosting is Azure Static Web Apps, which can add managed Functions in the same
+    service. That is an option for RG-9 to weigh, not a decision.
 - [ ] RepoGrove Pro / B2B intelligence (Phase 3 of product) — blocked on RG-8
   (accounts/auth) and a payments-vendor decision (not yet asked)
 

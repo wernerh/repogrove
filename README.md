@@ -7,12 +7,14 @@ what's rising before it's mainstream, what's the open-source alternative to this
 tool, and what actually happened recently with a project.
 
 This repository is being built and maintained by an autonomous software factory (see
-`CLAUDE.md`) under a single human owner. It is not yet deployed anywhere.
+`CLAUDE.md`) under a single human owner. The site is live at https://www.repogrove.com (Azure Static
+Web Apps).
 
 ## Status
-**Phase 0 complete.** Phase 1 (walking skeleton — static homepage, one Grove page, one
-repo page from hand-written content) is next. See `PROJECT_STATE.md` for the live state
-and `docs/WORKPLAN.md` for the full phased plan.
+**Phase 3 complete** (the 17-item MVP gate is met) and **deployed**: a static export hosted
+on Azure Static Web Apps at https://www.repogrove.com. Phase 4 (accounts, alerts, API,
+newsletter automation) waits on owner decisions RG-7/8/9. See `PROJECT_STATE.md` for the
+live state, `OPERATIONS.md` for how deploys work, and `docs/WORKPLAN.md` for the phased plan.
 
 ## Repository map
 | Path | What |
@@ -23,7 +25,8 @@ and `docs/WORKPLAN.md` for the full phased plan.
 | `docs/WORKPLAN.md` | Phased build plan with gates |
 | `docs/adr/` | Architecture decision records |
 | `content/` | The Git-native content database (Groves, repo write-ups, alternatives) |
-| `src/` | The Next.js application (Phase 1+) |
+| `src/` | The Next.js application (static export, deployed to Azure Static Web Apps) |
+| `OPERATIONS.md` | Deployment, CI, ingestion and rollback runbook |
 | `docs/security/`, `docs/design/` | Security and design factory lanes' working docs |
 | `CLAUDE.md` | Operating manual for the autonomous factory |
 

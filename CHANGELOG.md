@@ -7,6 +7,14 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-02 — Site deployed by the owner to https://www.repogrove.com on Azure Static Web
+  Apps. Docs updated to match (owner-requested): `CLAUDE.md` rule 5 (hosting decided; merge
+  to `main` is a production deploy), ADR-002 addendum, `OPERATIONS.md` (rewritten),
+  `README.md`, `ARCHITECTURE.md`, `PRODUCT.md`, `SECURITY.md`, `PROJECT_STATE.md`,
+  `DECISIONS.md`, `.factory/decisions.yaml` (RG-2, RG-7 notes), `.factory/state.yaml`,
+  `TECH-DEBT.md` (5 rows), `ROADMAP.md`, `docs/security/PRODUCTION-HARDENING.md`, the PR
+  template, `docs/factory/dev-run.md`, and comments in `src/lib/site.ts`, `next.config.ts`,
+  `src/app/sitemap.ts`. No behaviour change.
 - 2026-10-02 — Dev run 57: added Immich (`content/repos/immich.md`, `immich-app/immich`,
   AGPL-3.0) to the Self-Hosted grove — the next item from `PRODUCT.md` §2's own named
   example list (Coolify, Dokploy, CasaOS, Portainer, Immich, Nextcloud) not yet built.

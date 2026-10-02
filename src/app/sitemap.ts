@@ -5,8 +5,8 @@ import { SITE_URL } from "@/lib/site";
 /**
  * `next build`'s static export (`output: "export"`, `next.config.ts`)
  * renders this into a real `sitemap.xml` at build time — no server runtime
- * needed, so it's compatible with the Azure Storage static hosting target
- * (ADR-002). Every route is derived from the same content-loader functions
+ * needed, so it's compatible with the Azure Static Web Apps static hosting
+ * target (ADR-002). Every route is derived from the same content-loader functions
  * every page already calls (`getAllRepos`/`getAllGroves`/
  * `getAllAlternatives`/`getAllComparisons`) rather than a second,
  * hand-maintained list of "what pages exist" — a new `content/*.md` file

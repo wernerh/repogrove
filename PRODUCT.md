@@ -63,7 +63,7 @@ affiliate revenue, RepoGrove Pro, B2B ecosystem-monitoring, API. Do not monetise
 aggressively before there's an audience.
 
 ## Brand
-Domain (target, not yet provisioned): repogrove.com. Positioning: "Explore the
+Domain: repogrove.com (live at https://www.repogrove.com since 2026-10-02). Positioning: "Explore the
 open-source ecosystem" / "A map of open source." Light in-house terminology (Grove, Hot,
 Rising, Neighbours) — normal language stays dominant for SEO/usability; don't overdo it.
 

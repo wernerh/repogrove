@@ -25,6 +25,12 @@
     CLAUDE.md rule 6 (creating cloud resources is a human gate) regardless of this
     answer — the owner still needs to provision the Azure Storage account itself.
   answered_at: "2026-09-27T17:24:28Z"
+  note: >
+    2026-10-02 — The owner provisioned hosting and the site is live at
+    https://www.repogrove.com. It runs on Azure Static Web Apps, not the Azure Storage
+    static-website hosting this answer named; both serve the same static export, so no
+    code changes. Recorded in the ADR-002 addendum. A merge to main is now a production
+    deploy (CLAUDE.md rule 5). No further owner action needed for RG-2.
 
 - id: RG-3
   lane: dev
@@ -425,6 +431,14 @@
     bullet-truncation bug plus a build-time guard against it, PR #109 — pushed, left open
     for the next run to verify CI and merge) — not Phase 4 groundwork, so doesn't preempt
     either answer.
+
+    2026-10-02 (owner-requested docs update) — the premise of this question changed: the
+    site is now deployed and live at https://www.repogrove.com (Azure Static Web Apps,
+    ADR-002 addendum). That meets the "deployed" half of the recommended default; the "has
+    real users" half is unmeasured (no analytics exist yet). This note does not answer
+    RG-7: whether to hold or build Phase 4 is still the owner's call, and the
+    2026-10-03T13:02:34Z default still applies unless the owner replies. The next dev run
+    should mention the new premise when it applies or re-checks that default.
 
 - id: RG-8
   lane: dev
