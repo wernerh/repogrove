@@ -412,7 +412,12 @@ describe("splitOutSection", () => {
 describe("getAllAlternatives (real /content fixtures)", () => {
   it("loads every alternatives content file", () => {
     const alternatives = getAllAlternatives();
-    expect(alternatives.map((a) => a.slug).sort()).toEqual(["firebase", "notion"]);
+    expect(alternatives.map((a) => a.slug).sort()).toEqual([
+      "firebase",
+      "gitkraken",
+      "notion",
+      "sourcetree",
+    ]);
   });
 
   it("parses Notion's frontmatter and body sections correctly", () => {
@@ -422,6 +427,40 @@ describe("getAllAlternatives (real /content fixtures)", () => {
     expect(notion?.category).toBe("knowledge-management");
     expect(notion?.openSource).toEqual(["AppFlowy", "Outline", "AFFiNE", "Anytype"]);
     expect(notion?.bestFit).toContain("Personal knowledge management");
+  });
+
+  it("parses GitKraken's frontmatter and body sections correctly", () => {
+    const gitkraken = getAlternative("gitkraken");
+    expect(gitkraken).toBeDefined();
+    expect(gitkraken?.product).toBe("GitKraken");
+    expect(gitkraken?.category).toBe("git-gui-client");
+    expect(gitkraken?.openSource).toEqual(["GitUI", "LazyGit", "Tig"]);
+    expect(gitkraken?.free).toEqual(["Sourcetree"]);
+    // Full-array assertion (not just `toContain`) so a bullet that wraps
+    // across source lines — which `extractListItems` silently truncates at
+    // the first line lacking its own "- " marker, since it only tests each
+    // line's own trimmed text — would fail here instead of shipping a
+    // truncated sentence to the live page.
+    expect(gitkraken?.bestFit).toEqual([
+      "A terminal-first, keyboard-driven workflow with no GUI/Electron overhead (GitUI, LazyGit, Tig)",
+      "Free private-repo access without a paid plan — GitKraken's free Community tier covers public repositories only, so a private repo needs a Pro-or-higher plan, while Sourcetree is free for private repos too, with no seat limit",
+      "Mercurial support alongside Git, not just Git (Sourcetree)",
+    ]);
+  });
+
+  it("parses Sourcetree's frontmatter and body sections correctly", () => {
+    const sourcetree = getAlternative("sourcetree");
+    expect(sourcetree).toBeDefined();
+    expect(sourcetree?.product).toBe("Sourcetree");
+    expect(sourcetree?.category).toBe("git-gui-client");
+    expect(sourcetree?.openSource).toEqual(["GitUI", "LazyGit", "Tig"]);
+    expect(sourcetree?.commercial).toEqual(["GitKraken"]);
+    // Same full-array check as GitKraken's test above, for the same reason.
+    expect(sourcetree?.bestFit).toEqual([
+      "A terminal-first, keyboard-driven workflow with no GUI overhead (GitUI, LazyGit, Tig)",
+      "Advanced visual tooling on a paid plan — interactive rebase with drag-and-drop, built-in AI assistance, and PR/code-review management across hosting providers (GitKraken)",
+      "Linux support — Sourcetree only ships Mac and Windows builds, while GitKraken also builds for Linux",
+    ]);
   });
 
   it("returns undefined for an alternative that doesn't exist", () => {
