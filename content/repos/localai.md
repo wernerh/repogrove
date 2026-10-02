@@ -31,18 +31,14 @@ without separate client code for each.
 - Built-in agents, tool use, and RAG support, not just raw model serving
 
 ## Pros
-- Broad model-type and hardware coverage in one project, rather than a separate tool per
-  modality
-- Genuine API compatibility, not just a similar shape — existing OpenAI-client code
-  tends to work unmodified
+- Broad model-type and hardware coverage in one project, rather than a separate tool per modality
+- Genuine API compatibility, not just a similar shape — existing OpenAI-client code tends to work unmodified
 - Active development with support for dozens of backends
 
 ## Cons
-- That breadth brings more moving parts than a single-purpose server like Ollama or
-  vLLM — backends are pulled on demand per model, which adds setup steps
+- That breadth brings more moving parts than a single-purpose server like Ollama or vLLM — backends are pulled on demand per model, which adds setup steps
 - Optional distributed/clustering mode needs its own PostgreSQL and NATS infrastructure
-- Smaller, less polished day-one experience than Ollama for someone who just wants to
-  run one local chat model
+- Smaller, less polished day-one experience than Ollama for someone who just wants to run one local chat model
 
 ## Alternatives
 Ollama (simpler, chat-focused local serving), vLLM (GPU-focused production serving

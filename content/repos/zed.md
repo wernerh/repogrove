@@ -45,17 +45,12 @@ behind Atom and Tree-sitter at GitHub before Atom was discontinued in 2022.
 - Genuinely fast, GPU-rendered interface rather than an Electron/web-view wrapper
 - Collaborative editing is deeply integrated rather than an add-on
 - Sensible defaults (LSP, Tree-sitter, terminal) work immediately after install
-- Actively developed, with Rust/WASM extensions for adding new languages and
-  frameworks
+- Actively developed, with Rust/WASM extensions for adding new languages and frameworks
 
 ## Cons
-- GUI-only — unlike Vim, Neovim, or Helix, it isn't usable over a plain SSH
-  terminal session
-- Licensing is split across three files (GPL-3.0 for the editor, AGPL-3.0 for the
-  server/collaboration code, Apache-2.0 for the GPUI framework itself), worth
-  reading closely before redistributing or self-hosting the collaboration backend
-- Some AI features require a paid plan or your own API keys for the connected
-  model providers
+- GUI-only — unlike Vim, Neovim, or Helix, it isn't usable over a plain SSH terminal session
+- Licensing is split across three files (GPL-3.0 for the editor, AGPL-3.0 for the server/collaboration code, Apache-2.0 for the GPUI framework itself), worth reading closely before redistributing or self-hosting the collaboration backend
+- Some AI features require a paid plan or your own API keys for the connected model providers
 - Much younger plugin/extension ecosystem than VS Code's, despite rapid growth
 
 ## Alternatives

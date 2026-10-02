@@ -33,19 +33,14 @@ document ingestion, parsing, and indexing are the core of the project.
 - Permissive MIT license with an actively maintained core library
 
 ## Pros
-- Retrieval and document indexing are the primary design goal, not a feature bolted onto
-  a broader orchestration framework
+- Retrieval and document indexing are the primary design goal, not a feature bolted onto a broader orchestration framework
 - Broad vector store and embedding-provider support across its integration ecosystem
 - Active development and a large, fast-growing community
 
 ## Cons
-- Python-first: the flagship `llama_index` package is the primary, most complete
-  surface, so non-Python stacks have a narrower integration path
-- Heavier orchestration/indexing framework than is needed for a single well-understood
-  retrieval use case, where calling a vector store and an LLM API directly can be simpler
-- The project's own hosted offerings (LlamaParse, LlamaCloud) are separate paid
-  services — useful for production document parsing at scale, but a reason to check
-  whether a given feature is open-source or hosted before relying on it
+- Python-first: the flagship `llama_index` package is the primary, most complete surface, so non-Python stacks have a narrower integration path
+- Heavier orchestration/indexing framework than is needed for a single well-understood retrieval use case, where calling a vector store and an LLM API directly can be simpler
+- The project's own hosted offerings (LlamaParse, LlamaCloud) are separate paid services — useful for production document parsing at scale, but a reason to check whether a given feature is open-source or hosted before relying on it
 
 ## Alternatives
 LangChain (broader general-purpose LLM orchestration — chains, memory, and agents — over

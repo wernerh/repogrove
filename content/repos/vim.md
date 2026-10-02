@@ -36,15 +36,12 @@ faster Vim9script), and can run as a terminal program or a GUI (gVim).
 - Extremely fast startup and responsiveness, even on constrained or remote machines
 - Stable, backwards-compatible scripting surface built up over 30+ years
 - Works identically across macOS, Linux, BSD, and Windows
-- Active upstream development continued by its core maintainers; Vim 9.2 shipped in
-  February 2026
+- Active upstream development continued by its core maintainers; Vim 9.2 shipped in February 2026
 
 ## Cons
 - Steep learning curve for anyone unfamiliar with modal editing
-- No built-in Language Server Protocol client — LSP support comes from third-party
-  plugins (for example `yegappan/lsp`), unlike Neovim's built-in client
-- Vimscript (even Vim9script) is a narrower, less general-purpose language than Lua,
-  so some modern plugin ecosystems target Neovim first
+- No built-in Language Server Protocol client — LSP support comes from third-party plugins (for example `yegappan/lsp`), unlike Neovim's built-in client
+- Vimscript (even Vim9script) is a narrower, less general-purpose language than Lua, so some modern plugin ecosystems target Neovim first
 
 ## Alternatives
 Neovim is the actively-developed fork that rebuilt Vim's plugin model around Lua and

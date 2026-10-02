@@ -31,17 +31,13 @@ LazyGit and GitUI and is maintained by Jonas Fonseca.
   including older or resource-constrained machines
 
 ## Pros
-- One of the longest-running, most battle-tested terminal git browsers — a stable,
-  predictable tool rather than a fast-moving one
-- Very low resource footprint; starts instantly even on large repositories' history
-  views
+- One of the longest-running, most battle-tested terminal git browsers — a stable, predictable tool rather than a fast-moving one
+- Very low resource footprint; starts instantly even on large repositories' history views
 - Works as both a standalone browser and a drop-in pager for other git commands
 
 ## Cons
-- Interface conventions (vi-style navigation, C-era menus) feel dated next to newer
-  Rust-based terminal UIs
-- Staging and commit-authoring workflows are less central than in LazyGit or GitUI,
-  which were designed around day-to-day staging first
+- Interface conventions (vi-style navigation, C-era menus) feel dated next to newer Rust-based terminal UIs
+- Staging and commit-authoring workflows are less central than in LazyGit or GitUI, which were designed around day-to-day staging first
 
 ## Alternatives
 LazyGit and GitUI cover similar "git TUI" ground with more modern staging-first

@@ -28,8 +28,7 @@ leaving the terminal or typing out the underlying git subcommands.
   command line
 
 ## Pros
-- Noticeably faster for everyday git operations (staging, rebasing, branch switching)
-  once the keybindings click
+- Noticeably faster for everyday git operations (staging, rebasing, branch switching) once the keybindings click
 - Actively maintained with a large, terminal-centric user base
 - No GUI dependency — fits naturally into a terminal-first setup
 

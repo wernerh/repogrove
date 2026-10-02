@@ -33,8 +33,7 @@ with no separate services to install or wire together.
 - Active development, responsive maintainer
 
 ## Cons
-- SQLite underneath means it doesn't suit high-write-concurrency or multi-writer-node
-  workloads the way a client-server database does
+- SQLite underneath means it doesn't suit high-write-concurrency or multi-writer-node workloads the way a client-server database does
 - Smaller ecosystem and fewer managed/hosted options than Supabase or Firebase
 
 ## Alternatives
