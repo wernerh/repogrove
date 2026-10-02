@@ -25,12 +25,11 @@ describe("Homepage", () => {
     );
     // Grove card footer — repo count, from getReposInGrove, not hand-copied.
     // AI: Ollama, LangChain, LlamaIndex, vLLM, LocalAI (5). Self-Hosted:
-    // Supabase, Coolify, Appwrite, PocketBase, Dokploy, Immich (6). Developer
-    // Tools: Neovim, LazyGit, Vim, Helix, Zed, Tig, GitUI (7). Databases:
-    // DuckDB, ClickHouse, SQLite, PostgreSQL (4).
+    // Supabase, Coolify, Appwrite, PocketBase, Dokploy, Immich, Portainer (7).
+    // Developer Tools: Neovim, LazyGit, Vim, Helix, Zed, Tig, GitUI (7).
+    // Databases: DuckDB, ClickHouse, SQLite, PostgreSQL (4).
     expect(screen.getByText("5 repos")).toBeInTheDocument();
-    expect(screen.getByText("6 repos")).toBeInTheDocument();
-    expect(screen.getByText("7 repos")).toBeInTheDocument();
+    expect(screen.getAllByText("7 repos").length).toBe(2);
     expect(screen.getByText("4 repos")).toBeInTheDocument();
 
     // Repos — from content/repos/*.md, rendered as cards. The homepage pages 10 at a
@@ -96,15 +95,15 @@ describe("Homepage", () => {
       screen.getAllByRole("link").filter((link) => link.getAttribute("href")?.startsWith("/repo/"))
         .length;
 
-    it("shows 10 repos per page by default, with a range summary over all 22", () => {
+    it("shows 10 repos per page by default, with a range summary over all 23", () => {
       render(<Home />);
       expect(repoCardCount()).toBe(10);
-      expect(screen.getByText("Showing 1–10 of 22 repositories")).toBeInTheDocument();
+      expect(screen.getByText("Showing 1–10 of 23 repositories")).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "Page 1" })).toHaveAttribute("aria-current", "page");
       expect(screen.getByRole("button", { name: "Previous page" })).toBeDisabled();
     });
 
-    it("pages through every repo exactly once (10 + 10 + 2)", () => {
+    it("pages through every repo exactly once (10 + 10 + 3)", () => {
       render(<Home />);
       const seen = new Set<string>();
       const collect = () =>
@@ -116,15 +115,15 @@ describe("Homepage", () => {
 
       collect();
       fireEvent.click(screen.getByRole("button", { name: "Next page" }));
-      expect(screen.getByText("Showing 11–20 of 22 repositories")).toBeInTheDocument();
+      expect(screen.getByText("Showing 11–20 of 23 repositories")).toBeInTheDocument();
       collect();
       fireEvent.click(screen.getByRole("button", { name: "Next page" }));
-      expect(screen.getByText("Showing 21–22 of 22 repositories")).toBeInTheDocument();
-      expect(repoCardCount()).toBe(2);
+      expect(screen.getByText("Showing 21–23 of 23 repositories")).toBeInTheDocument();
+      expect(repoCardCount()).toBe(3);
       expect(screen.getByRole("button", { name: "Next page" })).toBeDisabled();
       collect();
 
-      expect(seen.size).toBe(22);
+      expect(seen.size).toBe(23);
     });
 
     it("lets the reader choose 5 per page and returns to page 1", () => {
@@ -132,7 +131,7 @@ describe("Homepage", () => {
       fireEvent.click(screen.getByRole("button", { name: "Page 2" }));
       fireEvent.click(screen.getByRole("button", { name: "5" }));
       expect(repoCardCount()).toBe(5);
-      expect(screen.getByText("Showing 1–5 of 22 repositories")).toBeInTheDocument();
+      expect(screen.getByText("Showing 1–5 of 23 repositories")).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "5" })).toHaveAttribute("aria-pressed", "true");
       expect(screen.getByRole("button", { name: "Page 5" })).toBeInTheDocument();
     });
@@ -141,7 +140,7 @@ describe("Homepage", () => {
       render(<Home />);
       fireEvent.click(screen.getByRole("button", { name: "20" }));
       expect(repoCardCount()).toBe(20);
-      expect(screen.getByText("Showing 1–20 of 22 repositories")).toBeInTheDocument();
+      expect(screen.getByText("Showing 1–20 of 23 repositories")).toBeInTheDocument();
     });
   });
 });

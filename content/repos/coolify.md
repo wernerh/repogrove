@@ -7,7 +7,7 @@ status: active
 featured: false
 groves: [self-hosted]
 alternatives:
-  open_source: [dokploy]
+  open_source: [dokploy, portainer]
   commercial: [Vercel, Heroku, Netlify]
 ---
 
@@ -36,7 +36,7 @@ databases, and a large catalog of other self-hostable services.
 - Self-hosting it means you're also responsible for its own security posture
 
 ## Alternatives
-**Open-source:** Dokploy.
+**Open-source:** Dokploy, Portainer.
 **Commercial:** Vercel, Heroku, Netlify.
 
 ## Related Grove
