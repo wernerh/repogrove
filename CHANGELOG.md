@@ -7,6 +7,20 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-02 — Dev run 54: added `content/repos/sqlite.md` (`sqlite/sqlite`, Public
+  Domain) to the Databases grove, growing it from 2 to 3 repos — picking up run 53's
+  own next-action pointer to continue the product spec's named Database Grove example
+  list (PostgreSQL, DuckDB, SQLite, ClickHouse, SurrealDB, PocketBase). Cross-referenced
+  DuckDB and SQLite as mutual open-source alternatives (both embedded/serverless, but
+  OLTP-row vs. OLAP-columnar workloads) and added `content/comparisons/duckdb-vs-sqlite.md`
+  in the same PR to close that pair immediately rather than leave a dangling-reference
+  gap. Facts verified via WebFetch against Wikipedia and an independent third-party
+  DuckDB-vs-SQLite comparison. 362/362 tests pass (3 new/updated), lint/`tsc --noEmit`
+  clean, 0 `npm audit` findings, all run locally; `npm run build` reproduced the known
+  ADR-006 sandbox font-fetch gap, left to CI. Independent review (subagent) found no
+  BLOCKER/MAJOR/MINOR issues. PR #106 (4/4 gating checks green, plus the non-gating
+  Playwright/axe-core run); post-merge CI on `main` also confirmed green. RG-7/8/9
+  re-checked — still no owner reply, held off Phase 4 feature work again (dev)
 - 2026-10-02 — Dev run 53: added `content/groves/databases.md` with two initial repos,
   DuckDB (`content/repos/duckdb.md`, MIT) and ClickHouse (`content/repos/clickhouse.md`,
   Apache-2.0), plus `content/comparisons/clickhouse-vs-duckdb.md` (PR #105). With every

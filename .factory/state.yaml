@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-10-02T10:55:59Z"
-  holder: dev
-  last_run: "2026-10-02T09:09:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-10-02T11:09:53Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,14 +19,55 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 71
-  features_completed: 36
+  runs: 72
+  features_completed: 37
   bugs_fixed: 11
   security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
 
 next_actions:
+  - "2026-10-02 (run 54): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03T13:02:34Z) hasn't passed (due tomorrow — this is likely the last
+    re-check before it does; if the next dev run finds it still unanswered past the
+    due date, it should apply RG-7's recommended default, 'Hold', per
+    docs/DECISION-PROTOCOL.md's auto-default rule for cheap-to-reverse questions).
+    RG-8/RG-9 have no default and stay open regardless. Held off Phase 4 feature work
+    again this run. Picked up run 53's own next-action pointer: grew the Databases
+    grove further per the product spec's own named example list (PostgreSQL, DuckDB,
+    SQLite, ClickHouse, SurrealDB, PocketBase) — added content/repos/sqlite.md
+    (sqlite/sqlite, Public Domain license), paired with DuckDB as a mutual
+    open-source alternative (both embedded/serverless databases, but SQLite is
+    OLTP/row-oriented and DuckDB is OLAP/columnar — a well-documented real-world
+    comparison, not an invented pairing). Facts (SQLite: designed by D. Richard Hipp
+    in 2000, public-domain license, row-oriented storage, full ACID transactions, a
+    single-writer-at-a-time limitation, ubiquitous across mobile OSes/browsers/
+    embedded apps) verified via WebFetch against Wikipedia, cross-checked against an
+    independent third-party DuckDB-vs-SQLite comparison (motherduck.com) for the
+    OLTP/row vs. OLAP/columnar framing — not scraped from the project's own one-line
+    GitHub description, per CLAUDE.md rule 4. Added content/comparisons/
+    duckdb-vs-sqlite.md in the same PR, closing that mutual pair immediately rather
+    than leaving a dangling-reference gap for a future run. Small related task: added
+    a 'Core projects' bullet for SQLite to content/groves/databases.md (now 3 repos).
+    Updated/added tests across all affected files (tests/lib/content.test.ts: repo
+    slug list, DuckDB's alternatives, a new SQLite frontmatter-parsing test,
+    getReposInGrove('databases') coverage, comparisons slug list; real-page render
+    tests for /repo/sqlite, /grove/databases, /repo/duckdb, /compare/duckdb/sqlite;
+    recomputed homepage fixture numbers — 20 repos + 4 groves = 24 card links, 3
+    repos for the Databases grove's footer). 362/362 tests pass (3 new/updated),
+    lint clean, tsc --noEmit clean, npm audit --audit-level=high 0 vulnerabilities,
+    all run locally; npm run build reproduced the known ADR-006 sandbox font-fetch
+    gap (confirmed via the full local test suite exercising content.ts's real
+    build-time validation against every file in this PR), left to CI's GitHub-hosted
+    runner — confirmed all 4 gating checks green on PR #106 (plus the non-gating
+    Playwright/axe-core run) before squash-merging it myself; post-merge CI on main
+    also confirmed green. Independent review (subagent, skeptical-senior-engineer
+    pass) found no BLOCKER/MAJOR/MINOR issues. ROADMAP.md needed no changes (no
+    roadmap item touched). CHANGELOG.md/PROJECT_STATE.md/DECISIONS.md/
+    .factory/decisions.yaml updated. Next: re-check RG-7/8/9 (apply RG-7's default if
+    due date passed by then); grow Databases grove further (PostgreSQL/SurrealDB/
+    PocketBase per the spec's own example list) or find the next content gap."
   - "2026-10-02 (run 53): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03) hasn't passed (due tomorrow); RG-8/RG-9 have no default and stay open
@@ -366,52 +407,8 @@ next_actions:
     comparison gap flagged since run 36 is now closed — next run should re-scan
     content/ for any remaining one-off dangling references or other content/validator
     gaps before falling back to a fresh drift pass, if RG-7 is still open."
-  - "2026-10-01 (run 45): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
-    — still exactly the one original message, no owner reply. RG-7's default_due_at
-    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
-    Held off Phase 4 feature work again this run, consistent with runs 33-44. Picked
-    up run 44's own Next pointer: the AI grove's Ollama/LocalAI/vLLM trio had only
-    ollama-vs-vllm despite all three listing each other under alternatives.open_source
-    — the same fully-mutual-trio gap run 36's Supabase/Appwrite/PocketBase and run 44's
-    GitUI/LazyGit/Tig comparisons closed. Major task: added
-    content/comparisons/localai-vs-ollama.md and localai-vs-vllm.md, completing the
-    trio. Small related task: coolify.md and dokploy.md have listed each other since
-    dokploy.md was added (run 38) but had no comparison page at all — added
-    content/comparisons/coolify-vs-dokploy.md, closing that single-pair gap too. Each
-    page's prose draws primarily on facts already stated in the five repos' own
-    content files, plus one new independently verified fact in coolify-vs-dokploy.md:
-    per Coolify's own docs (coolify.io/docs/core/infrastructure/scaling/overview and
-    .../knowledge-base/docker/swarm, fetched via WebFetch this run), Coolify's
-    multi-server story is standalone Docker per server plus an external load balancer,
-    with its Docker Swarm support already deprecated and slated for removal in
-    Coolify v5 — unlike Dokploy, which builds multi-server orchestration on Swarm as a
-    first-class, built-in feature. Independent review (subagent, skeptical-senior-
-    engineer pass) flagged two real findings, both fixed pre-merge: a MINOR — the
-    AI-trio file was initially misordered as ollama-vs-localai.md (repos: [ollama,
-    localai]), breaking every other comparison file's alphabetical-by-slug naming
-    convention — renamed to localai-vs-ollama.md with repos: [localai, ollama] and the
-    page's own title corrected to 'LocalAI vs Ollama'; a NIT — the Swarm-deprecation
-    sentence initially read like an internal reviewer's citation note rather than
-    end-reader copy — reworded to read naturally on the page. 329/329 tests pass (6
-    new/updated: a getComparisonsForRepo AI-trio-coverage test, a coolify/dokploy
-    single-comparison test, real render tests for /compare/localai/ollama and
-    /compare/coolify/dokploy, and the repo-page.test.tsx 'no comparisons' fixture
-    swapped from coolify — which now has one — to langchain), lint clean, tsc
-    --noEmit clean, npm audit --audit-level=high 0 vulnerabilities, all run locally;
-    npm run build reproduced the known ADR-006 sandbox font-fetch gap (confirmed it
-    compiles past content loading first), left to CI's GitHub-hosted runner —
-    confirmed all 4 gating checks green on PR #95 (scripts/factory/check.py,
-    dependency scan, lint/test/build, factory guardrails; the non-gating
-    screenshot/axe-core job was still in progress at merge time, consistent with its
-    own 'does not gate merges' label) before squash-merging it myself; post-merge CI
-    on main also confirmed green. ROADMAP.md needed no changes (no roadmap item
-    touched). CHANGELOG.md/PROJECT_STATE.md/DECISIONS.md/.factory/decisions.yaml
-    updated. Next: re-check RG-7/8/9 each run; the editor cluster (vim/neovim/helix/
-    zed, fully mutual, 6 missing comparison pairs) is now the only sizeable
-    missing-comparisons content gap left — every other fully-mutual trio/pair in
-    content/ now has complete /compare/:a/:b coverage."
-  - "Older next_actions entries (runs 22-44) archived to docs/factory/run-history.md
-    on 2026-10-01/02 (dev runs 44/46/47/48/50/51/52/53) -- TECH-DEBT.md's 2026-10-01 row:
+  - "Older next_actions entries (runs 22-45) archived to docs/factory/run-history.md
+    on 2026-10-01/02 (dev runs 44/46/47/48/50/51/52/53/54) -- TECH-DEBT.md's 2026-10-01 row:
     this list's unbounded growth was costing a real tool-output truncation on every
     lock-acquisition read. Keeping only the most recent ~9 entries here going forward;
     full history (including these) stays in docs/factory/run-history.md, which
