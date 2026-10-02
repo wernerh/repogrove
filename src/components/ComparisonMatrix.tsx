@@ -44,18 +44,32 @@ export default function ComparisonMatrix({ columns }: { columns: MatrixColumn[] 
         Side-by-side facts against the alternatives we&apos;ve profiled.
       </p>
       <div className="mt-3 overflow-x-auto">
-        <table className="w-full border-collapse text-left font-sans text-sm">
+        {/* UX-2026-007: below `sm`, real content (long license strings like zed.md's
+            "GPL-3.0 / AGPL-3.0", 7-digit comma-formatted star counts) still overflowed
+            this table's 390px mobile container even after scoping down padding alone —
+            padding wasn't the binding constraint, `table-layout: auto`'s refusal to
+            shrink a column below its max-content (unwrapped) width was. `table-fixed`
+            forces every column to the width this layout assigns it (the "Parameter"
+            column gets a fixed share below `sm`; the repo columns split the rest
+            equally) regardless of content, and `break-words` lets any cell's text wrap
+            (even an unbroken token like a license slug or a large number) to fit that
+            width instead of forcing the table wider. `sm:table-auto` restores the
+            original content-sized columns at `sm`+, unchanged. */}
+        <table className="w-full table-fixed sm:table-auto border-collapse text-left font-sans text-sm">
           <caption className="sr-only">Comparison with profiled open-source alternatives</caption>
           <thead>
             <tr className="border-b border-border-default">
-              <th scope="col" className="py-2 pr-4 font-mono text-sm font-normal text-text-secondary">
+              <th
+                scope="col"
+                className="w-[30%] py-2 pr-2 font-mono text-sm font-normal text-text-secondary break-words sm:w-auto sm:pr-4"
+              >
                 Parameter
               </th>
               {columns.map((c) => (
                 <th
                   key={c.slug}
                   scope="col"
-                  className={`px-3 py-2 font-sans text-sm font-semibold ${
+                  className={`px-2 py-2 font-sans text-sm font-semibold break-words sm:px-3 ${
                     c.isCurrent ? "bg-bg-brand-subtle text-text-on-brand-subtle" : "text-text-default"
                   }`}
                 >
@@ -73,13 +87,16 @@ export default function ComparisonMatrix({ columns }: { columns: MatrixColumn[] 
           <tbody>
             {rows.map((row) => (
               <tr key={row.label} className="border-b border-border-subtle last:border-b-0">
-                <th scope="row" className="py-2 pr-4 font-sans text-sm font-normal text-text-secondary">
+                <th
+                  scope="row"
+                  className="w-[30%] py-2 pr-2 font-sans text-sm font-normal text-text-secondary break-words sm:w-auto sm:pr-4"
+                >
                   {row.label}
                 </th>
                 {columns.map((c) => (
                   <td
                     key={c.slug}
-                    className={`px-3 py-2 font-mono text-sm text-text-default ${c.isCurrent ? "bg-bg-brand-subtle" : ""}`}
+                    className={`px-2 py-2 font-mono text-sm text-text-default break-words sm:px-3 ${c.isCurrent ? "bg-bg-brand-subtle" : ""}`}
                   >
                     {row.render(c)}
                   </td>

@@ -511,6 +511,28 @@ entries.
   misaligning the row (caught by independent review pre-merge). See
   `docs/design/findings/UX-2026-005-momentum-chip-tooltip-accessibility.md`. PR #82.
   (design)
+- 2026-10-02 — `ComparisonMatrix`'s "How it compares" table (`/repo/[slug]`, shipped by
+  PR #115 this same day) silently overflowed the project's 390px mobile viewport with no
+  visual scroll affordance — the non-gating "Design screenshots & accessibility" check
+  failed on `main` (UX-2026-006's own generic overflow guard caught it, 2px over on
+  `/repo/ollama`'s short content). A first, padding-only fix (`px-2 sm:px-3`,
+  `pr-2 sm:pr-4`) passed every local check but an independent review found it never
+  addressed the real mechanism — a real Chromium reproduction against the actual
+  worst-case content (`/repo/zed`'s own `license: GPL-3.0 / AGPL-3.0`, the longest in
+  `content/`) showed 68px of real overflow before any fix and still 28px after the
+  padding-only one. Re-fixed for real with `table-layout: fixed` + `break-words` below
+  `sm` (forces every column to a fixed, wrapping width regardless of content length,
+  instead of letting the table's auto layout refuse to shrink below each cell's
+  unwrapped width) — confirmed 0px overflow on both `/repo/ollama` and `/repo/zed` at
+  390/768/1440px, with tablet/desktop byte-identical to before. Added `/repo/zed` to
+  `tests/design/screenshots.spec.ts`'s `ROUTES` so CI's own real, correctly-fonted build
+  now exercises this component's worst case on every future run, not just the easy one.
+  384/384 tests pass (1 rewritten to cover every cell, not just thead, written first and
+  confirmed red against both the pre-fix and the insufficient first-fix component),
+  lint/`tsc --noEmit` clean, 0 `npm audit` findings, all run locally; `npm run build`
+  reproduced the known ADR-006 sandbox font-fetch gap, left to CI. See
+  `docs/design/findings/UX-2026-007-comparison-matrix-mobile-overflow.md`, issue #116.
+  (dev)
 
 ### Added
 - 2026-09-30 — Comparison pages for the Self-Hosted grove's backend trio:
