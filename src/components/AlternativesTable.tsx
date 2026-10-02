@@ -24,9 +24,10 @@ export interface ResolvedAlternative {
 /** One commercial alternative, resolved against `/content/alternatives` by
  * the caller (same split-responsibility convention `ResolvedAlternative`
  * documents above). `alternativeSlug` is `null` when the name doesn't match
- * any `content/alternatives/*.md` file yet (most commercial names still
- * don't — e.g. "LM Studio" on `/repo/ollama`), in which case the name
- * renders as plain, unlinked text rather than a link that would 404.
+ * any `content/alternatives/*.md` file yet (a commercial name with no
+ * matching page at all is now rare — see TECH-DEBT.md — but still possible
+ * for a brand-new reference), in which case the name renders as plain,
+ * unlinked text rather than a link that would 404.
  *
  * TECH-DEBT.md's 2026-10-01 row: until this type existed, a commercial name
  * never linked forward even once a matching `/alternative/:slug` page did

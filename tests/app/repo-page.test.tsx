@@ -137,9 +137,10 @@ describe("Repo page (/repo/[slug])", () => {
     // ollama.md's frontmatter: alternatives.open_source = [localai, vllm],
     // alternatives.commercial = [LM Studio] — LM Studio is closed-source/
     // proprietary freeware, not an open-source project (2026-09-30 content-
-    // accuracy fix), so it renders as a plain commercial chip, not an
-    // unresolved open-source row. Both open-source entries now have their own
-    // content/repos/*.md files (localai.md added this run) — see
+    // accuracy fix), so it renders as a commercial chip, not an unresolved
+    // open-source row (its chip now links to /alternative/lm-studio — see
+    // the dedicated real-link test below). Both open-source entries now have
+    // their own content/repos/*.md files (localai.md added this run) — see
     // "renders the Alternatives table leaving llamaindex unresolved" below for
     // real unresolved-row coverage, and tests/components/alternatives-table.test.tsx
     // for the component's own unit coverage of resolved vs. unresolved rows.
@@ -420,6 +421,22 @@ describe("Repo page (/repo/[slug])", () => {
     ] as const) {
       expect(screen.getByRole("link", { name })).toHaveAttribute("href", `/alternative/${slug}`);
     }
+  });
+
+  it("links Ollama's commercial chip (LM Studio) to its own /alternative/:slug page now that it exists", async () => {
+    // ollama.md's alternatives.commercial ([LM Studio]) predates
+    // content/alternatives/lm-studio.md — the last known dangling commercial
+    // reference (Firebase/GitKraken-Sourcetree/Vercel-Heroku-Netlify/AWS
+    // Amplify all closed in runs 48-51). Real-page integration test for the
+    // resolved link, not just the isolated component/alternative-page unit
+    // tests.
+    const element = await RepoPage({ params: Promise.resolve({ slug: "ollama" }) });
+    render(element);
+
+    expect(screen.getByRole("link", { name: "LM Studio" })).toHaveAttribute(
+      "href",
+      "/alternative/lm-studio",
+    );
   });
 
   it("renders a 'Compared with' cross-link for a repo named in a /compare/:a/:b content file (issue #62)", async () => {

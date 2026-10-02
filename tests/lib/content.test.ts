@@ -417,6 +417,7 @@ describe("getAllAlternatives (real /content fixtures)", () => {
       "firebase",
       "gitkraken",
       "heroku",
+      "lm-studio",
       "netlify",
       "notion",
       "sourcetree",
@@ -531,6 +532,25 @@ describe("getAllAlternatives (real /content fixtures)", () => {
       "Running backend services and databases alongside your app, not just a frontend and its functions — Netlify's free plan is scoped to 125,000 function invocations and 1 million edge function invocations a month, while Coolify and Dokploy run arbitrary backend services and provision databases (MySQL, PostgreSQL, MongoDB, MariaDB, Redis via Dokploy) on hardware you control, with no invocation ceiling",
       "Avoiding a monthly allowance that suspends your site — Netlify's own announcement of its free plan says a site suspends for the rest of the calendar month once its usage allowance (100 GB bandwidth, 300 build minutes) is exceeded, while a self-hosted Coolify or Dokploy instance keeps running on whatever capacity its own server has",
       "Building without a per-minute build-time budget — Netlify's free plan includes 300 build minutes a month, while Coolify and Dokploy build on your own server with no per-minute metering",
+    ]);
+  });
+
+  it("parses LM Studio's frontmatter and body sections correctly", () => {
+    const lmStudio = getAlternative("lm-studio");
+    expect(lmStudio).toBeDefined();
+    expect(lmStudio?.product).toBe("LM Studio");
+    expect(lmStudio?.category).toBe("local-llm-chat");
+    expect(lmStudio?.openSource).toEqual(["Ollama", "LocalAI", "vLLM"]);
+    // Full-array assertion (not just `toContain`) so a bullet that wraps
+    // across source lines — which `extractListItems` silently truncates at
+    // the first line lacking its own "- " marker — would fail here instead
+    // of shipping a truncated sentence to the live page (same lesson as
+    // gitkraken.md/sourcetree.md's and vercel.md's tests above).
+    expect(lmStudio?.bestFit).toEqual([
+      "Full source-code auditability and self-hosting with nothing proprietary to trust — LM Studio is free to use, including commercially, but closed source with no public code access, while Ollama, LocalAI, and vLLM are open source end to end",
+      "A CLI/API-first workflow instead of LM Studio's bundled point-and-click GUI — Ollama's simple local API has a growing ecosystem of third-party interfaces that now speak it directly, without requiring LM Studio's own desktop app",
+      "Model coverage beyond text chat behind one OpenAI-compatible server — LocalAI adds speech-to-text, image, and video generation on top of chat, rather than LM Studio's chat-and-completions-focused interface",
+      "Production-scale serving for many concurrent users instead of a single local chat session — vLLM's continuous batching and tensor parallelism are built for serving at scale, not LM Studio's single-user desktop use case",
     ]);
   });
 

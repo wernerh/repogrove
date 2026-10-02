@@ -13,6 +13,7 @@ describe("Alternative page (/alternative/[slug])", () => {
       "firebase",
       "gitkraken",
       "heroku",
+      "lm-studio",
       "netlify",
       "notion",
       "sourcetree",
@@ -248,6 +249,41 @@ describe("Alternative page (/alternative/[slug])", () => {
     expect(
       screen.getByText(
         "Building without a per-minute build-time budget — Netlify's free plan includes 300 build minutes a month, while Coolify and Dokploy build on your own server with no per-minute metering",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("renders /alternative/lm-studio with Ollama, LocalAI, and vLLM resolved to real content/repos/*.md pages", async () => {
+    // Ollama, LocalAI, and vLLM each already have their own content/repos/*.md
+    // page (ollama.md names LM Studio as its own commercial alternative) —
+    // same resolved-link branch firebase.md's test above exercises. Unlike
+    // every other alternatives page above, lm-studio.md has no Free or
+    // Commercial section (no other repo cross-references a commercial
+    // alternative to LM Studio), so this also exercises PlainListSection's
+    // omit-when-empty branch for both.
+    render(await AlternativePage({ params: Promise.resolve({ slug: "lm-studio" }) }));
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "LM Studio alternatives" }),
+    ).toBeInTheDocument();
+
+    for (const [name, slug] of [
+      ["Ollama", "ollama"],
+      ["LocalAI", "localai"],
+      ["vLLM", "vllm"],
+    ] as const) {
+      const link = screen.getByRole("link", { name });
+      expect(link).toHaveAttribute("href", `/repo/${slug}`);
+    }
+
+    expect(screen.queryByText("Free")).not.toBeInTheDocument();
+    expect(screen.queryByText("Commercial")).not.toBeInTheDocument();
+
+    // Best fit full-sentence regression check, same reasoning as gitkraken's
+    // test above.
+    expect(
+      screen.getByText(
+        "Model coverage beyond text chat behind one OpenAI-compatible server — LocalAI adds speech-to-text, image, and video generation on top of chat, rather than LM Studio's chat-and-completions-focused interface",
       ),
     ).toBeInTheDocument();
   });
