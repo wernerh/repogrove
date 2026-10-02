@@ -15,10 +15,12 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 58: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03T13:02:34Z, ~18h off). PR #115
-broke CI on `main` (UX-2026-007: ComparisonMatrix mobile overflow) — fixed same-run
-under "failing CI" priority (#116). Next: apply RG-7's default if unanswered; confirm
-#116's PR merged; grow Self-Hosted (Portainer/Nextcloud/CasaOS) or find next content gap.
+Run 58: RG-7/8/9 no reply (RG-7 defaults 2026-10-03T13:02:34Z). PR #115 broke CI on
+`main` (UX-2026-007 overflow); fixed — a padding-only first attempt was insufficient
+for real content, re-fixed with `table-fixed`+`break-words`, second review pass with
+no BLOCKER/MAJOR, PR #117 merged (CI green). Next: apply RG-7's default if still
+unanswered by 2026-10-03T13:02:34Z; grow Self-Hosted (Portainer/Nextcloud/CasaOS) or
+find the next content gap.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -53,7 +55,6 @@ None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 stays stubbed u
   (DuckDB/ClickHouse/SQLite/PostgreSQL), all dangling open-source/commercial
   alternative refs closed, all mutual comparisons incl. Databases' full matrix
   (#81-108) — 4 groves/21 repos total.
-- [x] 2026-10-02 — Found/fixed a site-wide Pros/Cons/alternatives bullet-truncation
-  bug + added a build-time guard against it (#109, merged); added Immich to
-  Self-Hosted (#111) — 4 groves/22 repos total.
+- [x] 2026-10-02 — Pros/Cons truncation guard (#109); Immich to Self-Hosted (#111) —
+  4 groves/22 repos; ComparisonMatrix mobile-overflow fix (#116/#117, UX-2026-007).
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (#76-78), awaiting owner

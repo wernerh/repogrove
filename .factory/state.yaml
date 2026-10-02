@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-10-02T18:53:12Z"
-  holder: dev
-  last_run: "2026-10-02T17:20:43Z"
+  current_run: null
+  holder: null
+  last_run: "2026-10-02T19:41:23Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -13,13 +13,13 @@ execution:
   open_prs: []
 
 health:
-  ci: green
+  ci: "all checks green on main, including the non-gating design-screenshots check (UX-2026-007 fixed, PR #117 merged)"
   security: green
   production: not_deployed
   infrastructure: none
 
 metrics:
-  runs: 75
+  runs: 76
   features_completed: 40
   bugs_fixed: 12
   security_issues_fixed: 3
@@ -27,6 +27,62 @@ metrics:
   failed_runs: 0
 
 next_actions:
+  - "2026-10-02 (run 58): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03T13:02:34Z) hasn't passed (~17-18h off at this run's close-out). RG-8/
+    RG-9 have no default and stay open regardless. Held off Phase 4 feature work again
+    this run. This run's priority-1 item (failing CI on main, CLAUDE.md §5/
+    factory-core's own ordering) pre-empted the usual decision-free content work:
+    design lane's PR #115 (ComparisonMatrix component, merged earlier this run cycle)
+    had broken the non-gating Playwright/axe-core design-screenshots check on main —
+    its 'How it compares' table silently overflowed the 390px mobile viewport
+    (UX-2026-007), caught by the project's own generic overflow-x:auto guard in
+    tests/design/screenshots.spec.ts. Filed issue #116, opened branch
+    fix/comparison-matrix-mobile-overflow. First fix attempt scoped the table's padding
+    down below `sm` (px-3->px-2, pr-4->pr-2) — looked sufficient against /repo/ollama's
+    short MIT-license content, but an independent review (factory-reviewer-dev
+    subagent) found two real MAJOR gaps before I opened the PR for real: (1) the new
+    regression test only covered 2 of 17 relevant table cells (thead columnheaders
+    only — every tbody rowheader/cell was unchecked), and (2) the fix's own
+    'verification' never exercised the corpus's actual worst-case content
+    (content/repos/zed.md's 18-char 'GPL-3.0 / AGPL-3.0' license string, a real 4-column
+    matrix against vim/neovim/helix). Re-verified against real content by compiling
+    globals.css directly via @tailwindcss/postcss (bypassing next/font, which this
+    sandbox can't reach per ADR-006) and reproducing the real DOM in headless Chromium
+    (/opt/pw-browsers/chromium) with real snapshot numbers queried from
+    data/repogrove.db via node:sqlite — confirmed the padding-only fix left 28px of
+    real overflow on /repo/zed (down from 68px unfixed, but not closed). Re-fixed for
+    real: `table-layout:fixed sm:table-auto` + `break-words` on every cell + an
+    explicit `w-[30%] sm:w-auto` Parameter-column width — verified 0px overflow on both
+    /repo/ollama and /repo/zed, byte-identical tablet/desktop. Rewrote the regression
+    test to be class-order-independent and cover every cell role (columnheader/
+    rowheader/cell), and added /repo/zed as a new permanent route in
+    tests/design/screenshots.spec.ts's ROUTES (the reviewer's own top recommendation,
+    so this class of 'fix only verified against the easy case' bug can't recur
+    silently). 384/384 tests pass (regression test rewritten, net +1), lint clean, tsc
+    --noEmit clean, npm audit --audit-level=high 0 vulnerabilities, all run locally;
+    npm run build reproduced the known ADR-006 sandbox font-fetch gap (confirmed it
+    compiles past content/data loading first), left to CI's GitHub-hosted runner.
+    Pushed the corrected fix as PR #117 and updated its body to describe the real
+    two-stage story (first fix -> review -> found insufficient -> re-fix), rather than
+    quietly rewriting history. Wrote
+    docs/design/findings/UX-2026-007-comparison-matrix-mobile-overflow.md (full
+    root-cause/first-fix/review/second-fix/verification record, following
+    UX-2026-006's template), added a cross-lane note + table row to
+    docs/design/README.md (design lane owns UX-2026-007; dev fixed it under the
+    failing-CI-on-main priority), and appended to CHANGELOG.md's existing [Unreleased]
+    Fixed section. At close-out, confirmed PR #117's real CI run (head 4f8e642) green
+    on CI/Factory guardrails/Design screenshots & accessibility (the one red check,
+    Azure Static Web Apps CI/CD, is the known pre-existing deploy-job failure unrelated
+    to any PR's diff — confirmed by cross-checking an unrelated docs PR #118 failing it
+    identically), then ran a second independent-review pass (factory-reviewer-dev) on
+    the corrected fix per protocol ('re-run the reviewer until it passes') — PASS WITH
+    NITS, no BLOCKER/MAJOR (2 MINOR/NIT test-coverage suggestions, not blocking) — and
+    squash-merged PR #117 myself. PROJECT_STATE.md/.factory/state.yaml updated;
+    .factory/decisions.yaml unchanged (RG-7/8/9 status unchanged — due date not yet
+    passed). Next: apply RG-7's default ('Hold') if still unanswered past
+    2026-10-03T13:02:34Z; otherwise resume growing Self-Hosted (Portainer/Nextcloud/
+    CasaOS) or find the next content gap."
   - "2026-10-02 (run 57): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03T13:02:34Z) hasn't passed (~20h off at this run's start). RG-8/RG-9 have
@@ -387,47 +443,6 @@ next_actions:
     future decision-free runs may need a fresh content/validator audit or a
     TECH-DEBT.md row (e.g. #32's Grove Heat v1 threshold-revisit) if RG-7/8/9 are still
     open by then."
-  - "2026-10-02 (run 49): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
-    — still exactly the one original message, no owner reply. RG-7's default_due_at
-    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
-    Held off Phase 4 feature work again this run, consistent with runs 33-48. Picked up
-    run 48's own next-action pointer: cross-referenced every content/repos/*.md's
-    alternatives.commercial field against content/alternatives/*.md and found GitKraken
-    and Sourcetree tied for the highest-value remaining gap — each named by 3 repos
-    (gitui.md, lazygit.md, tig.md), vs. 2 each for Vercel/Heroku/Netlify
-    (coolify.md, dokploy.md). Major task: added both content/alternatives/gitkraken.md
-    and sourcetree.md together (closely related — same 3 referencing repos, same
-    git-gui-client category), listing GitUI/LazyGit/Tig as open-source alternatives
-    (all three slugify-resolve to real repo pages) and cross-referencing each other
-    (Sourcetree under GitKraken's Free bucket; GitKraken under Sourcetree's Commercial
-    bucket). Facts (GitKraken's free Community tier is public-repos-only, ships
-    Mac/Windows/Linux via Electron; Sourcetree is free including private repos with no
-    seat limit, supports Git and Mercurial, Mac/Windows only) verified via
-    WebSearch/WebFetch against two independent comparison sources. Independent review
-    (subagent, skeptical-senior-engineer pass) caught a real BLOCKER: both files' first
-    drafts wrapped 'Best fit' bullets across multiple source lines, which
-    extractListItems silently truncates (only lines starting with '- ' are captured,
-    so a continuation line is dropped) — three of six bullets would have shipped as
-    mid-sentence fragments on the live page (e.g. losing the entire Sourcetree-
-    comparison clause from GitKraken's free-tier bullet). Fixed by putting every bullet
-    on a single line in both files. The review also flagged the Mercurial-support claim
-    as plausibly outdated given Bitbucket's 2020 Mercurial sunset — re-verified against
-    Atlassian's own Sourcetree support KB, which confirms Sourcetree itself still
-    supports (and only optionally disables) Mercurial today, so the claim stands. Added
-    full-array/full-sentence test assertions (not just toContain) in
-    tests/lib/content.test.ts and tests/app/alternative-page.test.tsx for both files'
-    complete Best-fit lists, so a future wrapped bullet fails the suite instead of
-    truncating silently. Updated the two hardcoded alternatives-slug fixtures this
-    addition affects and added real-content render tests for /alternative/gitkraken and
-    /alternative/sourcetree. 338/338 tests pass (6 new/updated), lint clean, tsc
-    --noEmit clean, npm audit --audit-level=high 0 vulnerabilities, all run locally;
-    npm run build reproduced the known ADR-006 sandbox font-fetch gap (confirmed it
-    compiles past content loading first), left to CI's GitHub-hosted runner — all 3
-    checks (CI, Factory guardrails, Design screenshots & accessibility) green on PR
-    #101 before squash-merging it myself; post-merge CI on main also confirmed green.
-    CHANGELOG.md/PROJECT_STATE.md/DECISIONS.md/.factory/decisions.yaml updated. Next:
-    re-check RG-7/8/9; Vercel/Heroku/Netlify (coolify.md, dokploy.md — 2 repos each) is
-    the next commercial-alternative-page gap if RG-7/8/9 are still open by then."
   - "Older next_actions entries (runs 22-48) archived to docs/factory/run-history.md
     on 2026-10-01/02 (dev runs 44/46/47/48/50/51/52/53/54/55/56/57) -- TECH-DEBT.md's
     2026-10-01 row: this list's unbounded growth was costing a real tool-output

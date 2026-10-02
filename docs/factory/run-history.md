@@ -12,6 +12,47 @@ context) to skim, same role the archived entries played in state.yaml before thi
 Newest-archived-first, same order they appeared in state.yaml.
 
 ```yaml
+  - "2026-10-02 (run 49): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
+    Held off Phase 4 feature work again this run, consistent with runs 33-48. Picked up
+    run 48's own next-action pointer: cross-referenced every content/repos/*.md's
+    alternatives.commercial field against content/alternatives/*.md and found GitKraken
+    and Sourcetree tied for the highest-value remaining gap — each named by 3 repos
+    (gitui.md, lazygit.md, tig.md), vs. 2 each for Vercel/Heroku/Netlify
+    (coolify.md, dokploy.md). Major task: added both content/alternatives/gitkraken.md
+    and sourcetree.md together (closely related — same 3 referencing repos, same
+    git-gui-client category), listing GitUI/LazyGit/Tig as open-source alternatives
+    (all three slugify-resolve to real repo pages) and cross-referencing each other
+    (Sourcetree under GitKraken's Free bucket; GitKraken under Sourcetree's Commercial
+    bucket). Facts (GitKraken's free Community tier is public-repos-only, ships
+    Mac/Windows/Linux via Electron; Sourcetree is free including private repos with no
+    seat limit, supports Git and Mercurial, Mac/Windows only) verified via
+    WebSearch/WebFetch against two independent comparison sources. Independent review
+    (subagent, skeptical-senior-engineer pass) caught a real BLOCKER: both files' first
+    drafts wrapped 'Best fit' bullets across multiple source lines, which
+    extractListItems silently truncates (only lines starting with '- ' are captured,
+    so a continuation line is dropped) — three of six bullets would have shipped as
+    mid-sentence fragments on the live page (e.g. losing the entire Sourcetree-
+    comparison clause from GitKraken's free-tier bullet). Fixed by putting every bullet
+    on a single line in both files. The review also flagged the Mercurial-support claim
+    as plausibly outdated given Bitbucket's 2020 Mercurial sunset — re-verified against
+    Atlassian's own Sourcetree support KB, which confirms Sourcetree itself still
+    supports (and only optionally disables) Mercurial today, so the claim stands. Added
+    full-array/full-sentence test assertions (not just toContain) in
+    tests/lib/content.test.ts and tests/app/alternative-page.test.tsx for both files'
+    complete Best-fit lists, so a future wrapped bullet fails the suite instead of
+    truncating silently. Updated the two hardcoded alternatives-slug fixtures this
+    addition affects and added real-content render tests for /alternative/gitkraken and
+    /alternative/sourcetree. 338/338 tests pass (6 new/updated), lint clean, tsc
+    --noEmit clean, npm audit --audit-level=high 0 vulnerabilities, all run locally;
+    npm run build reproduced the known ADR-006 sandbox font-fetch gap (confirmed it
+    compiles past content loading first), left to CI's GitHub-hosted runner — all 3
+    checks (CI, Factory guardrails, Design screenshots & accessibility) green on PR
+    #101 before squash-merging it myself; post-merge CI on main also confirmed green.
+    CHANGELOG.md/PROJECT_STATE.md/DECISIONS.md/.factory/decisions.yaml updated. Next:
+    re-check RG-7/8/9; Vercel/Heroku/Netlify (coolify.md, dokploy.md — 2 repos each) is
+    the next commercial-alternative-page gap if RG-7/8/9 are still open by then."
   - "2026-10-01 (run 48): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
