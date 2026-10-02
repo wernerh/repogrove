@@ -11,3 +11,7 @@ enough real content flow to justify the extra process.
 
 No agent here — present or future — has authority to publish directly. All output is a PR
 proposal, reviewed and merged like any other change (spec §20, §33).
+
+Not to be confused with `/.claude/agents/`: that directory holds the factory's own
+read-only reviewer subagents (see `docs/factory/README.md`), not the content/research
+agents described above.
