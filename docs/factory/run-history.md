@@ -12,6 +12,33 @@ context) to skim, same role the archived entries played in state.yaml before thi
 Newest-archived-first, same order they appeared in state.yaml.
 
 ```yaml
+  - "2026-10-01 (run 40): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
+    Held off Phase 4 feature work again this run, consistent with runs 33-39. Audited
+    content/ for the next decision-free content gap: content/repos/neovim.md has
+    listed 'vim' under alternatives.open_source since bootstrap (run 33), but
+    content/repos/vim.md never existed, so it rendered as 'Not yet profiled' on
+    Neovim's page — the same class of dangling-reference gap runs 33/34/37/38/39
+    closed. Major task: added content/repos/vim.md (vim/vim, Vim License, Developer
+    Tools grove), cross-referencing Neovim. Facts (Vim License name/GPL-compatibility,
+    no native LSP client — third-party plugins like yegappan/lsp fill the gap, unlike
+    Neovim's built-in client — and the February 2026 Vim 9.2 release) verified via
+    WebFetch/WebSearch against Wikipedia, a license explainer, and independent
+    release-coverage sources, not scraped from a one-line description. Independent
+    review (subagent, skeptical-senior-engineer pass) specifically fact-checked the
+    dated 9.2-release claim as the highest fabrication-risk detail and confirmed it
+    independently (LWN.net, Help Net Security, Linuxiac); no other issues found.
+    Small related task: added Vim to content/groves/developer-tools.md's Core
+    projects. 318/318 tests pass (6 new/updated), lint clean, tsc --noEmit clean, npm
+    audit --audit-level=high 0 vulnerabilities, all run locally; npm run build
+    reproduced the known ADR-006 sandbox font-fetch gap (confirmed it compiles past
+    content loading first), left to CI's GitHub-hosted runner, which came back green
+    (6/6 checks, including the non-gating screenshot job). PR #89 merged (squash).
+    Updated PROJECT_STATE.md (next action, milestones), CHANGELOG.md, DECISIONS.md,
+    .factory/decisions.yaml (RG-7/8/9 re-check notes). Remaining one-off content gaps
+    for future runs: tig, gitui (lazygit.md's dangling refs), helix, zed (vim.md's own
+    new dangling refs)."
   - "2026-10-01 (run 39): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.

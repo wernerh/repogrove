@@ -7,6 +7,36 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-02 — Dev run 49: added `content/alternatives/gitkraken.md` and
+  `content/alternatives/sourcetree.md` (PR #101). Three existing repo pages
+  (`gitui.md`, `lazygit.md`, `tig.md`) already listed both GitKraken and Sourcetree
+  under `alternatives.commercial` with no corresponding alternative pages — both tied
+  for the highest-value gap left (3 referencing repos each, vs. 2 each for
+  Vercel/Heroku/Netlify), the same class of gap run 48 closed for Firebase. Both pages
+  list GitUI/LazyGit/Tig as Open-source alternatives (all three slugify-resolve to real
+  repo pages, rendering as real links with live star counts) and cross-reference each
+  other (Sourcetree listed under GitKraken's Free bucket, since Sourcetree is the
+  fully-free one; GitKraken listed under Sourcetree's Commercial bucket, since
+  GitKraken's free tier is public-repos-only). Facts (GitKraken's free Community tier
+  is public-repos-only — private repos need Pro+, ships Mac/Windows/Linux via
+  Electron; Sourcetree is free including private
+  repos with no seat limit, supports Git and Mercurial, Mac/Windows only) verified via
+  WebSearch/WebFetch against two independent comparison sources, plus Atlassian's own
+  Sourcetree support KB specifically for the Mercurial claim after independent review
+  flagged it as plausibly outdated (Bitbucket's 2020 Mercurial sunset) — Atlassian's
+  own docs confirm Sourcetree itself still supports Mercurial today. Independent review
+  (subagent, skeptical-senior-engineer pass) caught a real BLOCKER: both files'
+  first-draft "Best fit" bullets wrapped across multiple source lines, which
+  `extractListItems` silently truncates (only lines starting with "- " are captured) —
+  three of six bullets would have shipped as mid-sentence fragments. Fixed by putting
+  every bullet on one line; added full-array/full-sentence test assertions (not just
+  `toContain`) in `tests/lib/content.test.ts` and `tests/app/alternative-page.test.tsx`
+  so a future wrapped bullet fails the suite instead of truncating silently on the
+  page. Updated the two hardcoded alternatives-slug fixtures this addition affects and
+  added real-content render tests for `/alternative/gitkraken` and
+  `/alternative/sourcetree`. 338/338 tests pass, lint/tsc clean, 0 vulnerabilities, all
+  run locally; build reproduced the known ADR-006 sandbox font-fetch gap, confirmed
+  green on CI's real GitHub-hosted runner (all 3 checks, pre- and post-merge).
 - 2026-10-01 — Dev run 48: added `content/alternatives/firebase.md`, the second
   `/alternative/:slug` page after `notion.md`. Three existing repo pages
   (`appwrite.md`, `supabase.md`, `pocketbase.md`) already listed Firebase under
