@@ -38,6 +38,7 @@ describe("getAllRepos (real /content fixtures)", () => {
       "duckdb",
       "gitui",
       "helix",
+      "immich",
       "langchain",
       "lazygit",
       "llamaindex",
@@ -167,6 +168,7 @@ describe("getReposInGrove (derived from repo frontmatter, per ADR-003)", () => {
       "appwrite",
       "coolify",
       "dokploy",
+      "immich",
       "pocketbase",
       "supabase",
     ]);

@@ -13,6 +13,7 @@ describe("Repo page (/repo/[slug])", () => {
       "duckdb",
       "gitui",
       "helix",
+      "immich",
       "langchain",
       "lazygit",
       "llamaindex",

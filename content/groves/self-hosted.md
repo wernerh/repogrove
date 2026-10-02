@@ -19,6 +19,8 @@ Projects that let you replace a hosted SaaS with something you run and control y
   storage, realtime API).
 - [Dokploy](/repo/dokploy) — self-hostable PaaS for deploying apps, databases, and
   Compose stacks across your own servers, including multi-server Docker Swarm clusters.
+- [Immich](/repo/immich) — self-hosted photo and video backup with mobile apps and
+  ML-powered face recognition and search, as an alternative to Google Photos/iCloud Photos.
 
 ## Related Groves
 AI, Developer Tools, Databases
