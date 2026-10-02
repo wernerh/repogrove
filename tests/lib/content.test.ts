@@ -413,6 +413,7 @@ describe("getAllAlternatives (real /content fixtures)", () => {
   it("loads every alternatives content file", () => {
     const alternatives = getAllAlternatives();
     expect(alternatives.map((a) => a.slug).sort()).toEqual([
+      "aws-amplify",
       "firebase",
       "gitkraken",
       "heroku",
@@ -420,6 +421,26 @@ describe("getAllAlternatives (real /content fixtures)", () => {
       "notion",
       "sourcetree",
       "vercel",
+    ]);
+  });
+
+  it("parses AWS Amplify's frontmatter and body sections correctly", () => {
+    const awsAmplify = getAlternative("aws-amplify");
+    expect(awsAmplify).toBeDefined();
+    expect(awsAmplify?.product).toBe("AWS Amplify");
+    expect(awsAmplify?.category).toBe("backend-as-a-service");
+    expect(awsAmplify?.openSource).toEqual(["Appwrite", "Supabase", "PocketBase"]);
+    expect(awsAmplify?.commercial).toEqual(["Firebase"]);
+    // Full-array assertion (not just `toContain`) so a bullet that wraps
+    // across source lines — which `extractListItems` silently truncates at
+    // the first line lacking its own "- " marker — would fail here instead
+    // of shipping a truncated sentence to the live page (same lesson as
+    // gitkraken.md/sourcetree.md's and vercel.md's tests above).
+    expect(awsAmplify?.bestFit).toEqual([
+      "Avoiding AWS lock-in and per-service AWS billing — Amplify is a managed front door onto Cognito (auth), AppSync/Lambda (API and functions), and S3 (storage), so its data model and operational quirks are AWS's, not a single portable backend, while Appwrite, Supabase, and PocketBase can all run on any server you choose",
+      "Predictable costs instead of open-ended usage billing — Amplify's 12-month free tier (1,000 build minutes, 15 GB data served, 5 GB storage, 500,000 requests) has no pause once exceeded, it just starts billing pay-as-you-go per build minute, GB served, and request, whereas a self-hosted Appwrite, Supabase, or PocketBase instance only costs whatever server it runs on",
+      "A single, already-integrated backend instead of assembling AWS primitives yourself — Appwrite and Supabase bundle auth, database, storage, and functions behind one API out of the box, closer to Amplify's pitch than to wiring up Cognito, AppSync, and S3 individually, without requiring an AWS account to get started",
+      "A single-binary, minimal-ops deployment for a small app — PocketBase needs no AWS account, IAM setup, or per-service configuration at all",
     ]);
   });
 

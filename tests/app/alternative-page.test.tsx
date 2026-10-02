@@ -9,6 +9,7 @@ describe("Alternative page (/alternative/[slug])", () => {
   it("statically generates params for every alternatives content file", async () => {
     const params = generateStaticParams();
     expect(params.map((p) => p.slug).sort()).toEqual([
+      "aws-amplify",
       "firebase",
       "gitkraken",
       "heroku",
@@ -63,8 +64,45 @@ describe("Alternative page (/alternative/[slug])", () => {
     }
 
     // Commercial renders as a plain list, same as notion.md's Confluence/Coda/ClickUp.
+    // This never resolves to a link regardless of whether content/alternatives/
+    // aws-amplify.md exists — AlternativePage's Commercial section is always a
+    // plain PlainListSection (only "Open source" resolves); only
+    // AlternativesTable.tsx on /repo/[slug] pages resolves commercial chips.
     expect(screen.getByText("AWS Amplify")).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "AWS Amplify" })).not.toBeInTheDocument();
+  });
+
+  it("renders /alternative/aws-amplify with every Open source item resolved to a real content/repos/*.md page", async () => {
+    // Appwrite, Supabase, PocketBase each already have a content/repos/*.md
+    // page (all three name AWS Amplify as a commercial alternative
+    // themselves) — same resolved-link branch firebase.md's test above
+    // exercises.
+    render(await AlternativePage({ params: Promise.resolve({ slug: "aws-amplify" }) }));
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "AWS Amplify alternatives" }),
+    ).toBeInTheDocument();
+
+    for (const [name, slug] of [
+      ["Appwrite", "appwrite"],
+      ["Supabase", "supabase"],
+      ["PocketBase", "pocketbase"],
+    ] as const) {
+      const link = screen.getByRole("link", { name });
+      expect(link).toHaveAttribute("href", `/repo/${slug}`);
+    }
+
+    // Commercial renders as a plain list, same as firebase.md's AWS Amplify entry.
+    expect(screen.getByText("Firebase")).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Firebase" })).not.toBeInTheDocument();
+
+    // Best fit renders each bullet's full text — same silent-truncation
+    // regression coverage as gitkraken.md's/vercel.md's tests above.
+    expect(
+      screen.getByText(
+        "Predictable costs instead of open-ended usage billing — Amplify's 12-month free tier (1,000 build minutes, 15 GB data served, 5 GB storage, 500,000 requests) has no pause once exceeded, it just starts billing pay-as-you-go per build minute, GB served, and request, whereas a self-hosted Appwrite, Supabase, or PocketBase instance only costs whatever server it runs on",
+      ),
+    ).toBeInTheDocument();
   });
 
   it("renders /alternative/gitkraken with every Open source item resolved to a real content/repos/*.md page", async () => {

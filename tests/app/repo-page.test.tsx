@@ -404,6 +404,24 @@ describe("Repo page (/repo/[slug])", () => {
     }
   });
 
+  it("links Appwrite's commercial chips (Firebase, AWS Amplify) to their own /alternative/:slug pages now that both exist", async () => {
+    // appwrite.md's alternatives.commercial ([Firebase, AWS Amplify]) predates
+    // both content/alternatives/*.md pages — Firebase landed in run 48 (still
+    // unresolved on this page until run 50's AlternativesTable fix), and AWS
+    // Amplify landed this run, closing the second half of the same dangling
+    // commercial reference. Real-page integration test for both resolving
+    // together, not just the isolated component/alternative-page unit tests.
+    const element = await RepoPage({ params: Promise.resolve({ slug: "appwrite" }) });
+    render(element);
+
+    for (const [name, slug] of [
+      ["Firebase", "firebase"],
+      ["AWS Amplify", "aws-amplify"],
+    ] as const) {
+      expect(screen.getByRole("link", { name })).toHaveAttribute("href", `/alternative/${slug}`);
+    }
+  });
+
   it("renders a 'Compared with' cross-link for a repo named in a /compare/:a/:b content file (issue #62)", async () => {
     // content/comparisons/ollama-vs-vllm.md names both ollama and vllm.
     const element = await RepoPage({ params: Promise.resolve({ slug: "ollama" }) });
