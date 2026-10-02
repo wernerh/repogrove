@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
 import {
+  getReposInGrove,
   getAllRepos,
   getAlternative,
   getComparisonsForRepo,
@@ -9,11 +10,16 @@ import {
   slugifyAlternativeName,
   splitOutSection,
 } from "@/lib/content";
-import { getGrowthSummaries, getSnapshotHistory } from "@/lib/snapshots";
+import { getGrowthSummaries, getSnapshotHistories, getGrowthSummary, type SnapshotRow } from "@/lib/snapshots";
 import { getRecentReleases } from "@/lib/releases";
 import { computeHeat } from "@/lib/heat";
-import { dateFormatter } from "@/lib/format";
+import { dateFormatter, numberFormatter } from "@/lib/format";
 import StarGrowthChart from "@/components/StarGrowthChart";
+import StarIcon from "@/components/StarIcon";
+import RepoStatTiles from "@/components/RepoStatTiles";
+import RepoLedger from "@/components/RepoLedger";
+import GroveNeighbors from "@/components/GroveNeighbors";
+import ComparisonMatrix, { type MatrixColumn } from "@/components/ComparisonMatrix";
 import StatusChip from "@/components/StatusChip";
 import MomentumChip from "@/components/MomentumChip";
 import AlternativesTable, {
@@ -83,8 +89,70 @@ export default async function RepoPage({ params }: PageProps) {
   // Reused for both the star-growth chart and the Momentum/Heat chip below
   // — one getSnapshotHistory call per repo page, not two (same N+1 lesson
   // as TECH-DEBT.md's 2026-09-29 homepage row).
-  const snapshotHistory = getSnapshotHistory(repo.github);
+  // One batched read for this repo, its profiled alternatives (comparison matrix) and its Grove
+  // neighbors (sidebar) — the database is opened once, not once per repo.
+  const neighborRepos = [
+    ...new Map(
+      repo.groves
+        .flatMap((groveSlug) => getReposInGrove(groveSlug))
+        .filter((r) => r.slug !== repo.slug)
+        .map((r) => [r.slug, r] as const),
+    ).values(),
+  ];
+  const profiledAlternatives = resolvedRepos.flatMap((r) => (r.repo ? [r.repo] : [])).slice(0, 3);
+  const histories = getSnapshotHistories([
+    repo.github,
+    ...profiledAlternatives.map((r) => r.github),
+    ...neighborRepos.map((r) => r.github),
+  ]);
+  const snapshotHistory = histories.get(repo.github) ?? [];
   const heat = computeHeat(snapshotHistory);
+  const latestOf = (history: SnapshotRow[] | undefined): SnapshotRow | null =>
+    history && history.length > 0
+      ? [...history].sort((a, b) => a.capturedOn.localeCompare(b.capturedOn))[history.length - 1]
+      : null;
+  const latest = latestOf(snapshotHistory);
+  const growth = getGrowthSummary(snapshotHistory);
+
+  const neighbors = neighborRepos
+    .map((r) => ({
+      slug: r.slug,
+      name: r.name,
+      category: r.category[0],
+      stars: latestOf(histories.get(r.github))?.stars ?? null,
+    }))
+    .sort((a, b) => (b.stars ?? -1) - (a.stars ?? -1))
+    .slice(0, 3);
+
+  const toColumn = (r: typeof repo, isCurrent: boolean): MatrixColumn => {
+    const row = latestOf(histories.get(r.github));
+    return {
+      slug: r.slug,
+      name: r.name,
+      isCurrent,
+      stars: row?.stars ?? null,
+      contributors: row?.contributors ?? null,
+      forks: row?.forks ?? null,
+      status: r.status,
+      license: r.license,
+    };
+  };
+  const matrixColumns = [toColumn(repo, true), ...profiledAlternatives.map((r) => toColumn(r, false))];
+
+  const statusLabel = { active: "Active", maintained: "Maintained", inactive: "Inactive" }[repo.status];
+  const ledgerRows = [
+    { label: "License", value: repo.license },
+    { label: "Status", value: statusLabel },
+    { label: "Category", value: repo.category.join(", ") },
+    ...(latest?.contributors != null ? [{ label: "Contributors", value: numberFormatter.format(latest.contributors) }] : []),
+    ...(latest ? [{ label: "Watchers", value: numberFormatter.format(latest.watchers) }] : []),
+    ...(latest ? [{ label: "Open issues", value: numberFormatter.format(latest.openIssues) }] : []),
+    ...(growth ? [{ label: "Tracking since", value: growth.trackingSince }] : []),
+  ];
+  const directAlternativeNames = [
+    ...resolvedRepos.map((r) => r.repo?.name ?? r.slug),
+    ...repo.alternatives.commercial,
+  ];
 
   // Issue #72 (basic news widget, v1: GitHub Releases only) — recent releases for
   // this repo, ingested into data/repogrove.db (never fetched live: output: "export"
@@ -138,18 +206,36 @@ export default async function RepoPage({ params }: PageProps) {
   return (
     <article className="flex flex-col gap-6">
       <header className={`${CARD} sm:p-8`}>
-        <p className="font-mono text-sm text-text-link">Repository</p>
-        <h1 className="mt-1 font-sans text-3xl font-semibold tracking-tight text-text-default">
-          {repo.name}
-        </h1>
-        <a
-          href={`https://github.com/${repo.github}`}
-          className="font-mono text-sm text-text-secondary hover:underline"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          github.com/{repo.github}
-        </a>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="font-mono text-sm text-text-link">Repository</p>
+            <h1 className="mt-1 font-sans text-3xl font-semibold tracking-tight text-text-default">
+              {repo.name}
+            </h1>
+            <a
+              href={`https://github.com/${repo.github}`}
+              className="font-mono text-sm text-text-secondary hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              github.com/{repo.github}
+            </a>
+          </div>
+          <a
+            href={`https://github.com/${repo.github}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 rounded-md bg-cta-fill px-4 py-2 no-underline font-sans text-sm font-medium text-cta-text transition-colors duration-[var(--duration-fast)] hover:bg-cta-fill-hover focus:outline-none focus:ring-2 focus:ring-cta-fill focus:ring-offset-2 focus:ring-offset-bg-elevated"
+          >
+            Visit on GitHub
+            {latest && (
+              <span className="inline-flex items-center gap-1 border-l border-current/30 pl-3 font-mono">
+                <StarIcon className="!text-current" />
+                {numberFormatter.format(latest.stars)}
+              </span>
+            )}
+          </a>
+        </div>
 
         <dl className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 font-sans text-sm text-text-secondary">
           <div>
@@ -175,6 +261,30 @@ export default async function RepoPage({ params }: PageProps) {
             <dd className="inline font-mono">{repo.category.join(", ")}</dd>
           </div>
         </dl>
+
+        {directAlternativeNames.length > 0 && (
+          <p className="mt-4 flex flex-wrap items-center gap-2 font-sans text-sm text-text-secondary">
+            Direct alternative to:
+            {directAlternativeNames.map((name) => (
+              <span key={name} className="rounded-sm bg-bg-subtle px-2 py-1 font-mono text-sm text-text-default">
+                {name}
+              </span>
+            ))}
+          </p>
+        )}
+
+        <RepoStatTiles
+          tiles={[
+            {
+              label: "Stargazers",
+              value: latest?.stars ?? null,
+              hint: growth && growth.days > 0 ? `${growth.deltaStars >= 0 ? "+" : ""}${numberFormatter.format(growth.deltaStars)} / ${growth.days}d` : undefined,
+            },
+            { label: "Forks", value: latest?.forks ?? null },
+            { label: "Contributors", value: latest?.contributors ?? null },
+            { label: "Open issues", value: latest?.openIssues ?? null },
+          ]}
+        />
       </header>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
@@ -191,6 +301,12 @@ export default async function RepoPage({ params }: PageProps) {
             <AlternativesTable openSource={openSourceAlternatives} commercial={commercialAlternatives} />
           </div>
 
+          {matrixColumns.length > 1 && (
+            <div className={CARD}>
+              <ComparisonMatrix columns={matrixColumns} />
+            </div>
+          )}
+
           <div className={CARD}>
             {/* The body's own "## Related Grove" section (hand-authored in
                 content/repos/*.md) already links back to the Grove — rendering
@@ -200,6 +316,8 @@ export default async function RepoPage({ params }: PageProps) {
         </div>
 
         <aside className="flex min-w-0 flex-col gap-6" aria-label="Repository sidebar">
+          <RepoLedger rows={ledgerRows} />
+          <GroveNeighbors neighbors={neighbors} />
           {comparisons.length > 0 && (
             <section className={CARD}>
               <h2 className="!mt-0 font-sans text-lg font-semibold text-text-default">Compared with</h2>

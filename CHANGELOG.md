@@ -1361,3 +1361,8 @@ entries.
   preview), repo page hero card + sidebar, stray chip-list bullets removed. Mock-only
   elements with no backing data were not built (listed in DESIGN-SYSTEM.md). 376/376
   tests; screenshot harness 48/48 with 0 axe violations. (design)
+- 2026-10-02 — **design:** repo page details widgets from real data — hero GitHub button +
+  stat tiles + "Direct alternative to" chips, Repository ledger, Grove neighbors, "How it
+  compares" matrix. Data-less mock widgets (Health Index, Quick Start, Language
+  Composition, Community Pulse, commit density) left unbuilt, listed in DESIGN-SYSTEM.md. 383/383 tests;
+  harness 48/48, 0 axe violations. (design)
