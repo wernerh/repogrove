@@ -48,14 +48,14 @@ export default function ComparisonMatrix({ columns }: { columns: MatrixColumn[] 
           <caption className="sr-only">Comparison with profiled open-source alternatives</caption>
           <thead>
             <tr className="border-b border-border-default">
-              <th scope="col" className="py-2 pr-4 font-mono text-sm font-normal text-text-secondary">
+              <th scope="col" className="py-2 pr-2 sm:pr-4 font-mono text-sm font-normal text-text-secondary">
                 Parameter
               </th>
               {columns.map((c) => (
                 <th
                   key={c.slug}
                   scope="col"
-                  className={`px-3 py-2 font-sans text-sm font-semibold ${
+                  className={`px-2 sm:px-3 py-2 font-sans text-sm font-semibold ${
                     c.isCurrent ? "bg-bg-brand-subtle text-text-on-brand-subtle" : "text-text-default"
                   }`}
                 >
@@ -73,13 +73,13 @@ export default function ComparisonMatrix({ columns }: { columns: MatrixColumn[] 
           <tbody>
             {rows.map((row) => (
               <tr key={row.label} className="border-b border-border-subtle last:border-b-0">
-                <th scope="row" className="py-2 pr-4 font-sans text-sm font-normal text-text-secondary">
+                <th scope="row" className="py-2 pr-2 sm:pr-4 font-sans text-sm font-normal text-text-secondary">
                   {row.label}
                 </th>
                 {columns.map((c) => (
                   <td
                     key={c.slug}
-                    className={`px-3 py-2 font-mono text-sm text-text-default ${c.isCurrent ? "bg-bg-brand-subtle" : ""}`}
+                    className={`px-2 sm:px-3 py-2 font-mono text-sm text-text-default ${c.isCurrent ? "bg-bg-brand-subtle" : ""}`}
                   >
                     {row.render(c)}
                   </td>

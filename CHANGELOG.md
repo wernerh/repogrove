@@ -511,6 +511,20 @@ entries.
   misaligning the row (caught by independent review pre-merge). See
   `docs/design/findings/UX-2026-005-momentum-chip-tooltip-accessibility.md`. PR #82.
   (design)
+- 2026-10-02 — `ComparisonMatrix`'s "How it compares" table (`/repo/[slug]`, shipped by
+  PR #115 this same day) silently overflowed the project's 390px mobile viewport by 2px
+  with no visual scroll affordance — the non-gating "Design screenshots & accessibility"
+  check failed on `main` (UX-2026-006's own generic overflow guard caught it). Scoped
+  every cell's horizontal padding down below `sm` (`px-2 sm:px-3`, `pr-2 sm:pr-4`),
+  leaving desktop/tablet unchanged. Verified via a real Chromium/Playwright geometry
+  reproduction of the real DOM ancestor chain and compiled `globals.css` at 390×844
+  (table's natural width: 324px pre-fix with this sandbox's fallback fonts, matching
+  CI's real 326px at the overflow boundary; 305px post-fix, 19px of margin) — not just a
+  class-presence assertion. 385/385 tests pass (1 new, written first and confirmed red
+  pre-fix), lint/`tsc --noEmit` clean, 0 `npm audit` findings, all run locally;
+  `npm run build` reproduced the known ADR-006 sandbox font-fetch gap, left to CI. See
+  `docs/design/findings/UX-2026-007-comparison-matrix-mobile-overflow.md`, issue #116.
+  (dev)
 
 ### Added
 - 2026-09-30 — Comparison pages for the Self-Hosted grove's backend trio:

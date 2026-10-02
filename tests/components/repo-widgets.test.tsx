@@ -88,4 +88,21 @@ describe("ComparisonMatrix", () => {
     expect(contributorsRow).toHaveTextContent("—");
     expect(within(table).getByRole("row", { name: /License/ })).toHaveTextContent("Apache-2.0");
   });
+
+  it("scopes cell horizontal padding down below the sm breakpoint (regression: real CI screenshot run found this table silently overflowing /repo/ollama's 390px mobile viewport by 2px with the unconditional px-3/pr-4 padding this test guards against — see issue #116)", () => {
+    render(
+      <ComparisonMatrix
+        columns={[col({}), col({ slug: "vllm", name: "vLLM", isCurrent: false, license: "Apache-2.0" })]}
+      />,
+    );
+    const table = screen.getByRole("table");
+    for (const cell of within(table).getAllByRole("columnheader")) {
+      expect(cell.className).not.toMatch(/(?<!sm:)px-3\b/);
+      expect(cell.className).not.toMatch(/(?<!sm:)pr-4\b/);
+    }
+    // The "Parameter" header/row-label column uses pr-*; the data columns use px-*.
+    expect(within(table).getByRole("columnheader", { name: "Parameter" }).className).toMatch(/\bpr-2 sm:pr-4\b/);
+    const vllmHeader = within(table).getByRole("columnheader", { name: "vLLM" });
+    expect(vllmHeader.className).toMatch(/\bpx-2 sm:px-3\b/);
+  });
 });

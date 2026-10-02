@@ -15,10 +15,10 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 57 closed out: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03T13:02:34Z). Added
-Immich to the Self-Hosted grove (#111, merged); researched/rejected Continue/Aider
-(EOL/maintenance-risk). Next run: apply RG-7's default if still unanswered; grow
-Self-Hosted further (Portainer/Nextcloud/CasaOS) or find the next content gap.
+Run 58: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03T13:02:34Z, ~18h off). PR #115
+broke CI on `main` (UX-2026-007: ComparisonMatrix mobile overflow) — fixed same-run
+under "failing CI" priority (#116). Next: apply RG-7's default if unanswered; confirm
+#116's PR merged; grow Self-Hosted (Portainer/Nextcloud/CasaOS) or find next content gap.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |

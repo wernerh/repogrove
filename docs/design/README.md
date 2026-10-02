@@ -274,9 +274,17 @@ tooltip-only signal exposure first, then `AlternativesTable`'s non-interactive s
 | UX-2026-002 | MINOR | Fixed (same run) | Alternatives table mobile Category column | `AlternativesTable.tsx` | PR #57 follow-up |
 | UX-2026-003 | MAJOR | Verified (fixed) | StatusChip/MomentumChip icon collision | `StatusChip.tsx` | #52, PR #60 |
 | UX-2026-004 | MINOR | Verified (fixed) | Repo page "Latest" section placement | `src/app/repo/[slug]/page.tsx` | PR #79 |
+| UX-2026-007 | MAJOR | Fixed (dev lane, same run) | ComparisonMatrix mobile overflow on `/repo/[slug]` | `ComparisonMatrix.tsx` | #116 |
 
 **Owner-directed refresh (2026-10-02):** applied the owner's "Precision Editorial" board and
 page mockups as DESIGN-SYSTEM.md v2.0 (tokens, serif retired, new header/hero/card/repo-page
 layouts) — see that doc's "Precision Editorial refresh" section for scope, what was
 deliberately not built (mock-only data), and verification. The screenshot harness caught a
 real mobile overflow regression in this work and it was fixed before the PR.
+
+**Cross-lane note (2026-10-02, dev run):** PR #115's "details-page widgets" commit shipped
+a second, separate mobile overflow regression in the new `ComparisonMatrix` component — the
+screenshot harness's generic overflow guard (built for UX-2026-006) caught it as a failing
+non-gating CI check on `main` post-merge. The dev lane fixed it same-day under this run's
+"failing CI on `main`" top priority rather than waiting for this lane's next scheduled run —
+see UX-2026-007 above and issue #116.
