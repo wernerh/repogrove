@@ -1,5 +1,7 @@
 import { getGrowthSummary, type SnapshotRow } from "@/lib/snapshots";
 import StarIcon from "@/components/StarIcon";
+import { formatDelta, numberFormatter } from "@/lib/format";
+import { buildSparklinePoints } from "@/lib/sparkline";
 
 interface StarGrowthChartProps {
   history: SnapshotRow[];
@@ -8,39 +10,6 @@ interface StarGrowthChartProps {
 const CHART_WIDTH = 320;
 const CHART_HEIGHT = 64;
 const CHART_PADDING = 4;
-
-const numberFormatter = new Intl.NumberFormat("en-US");
-
-/** SVG `points` for a `<polyline>` sparkline, oldest-first, scaled to fill the
- * chart's viewBox. Flat history (every value equal) still renders a flat
- * line across the middle rather than dividing by zero — `span` falls back
- * to `1` to avoid the division, but every point's fraction is then `0/1`,
- * which would otherwise pin the line to the bottom edge, not the middle;
- * the `isFlat` case below renders the midpoint explicitly instead. */
-function buildSparklinePoints(history: SnapshotRow[]): string {
-  const stars = history.map((row) => row.stars);
-  const min = Math.min(...stars);
-  const max = Math.max(...stars);
-  const isFlat = max === min;
-  const span = max - min || 1;
-  const stepX = history.length > 1 ? (CHART_WIDTH - CHART_PADDING * 2) / (history.length - 1) : 0;
-
-  return history
-    .map((row, i) => {
-      const x = CHART_PADDING + i * stepX;
-      const y = isFlat
-        ? CHART_HEIGHT / 2
-        : CHART_HEIGHT - CHART_PADDING - ((row.stars - min) / span) * (CHART_HEIGHT - CHART_PADDING * 2);
-      return `${x.toFixed(1)},${y.toFixed(1)}`;
-    })
-    .join(" ");
-}
-
-function formatDelta(delta: number): string {
-  if (delta > 0) return `+${numberFormatter.format(delta)}`;
-  if (delta < 0) return numberFormatter.format(delta); // already carries "-"
-  return "±0";
-}
 
 /**
  * Star-growth chart for a repo page (issue #18). Degrades gracefully
@@ -91,7 +60,7 @@ export default function StarGrowthChart({ history }: StarGrowthChartProps) {
         preserveAspectRatio="none"
         className="mt-2 h-16 w-full max-w-xs text-cta-fill"
       >
-        <polyline points={buildSparklinePoints(history)} fill="none" stroke="currentColor" strokeWidth="1.5" />
+        <polyline points={buildSparklinePoints(history.map((row) => row.stars), CHART_WIDTH, CHART_HEIGHT, CHART_PADDING)} fill="none" stroke="currentColor" strokeWidth="1.5" />
       </svg>
     </div>
   );

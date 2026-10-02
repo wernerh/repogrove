@@ -32,6 +32,9 @@ import path from "node:path";
 const ROUTES: { path: string; name: string }[] = [
   { path: "/", name: "home" },
   { path: "/grove/ai", name: "grove-ai" },
+  // Grove page redesign (filter/sort/pagination Client Component + sidebar) — covers a
+  // multi-repo Grove with real growth data, unlike the sparse /grove/ai fixture era.
+  { path: "/grove/developer-tools", name: "grove-developer-tools" },
   { path: "/repo/ollama", name: "repo-ollama" },
   { path: "/trending", name: "trending" },
   { path: "/rising", name: "rising" },

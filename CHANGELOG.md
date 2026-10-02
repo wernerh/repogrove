@@ -7,6 +7,20 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-02 — Grove page (`/grove/[slug]`) rebuilt to the owner's "Developer Tools Grove"
+  mockup: breadcrumb + updated date, header card with a four-figure stat strip (repos,
+  collective stars, median daily star gain, maintenance-status bar) and license mix; a
+  filterable (category tabs + text), sortable (stars / growth / name) and paginated (6/12/24)
+  repo list with per-repo stars, status, alternatives, categories and star-history sparkline;
+  and a sidebar with Trendspotting (biggest real star gains), Related Groves and the
+  newsletter form. Repo membership now comes from each repo's own `groves:` frontmatter rather
+  than the Grove body's hand-written bullets. Every figure is derived from `/content` or
+  `data/repogrove.db`; mockup elements with no backing data (language mix, Maintainer Radar,
+  version tags, grade, follow/submit/bookmark/RSS, grid-view toggle) are deliberately not
+  built — see `docs/design/DESIGN-SYSTEM.md`. Extracted `buildSparklinePoints`/`formatDelta`
+  from `StarGrowthChart`; `NewsletterSignupForm` now lays out by container width. Added
+  `/grove/developer-tools` to the screenshot/axe harness; local axe scan 0 WCAG 2.1 A/AA
+  violations (light/dark × desktop/mobile). (design)
 - 2026-10-02 — Factory run protocol moved into the repo: shared `factory-core` skill plus
   `dev-factory`, `security-factory` and `design-factory` lane skills under `.claude/skills/`,
   and three read-only reviewer subagents (`factory-reviewer-dev`, `-security`, `-design`)

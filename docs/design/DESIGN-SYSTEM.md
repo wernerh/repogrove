@@ -268,6 +268,32 @@ overflowing its new card padding) — fixed by tightening mobile gutters (`px-4`
 Local screenshots used system Inter (Google Fonts unreachable here, ADR-006); real-font
 screenshots come from CI.
 
+## Grove page (`/grove/[slug]`) — rebuilt to owner mockup (2026-10-02)
+
+Header card (avatar tile, name, description, license mix) + stat strip; main column =
+category-tab / text-filter / sort controls, the repo list (`GroveRepoRow`, same single-focus-stop
+stretched-link card pattern as `RepoCard`), pagination; sidebar = Trendspotting, Related Groves,
+newsletter form. Two-column from `md` (768px) to match the mockup's 803px frame. Components:
+`GroveHeader`, `GroveRepoList` (Client Component — static export, so filter/sort/paging run in
+the browser over build-time rows), `GroveRepoRow`, `GroveSidebar`; logic in `lib/grove-view.ts`
+(client-safe) and `lib/grove-rows.ts` (server).
+
+**Rules learned:** (1) category tabs are `aria-pressed` toggle buttons, not an ARIA tablist —
+they filter one list, not switch panels; (2) tab tags are derived per Grove, dropping a tag every
+repo carries (filters nothing) or only one repo carries; (3) success/warning *text* colours reach
+4.5:1 in dark mode only on `bg.subtle` (StatusChip's surface), **not** on `bg.elevated` — put
+status text in a `bg.subtle` pill, or use a coloured swatch with a body-contrast label (axe
+caught this); (4) `@container` + `@md:` for a component reused in both narrow and wide slots.
+
+**Not built from the mockup — no backing data (not fabricated):** language-composition bars and
+per-repo language %, Maintainer Radar, version tags, "Grade", "Core Reproducibility", release
+"cadence"/"bi-weekly" velocity, per-repo subtitle, Follow / Suggest Repo / Submit Repo /
+bookmark / RSS (Phase 4 features, gated on RG-7/8/9), grid/list view toggle. The mockup's
+sparkline "Cadence" is shown as the real star-history sparkline + delta. Shared site-header and
+footer differences in the mockup (Groves/Repositories/Weekly nav, About/Community footer links)
+are layout-level and untouched. **Known, pre-existing:** at 390px the shared header's Search
+button overflows the viewport by ~28px on every page.
+
 ## Spacing & layout
 
 **Base unit: 8px** (not 4px) — the "airy, editorial interface" choice per the theme
