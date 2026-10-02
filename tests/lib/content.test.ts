@@ -45,6 +45,7 @@ describe("getAllRepos (real /content fixtures)", () => {
       "neovim",
       "ollama",
       "pocketbase",
+      "postgresql",
       "sqlite",
       "supabase",
       "tig",
@@ -99,8 +100,22 @@ describe("getAllRepos (real /content fixtures)", () => {
     expect(sqlite?.license).toBe("Public Domain");
     expect(sqlite?.status).toBe("active");
     expect(sqlite?.groves).toEqual(["databases"]);
-    expect(sqlite?.alternatives.open_source).toEqual(["duckdb"]);
+    // PostgreSQL added as a mutual alternative this run (postgresql.md lists
+    // sqlite back) alongside the existing DuckDB pairing.
+    expect(sqlite?.alternatives.open_source).toEqual(["duckdb", "postgresql"]);
     expect(sqlite?.alternatives.commercial).toEqual([]);
+  });
+
+  it("parses PostgreSQL's frontmatter correctly", () => {
+    const postgresql = getRepo("postgresql");
+    expect(postgresql).toBeDefined();
+    expect(postgresql?.github).toBe("postgres/postgres");
+    expect(postgresql?.name).toBe("PostgreSQL");
+    expect(postgresql?.license).toBe("PostgreSQL License");
+    expect(postgresql?.status).toBe("active");
+    expect(postgresql?.groves).toEqual(["databases"]);
+    expect(postgresql?.alternatives.open_source).toEqual(["sqlite"]);
+    expect(postgresql?.alternatives.commercial).toEqual([]);
   });
 
   it("returns undefined for a repo that doesn't exist", () => {
@@ -169,6 +184,7 @@ describe("getReposInGrove (derived from repo frontmatter, per ADR-003)", () => {
     expect(reposInDatabases.map((r) => r.slug).sort()).toEqual([
       "clickhouse",
       "duckdb",
+      "postgresql",
       "sqlite",
     ]);
   });
@@ -732,6 +748,7 @@ describe("getAllComparisons (real /content fixtures)", () => {
       "neovim-vs-zed",
       "ollama-vs-vllm",
       "pocketbase-vs-supabase",
+      "postgresql-vs-sqlite",
       "vim-vs-zed",
     ]);
   });

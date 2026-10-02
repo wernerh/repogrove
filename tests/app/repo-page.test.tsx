@@ -20,6 +20,7 @@ describe("Repo page (/repo/[slug])", () => {
       "neovim",
       "ollama",
       "pocketbase",
+      "postgresql",
       "sqlite",
       "supabase",
       "tig",
@@ -405,11 +406,38 @@ describe("Repo page (/repo/[slug])", () => {
       "href",
       "/grove/databases",
     );
-    // Its own alternatives.open_source (duckdb) already exists, so it
-    // resolves to a real link.
+    // Its own alternatives.open_source (duckdb, postgresql) already exist,
+    // so both resolve to real links.
     expect(screen.getByRole("link", { name: "DuckDB" })).toHaveAttribute(
       "href",
       "/repo/duckdb",
+    );
+    expect(screen.getByRole("link", { name: "PostgreSQL" })).toHaveAttribute(
+      "href",
+      "/repo/postgresql",
+    );
+  });
+
+  it("renders /repo/postgresql from content/repos/postgresql.md, not a hardcoded string", async () => {
+    render(await RepoPage({ params: Promise.resolve({ slug: "postgresql" }) }));
+
+    expect(screen.getByRole("heading", { level: 1, name: "PostgreSQL" })).toBeInTheDocument();
+    expect(screen.getByText(/📜 PostgreSQL License/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/A general-purpose, client-server relational database/),
+    ).toBeInTheDocument();
+    // The body's own "## Related Grove" section links back to Databases —
+    // proves this new content/repos/*.md file renders through the real
+    // page, not just through generateStaticParams.
+    expect(screen.getByRole("link", { name: "Databases" })).toHaveAttribute(
+      "href",
+      "/grove/databases",
+    );
+    // Its own alternatives.open_source (sqlite) already exists, so it
+    // resolves to a real link.
+    expect(screen.getByRole("link", { name: "SQLite" })).toHaveAttribute(
+      "href",
+      "/repo/sqlite",
     );
   });
 

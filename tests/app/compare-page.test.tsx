@@ -235,6 +235,37 @@ describe("Compare page (/compare/[a]/[b])", () => {
     ).toBeInTheDocument();
   });
 
+  it("renders /compare/postgresql/sqlite from content/comparisons/postgresql-vs-sqlite.md", async () => {
+    // postgresql.md and sqlite.md list each other under alternatives.open_source
+    // since postgresql.md was added this run — this comparison page closes
+    // that pair out in the same PR, rather than leaving a dangling-mutual-pair
+    // gap for a future run to find.
+    const { container } = render(
+      await ComparePage({ params: Promise.resolve({ a: "postgresql", b: "sqlite" }) }),
+    );
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "PostgreSQL vs SQLite" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "PostgreSQL" })).toHaveAttribute(
+      "href",
+      "/repo/postgresql",
+    );
+    expect(screen.getByRole("link", { name: "SQLite" })).toHaveAttribute(
+      "href",
+      "/repo/sqlite",
+    );
+
+    const table = container.querySelector("table")!;
+    expect(within(table).getAllByText(/PostgreSQL License/).length).toBeGreaterThan(0);
+    expect(within(table).getAllByText(/Public Domain/).length).toBeGreaterThan(0);
+
+    expect(screen.getByRole("heading", { level: 2, name: "How they differ" })).toBeInTheDocument();
+    expect(
+      screen.getByText(/PostgreSQL is a client-server database/),
+    ).toBeInTheDocument();
+  });
+
   it("resolves the reverse URL order (/compare/vllm/ollama) to the same content, rendered in canonical order", async () => {
     const { container: forward } = render(
       await ComparePage({ params: Promise.resolve({ a: "ollama", b: "vllm" }) }),
