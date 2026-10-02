@@ -1,4 +1,5 @@
 import { getGrowthSummary, type SnapshotRow } from "@/lib/snapshots";
+import StarIcon from "@/components/StarIcon";
 
 interface StarGrowthChartProps {
   history: SnapshotRow[];
@@ -55,7 +56,7 @@ export default function StarGrowthChart({ history }: StarGrowthChartProps) {
   if (history.length === 0) {
     return (
       <p className="mt-6 font-sans text-sm text-text-secondary">
-        ⭐ Star history isn&apos;t available yet — tracking begins with the next ingestion run.
+        Star history isn&apos;t available yet — tracking begins with the next ingestion run.
       </p>
     );
   }
@@ -66,7 +67,8 @@ export default function StarGrowthChart({ history }: StarGrowthChartProps) {
   if (!summary || summary.days === 0) {
     return (
       <p className="mt-6 font-sans text-sm text-text-secondary">
-        ⭐ {numberFormatter.format(latest.stars)} stars — tracking started{" "}
+        <StarIcon className="mr-1 inline" />
+        {numberFormatter.format(latest.stars)} stars — tracking started{" "}
         <time dateTime={latest.capturedOn}>{latest.capturedOn}</time>. Check back in a few days for growth history.
       </p>
     );
@@ -75,7 +77,8 @@ export default function StarGrowthChart({ history }: StarGrowthChartProps) {
   return (
     <div className="mt-6">
       <p className="font-sans text-sm text-text-secondary">
-        ⭐ {numberFormatter.format(summary.currentStars)} stars · {formatDelta(summary.deltaStars)} stars /{" "}
+        <StarIcon className="mr-1 inline" />
+        {numberFormatter.format(summary.currentStars)} stars · {formatDelta(summary.deltaStars)} stars /{" "}
         {summary.days} day{summary.days === 1 ? "" : "s"} · tracking since{" "}
         <time dateTime={summary.trackingSince}>{summary.trackingSince}</time>
       </p>

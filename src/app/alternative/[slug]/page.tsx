@@ -4,6 +4,7 @@ import { getAllAlternatives, getAlternative, getRepo, slugifyAlternativeName, ty
 import { getGrowthSummaries } from "@/lib/snapshots";
 import { numberFormatter } from "@/lib/format";
 import type { Metadata } from "next";
+import StarIcon from "@/components/StarIcon";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -57,7 +58,7 @@ function PlainListSection({ heading, items }: { heading: string; items: string[]
   return (
     <section className="mt-6">
       <h2 className="font-sans text-xl font-semibold text-text-default">{heading}</h2>
-      <ul className="mt-3 flex flex-col gap-1 font-serif text-sm text-text-secondary">
+      <ul className="mt-3 flex flex-col gap-1 text-sm text-text-secondary">
         {items.map((item) => (
           <li key={item}>{item}</li>
         ))}
@@ -81,12 +82,12 @@ export default async function AlternativePage({ params }: PageProps) {
   );
 
   return (
-    <article>
+    <article className="max-w-3xl">
       <p className="font-sans text-sm font-medium text-text-link">Alternatives</p>
       <h1 className="font-sans text-2xl font-semibold tracking-tight text-text-default">
         {alternative.product} alternatives
       </h1>
-      <p className="mt-2 font-serif text-lg text-text-secondary">{alternative.category}</p>
+      <p className="mt-2 text-lg text-text-secondary">{alternative.category}</p>
 
       {resolvedOpenSource.length > 0 && (
         <section className="mt-6">
@@ -105,7 +106,8 @@ export default async function AlternativePage({ params }: PageProps) {
                   )}
                   {stars !== null && (
                     <span className="ml-2 font-mono text-text-secondary">
-                      ⭐ {numberFormatter.format(stars)}
+                      <StarIcon className="mr-1 inline" />
+                      {numberFormatter.format(stars)}
                     </span>
                   )}
                   {!repo && <span className="ml-2 text-text-secondary">Not yet profiled</span>}

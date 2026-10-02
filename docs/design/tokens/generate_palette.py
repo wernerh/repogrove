@@ -29,9 +29,9 @@ def contrast(fg: str, bg: str) -> float:
 
 def build_neutral_scale(hue: int) -> dict[int, tuple[float, float, str]]:
     steps = {
-        0: (99, 0.001), 10: (96, 0.003), 20: (91, 0.004), 30: (84, 0.006),
-        40: (74, 0.008), 50: (62, 0.010), 60: (50, 0.010), 70: (40, 0.009),
-        80: (30, 0.008), 90: (20, 0.006), 100: (12, 0.004),
+        0: (99, 0.002), 10: (96, 0.004), 20: (91, 0.006), 30: (84, 0.009),
+        40: (74, 0.012), 50: (62, 0.016), 60: (50, 0.018), 70: (40, 0.018),
+        80: (30, 0.018), 90: (20, 0.020), 100: (12, 0.015),
     }
     out = {}
     for step, (light, chroma) in steps.items():
@@ -42,14 +42,24 @@ def build_neutral_scale(hue: int) -> dict[int, tuple[float, float, str]]:
 
 def build_brand_scale(hue: int) -> dict[int, tuple[float, float, str]]:
     steps = {
-        10: (95, 0.03), 20: (88, 0.05), 30: (80, 0.07), 40: (70, 0.10),
-        50: (58, 0.13), 60: (48, 0.13), 70: (38, 0.11), 80: (28, 0.09), 90: (18, 0.06),
+        10: (95, 0.03), 20: (88, 0.045), 30: (80, 0.06), 40: (70, 0.075),
+        50: (56, 0.082), 60: (43, 0.071), 70: (35, 0.06), 80: (26, 0.048), 90: (17, 0.035),
     }
     out = {}
     for step, (light, chroma) in steps.items():
         h = hexof(f"oklch({light}% {chroma} {hue})")
         out[step] = (light, chroma, h)
     return out
+
+
+def build_amber_scale(hue: float) -> dict[int, tuple[float, float, str]]:
+    # Tertiary accent (Precision Editorial). amber-60 (light-mode star mark) must clear
+    # AA_UI_MIN vs bg.default; amber-50 is the dark-mode star mark.
+    steps = {
+        10: (96, 0.04), 20: (90, 0.08), 30: (84, 0.12), 40: (80, 0.15),
+        50: (77, 0.165), 60: (62, 0.14), 70: (50, 0.115), 80: (38, 0.09), 90: (28, 0.06),
+    }
+    return {k: (l, c, hexof(f"oklch({l}% {c} {hue})")) for k, (l, c) in steps.items()}
 
 
 def solve_text_color(hue: float, light: float, chroma: float, bg_hex: str,
@@ -68,18 +78,36 @@ def solve_text_color(hue: float, light: float, chroma: float, bg_hex: str,
 
 
 def main() -> None:
-    neutral = build_neutral_scale(220)
-    brand = build_brand_scale(205)
+    neutral = build_neutral_scale(250)
+    brand = build_brand_scale(189.5)
+    amber = build_amber_scale(70)
     bg_light = neutral[0][2]
     bg_dark = neutral[90][2]
 
-    print("=== Neutral scale (hue 220) ===")
+    print("=== Neutral scale (hue 250) ===")
     for step, (l, c, h) in neutral.items():
-        print(f"neutral-{step:<3} oklch({l}% {c} 220) -> {h}")
+        print(f"neutral-{step:<3} oklch({l}% {c} 250) -> {h}")
 
-    print("\n=== Brand scale (hue 205, 'deep pond') ===")
+    print("\n=== Brand scale (hue 189.5, deep teal; brand-60 = #0B5C58) ===")
     for step, (l, c, h) in brand.items():
-        print(f"brand-{step:<3} oklch({l}% {c} 205) -> {h}")
+        print(f"brand-{step:<3} oklch({l}% {c} 189.5) -> {h}")
+
+    print("\n=== Amber scale (hue 70, tertiary accent) ===")
+    for step, (l, c, h) in amber.items():
+        print(f"amber-{step:<3} oklch({l}% {c} 70) -> {h}")
+    print(f"star mark light (amber-60) vs bg-light: {contrast(amber[60][2], bg_light):.2f}:1 (UI min 3:1)")
+    print(f"star mark dark  (amber-50) vs bg-dark : {contrast(amber[50][2], bg_dark):.2f}:1 (UI min 3:1)")
+    # Loose text now also sits on bg.subtle (the page background behind cards).
+    sub_light, sub_dark = neutral[10][2], neutral[100][2]
+    for label, fg, bg in [
+        ("text.secondary on bg.subtle light", neutral[60][2], sub_light),
+        ("text.link on bg.subtle light", brand[70][2], sub_light),
+        ("text.secondary on bg.subtle dark", neutral[40][2], sub_dark),
+        ("text.link on bg.subtle dark", brand[30][2], sub_dark),
+        ("brand chip text on brand-10", brand[70][2], brand[10][2]),
+        ("brand chip text on brand-80 (dark)", brand[30][2], brand[80][2]),
+    ]:
+        print(f"{label}: {contrast(fg, bg):.2f}:1")
 
     # Semantic + momentum base recipes (light mode), solved to clear AA_TEXT_MIN.
     recipes = [

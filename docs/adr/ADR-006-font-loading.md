@@ -59,3 +59,10 @@ for these three roles since PR #25; this closes that gap (TECH-DEBT.md, row adde
   screenshot-verified (PR #25).
 - Revisit if a non-Latin subset is needed later (community-submitted content, i18n) —
   add the relevant `subsets` entries then, not preemptively.
+
+## Addendum — 2026-10-02 (Precision Editorial refresh)
+
+Source Serif 4 is **retired**: `layout.tsx` now loads only Inter and IBM Plex Mono
+(`--font-inter`, `--font-ibm-plex-mono`), and `globals.css` no longer defines
+`--font-serif`. Same self-hosted, no-CDN method as above; one fewer font file at build.
+See `docs/design/DESIGN-SYSTEM.md` "Precision Editorial refresh".

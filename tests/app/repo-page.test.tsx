@@ -55,7 +55,7 @@ describe("Repo page (/repo/[slug])", () => {
     const statusRow = within(metadata!).getByText("Status:").closest("div")!;
     expect(within(statusRow).getByText("Active")).toBeInTheDocument();
     expect(within(statusRow).getByTestId("status-chip-swatch")).toBeInTheDocument();
-    expect(screen.getByText(/📜 MIT/)).toBeInTheDocument();
+    expect(screen.getByText(/MIT/, { selector: "dd" })).toBeInTheDocument();
     expect(screen.getByText(/Ollama packages open-weight LLMs/)).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to the Grove.
     expect(screen.getByRole("link", { name: "AI" })).toHaveAttribute("href", "/grove/ai");
@@ -65,7 +65,7 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "neovim" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "Neovim" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 Apache-2\.0/)).toBeInTheDocument();
+    expect(screen.getByText(/Apache-2\.0/, { selector: "dd" })).toBeInTheDocument();
     expect(screen.getByText(/Neovim keeps Vim's modal editing model/)).toBeInTheDocument();
     // The body's own "## Related Grove" section links to the new Developer
     // Tools grove — proves the new content/repos/*.md file actually renders
@@ -80,7 +80,7 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "pocketbase" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "PocketBase" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 MIT/)).toBeInTheDocument();
+    expect(screen.getByText(/MIT/, { selector: "dd" })).toBeInTheDocument();
     expect(screen.getByText(/PocketBase ships as one small Go binary/)).toBeInTheDocument();
     // The body's own "## Related Grove" section links to Self-Hosted — proves
     // the new content/repos/*.md file actually renders through the real
@@ -186,7 +186,7 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "llamaindex" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "LlamaIndex" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 MIT/)).toBeInTheDocument();
+    expect(screen.getByText(/MIT/, { selector: "dd" })).toBeInTheDocument();
     expect(screen.getByText(/Open-source data framework for connecting large language models/)).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to the AI grove —
     // proves this new content/repos/*.md file renders through the real page,
@@ -204,7 +204,7 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "vim" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "Vim" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 Vim License/)).toBeInTheDocument();
+    expect(screen.getByText(/Vim License/, { selector: "dd" })).toBeInTheDocument();
     expect(screen.getByText(/A modal, keyboard-driven text editor descended from vi/)).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to Developer
     // Tools — proves this new content/repos/*.md file renders through the
@@ -240,7 +240,7 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "helix" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "Helix" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 MPL-2.0/)).toBeInTheDocument();
+    expect(screen.getByText(/MPL-2.0/, { selector: "dd" })).toBeInTheDocument();
     expect(
       screen.getByText(/A modal terminal text editor built in Rust/),
     ).toBeInTheDocument();
@@ -262,7 +262,7 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "zed" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "Zed" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 GPL-3.0 \/ AGPL-3.0/)).toBeInTheDocument();
+    expect(screen.getByText(/GPL-3.0 \/ AGPL-3.0/, { selector: "dd" })).toBeInTheDocument();
     expect(
       screen.getByText(/A GPU-accelerated code editor built from scratch in Rust/),
     ).toBeInTheDocument();
@@ -302,7 +302,7 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "tig" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "Tig" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 GPL-2.0/)).toBeInTheDocument();
+    expect(screen.getByText(/GPL-2.0/, { selector: "dd" })).toBeInTheDocument();
     expect(
       screen.getByText(/An ncurses-based text-mode interface for exploring a Git repository's history/),
     ).toBeInTheDocument();
@@ -323,7 +323,7 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "gitui" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "GitUI" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 MIT/)).toBeInTheDocument();
+    expect(screen.getByText(/MIT/, { selector: "dd" })).toBeInTheDocument();
     expect(
       screen.getByText(/A terminal UI for git written in Rust, built for speed on very large repositories/),
     ).toBeInTheDocument();
@@ -344,7 +344,7 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "duckdb" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "DuckDB" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 MIT/)).toBeInTheDocument();
+    expect(screen.getByText(/MIT/, { selector: "dd" })).toBeInTheDocument();
     expect(
       screen.getByText(/An in-process SQL database built for fast analytical queries/),
     ).toBeInTheDocument();
@@ -375,7 +375,7 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "clickhouse" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "ClickHouse" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 Apache-2.0/)).toBeInTheDocument();
+    expect(screen.getByText(/Apache-2.0/, { selector: "dd" })).toBeInTheDocument();
     expect(
       screen.getByText(
         /A distributed, column-oriented database built for real-time analytics at scale/,
@@ -408,7 +408,7 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "sqlite" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "SQLite" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 Public Domain/)).toBeInTheDocument();
+    expect(screen.getByText(/Public Domain/)).toBeInTheDocument();
     expect(
       screen.getByText(/An embedded, serverless SQL database/),
     ).toBeInTheDocument();
@@ -439,7 +439,7 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "postgresql" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "PostgreSQL" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 PostgreSQL License/)).toBeInTheDocument();
+    expect(screen.getByText(/PostgreSQL License/)).toBeInTheDocument();
     expect(
       screen.getByText(/A general-purpose, client-server relational database/),
     ).toBeInTheDocument();
@@ -470,7 +470,7 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "localai" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "LocalAI" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 MIT/)).toBeInTheDocument();
+    expect(screen.getByText(/MIT/)).toBeInTheDocument();
     expect(screen.getByText(/LocalAI runs open-weight models/)).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to the AI grove —
     // proves this new content/repos/*.md file renders through the real page,
@@ -486,7 +486,7 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "dokploy" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "Dokploy" })).toBeInTheDocument();
-    expect(screen.getByText(/📜 Apache-2\.0/)).toBeInTheDocument();
+    expect(screen.getByText(/Apache-2\.0/, { selector: "dd" })).toBeInTheDocument();
     expect(screen.getByText(/Dokploy wraps Docker and Docker Swarm/)).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to Self-Hosted —
     // proves this new content/repos/*.md file renders through the real page,

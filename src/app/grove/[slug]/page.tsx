@@ -24,12 +24,12 @@ export default async function GrovePage({ params }: PageProps) {
   if (!grove) notFound();
 
   return (
-    <article>
+    <article className="max-w-3xl">
       <p className="font-sans text-sm font-medium text-text-link">Grove</p>
       <h1 className="font-sans text-2xl font-semibold tracking-tight text-text-default">
         {grove.name}
       </h1>
-      <p className="mt-2 font-serif text-lg text-text-secondary">
+      <p className="mt-2 text-lg text-text-secondary">
         {grove.description}
       </p>
 

@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Repo } from "@/lib/content";
 import { numberFormatter } from "@/lib/format";
 import StatusChip from "@/components/StatusChip";
+import StarIcon from "@/components/StarIcon";
 
 /** One open-source alternative, resolved against `/content/repos` by the caller
  * (a server component — content/snapshot reads happen there, not in this
@@ -91,8 +92,8 @@ export default function AlternativesTable({ openSource, commercial }: Alternativ
   if (openSource.length === 0 && commercial.length === 0) {
     return (
       <section className="mt-6">
-        <h2 className="font-sans text-xl font-semibold text-text-default">Alternatives</h2>
-        <p className="mt-2 font-serif text-sm text-text-secondary">
+        <h2 className="mt-0 font-sans text-xl font-semibold text-text-default">Alternatives</h2>
+        <p className="mt-2 text-sm text-text-secondary">
           No alternatives documented yet.
         </p>
       </section>
@@ -113,7 +114,7 @@ export default function AlternativesTable({ openSource, commercial }: Alternativ
 
   return (
     <section className="mt-6">
-      <h2 className="font-sans text-xl font-semibold text-text-default">Alternatives</h2>
+      <h2 className="mt-0 font-sans text-xl font-semibold text-text-default">Alternatives</h2>
 
       {openSource.length > 0 && (
         // overflow-x-auto is a safety net, not the primary mobile strategy: the
@@ -168,7 +169,14 @@ export default function AlternativesTable({ openSource, commercial }: Alternativ
                     )}
                   </td>
                   <td className="py-2 pr-4 font-mono text-text-secondary">
-                    {alt.stars !== null ? `⭐ ${numberFormatter.format(alt.stars)}` : "—"}
+                    {alt.stars !== null ? (
+                      <span className="inline-flex items-center gap-1">
+                        <StarIcon />
+                        {numberFormatter.format(alt.stars)}
+                      </span>
+                    ) : (
+                      "—"
+                    )}
                   </td>
                   {/* Primary category only, same as RepoCard.tsx's card footer —
                       not the repo page header's full comma-joined list, which
@@ -191,7 +199,7 @@ export default function AlternativesTable({ openSource, commercial }: Alternativ
           <h3 className="font-sans text-sm font-medium text-text-secondary">
             Commercial alternatives
           </h3>
-          <ul className="mt-2 flex flex-wrap gap-2">
+          <ul className="mt-2 flex list-none flex-wrap gap-2 p-0">
             {commercial.map(({ name, alternativeSlug }) => (
               <li key={name} className="rounded-sm bg-bg-subtle p-2 font-sans text-sm">
                 {alternativeSlug ? (

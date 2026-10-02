@@ -130,114 +130,128 @@ export default async function RepoPage({ params }: PageProps) {
     );
   }
 
-  return (
-    <article>
-      <p className="font-sans text-sm font-medium text-text-link">Repository</p>
-      <h1 className="font-sans text-2xl font-semibold tracking-tight text-text-default">
-        {repo.name}
-      </h1>
-      <a
-        href={`https://github.com/${repo.github}`}
-        className="font-mono text-sm text-text-secondary hover:underline"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        github.com/{repo.github}
-      </a>
+  // `[&>:first-child]:mt-0!`: the article-level prose rules (globals.css) give headings
+  // and paragraphs a top margin that would otherwise double the card's own padding.
+  const CARD =
+    "rounded-md border border-border-subtle bg-bg-elevated p-4 shadow-elevation-1 sm:p-6 [&>:first-child]:mt-0!";
 
-      <dl className="mt-4 flex flex-wrap gap-x-6 gap-y-1 font-sans text-sm text-text-secondary">
-        <div>
-          <dt className="inline font-medium text-text-default">Status: </dt>
-          <dd className="inline">
-            <StatusChip status={repo.status} />
-          </dd>
-        </div>
-        {heat && (
+  return (
+    <article className="flex flex-col gap-6">
+      <header className={`${CARD} sm:p-8`}>
+        <p className="font-mono text-sm text-text-link">Repository</p>
+        <h1 className="mt-1 font-sans text-3xl font-semibold tracking-tight text-text-default">
+          {repo.name}
+        </h1>
+        <a
+          href={`https://github.com/${repo.github}`}
+          className="font-mono text-sm text-text-secondary hover:underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          github.com/{repo.github}
+        </a>
+
+        <dl className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 font-sans text-sm text-text-secondary">
           <div>
-            <dt className="inline font-medium text-text-default">Momentum: </dt>
+            <dt className="inline font-medium text-text-default">Status: </dt>
             <dd className="inline">
-              <MomentumChip heat={heat} />
+              <StatusChip status={repo.status} />
             </dd>
           </div>
-        )}
-        <div>
-          <dt className="inline font-medium text-text-default">License: </dt>
-          <dd className="inline">📜 {repo.license}</dd>
+          {heat && (
+            <div>
+              <dt className="inline font-medium text-text-default">Momentum: </dt>
+              <dd className="inline">
+                <MomentumChip heat={heat} />
+              </dd>
+            </div>
+          )}
+          <div>
+            <dt className="inline font-medium text-text-default">License: </dt>
+            <dd className="inline font-mono">{repo.license}</dd>
+          </div>
+          <div>
+            <dt className="inline font-medium text-text-default">Category: </dt>
+            <dd className="inline font-mono">{repo.category.join(", ")}</dd>
+          </div>
+        </dl>
+      </header>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+        <div className="flex min-w-0 flex-col gap-6">
+          <div className={CARD}>
+            <StarGrowthChart history={snapshotHistory} />
+          </div>
+
+          <div className={CARD}>
+            <Markdown>{bodyBeforeAlternatives}</Markdown>
+          </div>
+
+          <div className={CARD}>
+            <AlternativesTable openSource={openSourceAlternatives} commercial={commercialAlternatives} />
+          </div>
+
+          <div className={CARD}>
+            {/* The body's own "## Related Grove" section (hand-authored in
+                content/repos/*.md) already links back to the Grove — rendering
+                a second, computed one here would just duplicate it. */}
+            <Markdown>{bodyAfterAlternatives}</Markdown>
+          </div>
         </div>
-        <div>
-          <dt className="inline font-medium text-text-default">Category: </dt>
-          <dd className="inline">{repo.category.join(", ")}</dd>
-        </div>
-      </dl>
 
-      <StarGrowthChart history={snapshotHistory} />
+        <aside className="flex min-w-0 flex-col gap-6" aria-label="Repository sidebar">
+          {comparisons.length > 0 && (
+            <section className={CARD}>
+              <h2 className="!mt-0 font-sans text-lg font-semibold text-text-default">Compared with</h2>
+              <ul className="mt-3 flex list-none flex-wrap gap-2 p-0">
+                {comparisons.map(({ comparison, otherRepo }) => (
+                  <li key={comparison.slug}>
+                    <Link
+                      href={`/compare/${repo.slug}/${otherRepo.slug}`}
+                      className="inline-block rounded-sm bg-bg-brand-subtle px-2 py-1 font-sans text-sm text-text-on-brand-subtle hover:underline"
+                    >
+                      vs {otherRepo.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
-      <div className="mt-6">
-        <Markdown>{bodyBeforeAlternatives}</Markdown>
+          {/* UX-2026-004: "Latest" is supplementary and must never sit above the
+              editorial lede. In the two-column layout it lives in the sidebar, so
+              the main column's order is still chart -> editorial body ->
+              alternatives -> related Grove (PRODUCT.md §5/§10), and on narrow
+              screens the sidebar stacks *after* the main column, i.e. last. */}
+          <section className={CARD}>
+            <h2 className="!mt-0 font-sans text-lg font-semibold text-text-default">Latest</h2>
+            {releases.length > 0 ? (
+              <ul className="mt-3 flex list-none flex-col gap-2 p-0">
+                {releases.map((release) => (
+                  <li
+                    key={release.tagName}
+                    className="flex flex-wrap items-baseline justify-between gap-x-2 font-sans text-sm"
+                  >
+                    <a
+                      href={release.htmlUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-text-link hover:underline"
+                    >
+                      {release.name ?? release.tagName}
+                    </a>
+                    <span className="font-mono text-sm text-text-secondary">
+                      {dateFormatter.format(new Date(release.publishedAt))}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-3 font-sans text-sm text-text-secondary">No recent releases.</p>
+            )}
+          </section>
+        </aside>
       </div>
-
-      <AlternativesTable openSource={openSourceAlternatives} commercial={commercialAlternatives} />
-
-      <div className="mt-6">
-        {/* The body's own "## Related Grove" section (hand-authored in
-            content/repos/*.md) already links back to the Grove — rendering
-            a second, computed one here would just duplicate it. */}
-        <Markdown>{bodyAfterAlternatives}</Markdown>
-      </div>
-
-      {comparisons.length > 0 && (
-        <section className="mt-6">
-          <h2 className="font-sans text-xl font-semibold text-text-default">Compared with</h2>
-          <ul className="mt-3 flex flex-wrap gap-2">
-            {comparisons.map(({ comparison, otherRepo }) => (
-              <li key={comparison.slug}>
-                <Link
-                  href={`/compare/${repo.slug}/${otherRepo.slug}`}
-                  className="inline-block rounded-sm bg-bg-subtle p-2 font-sans text-sm text-text-link hover:underline"
-                >
-                  vs {otherRepo.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {/* UX-2026-004: placed last, after the editorial narrative, alternatives and
-          comparisons — matching PRODUCT.md §5/§10's page-perspective order
-          (Overview -> Alternatives -> Comparison -> Momentum -> News). Originally
-          landed (#74) directly after the star chart and before the repo's own
-          one-sentence tagline (the first line of its Markdown body); with no distinct
-          lede styling on that tagline, "Latest" pushed it down to visually read as a
-          trailing continuation of the "No recent releases." empty state rather than
-          the page's lead sentence. See docs/design/findings/UX-2026-004. */}
-      <section className="mt-6">
-        <h2 className="font-sans text-xl font-semibold text-text-default">Latest</h2>
-        {releases.length > 0 ? (
-          <ul className="mt-3 flex flex-col gap-2">
-            {releases.map((release) => (
-              <li
-                key={release.tagName}
-                className="flex flex-wrap items-baseline gap-x-2 font-sans text-sm"
-              >
-                <a
-                  href={release.htmlUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-text-link hover:underline"
-                >
-                  {release.name ?? release.tagName}
-                </a>
-                <span className="font-mono text-xs text-text-secondary">
-                  {dateFormatter.format(new Date(release.publishedAt))}
-                </span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="mt-3 font-sans text-sm text-text-secondary">No recent releases.</p>
-        )}
-      </section>
     </article>
   );
 }
