@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-10-02T02:50:00Z"
-  holder: "dev"
-  last_run: "2026-10-02T01:27:36Z"
+  current_run: null
+  holder: null
+  last_run: "2026-10-02T03:14:30Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,14 +19,68 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 67
-  features_completed: 32
+  runs: 68
+  features_completed: 33
   bugs_fixed: 11
   security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
 
 next_actions:
+  - "2026-10-02 (run 50): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
+    Held off Phase 4 feature work again this run, consistent with runs 33-49. Picked up
+    run 49's own next-action pointer: coolify.md/dokploy.md have both listed Vercel,
+    Heroku, and Netlify under alternatives.commercial since bootstrap, but none had its
+    own /alternative/:slug page — the next highest-value commercial-alternative gap (2
+    referencing repos each), after Firebase (run 48, 3 repos) and GitKraken/Sourcetree
+    (run 49, 3 repos each). Major task: added content/alternatives/vercel.md, heroku.md,
+    and netlify.md together (closely related — same 2 referencing repos, same paas
+    category), each listing Coolify/Dokploy as open-source alternatives (both
+    slugify-resolve to real repo pages) and cross-referencing the other two commercial
+    platforms. Facts (Vercel's Hobby plan is contractually restricted to personal/
+    non-commercial use per vercel.com/legal/terms section 4, and is paused once
+    free-tier usage is exceeded per vercel.com/docs/plans; Heroku removed its free
+    dyno/Postgres/Key-Value Store plans in November 2022, with usage-based Eco dynos
+    and $5/month Mini Postgres and $3/month Mini Key-Value Store as the current
+    minimums, per help.heroku.com's own FAQ; Netlify's free plan explicitly permits
+    commercial projects but suspends a site for the rest of the calendar month once its
+    100GB bandwidth/300 build minute/125k function invocation allowance is exceeded,
+    per netlify.com's own 'Introducing Netlify's Free plan' post) verified via
+    WebSearch/WebFetch against each vendor's own documentation, ToS, or blog — not
+    scraped descriptions. Small related task: fixed TECH-DEBT.md's 2026-10-01 row
+    (filed by run 48's reviewer) — AlternativesTable.tsx's commercial-alternative chips
+    always rendered as inert plain-text pills, never a link to a matching
+    /alternative/:slug page even once one existed (e.g. Firebase on /repo/appwrite
+    since run 48). Changed its commercial prop from string[] to a new
+    ResolvedCommercialAlternative[] ({name, alternativeSlug}), resolved in
+    src/app/repo/[slug]/page.tsx via getAlternative(slugifyAlternativeName(name)) the
+    same way open-source names already resolve against getAllRepos(); this run's own
+    new alternative pages gave /repo/coolify and /repo/dokploy's long-standing
+    Vercel/Heroku/Netlify chips somewhere real to link to for the first time.
+    Independent review (subagent, skeptical-senior-engineer pass) found no BLOCKER/
+    MAJOR issues with the content or code (verified frontmatter schema, no
+    self-reference, every Best fit bullet on a single unwrapped source line per the
+    extractListItems-truncation lesson from runs 48/49, no slug-like commercial names,
+    facts independently sourced not copy-pasted marketing), but caught a real MAJOR
+    coverage gap: nothing exercised the actual /repo/coolify or /repo/dokploy rendered
+    output with the new resolution wired in, only the isolated component and
+    /alternative/[slug] unit tests. Fixed by adding a real-content integration test
+    (tests/app/repo-page.test.tsx, 'links Coolify's commercial chips to their own
+    /alternative/:slug pages') before merge, and folded the TECH-DEBT.md row's
+    resolved-status update into the same commit per the review's second (MINOR)
+    finding. 346/346 tests pass (8 new/updated), lint clean, tsc --noEmit clean, npm
+    audit --audit-level=high 0 vulnerabilities, all run locally; npm run build
+    reproduced the known ADR-006 sandbox font-fetch gap (confirmed it compiles past
+    content loading first), left to CI's GitHub-hosted runner — all 3 checks (CI,
+    Factory guardrails, Design screenshots & accessibility) green on PR #102 before
+    squash-merging it myself; post-merge CI on main also confirmed green. CHANGELOG.md/
+    PROJECT_STATE.md/DECISIONS.md/.factory/decisions.yaml updated. Next: re-check
+    RG-7/8/9; no further dangling commercial-alternative-reference gaps are known —
+    future decision-free runs may need a fresh content/validator audit or a
+    TECH-DEBT.md row (e.g. #32's Grove Heat v1 threshold-revisit) if RG-7/8/9 are still
+    open by then."
   - "2026-10-02 (run 49): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
@@ -338,38 +392,9 @@ next_actions:
     was already the real source of truth. Next: re-check RG-7/8/9 each run; tig/gitui
     (lazygit.md) is the only remaining dangling alternatives.open_source gap of this
     kind."
-  - "2026-10-01 (run 41): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
-    — still exactly the one original message, no owner reply. RG-7's default_due_at
-    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
-    Held off Phase 4 feature work again this run, consistent with runs 33-40. Audited
-    content/ for the next decision-free content gap: content/repos/vim.md and
-    content/repos/neovim.md have both listed 'helix' under alternatives.open_source
-    since runs 33/40, but content/repos/helix.md never existed, so it rendered as
-    'Not yet profiled' on both pages — the same class of dangling-reference gap runs
-    33/34/37/38/39/40 closed. Major task: added content/repos/helix.md (helix-editor/
-    helix, MPL-2.0, Developer Tools grove), cross-referencing both Vim and Neovim.
-    Facts (Rust implementation, Kakoune-inspired selection-first modal editing with
-    multiple selections as a core primitive, built-in Tree-sitter/LSP with no plugins
-    required, MPL-2.0 license, no official stable plugin system — the experimental
-    Steel/Scheme scripting layer requires building from a fork) verified via
-    WebFetch/WebSearch against helix-editor.com, Gentoo's package database, and an
-    independent walkthrough of Steel's current status, not scraped from a one-line
-    description. Independent review (subagent, skeptical-senior-engineer pass) found
-    no BLOCKER/MAJOR issues; content/frontmatter/tests all verified against house
-    style and the content schema's validators (assertGrovesExist, assertValidAlternatives,
-    assertNoGithubCollisions). Small related task: added Helix to
-    content/groves/developer-tools.md's Core projects. 319/319 tests pass (7
-    new/updated), lint clean, tsc --noEmit clean, npm audit --audit-level=high 0
-    vulnerabilities, all run locally; npm run build reproduced the known ADR-006
-    sandbox font-fetch gap (confirmed it compiles past content loading first), left to
-    CI's GitHub-hosted runner, which came back green (3/3 checks, including the
-    non-gating screenshot job). PR #90 merged (squash). Updated PROJECT_STATE.md (next
-    action, milestones), CHANGELOG.md, DECISIONS.md, .factory/decisions.yaml (RG-7/8/9
-    re-check notes). Remaining one-off content gaps for future runs: tig, gitui
-    (lazygit.md's dangling refs), zed (vim.md/neovim.md/helix.md's shared dangling ref)."
-  - "Older next_actions entries (runs 22-40) archived to docs/factory/run-history.md
-    on 2026-10-01 (dev runs 44/46/47/48) -- TECH-DEBT.md's 2026-10-01 row: this list's
-    unbounded growth was costing a real tool-output truncation on every lock-
+  - "Older next_actions entries (runs 22-41) archived to docs/factory/run-history.md
+    on 2026-10-01/02 (dev runs 44/46/47/48/50) -- TECH-DEBT.md's 2026-10-01 row: this
+    list's unbounded growth was costing a real tool-output truncation on every lock-
     acquisition read. Keeping only the most recent ~9 entries here going forward;
     full history (including these) stays in docs/factory/run-history.md, which
     nothing in scripts/factory/ reads -- safe to keep trimming the same way each run."

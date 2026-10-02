@@ -7,6 +7,34 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-02 — Dev run 50: added `content/alternatives/vercel.md`, `heroku.md`, and
+  `netlify.md` (PR #102). `coolify.md` and `dokploy.md` have both listed Vercel,
+  Heroku, and Netlify under `alternatives.commercial` since bootstrap with no
+  corresponding alternative pages — the next highest-value gap after Firebase (run
+  48) and GitKraken/Sourcetree (run 49), tied at 2 referencing repos each. Each new
+  page lists Coolify and Dokploy as Open-source alternatives (both already have real
+  repo pages) and cross-references the other two commercial platforms. Facts
+  verified against each vendor's own documentation, not scraped: Vercel's Hobby plan
+  is contractually non-commercial-use-only and pauses once free-tier usage is
+  exceeded (vercel.com/legal/terms, vercel.com/docs/plans); Heroku removed its free
+  dyno/Postgres/Key-Value Store plans in November 2022, with usage-based Eco dynos
+  and $5/$3-per-month Mini data plans as the current minimums (help.heroku.com's own
+  FAQ); Netlify's free plan explicitly permits commercial projects but suspends a
+  site for the rest of the month once its usage allowance is exceeded (netlify.com's
+  own "Introducing Netlify's Free plan" post). Small related task: fixed
+  TECH-DEBT.md's 2026-10-01 row — `AlternativesTable.tsx`'s commercial chips never
+  linked forward to a matching `/alternative/:slug` page even once one existed (e.g.
+  Firebase on `/repo/appwrite` since run 48). Changed its `commercial` prop from
+  `string[]` to `ResolvedCommercialAlternative[]`, resolved in
+  `src/app/repo/[slug]/page.tsx` the same way open-source names already resolve.
+  Independent review (subagent, skeptical-senior-engineer pass) found no
+  BLOCKER/MAJOR content or code issues, but caught a real coverage gap — nothing
+  exercised the actual `/repo/coolify`/`/repo/dokploy` rendered output with the new
+  resolution wired in — fixed with a real-content integration test
+  (`tests/app/repo-page.test.tsx`) before merge. 346/346 tests pass (8 new/updated),
+  lint/tsc clean, 0 vulnerabilities, all run locally; build reproduced the known
+  ADR-006 sandbox font-fetch gap, confirmed green on CI's real GitHub-hosted runner
+  (all 3 checks, pre- and post-merge).
 - 2026-10-02 — Dev run 49: added `content/alternatives/gitkraken.md` and
   `content/alternatives/sourcetree.md` (PR #101). Three existing repo pages
   (`gitui.md`, `lazygit.md`, `tig.md`) already listed both GitKraken and Sourcetree

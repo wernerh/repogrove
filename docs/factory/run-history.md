@@ -12,6 +12,35 @@ context) to skim, same role the archived entries played in state.yaml before thi
 Newest-archived-first, same order they appeared in state.yaml.
 
 ```yaml
+  - "2026-10-01 (run 41): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
+    Held off Phase 4 feature work again this run, consistent with runs 33-40. Audited
+    content/ for the next decision-free content gap: content/repos/vim.md and
+    content/repos/neovim.md have both listed 'helix' under alternatives.open_source
+    since runs 33/40, but content/repos/helix.md never existed, so it rendered as
+    'Not yet profiled' on both pages — the same class of dangling-reference gap runs
+    33/34/37/38/39/40 closed. Major task: added content/repos/helix.md (helix-editor/
+    helix, MPL-2.0, Developer Tools grove), cross-referencing both Vim and Neovim.
+    Facts (Rust implementation, Kakoune-inspired selection-first modal editing with
+    multiple selections as a core primitive, built-in Tree-sitter/LSP with no plugins
+    required, MPL-2.0 license, no official stable plugin system — the experimental
+    Steel/Scheme scripting layer requires building from a fork) verified via
+    WebFetch/WebSearch against helix-editor.com, Gentoo's package database, and an
+    independent walkthrough of Steel's current status, not scraped from a one-line
+    description. Independent review (subagent, skeptical-senior-engineer pass) found
+    no BLOCKER/MAJOR issues; content/frontmatter/tests all verified against house
+    style and the content schema's validators (assertGrovesExist, assertValidAlternatives,
+    assertNoGithubCollisions). Small related task: added Helix to
+    content/groves/developer-tools.md's Core projects. 319/319 tests pass (7
+    new/updated), lint clean, tsc --noEmit clean, npm audit --audit-level=high 0
+    vulnerabilities, all run locally; npm run build reproduced the known ADR-006
+    sandbox font-fetch gap (confirmed it compiles past content loading first), left to
+    CI's GitHub-hosted runner, which came back green (3/3 checks, including the
+    non-gating screenshot job). PR #90 merged (squash). Updated PROJECT_STATE.md (next
+    action, milestones), CHANGELOG.md, DECISIONS.md, .factory/decisions.yaml (RG-7/8/9
+    re-check notes). Remaining one-off content gaps for future runs: tig, gitui
+    (lazygit.md's dangling refs), zed (vim.md/neovim.md/helix.md's shared dangling ref)."
   - "2026-10-01 (run 40): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.

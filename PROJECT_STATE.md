@@ -15,9 +15,9 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 49: RG-7/8/9 still no reply (defaults 2026-10-03). Added content/alternatives/
-gitkraken.md + sourcetree.md (tied highest-value commercial gap, 3 repos each). Next:
-re-check RG-7/8/9; Vercel/Heroku/Netlify (coolify.md, dokploy.md — 2 repos) is next.
+Run 50: RG-7/8/9 still no reply (defaults 2026-10-03). Added vercel/heroku/netlify
+alternative pages + fixed commercial-chip linking (TECH-DEBT.md). Next: re-check
+RG-7/8/9; no dangling commercial-alternative gaps known — needs a fresh content audit.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -54,7 +54,7 @@ None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 stays stubbed u
   sitemap/robots (#64), `/search` (#63, ADR-008), newsletter form UI (#65, PR #71),
   basic news widget (#72, PR #74) — Phase 3 MVP gate complete.
 - [x] 2026-09-30/10-02 — Decision-free content: dev-tools grove, +PocketBase/Appwrite,
-  commercial-slug fix, LocalAI/Dokploy/LlamaIndex/Vim/Helix/Zed/Tig/GitUI (#81, #83-90,
-  #92-93); all comparisons incl. langchain-llamaindex; /alternative/firebase,
-  gitkraken, sourcetree (#85, #94-95, #97-98, #100-101) — done.
+  commercial-slug fix, LocalAI/Dokploy/LlamaIndex/Vim/Helix/Zed/Tig/GitUI, all
+  comparisons; /alternative/firebase, gitkraken, sourcetree, vercel, heroku, netlify
+  (#81, #83-90, #92-95, #97-98, #100-102); commercial-chip linking fixed (#102).
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (#76-78), awaiting owner
