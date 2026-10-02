@@ -20,8 +20,11 @@ deployment (none exists yet — this is a placeholder for when one does).
 Frontend (XSS/sanitiser bypasses, secrets in bundles, CSP/headers), ingestion
 API/jobs (SSRF via user-controlled GitHub URLs, injection, rate limiting, error
 leakage), repository-controlled CI/CD (workflow permissions, supply chain, secret
-scanning). Live cloud resources are out of scope until hosting exists (ADR-002) — see
-`docs/security/README.md` for the full methodology and OWASP coverage table.
+scanning). A real deployment now exists (Azure Static Web Apps, since 2026-10-02 — see
+SEC-006), but this lane still never inspects or touches the live cloud resource
+directly — repository-controlled config and workflow files, yes; the live Azure
+resource itself, no. See `docs/security/README.md` for the full methodology and OWASP
+coverage table.
 
 ## Principles
 - No secrets, no real personal data, ever, in this repository.
