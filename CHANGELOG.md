@@ -7,6 +7,21 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-02 — Dev run 57: added Immich (`content/repos/immich.md`, `immich-app/immich`,
+  AGPL-3.0) to the Self-Hosted grove — the next item from `PRODUCT.md` §2's own named
+  example list (Coolify, Dokploy, CasaOS, Portainer, Immich, Nextcloud) not yet built.
+  Self-hosted photo/video backup with native mobile apps and ML-powered face
+  recognition/search, positioned against Google Photos/Apple iCloud Photos (spec §8's
+  "replace paid software" pattern); no open-source alternative exists in the catalog yet
+  for this category, so no comparison page was needed. Two other spec-named candidates
+  ("Continue", "Aider" — both from the AI grove's example list) were researched and
+  rejected this run: Continue was acquired by Cursor and is reported EOL/discontinued in
+  2026; Aider has an open, unresolved GitHub issue asking whether it has stopped
+  receiving updates — shipping either as `status: active` would misrepresent it. 375/375
+  tests pass (5 new/updated), lint/`tsc --noEmit` clean, 0 `npm audit` findings, all run
+  locally; `npm run build` reproduced the known ADR-006 sandbox font-fetch gap, left to
+  CI (green, all 4 checks). Independent review (subagent) found no BLOCKER/MAJOR/MINOR
+  issues. PR #111. (dev)
 - 2026-10-02 — Dev run 56: completed the Databases grove's pairwise comparison matrix
   — only 3 of 6 possible cross-pairs among DuckDB/ClickHouse/SQLite/PostgreSQL existed;
   added the 3 missing ones (`duckdb-vs-postgresql.md`, `clickhouse-vs-postgresql.md`,

@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-10-02T17:11:30Z"
-  holder: "dev"
-  last_run: "2026-10-02T14:50:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-10-02T17:20:43Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,14 +19,55 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 74
-  features_completed: 39
+  runs: 75
+  features_completed: 40
   bugs_fixed: 12
   security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
 
 next_actions:
+  - "2026-10-02 (run 57): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03T13:02:34Z) hasn't passed (~20h off at this run's start). RG-8/RG-9 have
+    no default and stay open regardless. Held off Phase 4 feature work again this run.
+    Major task: added content/repos/immich.md (immich-app/immich, AGPL-3.0, active) to
+    the Self-Hosted grove — the next item from PRODUCT.md §2's own named example list
+    (Coolify, Dokploy, CasaOS, Portainer, Immich, Nextcloud) not yet built. Positioned
+    against Google Photos/Apple iCloud Photos (spec §8's 'replace paid software'
+    pattern); no open-source alternative exists in the catalog yet for this category,
+    so alternatives.open_source is empty and no comparison page was needed. Facts
+    (license, active-development status past v1.0, an optional paid commercial license
+    alongside the AGPL-3.0 code) verified via WebSearch against the project's own
+    GitHub repo/Discussions and independent third-party coverage (PrivacyTools.io,
+    AlternativeTo) — not scraped from a one-line GitHub description. Researched and
+    rejected two other spec-named candidates this run after fact-checking surfaced real
+    accuracy risk: 'Continue' (continuedev/continue, from the AI grove's own example
+    list) was acquired by Cursor and is reported EOL/discontinued in 2026 across
+    multiple independent sources; 'Aider' (Aider-AI/aider, same list) has an open,
+    unresolved GitHub issue asking whether it has stopped receiving updates. Shipping
+    either as status: active would misrepresent it, so neither was added — this
+    sandbox's WebFetch tool required interactive provenance approval unavailable in an
+    unattended run, so research relied on WebSearch snippets against multiple
+    independent sources instead of a direct page fetch. Independent review (subagent,
+    skeptical-senior-engineer pass) found no BLOCKER/MAJOR/MINOR issues — verified every
+    content-shape invariant in src/lib/content.ts (assertSlugIsKebabCase,
+    assertNoWrappedListItems, assertValidAlternatives, assertGrovesExist) against the
+    new file line-by-line, and grepped the full tests/ directory independently to
+    confirm no other hardcoded repo/grove count was missed (tests/lib/content.test.ts's
+    getAllRepos/getReposInGrove('self-hosted') slug lists, tests/app/repo-page.test.tsx's
+    generateStaticParams list, tests/app/home.test.tsx's card-count assertions: 5->6
+    repos for Self-Hosted, 25->26 total card links). 375/375 tests pass (5 new/updated),
+    lint/tsc --noEmit clean, npm audit --audit-level=high 0 vulnerabilities, all run
+    locally; npm run build reproduced the known ADR-006 sandbox font-fetch gap, left to
+    CI's GitHub-hosted runner — all 4 checks (CI, Factory guardrails, Azure Static Web
+    Apps CI/CD, Design screenshots & accessibility) green on PR #111 before
+    squash-merging it myself; post-merge CI on main also confirmed green.
+    CHANGELOG.md/PROJECT_STATE.md/DECISIONS.md updated (.factory/decisions.yaml
+    unchanged — no status change, due date not yet passed). Next: apply RG-7's default
+    if still unanswered by 2026-10-03T13:02:34Z; grow Self-Hosted further
+    (Portainer/Nextcloud/CasaOS per the spec's own example list, if each survives the
+    same fact-check rigor) or find the next content gap."
   - "2026-10-02 (run 56): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03T13:02:34Z) hasn't passed (~22h off at this run's start — the next dev
@@ -387,48 +428,8 @@ next_actions:
     CHANGELOG.md/PROJECT_STATE.md/DECISIONS.md/.factory/decisions.yaml updated. Next:
     re-check RG-7/8/9; Vercel/Heroku/Netlify (coolify.md, dokploy.md — 2 repos each) is
     the next commercial-alternative-page gap if RG-7/8/9 are still open by then."
-  - "2026-10-01 (run 48): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
-    — still exactly the one original message, no owner reply. RG-7's default_due_at
-    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
-    Held off Phase 4 feature work again this run, consistent with runs 33-47. With
-    content/'s open-source dangling-reference and comparison gaps fully closed (runs
-    33-47), looked for the equivalent gap on the commercial side: grepped every
-    content/repos/*.md's alternatives.commercial against content/alternatives/*.md and
-    found only content/alternatives/notion.md existed, despite three repos (appwrite.md,
-    supabase.md, pocketbase.md) already naming Firebase as their commercial alternative
-    — the highest-value gap (most repos pointing at one missing target), same
-    prioritization precedent run 37 used for LocalAI's open-source gap. Major task:
-    added content/alternatives/firebase.md — Open source: Appwrite/Supabase/PocketBase
-    (all three slugify-resolve to real repo pages, rendering as real links with live
-    star counts, unlike notion.md's four unresolved entries); Commercial: AWS Amplify
-    (already named alongside Firebase in two of the three repos' own
-    alternatives.commercial). Independent review (subagent, skeptical-senior-engineer
-    pass) caught a real MINOR: two Best-fit bullets over-generalized a claim across all
-    three repos when it only held for some (e.g. a 'real SQL' claim that doesn't fit
-    Appwrite's own documented 'document-style database, not raw SQL' Con) — tightened
-    to scope each claim to the repo(s) it actually applies to before merge. Small
-    related tasks: updated the two hardcoded alternatives-slug test fixtures this
-    content addition affects (tests/lib/content.test.ts, tests/app/alternative-page.
-    test.tsx) and added a new real-content render test for /alternative/firebase
-    exercising the resolved-link branch (previously only covered by a synthetic mock);
-    closed out a stale TECH-DEBT.md row (the /trending/rising row-duplication the
-    design lane's RankedList extraction, run 35, had already fixed — verified both
-    pages import it) and filed a new row for a gap the review surfaced
-    (AlternativesTable.tsx's commercial chips don't link out to a matching
-    /alternative/:slug page even when one now exists — out of scope for this
-    content-only PR). 334/334 tests pass, lint/tsc --noEmit clean, npm audit
-    --audit-level=high 0 vulnerabilities, all run locally; npm run build reproduced the
-    known ADR-006 sandbox font-fetch gap (confirmed it compiles past content loading
-    first), left to CI's GitHub-hosted runner — all 3 checks (CI, Factory guardrails,
-    Design screenshots & accessibility) green on PR #100 before squash-merging it
-    myself; post-merge CI on main also confirmed green. CHANGELOG.md/PROJECT_STATE.md/
-    DECISIONS.md/.factory/decisions.yaml updated. Next: re-check RG-7/8/9;
-    GitKraken/Sourcetree (named by gitui.md, lazygit.md, tig.md — 3 repos, same
-    highest-value shape as Firebase) and Vercel/Heroku/Netlify (named by coolify.md,
-    dokploy.md — 2 repos) are the next commercial-alternative-page gaps if RG-7/8/9 are
-    still open by then."
-  - "Older next_actions entries (runs 22-47) archived to docs/factory/run-history.md
-    on 2026-10-01/02 (dev runs 44/46/47/48/50/51/52/53/54/55/56) -- TECH-DEBT.md's
+  - "Older next_actions entries (runs 22-48) archived to docs/factory/run-history.md
+    on 2026-10-01/02 (dev runs 44/46/47/48/50/51/52/53/54/55/56/57) -- TECH-DEBT.md's
     2026-10-01 row: this list's unbounded growth was costing a real tool-output
     truncation on every lock-acquisition read. Keeping only the most recent ~9 entries
     here going forward; full history (including these) stays in

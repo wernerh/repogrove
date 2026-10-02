@@ -15,12 +15,10 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 56 closed out: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03T13:02:34Z, ~22h
-off at this run's start). Completed the Databases grove's comparison matrix (#108,
-merged); found/fixed a site-wide Pros/Cons/alternatives bullet-truncation bug +
-build-time guard (#109, CI went green post-lock, merged). Next run: re-check RG-7/8/9
-(RG-7's default applies if still unanswered by 2026-10-03T13:02:34Z); find the next
-content gap.
+Run 57 closed out: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03T13:02:34Z). Added
+Immich to the Self-Hosted grove (#111, merged); researched/rejected Continue/Aider
+(EOL/maintenance-risk). Next run: apply RG-7's default if still unanswered; grow
+Self-Hosted further (Portainer/Nextcloud/CasaOS) or find the next content gap.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -56,5 +54,6 @@ None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 stays stubbed u
   alternative refs closed, all mutual comparisons incl. Databases' full matrix
   (#81-108) — 4 groves/21 repos total.
 - [x] 2026-10-02 — Found/fixed a site-wide Pros/Cons/alternatives bullet-truncation
-  bug + added a build-time guard against it (#109, merged).
+  bug + added a build-time guard against it (#109, merged); added Immich to
+  Self-Hosted (#111) — 4 groves/22 repos total.
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (#76-78), awaiting owner

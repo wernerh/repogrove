@@ -12,6 +12,46 @@ context) to skim, same role the archived entries played in state.yaml before thi
 Newest-archived-first, same order they appeared in state.yaml.
 
 ```yaml
+  - "2026-10-01 (run 48): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
+    Held off Phase 4 feature work again this run, consistent with runs 33-47. With
+    content/'s open-source dangling-reference and comparison gaps fully closed (runs
+    33-47), looked for the equivalent gap on the commercial side: grepped every
+    content/repos/*.md's alternatives.commercial against content/alternatives/*.md and
+    found only content/alternatives/notion.md existed, despite three repos (appwrite.md,
+    supabase.md, pocketbase.md) already naming Firebase as their commercial alternative
+    — the highest-value gap (most repos pointing at one missing target), same
+    prioritization precedent run 37 used for LocalAI's open-source gap. Major task:
+    added content/alternatives/firebase.md — Open source: Appwrite/Supabase/PocketBase
+    (all three slugify-resolve to real repo pages, rendering as real links with live
+    star counts, unlike notion.md's four unresolved entries); Commercial: AWS Amplify
+    (already named alongside Firebase in two of the three repos' own
+    alternatives.commercial). Independent review (subagent, skeptical-senior-engineer
+    pass) caught a real MINOR: two Best-fit bullets over-generalized a claim across all
+    three repos when it only held for some (e.g. a 'real SQL' claim that doesn't fit
+    Appwrite's own documented 'document-style database, not raw SQL' Con) — tightened
+    to scope each claim to the repo(s) it actually applies to before merge. Small
+    related tasks: updated the two hardcoded alternatives-slug test fixtures this
+    content addition affects (tests/lib/content.test.ts, tests/app/alternative-page.
+    test.tsx) and added a new real-content render test for /alternative/firebase
+    exercising the resolved-link branch (previously only covered by a synthetic mock);
+    closed out a stale TECH-DEBT.md row (the /trending/rising row-duplication the
+    design lane's RankedList extraction, run 35, had already fixed — verified both
+    pages import it) and filed a new row for a gap the review surfaced
+    (AlternativesTable.tsx's commercial chips don't link out to a matching
+    /alternative/:slug page even when one now exists — out of scope for this
+    content-only PR). 334/334 tests pass, lint/tsc --noEmit clean, npm audit
+    --audit-level=high 0 vulnerabilities, all run locally; npm run build reproduced the
+    known ADR-006 sandbox font-fetch gap (confirmed it compiles past content loading
+    first), left to CI's GitHub-hosted runner — all 3 checks (CI, Factory guardrails,
+    Design screenshots & accessibility) green on PR #100 before squash-merging it
+    myself; post-merge CI on main also confirmed green. CHANGELOG.md/PROJECT_STATE.md/
+    DECISIONS.md/.factory/decisions.yaml updated. Next: re-check RG-7/8/9;
+    GitKraken/Sourcetree (named by gitui.md, lazygit.md, tig.md — 3 repos, same
+    highest-value shape as Firebase) and Vercel/Heroku/Netlify (named by coolify.md,
+    dokploy.md — 2 repos) are the next commercial-alternative-page gaps if RG-7/8/9 are
+    still open by then."
   - "2026-10-01 (run 47): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
