@@ -21,12 +21,36 @@ export interface ResolvedAlternative {
   stars: number | null;
 }
 
+/** One commercial alternative, resolved against `/content/alternatives` by
+ * the caller (same split-responsibility convention `ResolvedAlternative`
+ * documents above). `alternativeSlug` is `null` when the name doesn't match
+ * any `content/alternatives/*.md` file yet (most commercial names still
+ * don't — e.g. "LM Studio" on `/repo/ollama`), in which case the name
+ * renders as plain, unlinked text rather than a link that would 404.
+ *
+ * TECH-DEBT.md's 2026-10-01 row: until this type existed, a commercial name
+ * never linked forward even once a matching `/alternative/:slug` page did
+ * exist (e.g. "Firebase" on `/repo/appwrite`, after `content/alternatives/
+ * firebase.md` shipped) — the reverse direction (that page's own Open
+ * source list resolving back to a repo) already worked. Resolved the same
+ * way `ResolvedAlternative` resolves open-source slugs.
+ */
+export interface ResolvedCommercialAlternative {
+  /** The raw display name from `Repo.alternatives.commercial`, e.g.
+   * "Firebase" — shown verbatim, linked or not. */
+  name: string;
+  /** The matching `content/alternatives/*.md` slug, or `null` when
+   * `slugifyAlternativeName(name)` doesn't resolve to one yet. */
+  alternativeSlug: string | null;
+}
+
 interface AlternativesTableProps {
   openSource: ResolvedAlternative[];
   /** Commercial alternatives are plain product names (spec §4), not GitHub
-   * repos — no stars/status/link to resolve, no future Phase-3 comparison
-   * page to point at yet (PROJECT_STATE.md "Not doing yet"). */
-  commercial: string[];
+   * repos — no stars/status to resolve — but may still link to their own
+   * `/alternative/:slug` page when one exists (see
+   * `ResolvedCommercialAlternative`'s doc comment). */
+  commercial: ResolvedCommercialAlternative[];
 }
 
 /**
@@ -54,10 +78,13 @@ interface AlternativesTableProps {
  *    once a second real sortable column exists.
  *  - **Momentum/"Heat" column: omitted**, not built (issue #21/ADR-004,
  *    data-gated) — same reasoning as the repo card and status chip.
- *  - **Unresolved alternatives are not links** — an alternative slug with no
- *    matching `content/repos/*.md` file yet has nowhere real to point to;
- *    linking it would 404. Shown as its raw slug (mono, secondary text) with
- *    a "not yet profiled" label instead.
+ *  - **Unresolved alternatives are not links** — an open-source alternative
+ *    slug with no matching `content/repos/*.md` file yet has nowhere real to
+ *    point to; linking it would 404. Shown as its raw slug (mono, secondary
+ *    text) with a "not yet profiled" label instead. Commercial alternatives
+ *    follow the same rule against `content/alternatives/*.md` (see
+ *    `ResolvedCommercialAlternative`'s doc comment) — most still don't
+ *    resolve, and render as plain text the same way.
  */
 export default function AlternativesTable({ openSource, commercial }: AlternativesTableProps) {
   if (openSource.length === 0 && commercial.length === 0) {
@@ -164,12 +191,18 @@ export default function AlternativesTable({ openSource, commercial }: Alternativ
             Commercial alternatives
           </h3>
           <ul className="mt-2 flex flex-wrap gap-2">
-            {commercial.map((name) => (
-              <li
-                key={name}
-                className="rounded-sm bg-bg-subtle p-2 font-sans text-sm text-text-secondary"
-              >
-                {name}
+            {commercial.map(({ name, alternativeSlug }) => (
+              <li key={name} className="rounded-sm bg-bg-subtle p-2 font-sans text-sm">
+                {alternativeSlug ? (
+                  <Link
+                    href={`/alternative/${alternativeSlug}`}
+                    className="text-text-link hover:underline"
+                  >
+                    {name}
+                  </Link>
+                ) : (
+                  <span className="text-text-secondary">{name}</span>
+                )}
               </li>
             ))}
           </ul>

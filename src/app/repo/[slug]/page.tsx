@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
-import { getAllRepos, getComparisonsForRepo, getRepo, splitOutSection } from "@/lib/content";
+import {
+  getAllRepos,
+  getAlternative,
+  getComparisonsForRepo,
+  getRepo,
+  slugifyAlternativeName,
+  splitOutSection,
+} from "@/lib/content";
 import { getGrowthSummaries, getSnapshotHistory } from "@/lib/snapshots";
 import { getRecentReleases } from "@/lib/releases";
 import { computeHeat } from "@/lib/heat";
@@ -9,7 +16,10 @@ import { dateFormatter } from "@/lib/format";
 import StarGrowthChart from "@/components/StarGrowthChart";
 import StatusChip from "@/components/StatusChip";
 import MomentumChip from "@/components/MomentumChip";
-import AlternativesTable, { type ResolvedAlternative } from "@/components/AlternativesTable";
+import AlternativesTable, {
+  type ResolvedAlternative,
+  type ResolvedCommercialAlternative,
+} from "@/components/AlternativesTable";
 import type { Metadata } from "next";
 
 interface PageProps {
@@ -52,6 +62,21 @@ export default async function RepoPage({ params }: PageProps) {
     repo: altRepo,
     stars: altRepo ? starsByGithub.get(altRepo.github)?.currentStars ?? null : null,
   }));
+
+  // TECH-DEBT.md's 2026-10-01 row: resolve each commercial display name
+  // against /content/alternatives the same way open-source names resolve
+  // against /content/repos above, so a chip links forward to its own
+  // /alternative/:slug page once one exists (most still don't — e.g. "LM
+  // Studio" has no content/alternatives/lm-studio.md yet) rather than always
+  // rendering as inert text. assertValidAlternatives (src/lib/content.ts)
+  // already fails the build loudly on a duplicate commercial name, so no
+  // extra dedup is needed here.
+  const commercialAlternatives: ResolvedCommercialAlternative[] = repo.alternatives.commercial.map(
+    (name) => ({
+      name,
+      alternativeSlug: getAlternative(slugifyAlternativeName(name))?.slug ?? null,
+    }),
+  );
 
   // Reused for both the star-growth chart and the Momentum/Heat chip below
   // — one getSnapshotHistory call per repo page, not two (same N+1 lesson
@@ -149,7 +174,7 @@ export default async function RepoPage({ params }: PageProps) {
         <Markdown>{bodyBeforeAlternatives}</Markdown>
       </div>
 
-      <AlternativesTable openSource={openSourceAlternatives} commercial={repo.alternatives.commercial} />
+      <AlternativesTable openSource={openSourceAlternatives} commercial={commercialAlternatives} />
 
       <div className="mt-6">
         {/* The body's own "## Related Grove" section (hand-authored in

@@ -11,8 +11,11 @@ describe("Alternative page (/alternative/[slug])", () => {
     expect(params.map((p) => p.slug).sort()).toEqual([
       "firebase",
       "gitkraken",
+      "heroku",
+      "netlify",
       "notion",
       "sourcetree",
+      "vercel",
     ]);
   });
 
@@ -125,6 +128,88 @@ describe("Alternative page (/alternative/[slug])", () => {
     expect(
       screen.getByText(
         "Linux support — Sourcetree only ships Mac and Windows builds, while GitKraken also builds for Linux",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("renders /alternative/vercel with Coolify and Dokploy resolved to real content/repos/*.md pages", async () => {
+    // Coolify and Dokploy both already have their own content/repos/*.md
+    // page (both name Vercel as a commercial alternative themselves) — same
+    // resolved-link branch firebase.md's test above exercises.
+    render(await AlternativePage({ params: Promise.resolve({ slug: "vercel" }) }));
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Vercel alternatives" }),
+    ).toBeInTheDocument();
+
+    for (const [name, slug] of [
+      ["Coolify", "coolify"],
+      ["Dokploy", "dokploy"],
+    ] as const) {
+      const link = screen.getByRole("link", { name });
+      expect(link).toHaveAttribute("href", `/repo/${slug}`);
+    }
+
+    // Commercial renders as a plain list, same as notion.md's Confluence/Coda/ClickUp.
+    expect(screen.getByText("Heroku")).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Heroku" })).not.toBeInTheDocument();
+    expect(screen.getByText("Netlify")).toBeInTheDocument();
+
+    // Best fit full-sentence regression check, same reasoning as gitkraken's
+    // test above.
+    expect(
+      screen.getByText(
+        "Avoiding a usage ceiling that pauses your deployments — Vercel's own docs say Hobby plans are paused once they exceed the included free-tier usage, while a self-hosted Coolify or Dokploy instance keeps running on whatever capacity its own server has",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("renders /alternative/heroku with Coolify and Dokploy resolved to real content/repos/*.md pages", async () => {
+    render(await AlternativePage({ params: Promise.resolve({ slug: "heroku" }) }));
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Heroku alternatives" }),
+    ).toBeInTheDocument();
+
+    for (const [name, slug] of [
+      ["Coolify", "coolify"],
+      ["Dokploy", "dokploy"],
+    ] as const) {
+      const link = screen.getByRole("link", { name });
+      expect(link).toHaveAttribute("href", `/repo/${slug}`);
+    }
+
+    expect(screen.getByText("Vercel")).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Vercel" })).not.toBeInTheDocument();
+
+    expect(
+      screen.getByText(
+        "Self-managed backing services instead of Heroku's paid add-ons — Dokploy provisions and backs up MySQL, PostgreSQL, MongoDB, MariaDB, and Redis itself, on the same servers as your app",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("renders /alternative/netlify with Coolify and Dokploy resolved to real content/repos/*.md pages", async () => {
+    render(await AlternativePage({ params: Promise.resolve({ slug: "netlify" }) }));
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Netlify alternatives" }),
+    ).toBeInTheDocument();
+
+    for (const [name, slug] of [
+      ["Coolify", "coolify"],
+      ["Dokploy", "dokploy"],
+    ] as const) {
+      const link = screen.getByRole("link", { name });
+      expect(link).toHaveAttribute("href", `/repo/${slug}`);
+    }
+
+    expect(screen.getByText("Vercel")).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Vercel" })).not.toBeInTheDocument();
+
+    expect(
+      screen.getByText(
+        "Building without a per-minute build-time budget — Netlify's free plan includes 300 build minutes a month, while Coolify and Dokploy build on your own server with no per-minute metering",
       ),
     ).toBeInTheDocument();
   });
