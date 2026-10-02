@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { getAllRepos } from "@/lib/content";
 import { getGrowthSummaries, type GrowthSummary } from "@/lib/snapshots";
 import { rankByAbsoluteGrowth } from "@/lib/trending";
-import { RankedList } from "@/components/RankedList";
+import { TrendBoard } from "@/components/TrendBoard";
+import { TrendHeader } from "@/components/TrendHeader";
+import { leadParagraph, type TrendItem } from "@/lib/trend-view";
 
 export const metadata: Metadata = {
   title: "Trending",
@@ -35,17 +37,27 @@ export default function TrendingPage() {
   const summaries = getGrowthSummaries(repos.map((repo) => repo.github));
   const ranked = rankByAbsoluteGrowth(repos, summaries);
 
-  return (
-    <div className="max-w-3xl">
-      <h1 className="font-sans text-2xl font-semibold tracking-tight text-text-default">
-        🔥 Hot Right Now
-      </h1>
-      <p className="mt-2 text-lg text-text-secondary">
-        Tracked repositories ranked by absolute GitHub star growth.
-      </p>
+  const items: TrendItem[] = ranked.map(({ repo, summary }, index) => ({
+    rank: index + 1,
+    slug: repo.slug,
+    name: repo.name,
+    github: repo.github,
+    category: repo.category[0] ?? null,
+    blurb: leadParagraph(repo.body),
+    reason: reason(summary),
+    metric: formatDelta(summary.deltaStars),
+    metricNote: "stars gained",
+    value: summary.deltaStars,
+    totalStars: summary.currentStars,
+    days: summary.days,
+  }));
 
-      <RankedList
-        entries={ranked.map(({ repo, summary }) => ({ repo, reason: reason(summary) }))}
+  return (
+    <div>
+      <TrendHeader mode="hot" />
+      <TrendBoard
+        mode="hot"
+        items={items}
         emptyMessage="Trending needs at least a few days of star-growth history to mean anything — check back once tracking has run a while longer."
       />
     </div>

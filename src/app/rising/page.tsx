@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { getAllRepos } from "@/lib/content";
 import { getGrowthSummaries } from "@/lib/snapshots";
 import { rankByRelativeGrowth, type RisingEntry } from "@/lib/rising";
-import { RankedList } from "@/components/RankedList";
+import { TrendBoard } from "@/components/TrendBoard";
+import { TrendHeader } from "@/components/TrendHeader";
+import { leadParagraph, type TrendItem } from "@/lib/trend-view";
 
 export const metadata: Metadata = {
   title: "Rising",
@@ -50,18 +52,27 @@ export default function RisingPage() {
   const summaries = getGrowthSummaries(repos.map((repo) => repo.github));
   const ranked = rankByRelativeGrowth(repos, summaries);
 
-  return (
-    <div className="max-w-3xl">
-      <h1 className="font-sans text-2xl font-semibold tracking-tight text-text-default">
-        🌱 Rising
-      </h1>
-      <p className="mt-2 text-lg text-text-secondary">
-        Tracked repositories ranked by star growth relative to their own size —
-        surfacing fast movers, not just the biggest.
-      </p>
+  const items: TrendItem[] = ranked.map((entry, index) => ({
+    rank: index + 1,
+    slug: entry.repo.slug,
+    name: entry.repo.name,
+    github: entry.repo.github,
+    category: entry.repo.category[0] ?? null,
+    blurb: leadParagraph(entry.repo.body),
+    reason: reason(entry),
+    metric: formatPercent(entry.percentGrowth),
+    metricNote: `growth over ${entry.summary.days} day${entry.summary.days === 1 ? "" : "s"}`,
+    value: entry.percentGrowth,
+    totalStars: entry.summary.currentStars,
+    days: entry.summary.days,
+  }));
 
-      <RankedList
-        entries={ranked.map((entry) => ({ repo: entry.repo, reason: reason(entry) }))}
+  return (
+    <div>
+      <TrendHeader mode="rising" />
+      <TrendBoard
+        mode="rising"
+        items={items}
         emptyMessage="Rising needs at least a few days of star-growth history to mean anything — check back once tracking has run a while longer."
       />
     </div>
