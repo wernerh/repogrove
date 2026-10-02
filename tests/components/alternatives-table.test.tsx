@@ -71,29 +71,31 @@ describe("AlternativesTable", () => {
   });
 
   it("renders an unresolved commercial alternative as a plain, unlinked name", () => {
-    // TECH-DEBT.md 2026-10-01 row: no content/alternatives/*.md page exists
-    // for LM Studio (ollama.md's own dangling commercial reference, still
-    // open) — stays plain text, the same "omit, don't fabricate a link"
-    // convention the open-source rows already follow. The second entry here
-    // is a synthetic alternativeSlug: null regardless of real content (AWS
-    // Amplify does have a real content/alternatives/aws-amplify.md page as
-    // of this run — see tests/app/repo-page.test.tsx's real-page test for
-    // that resolved case) — this test exercises the component's own
-    // null-resolution render branch in isolation, not real content.
+    // TECH-DEBT.md 2026-10-01 row: AlternativesTable renders a commercial
+    // chip as plain text whenever its resolver finds no matching
+    // content/alternatives/*.md page — the same "omit, don't fabricate a
+    // link" convention the open-source rows already follow. Both entries
+    // here are synthetic alternativeSlug: null regardless of real content
+    // (every real commercial reference content/repos/*.md names today —
+    // Firebase, AWS Amplify, GitKraken, Sourcetree, Vercel, Heroku, Netlify,
+    // LM Studio — now has its own content/alternatives/*.md page; see
+    // tests/app/repo-page.test.tsx's real-page tests for those resolved
+    // cases) — this test exercises the component's own null-resolution
+    // render branch in isolation, not real content.
     render(
       <AlternativesTable
         openSource={[]}
         commercial={[
-          { name: "LM Studio", alternativeSlug: null },
+          { name: "Totally Unprofiled Tool", alternativeSlug: null },
           { name: "Some Other Tool", alternativeSlug: null },
         ]}
       />,
     );
 
     expect(screen.getByText("Commercial alternatives")).toBeInTheDocument();
-    expect(screen.getByText("LM Studio")).toBeInTheDocument();
+    expect(screen.getByText("Totally Unprofiled Tool")).toBeInTheDocument();
     expect(screen.getByText("Some Other Tool")).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "LM Studio" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Totally Unprofiled Tool" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Some Other Tool" })).not.toBeInTheDocument();
   });
 
