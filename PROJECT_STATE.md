@@ -15,9 +15,9 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 50: RG-7/8/9 still no reply (defaults 2026-10-03). Added vercel/heroku/netlify
-alternative pages + fixed commercial-chip linking (TECH-DEBT.md). Next: re-check
-RG-7/8/9; no dangling commercial-alternative gaps known — needs a fresh content audit.
+Run 51: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03, due tomorrow). Added
+aws-amplify alternative page (fresh audit: 0 open_source gaps, 1 commercial gap left,
+LM Studio). Next: re-check RG-7/8/9 (apply RG-7's default if due); build LM Studio.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -55,6 +55,6 @@ None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 stays stubbed u
   basic news widget (#72, PR #74) — Phase 3 MVP gate complete.
 - [x] 2026-09-30/10-02 — Decision-free content: dev-tools grove, +PocketBase/Appwrite,
   commercial-slug fix, LocalAI/Dokploy/LlamaIndex/Vim/Helix/Zed/Tig/GitUI, all
-  comparisons; /alternative/firebase, gitkraken, sourcetree, vercel, heroku, netlify
-  (#81, #83-90, #92-95, #97-98, #100-102); commercial-chip linking fixed (#102).
+  comparisons; /alternative/firebase, gitkraken, sourcetree, vercel, heroku, netlify,
+  aws-amplify (#81, #83-90, #92-95, #97-98, #100-103); commercial-chip linking (#102).
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (#76-78), awaiting owner

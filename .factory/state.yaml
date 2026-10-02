@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-10-02T04:50:47Z"
-  holder: "dev"
-  last_run: "2026-10-02T03:14:30Z"
+  current_run: null
+  holder: null
+  last_run: "2026-10-02T05:22:00Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,14 +19,61 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 68
-  features_completed: 33
+  runs: 69
+  features_completed: 34
   bugs_fixed: 11
   security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
 
 next_actions:
+  - "2026-10-02 (run 51): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed (due tomorrow); RG-8/RG-9 have no default and stay open
+    regardless. Held off Phase 4 feature work again this run, consistent with runs
+    33-50. A fresh content audit (run 50's own next-action pointer) cross-referenced
+    every content/repos/*.md's alternatives.open_source and alternatives.commercial
+    against content/alternatives/*.md and content/repos/*.md: confirmed zero remaining
+    dangling open_source references anywhere, and exactly two remaining dangling
+    commercial references — AWS Amplify (2 referencing repos: appwrite, supabase) and
+    LM Studio (1 referencing repo: ollama). Major task: added
+    content/alternatives/aws-amplify.md (the higher-value gap), listing
+    Appwrite/Supabase/PocketBase as open-source alternatives (all three slugify-resolve
+    to real repo pages) and cross-referencing Firebase under Commercial. This sandbox's
+    network proxy declined a direct WebFetch to aws.amazon.com this run (a
+    provenance-approval prompt with no one to answer it, unattended) — facts
+    researched and cross-checked against two independent secondary sources instead
+    (appwrite.io's own BaaS-platform comparison post confirming Amplify is a managed
+    front door onto Cognito/AppSync/Lambda/S3, not a portable backend; a dedicated
+    AWS-Amplify-pricing comparison article confirming the 12-month free tier — 1,000
+    build minutes, 15 GB data served, 5 GB storage, 500,000 requests — transitions
+    straight to usage-based pay-as-you-go billing with no pause once exceeded, unlike
+    Netlify's suspend-on-overage model). Independent review (subagent,
+    skeptical-senior-engineer pass) found no BLOCKER/MAJOR/MINOR issues — verified
+    every Open-source name resolves to a real repo page, the 'looks like a slug'
+    commercial-name validation doesn't apply to this content type (it only gates
+    Repo.alternatives.commercial frontmatter, not content/alternatives/*.md's own
+    Commercial section), slugifyAlternativeName('AWS Amplify') matches the new
+    filename exactly, and no other file's 'AWS Amplify' reference breaks now that it
+    resolves to a real page. Updated the hardcoded alternatives-slug test fixtures
+    this addition affects (tests/lib/content.test.ts, tests/app/alternative-page.
+    test.tsx) and added a real-page integration test on /repo/appwrite asserting both
+    its Firebase and AWS Amplify commercial chips now resolve to real
+    /alternative/:slug links together (tests/app/repo-page.test.tsx), plus updated one
+    synthetic AlternativesTable unit test whose 'doesn't resolve' mock previously used
+    AWS Amplify (swapped to a content-independent placeholder name, since the old
+    mock's framing would now mislead a future reader even though the test itself
+    wasn't functionally broken). 349/349 tests pass (4 new/updated), lint clean, tsc
+    --noEmit clean, npm audit --audit-level=high 0 vulnerabilities, all run locally;
+    npm run build reproduced the known ADR-006 sandbox font-fetch gap (confirmed it
+    compiles past content loading first), left to CI's GitHub-hosted runner — all 3
+    gating checks (CI, Factory guardrails, Dependency vulnerability scan) green on PR
+    #103, plus the non-gating Playwright/axe-core design check, before squash-merging
+    it myself; post-merge CI on main also confirmed green. CHANGELOG.md/
+    PROJECT_STATE.md/DECISIONS.md/.factory/decisions.yaml updated. Next: re-check
+    RG-7/8/9 (apply RG-7's default if the 2026-10-03 due date has passed by then); LM
+    Studio (1 referencing repo, ollama.md) is the next and last known commercial-
+    alternative-page gap."
   - "2026-10-02 (run 50): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
@@ -352,48 +399,8 @@ next_actions:
     gap of this kind — none remain in content/repos/*.md — so the next decision-free
     content run needs a new source of work (a new comparison page, a fresh Grove, or a
     content-accuracy audit) rather than another dangling-ref closure."
-  - "2026-10-01 (run 42): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
-    — still exactly the one original message, no owner reply. RG-7's default_due_at
-    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
-    Held off Phase 4 feature work again this run, consistent with runs 33-41. Audited
-    content/ for the next decision-free content gap: content/repos/vim.md,
-    content/repos/neovim.md, and content/repos/helix.md had all listed 'zed' under
-    alternatives.open_source since runs 33/40/41, but content/repos/zed.md never
-    existed, so it rendered as 'Not yet profiled' on all three pages — the last of
-    the same class of dangling-reference gap runs 33/34/37/38/39/40/41 closed; only
-    tig/gitui (lazygit.md) remain open now. Major task: added content/repos/zed.md
-    (zed-industries/zed, GPL-3.0/AGPL-3.0, Developer Tools grove), cross-referencing
-    Vim, Neovim, and Helix. Facts (GPU-accelerated Rust editor built on its own GPUI
-    rendering framework rather than Electron/webview; split licensing across three
-    files — GPL-3.0 editor core, AGPL-3.0 server/collaboration code, Apache-2.0 for
-    GPUI itself; founded by Nathan Sobo/Antonio Scandurra/Max Brunsfeld, formerly of
-    Atom/Tree-sitter at GitHub before Atom was discontinued in 2022; built-in
-    real-time multiplayer editing (Zed Channels), Tree-sitter, LSP, terminal,
-    optional Vim keybindings, and an AI assistant with some paid-plan-gated features)
-    verified via WebSearch/WebFetch against Zed's own blog, Wikipedia, and an
-    independent features summary, not scraped from a one-line description.
-    category deliberately omits 'terminal' (unlike vim/neovim/helix) since Zed is
-    GUI-only, called out explicitly in its own Cons section. Independent review
-    (subagent, skeptical-senior-engineer pass) found no BLOCKER/MAJOR issues;
-    content/frontmatter/tests all verified against house style and the content
-    schema's validators (assertGrovesExist, assertValidAlternatives,
-    assertNoGithubCollisions), facts cross-checked against multiple independent
-    sources. Small related task: added Zed to content/groves/developer-tools.md's
-    Core projects. 322/322 tests pass (4 new/updated), lint clean, tsc --noEmit
-    clean, npm audit --audit-level=high 0 vulnerabilities, all run locally; npm run
-    build reproduced the known ADR-006 sandbox font-fetch gap (confirmed it compiles
-    past content loading first), left to CI's GitHub-hosted runner — confirmed 6/6
-    checks green on PR #92 (including the non-gating screenshot job) before
-    squash-merging it myself; post-merge CI on main also confirmed green.
-    ROADMAP.md/PROJECT_STATE.md/CHANGELOG.md/DECISIONS.md/.factory/decisions.yaml
-    updated. This repo's local main was stale at run start (a prior session's
-    unpushed bootstrap-branch commits, f6f1ea9/4225716/683ede4, never reached
-    origin) — hard-reset to origin/main before taking the lock; no data lost, origin
-    was already the real source of truth. Next: re-check RG-7/8/9 each run; tig/gitui
-    (lazygit.md) is the only remaining dangling alternatives.open_source gap of this
-    kind."
-  - "Older next_actions entries (runs 22-41) archived to docs/factory/run-history.md
-    on 2026-10-01/02 (dev runs 44/46/47/48/50) -- TECH-DEBT.md's 2026-10-01 row: this
+  - "Older next_actions entries (runs 22-42) archived to docs/factory/run-history.md
+    on 2026-10-01/02 (dev runs 44/46/47/48/50/51) -- TECH-DEBT.md's 2026-10-01 row: this
     list's unbounded growth was costing a real tool-output truncation on every lock-
     acquisition read. Keeping only the most recent ~9 entries here going forward;
     full history (including these) stays in docs/factory/run-history.md, which

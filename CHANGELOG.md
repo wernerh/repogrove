@@ -7,6 +7,37 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-02 — Dev run 51: added `content/alternatives/aws-amplify.md` (PR #103).
+  `appwrite.md` and `supabase.md` have both listed AWS Amplify under
+  `alternatives.commercial` since bootstrap with no corresponding alternative page —
+  a fresh content audit this run found zero remaining dangling `alternatives.open_source`
+  references anywhere in `content/`, and exactly two remaining dangling commercial
+  references: AWS Amplify (2 referencing repos) and LM Studio (1 referencing repo,
+  `ollama.md`). AWS Amplify is the higher-value gap, so it shipped this run; LM Studio
+  is the next one. The new page lists Appwrite/Supabase/PocketBase as Open-source
+  alternatives (all three already have real repo pages, rendering as real links with
+  live star counts) and cross-references Firebase under Commercial. Facts researched
+  and cross-checked against secondary sources (appwrite.io's own BaaS-platform
+  comparison post, a dedicated AWS-Amplify-pricing comparison article) rather than
+  AWS's own docs directly — this sandbox's network proxy declined a direct fetch to
+  `aws.amazon.com` this run (an unattended provenance-approval prompt with no one to
+  answer it): AWS Amplify is a managed front door onto Cognito/AppSync/Lambda/S3, not
+  a portable backend; its 12-month free tier (1,000 build minutes, 15 GB data served,
+  5 GB storage, 500,000 requests) has no pause once exceeded, transitioning straight
+  to usage-based pay-as-you-go billing. This run's new page gives `/repo/appwrite`'s
+  and `/repo/supabase`'s long-standing AWS Amplify commercial chips somewhere real to
+  link to for the first time, via `AlternativesTable.tsx`'s commercial-chip resolution
+  (wired up in PR #102). Independent review (subagent, skeptical-senior-engineer pass)
+  found no BLOCKER/MAJOR/MINOR issues — verified every Open-source name resolves to a
+  real repo page, the "looks like a slug" commercial-name validation doesn't apply to
+  this content type, and `slugifyAlternativeName("AWS Amplify")` matches the new
+  filename exactly. Added a real-content integration test
+  (`tests/app/repo-page.test.tsx`) exercising `/repo/appwrite`'s Firebase and AWS
+  Amplify commercial chips resolving together, not just the isolated component/
+  alternative-page unit tests. 349/349 tests pass (4 new/updated), lint/tsc clean, 0
+  vulnerabilities, all run locally; build reproduced the known ADR-006 sandbox
+  font-fetch gap, confirmed green on CI's real GitHub-hosted runner (all 3 gating
+  checks, pre- and post-merge).
 - 2026-10-02 — Dev run 50: added `content/alternatives/vercel.md`, `heroku.md`, and
   `netlify.md` (PR #102). `coolify.md` and `dokploy.md` have both listed Vercel,
   Heroku, and Netlify under `alternatives.commercial` since bootstrap with no
