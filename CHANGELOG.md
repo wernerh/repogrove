@@ -1409,3 +1409,9 @@ entries.
   compares" matrix. Data-less mock widgets (Health Index, Quick Start, Language
   Composition, Community Pulse, commit density) left unbuilt, listed in DESIGN-SYSTEM.md. 383/383 tests;
   harness 48/48, 0 axe violations. (design)
+- 2026-10-02 — **design:** `/trending` ("Hot Right Now") and `/rising` redesigned on a shared
+  `TrendBoard`: top-three cards, ranked ledger with growth bars, category filter (plus a size
+  filter on Rising), a Hot/Rising switch, and a sidebar summary (category share of stars
+  gained / mean growth). All figures computed from the existing snapshot data; ranking math
+  and reason strings unchanged. Mock-only elements with no backing data (per-repo "why it's
+  moving" copy, hourly accelerators, time-window tabs) not built. (design)
