@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-02T21:17:23.569635+00:00",
+  "generated_at": "2026-10-02T23:44:28.747150+00:00",
   "product": {
     "current_version": "0.0.0-bootstrap",
     "current_focus": "Phase 3 MVP gate complete \u2014 Phase 4 owner decisions raised (RG-7/8/9), awaiting owner; Phase 4 feature work deliberately held while RG-7 is open"
@@ -18,12 +18,12 @@
     "production": "not_deployed",
     "infrastructure": "none"
   },
-  "open_decisions": 3,
+  "open_decisions": 4,
   "security_findings": {
-    "total": 5,
+    "total": 6,
     "open": 2,
-    "fixed": 2,
-    "verified": 4
+    "fixed": 3,
+    "verified": 5
   },
   "design_findings": {
     "total": 7,
