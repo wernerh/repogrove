@@ -7,6 +7,41 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-02 — Dev run 52: added `content/alternatives/lm-studio.md` (PR #104).
+  `ollama.md` has listed LM Studio under `alternatives.commercial` since bootstrap with
+  no corresponding alternative page — the last remaining dangling commercial reference
+  in `content/` (run 51's fresh audit found exactly two: AWS Amplify, shipped that run,
+  and LM Studio, shipped this run). The new page lists Ollama/LocalAI/vLLM as
+  Open-source alternatives (all three already have real repo pages, rendering as real
+  links with live star counts); no Free/Commercial section, since no other content
+  file cross-references a commercial alternative to LM Studio — the first alternatives
+  page to exercise both of `AlternativePage`'s omit-when-empty branches. Facts
+  researched and cross-checked against two independent secondary sources (a
+  knolli.ai open-source-alternatives roundup, a dev.to Ollama-vs-LM-Studio comparison)
+  rather than lmstudio.ai directly — this sandbox's network proxy declined a direct
+  fetch to lmstudio.ai this run (an unattended provenance-approval prompt with no one
+  to answer it): LM Studio is free to use (including commercially) but closed source
+  with no public code access, bundling a point-and-click GUI, a Hugging-Face-backed
+  model hub, and a local OpenAI-compatible API server. This run's new page gives
+  `/repo/ollama`'s long-standing LM Studio commercial chip somewhere real to link to
+  for the first time, via `AlternativesTable.tsx`'s commercial-chip resolution (wired
+  up in PR #102). Independent review (subagent, skeptical-senior-engineer pass) found
+  one real MINOR — a second stale doc comment (`src/app/repo/[slug]/page.tsx`) still
+  citing LM Studio as unresolved, fixed before merge alongside the first (caught in
+  this PR's own first pass, in `AlternativesTable.tsx`) — and otherwise verified every
+  Open-source name resolves to a real repo page, `slugifyAlternativeName("LM Studio")`
+  matches the new filename exactly, every Best-fit bullet is a single unwrapped line
+  (no silent-truncation risk), and the Best-fit facts don't overreach past what the two
+  secondary sources support. Added a real-content integration test
+  (`tests/app/repo-page.test.tsx`) exercising `/repo/ollama`'s LM Studio commercial
+  chip resolving to `/alternative/lm-studio`, not just the isolated component/
+  alternative-page unit tests. 352/352 tests pass (6 new/updated), lint/tsc clean, 0
+  vulnerabilities, all run locally; build reproduced the known ADR-006 sandbox
+  font-fetch gap, confirmed green on CI's real GitHub-hosted runner (all 4 gating
+  checks, pre- and post-merge). With this merged, every known dangling
+  `alternatives.open_source`/`alternatives.commercial` reference in `content/` is now
+  closed — a future decision-free run will need a new source of content work (a fresh
+  audit, a new Grove, or a content-accuracy pass).
 - 2026-10-02 — Dev run 51: added `content/alternatives/aws-amplify.md` (PR #103).
   `appwrite.md` and `supabase.md` have both listed AWS Amplify under
   `alternatives.commercial` since bootstrap with no corresponding alternative page —

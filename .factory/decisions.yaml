@@ -378,6 +378,15 @@
     LM Studio, 1 — added content/alternatives/aws-amplify.md, the higher-value one, PR
     #103) — not Phase 4 groundwork, so doesn't preempt either answer.
 
+    Re-checked 2026-10-02 (dev run 52, via get_thread) — thread 1a0f26990ebc1e9c still
+    exactly the one original message, no owner reply. default_due_at (2026-10-03) hasn't
+    passed (due tomorrow). Held off Phase 4 feature work again this run; used the run
+    instead for decision-free editorial content (added content/alternatives/lm-studio.md,
+    the last remaining dangling alternatives.commercial reference — PR #104) — not Phase 4
+    groundwork, so doesn't preempt either answer. With this merged, every known dangling
+    alternatives.open_source/alternatives.commercial reference in content/ is now closed;
+    a future decision-free run will need a new source of content work.
+
 - id: RG-8
   lane: dev
   question: >
@@ -450,6 +459,8 @@
 
     Re-checked 2026-10-02 (dev run 51) — no owner reply; stays open, no default applies.
 
+    Re-checked 2026-10-02 (dev run 52) — no owner reply; stays open, no default applies.
+
 - id: RG-9
   lane: dev
   question: >
@@ -516,3 +527,5 @@
     Re-checked 2026-10-02 (dev run 50) — no owner reply; stays open, no default applies.
 
     Re-checked 2026-10-02 (dev run 51) — no owner reply; stays open, no default applies.
+
+    Re-checked 2026-10-02 (dev run 52) — no owner reply; stays open, no default applies.

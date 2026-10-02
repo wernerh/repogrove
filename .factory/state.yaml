@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-10-02T06:51:00Z"
-  holder: "dev"
-  last_run: "2026-10-02T05:22:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-10-02T07:14:00Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,14 +19,59 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 69
-  features_completed: 34
+  runs: 70
+  features_completed: 35
   bugs_fixed: 11
   security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
 
 next_actions:
+  - "2026-10-02 (run 52): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed (due tomorrow); RG-8/RG-9 have no default and stay open
+    regardless. Held off Phase 4 feature work again this run, consistent with runs
+    33-51. Picked up run 51's own next-action pointer: LM Studio was the last and only
+    remaining dangling alternatives.commercial reference (content/repos/ollama.md had
+    named it since bootstrap, with no content/alternatives/lm-studio.md to resolve it
+    against). Major task: added content/alternatives/lm-studio.md, listing
+    Ollama/LocalAI/vLLM as open-source alternatives (all three slugify-resolve to real
+    repo pages). No Free/Commercial section — no other content file cross-references a
+    commercial alternative to LM Studio today — the first alternatives page to exercise
+    both of AlternativePage's omit-when-empty branches. This sandbox's network proxy
+    declined a direct WebFetch to lmstudio.ai this run (a provenance-approval prompt
+    with no one to answer it, unattended) — facts researched and cross-checked against
+    two independent secondary sources instead (knolli.ai's open-source-alternatives
+    roundup confirming LM Studio is free including commercially but closed source, with
+    a bundled GUI/model hub/local OpenAI-compatible API server; a dev.to Ollama-vs-LM-
+    Studio comparison independently corroborating the same closed-source/GUI framing and
+    confirming Ollama's CLI/API-first interface). Independent review (subagent,
+    skeptical-senior-engineer pass) found one real MINOR — a second stale doc comment
+    (src/app/repo/[slug]/page.tsx) still cited LM Studio as an example of an unresolved
+    commercial name, alongside the one this PR's own first pass had already fixed in
+    AlternativesTable.tsx — fixed before merge; otherwise verified every Open-source
+    name resolves to a real repo page, slugifyAlternativeName(\"LM Studio\") matches the
+    new filename exactly, every Best-fit bullet is a single unwrapped line (no
+    truncation risk), and the Best-fit facts don't overreach past what the two secondary
+    sources support. Updated the hardcoded alternatives-slug test fixtures this addition
+    affects (tests/lib/content.test.ts, tests/app/alternative-page.test.tsx) and added a
+    real-page integration test on /repo/ollama asserting its LM Studio commercial chip
+    now resolves to /alternative/lm-studio, plus swapped one synthetic AlternativesTable
+    unit test's \"doesn't resolve\" mock off \"LM Studio\" (now a real resolving name)
+    onto a content-independent placeholder. 352/352 tests pass (6 new/updated), lint
+    clean, tsc --noEmit clean, npm audit --audit-level=high 0 vulnerabilities, all run
+    locally; npm run build reproduced the known ADR-006 sandbox font-fetch gap
+    (confirmed it compiles past content loading first), left to CI's GitHub-hosted
+    runner — all 4 gating checks (CI, Factory guardrails, Dependency vulnerability scan,
+    scripts/factory/check.py) green on PR #104 before squash-merging it myself; the
+    non-gating Playwright/axe-core design check was still in progress at merge time,
+    consistent with its own 'does not gate merges' label; post-merge CI on main also
+    confirmed green. CHANGELOG.md/PROJECT_STATE.md/DECISIONS.md/.factory/decisions.yaml
+    updated. With this merged, every known dangling alternatives.open_source/
+    alternatives.commercial reference in content/ is now closed. Next: re-check
+    RG-7/8/9 (apply RG-7's default if due); a future decision-free run needs a new
+    source of content work (a fresh audit, a new Grove, or a content-accuracy pass) —
+    no further dangling-reference gaps are known."
   - "2026-10-02 (run 51): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03) hasn't passed (due tomorrow); RG-8/RG-9 have no default and stay open
@@ -361,46 +406,8 @@ next_actions:
     comparison pairs) is the next biggest missing-comparisons content gap; ollama/
     localai/vllm trio has 1 remaining pair (ollama-vs-localai, localai-vs-vllm) also
     open; coolify/dokploy pair also has no comparison yet."
-  - "2026-10-01 (run 43): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
-    — still exactly the one original message, no owner reply. RG-7's default_due_at
-    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
-    Held off Phase 4 feature work again this run, consistent with runs 33-42. Audited
-    content/ for the next decision-free content gap: content/repos/lazygit.md had
-    listed 'tig' and 'gitui' under alternatives.open_source since bootstrap, but
-    neither content/repos/tig.md nor content/repos/gitui.md ever existed, so both
-    rendered as 'Not yet profiled' — the last of the same class of dangling-reference
-    gap runs 33/34/37/38/39/40/41/42 closed; grepped every content/repos/*.md file's
-    alternatives.open_source against the full slug list afterward and confirmed none
-    remain anywhere. Major task: added content/repos/tig.md (jonas/tig, GPL-2.0) and
-    content/repos/gitui.md (gitui-org/gitui, MIT), both Developer Tools grove,
-    cross-referencing each other and LazyGit reciprocally. Facts (Tig: ncurses-based C
-    repository browser predating both LazyGit and GitUI, maintained by Jonas Fonseca,
-    doubles as a git log/diff pager, ~13k+ GitHub stars; GitUI: Rust terminal UI
-    created by Stephan Dilly, staging-first workflow built on git2, notably
-    fast/memory-light on very large repositories, moved from extrawurst/gitui to the
-    gitui-org GitHub organization) verified via WebSearch/WebFetch against multiple
-    independent sources (Tig's own site/manual, GitHub's own indexed discussion-thread
-    titles confirming the gitui-org move, a third-party terminal-tools index, Stephan
-    Dilly's own blog/Medium post), not scraped from a one-line description. Independent
-    review (subagent, skeptical-senior-engineer pass) flagged a real MAJOR: the first
-    draft's GitUI org-move claim carried an unverified specific date ('December 2024',
-    sourced only from a single AI-generated wiki) — re-verified the org name itself
-    against a second, independent source (a GitHub issue titled 'fixup links to new
-    org' plus discussion-thread titles under the new org) and kept it, dropped the
-    unverifiable date from the prose before committing. Small related task: added Tig
-    and GitUI to content/groves/developer-tools.md's Core projects (grove now has 7
-    members). 324/324 tests pass (7 new/updated), lint clean, tsc --noEmit clean, npm
-    audit --audit-level=high 0 vulnerabilities, all run locally; npm run build
-    reproduced the known ADR-006 sandbox font-fetch gap, left to CI's GitHub-hosted
-    runner — confirmed 3/3 checks green on PR #93 (ci.yml, factory-guardrails.yml, the
-    non-gating design-screenshots.yml) before squash-merging it myself; post-merge CI
-    on main also confirmed green. ROADMAP.md/PROJECT_STATE.md/CHANGELOG.md/
-    DECISIONS.md/.factory/decisions.yaml updated. This was the last dangling-reference
-    gap of this kind — none remain in content/repos/*.md — so the next decision-free
-    content run needs a new source of work (a new comparison page, a fresh Grove, or a
-    content-accuracy audit) rather than another dangling-ref closure."
-  - "Older next_actions entries (runs 22-42) archived to docs/factory/run-history.md
-    on 2026-10-01/02 (dev runs 44/46/47/48/50/51) -- TECH-DEBT.md's 2026-10-01 row: this
+  - "Older next_actions entries (runs 22-43) archived to docs/factory/run-history.md
+    on 2026-10-01/02 (dev runs 44/46/47/48/50/51/52) -- TECH-DEBT.md's 2026-10-01 row: this
     list's unbounded growth was costing a real tool-output truncation on every lock-
     acquisition read. Keeping only the most recent ~9 entries here going forward;
     full history (including these) stays in docs/factory/run-history.md, which

@@ -15,9 +15,10 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 51: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03, due tomorrow). Added
-aws-amplify alternative page (fresh audit: 0 open_source gaps, 1 commercial gap left,
-LM Studio). Next: re-check RG-7/8/9 (apply RG-7's default if due); build LM Studio.
+Run 52: RG-7/8/9 still no reply (defaults 2026-10-03, due tomorrow). Added lm-studio
+alternative page — last known dangling content/ reference, now closed. Next: re-check
+RG-7/8/9; future decision-free runs need a new content source (audit/Grove/accuracy
+pass) — none known open.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -31,8 +32,7 @@ LM Studio). Next: re-check RG-7/8/9 (apply RG-7's default if due); build LM Stud
 | 2026-09-30 | RG-7/8/9: hold Phase 4 until deployed? auth provider? public API scope now? | Phase 3 MVP gate complete; these gate Phase 4's expensive items (CLAUDE.md rule 6) | OPEN | cheap/expensive |
 
 ## Assumptions
-- A1: "Grove"/repo pages are hand-authored/agent-drafted Markdown reviewed via PR, not
-  auto-published scrapes (spec §3, §29).
+- A1: "Grove"/repo pages are hand-authored/agent-drafted Markdown reviewed via PR, not auto-published scrapes (spec §3, §29).
 - A2: No pilot customer — general public product; no contractual obligations to model.
 
 ## Not doing (yet)
@@ -55,6 +55,6 @@ None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 stays stubbed u
   basic news widget (#72, PR #74) — Phase 3 MVP gate complete.
 - [x] 2026-09-30/10-02 — Decision-free content: dev-tools grove, +PocketBase/Appwrite,
   commercial-slug fix, LocalAI/Dokploy/LlamaIndex/Vim/Helix/Zed/Tig/GitUI, all
-  comparisons; /alternative/firebase, gitkraken, sourcetree, vercel, heroku, netlify,
-  aws-amplify (#81, #83-90, #92-95, #97-98, #100-103); commercial-chip linking (#102).
+  comparisons, all /alternative/:slug pages incl. lm-studio (#81-104); commercial-chip
+  linking (#102) — all known dangling alternatives references now closed.
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (#76-78), awaiting owner
