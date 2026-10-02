@@ -204,6 +204,37 @@ describe("Compare page (/compare/[a]/[b])", () => {
     ).toBeInTheDocument();
   });
 
+  it("renders /compare/duckdb/sqlite from content/comparisons/duckdb-vs-sqlite.md", async () => {
+    // duckdb.md and sqlite.md list each other under alternatives.open_source
+    // since sqlite.md was added this run — this comparison page closes that
+    // pair out in the same PR, rather than leaving a dangling-mutual-pair
+    // gap for a future run to find.
+    const { container } = render(
+      await ComparePage({ params: Promise.resolve({ a: "duckdb", b: "sqlite" }) }),
+    );
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "DuckDB vs SQLite" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "DuckDB" })).toHaveAttribute(
+      "href",
+      "/repo/duckdb",
+    );
+    expect(screen.getByRole("link", { name: "SQLite" })).toHaveAttribute(
+      "href",
+      "/repo/sqlite",
+    );
+
+    const table = container.querySelector("table")!;
+    expect(within(table).getAllByText(/MIT/).length).toBeGreaterThan(0);
+    expect(within(table).getAllByText(/Public Domain/).length).toBeGreaterThan(0);
+
+    expect(screen.getByRole("heading", { level: 2, name: "How they differ" })).toBeInTheDocument();
+    expect(
+      screen.getByText(/SQLite is built for OLTP/),
+    ).toBeInTheDocument();
+  });
+
   it("resolves the reverse URL order (/compare/vllm/ollama) to the same content, rendered in canonical order", async () => {
     const { container: forward } = render(
       await ComparePage({ params: Promise.resolve({ a: "ollama", b: "vllm" }) }),

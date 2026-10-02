@@ -15,6 +15,8 @@ yourself, from a single embedded file to a distributed cluster.
   analytical queries, with no server to run.
 - [ClickHouse](/repo/clickhouse) — a distributed, column-oriented database built for
   real-time analytics at very large scale.
+- [SQLite](/repo/sqlite) — an embedded, serverless SQL database built for everyday
+  transactional reads and writes, not analytical aggregations.
 
 ## Related Groves
 Self-Hosted, AI

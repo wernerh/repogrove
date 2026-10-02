@@ -35,11 +35,15 @@ describe("Grove page (/grove/[slug])", () => {
         /Open-source databases worth knowing about, from embedded analytics engines to distributed OLAP clusters\./,
       ),
     ).toBeInTheDocument();
-    // The body's own "## Core projects" section links to both new repos.
+    // The body's own "## Core projects" section links to all three repos.
     expect(screen.getByRole("link", { name: "DuckDB" })).toHaveAttribute("href", "/repo/duckdb");
     expect(screen.getByRole("link", { name: "ClickHouse" })).toHaveAttribute(
       "href",
       "/repo/clickhouse",
+    );
+    expect(screen.getByRole("link", { name: "SQLite" })).toHaveAttribute(
+      "href",
+      "/repo/sqlite",
     );
   });
 
