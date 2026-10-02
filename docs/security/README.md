@@ -109,6 +109,19 @@ Full detail: `docs/security/findings/SEC-001-ci-workflow-permissions.md`,
   `npm audit --audit-level=high` (0 vulnerabilities) all run locally; `npm run build`
   reproduced the known ADR-006 sandbox font-fetch gap (confirmed it compiles past
   content loading first), left to CI's real GitHub-hosted runner.
+
+  **Independent review of PR #123 (first pass: BLOCK).** Caught one MAJOR: this run's
+  own "Secrets management for deploy: PASS" characterization missed that the Azure
+  workflow's `pull_request` trigger means every same-repo PR (not just `push`) already
+  creates a real preview deployment with the live secret today — not a vulnerability,
+  but a materially understated operational fact given `ADR-002`'s "stays stubbed"
+  language. Corrected: downgraded to `PARTIAL`, raised as owner decision RG-10 + issue
+  #124 instead of this lane deciding unilaterally. Also two MINORs, both fixed:
+  `close_pull_request_job` had no explicit `permissions:` block (added
+  `{contents: read}`); the deferred-CSP reasoning had conflated `frame-ancestors`
+  (independent of script-src/style-src) with the genuinely-hard parts of CSP — added
+  `Content-Security-Policy: frame-ancestors 'none'`, safe and unrelated to the deferred
+  risk. Re-validated (463/463 tests, lint/tsc/audit clean) and re-requested review.
 - **2026-10-01 (run 10):** first security run since run 9 (2026-09-29) — a 15-run gap on
   the dev/design side, so the biggest task this run was reviewing the real Phase 3+
   attack surface that landed in that window rather than another "nothing changed" quiet

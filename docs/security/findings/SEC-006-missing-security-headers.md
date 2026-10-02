@@ -164,6 +164,46 @@ correct hashes or an explicit, reasoned `'unsafe-inline'` tradeoff instead of a 
 Left as `NOT VERIFIED` in `docs/security/PRODUCTION-HARDENING.md`'s CSP row rather than
 closed.
 
+## Addendum — independent review (2026-10-02, same run)
+The independent reviewer (`factory-reviewer-security`) returned **BLOCK** on the first
+pass, with two real findings against this writeup's own claims, not against the shipped
+headers themselves:
+
+- **MAJOR:** this writeup's "Secrets management for deploy: PASS (repo side)" graded
+  the deploy workflow clean by answering only "can an attacker exfiltrate the secret"
+  (no — fork-PR secrets are withheld by GitHub regardless). It missed the actual
+  operational consequence sitting in the same workflow file: the `pull_request:
+  [opened, synchronize, reopened]` trigger (not just `push`) means every **same-repo**
+  PR — every dev/design/security-lane PR, not just pushes to `main` — already creates a
+  real Azure preview-environment deployment with the live secret, right now, today.
+  That's not a vulnerability (same-repo PRs are an already-trusted surface — only
+  collaborators can push branches directly), but "PASS, no finding" overclaimed: it's a
+  materially significant operational fact (real cloud-resource activity on every PR)
+  that `ADR-002-hosting.md`'s own "deploy-related work... stays stubbed... rather than
+  half-built against unconfirmed credentials" language didn't anticipate, written before
+  the owner directly provisioned this resource. Corrected: downgraded
+  `PRODUCTION-HARDENING.md`'s row to `PARTIAL` with the fact stated plainly, and raised
+  it as a new owner decision (RG-10, `.factory/decisions.yaml`, emailed and mirrored as
+  needs-human issue #124) rather than this lane silently deciding whether per-PR
+  previews are acceptable.
+- **MINOR:** `close_pull_request_job` had no explicit `permissions:` block at all
+  (unlike `build_and_deploy_job`'s), relying on the unverifiable repo/org default — the
+  same class of gap SEC-001 already flagged elsewhere in this repo. Fixed: added
+  `permissions: { contents: read }`.
+- **MINOR:** the deferred-CSP reasoning conflated `frame-ancestors` (independent of
+  script-src/style-src entirely) with the harder, genuinely-deferred parts of the policy.
+  Fixed: added `Content-Security-Policy: frame-ancestors 'none'` to `globalHeaders` —
+  safe, reinforces `X-Frame-Options: DENY`, doesn't touch script/style loading at all.
+  The rest of CSP (script-src/style-src/etc.) is still deferred for the reasons stated
+  above; the regression test's "does not set a full CSP" assertion was updated to
+  "sets only `frame-ancestors`" accordingly.
+
+Both MINORs fixed and re-validated in place (463 tests still pass, lint/tsc/audit still
+clean). The MAJOR is a documentation/characterization fix, not a code fix — there is
+nothing unsafe to patch in the deploy workflow's `pull_request` trigger itself; the
+question of whether to keep, scope, or remove per-PR previews belongs to the owner
+(RG-10), not this lane.
+
 ## Related
 - `docs/security/PRODUCTION-HARDENING.md` — "CSP / security headers" and "HTTPS
   enforced" rows, both updated this run now that a real deployment exists to reason

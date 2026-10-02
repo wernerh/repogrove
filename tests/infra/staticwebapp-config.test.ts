@@ -57,19 +57,23 @@ describe("public/staticwebapp.config.json", () => {
     }
   });
 
-  it("does NOT set Content-Security-Policy yet (deliberately deferred, see SEC-006 finding)", () => {
+  it("sets only frame-ancestors in CSP — the rest is deliberately deferred (SEC-006)", () => {
     // Next.js App Router's static export injects inline hydration <script>
     // tags (RSC flight data) with no server available to mint per-request
     // nonces (output: "export" has no middleware/server at all) and at
     // least two components use inline style={{ width: ... }} attributes
-    // (TrendBoard.tsx, GroveHeader.tsx) for progress-bar widths. A CSP
+    // (TrendBoard.tsx, GroveHeader.tsx) for progress-bar widths. A full CSP
     // written without inspecting a real built `out/` or the live site
     // (both out of reach this run — the sandbox's own font-fetch gap
     // blocks a local build, and this lane never touches live cloud
     // resources) risks shipping a script-src that silently breaks
     // hydration/interactivity on the real production site on the next
-    // auto-deploy. Left as a scoped follow-up rather than guessed at.
+    // auto-deploy. `frame-ancestors` is independent of script-src/style-src
+    // entirely (it only governs who may embed this page in a frame) and is
+    // safely addable now — it reinforces X-Frame-Options: DENY and is the
+    // modern replacement browsers prefer. The rest of the policy
+    // (script-src/style-src/etc.) is left out, not guessed at.
     const headers = config.globalHeaders as Record<string, string>;
-    expect(headers["Content-Security-Policy"]).toBeUndefined();
+    expect(headers["Content-Security-Policy"]).toBe("frame-ancestors 'none'");
   });
 });
