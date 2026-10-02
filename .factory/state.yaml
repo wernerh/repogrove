@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-10-02T12:50:03Z"
-  holder: "dev"
-  last_run: "2026-10-02T11:09:53Z"
+  current_run: null
+  holder: null
+  last_run: "2026-10-02T13:16:00Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -19,14 +19,55 @@ health:
   infrastructure: none
 
 metrics:
-  runs: 72
-  features_completed: 37
+  runs: 73
+  features_completed: 38
   bugs_fixed: 11
   security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
 
 next_actions:
+  - "2026-10-02 (run 55): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03T13:02:34Z) hasn't passed (due tomorrow — the next dev run should apply
+    RG-7's recommended default, 'Hold', per docs/DECISION-PROTOCOL.md's auto-default
+    rule for cheap-to-reverse questions, if still unanswered by then). RG-8/RG-9 have
+    no default and stay open regardless. Held off Phase 4 feature work again this run.
+    Picked up run 54's own next-action pointer: grew the Databases grove further per
+    the product spec's own named example list (PostgreSQL, DuckDB, SQLite, ClickHouse,
+    SurrealDB, PocketBase) — added content/repos/postgresql.md (postgres/postgres,
+    'PostgreSQL License'), paired with SQLite as a mutual open-source alternative
+    (client-server vs. embedded/serverless — a well-documented real-world comparison,
+    not an invented pairing). Facts (Berkeley POSTGRES origin 1986, renamed/relaunched
+    as Postgres95 then PostgreSQL in 1996, client-server architecture, MVCC
+    concurrency control, extension ecosystem incl. PostGIS/pgvector/TimescaleDB)
+    verified via WebSearch against Wikipedia, postgresql.org, and pgpedia, and the
+    GitHub repo's own 'mirror of the official PostgreSQL GIT repository' description
+    — not scraped from the project's own one-line GitHub description, per CLAUDE.md
+    rule 4. Added content/comparisons/postgresql-vs-sqlite.md in the same PR, closing
+    that mutual pair immediately rather than leaving a dangling-reference gap for a
+    future run. Small related task: added a 'Core projects' bullet for PostgreSQL to
+    content/groves/databases.md (now 4 repos). Updated/added tests across all affected
+    files (tests/lib/content.test.ts: repo slug list, SQLite's alternatives, a new
+    PostgreSQL frontmatter-parsing test, getReposInGrove('databases') coverage,
+    comparisons slug list; real-page render tests for /repo/postgresql,
+    /grove/databases, /repo/sqlite, /compare/postgresql/sqlite; recomputed homepage
+    fixture numbers — 21 repos + 4 groves = 25 card links, 4 repos for the Databases
+    grove's footer). 365/365 tests pass (9 new/updated), lint clean, tsc --noEmit
+    clean, npm audit --audit-level=high 0 vulnerabilities, all run locally; npm run
+    build reproduced the known ADR-006 sandbox font-fetch gap (confirmed via the full
+    local test suite exercising content.ts's real build-time validation against every
+    file in this PR), left to CI's GitHub-hosted runner — confirmed all 3 checks green
+    on PR #107 (CI, Factory guardrails, plus the non-gating Playwright/axe-core run)
+    before squash-merging it myself; post-merge CI on main also confirmed green.
+    Independent review (subagent, skeptical-senior-engineer pass) found no
+    BLOCKER/MAJOR issues (one MINOR style note on the non-SPDX license string,
+    accepted per Vim's existing precedent). ROADMAP.md needed no changes (no roadmap
+    item touched). CHANGELOG.md/PROJECT_STATE.md/DECISIONS.md/.factory/decisions.yaml
+    updated. Archived run 46's entry to docs/factory/run-history.md to keep this list
+    at ~9 recent entries. Next: re-check RG-7/8/9 (apply RG-7's default if due date
+    passed by then); grow Databases grove further (SurrealDB per the spec's own
+    example list) or find the next content gap."
   - "2026-10-02 (run 54): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03T13:02:34Z) hasn't passed (due tomorrow — this is likely the last
@@ -377,39 +418,9 @@ next_actions:
     — a future decision-free run will need a new source of work (a fresh drift pass,
     a content-accuracy audit, or one of TECH-DEBT.md's open low-severity dev-lane rows,
     e.g. #32's Grove Heat v1 threshold-revisit row) if RG-7/8/9 are still open by then."
-  - "2026-10-01 (run 46): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
-    — still exactly the one original message, no owner reply. RG-7's default_due_at
-    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
-    Held off Phase 4 feature work again this run, consistent with runs 33-45. Picked
-    up run 45's own Next pointer: vim.md, neovim.md, helix.md, and zed.md have listed
-    each other under alternatives.open_source since zed.md was added (run 42) — a
-    fully-mutual 4-way cluster with zero content/comparisons/*.md pages, the last
-    sizeable comparisons gap of the kind run 36/44/45 already closed for their own
-    trios. Major task: added all 6 pairwise comparison pages (helix-vs-neovim,
-    helix-vs-vim, helix-vs-zed, neovim-vs-vim, neovim-vs-zed, vim-vs-zed), each
-    grounded entirely in facts already stated in the four repos' own content files
-    (license, built-in LSP or not, config language, GUI vs terminal, collaboration/AI,
-    plugin-ecosystem maturity) — no new external research needed. Independent review
-    (subagent, skeptical-senior-engineer pass) caught a real self-contradiction in two
-    files' framing sentences (vim-vs-zed.md and helix-vs-vim.md both called Vim
-    'terminal-only' while also correctly noting a few sentences later that Vim can run
-    as a GUI via gVim, per content/repos/vim.md itself) — reworded both to
-    'terminal-first'/'built around the terminal' before merge; everything else the
-    review checked (license/LSP/config-language accuracy, frontmatter format, no
-    duplicate comparison pairs, domain-rule compliance) came back clean. Updated
-    tests/lib/content.test.ts's comparisons fixture-list test (6 new slugs, alphabetical
-    order). 330/330 tests pass, lint clean; npm run build reproduces the known ADR-006
-    sandbox font-fetch gap, left to CI's GitHub-hosted runner — all 3 checks (CI,
-    Factory guardrails, Design screenshots & accessibility) green on PR #97 before
-    squash-merging it myself; post-merge main pulled and confirmed. CHANGELOG.md/
-    PROJECT_STATE.md updated; .factory/decisions.yaml's RG-7 note appended. Next:
-    re-check RG-7/8/9 each run; with the editor cluster closed, every fully-mutual
-    comparison gap flagged since run 36 is now closed — next run should re-scan
-    content/ for any remaining one-off dangling references or other content/validator
-    gaps before falling back to a fresh drift pass, if RG-7 is still open."
-  - "Older next_actions entries (runs 22-45) archived to docs/factory/run-history.md
-    on 2026-10-01/02 (dev runs 44/46/47/48/50/51/52/53/54) -- TECH-DEBT.md's 2026-10-01 row:
-    this list's unbounded growth was costing a real tool-output truncation on every
+  - "Older next_actions entries (runs 22-46) archived to docs/factory/run-history.md
+    on 2026-10-01/02 (dev runs 44/46/47/48/50/51/52/53/54/55) -- TECH-DEBT.md's 2026-10-01
+    row: this list's unbounded growth was costing a real tool-output truncation on every
     lock-acquisition read. Keeping only the most recent ~9 entries here going forward;
     full history (including these) stays in docs/factory/run-history.md, which
     nothing in scripts/factory/ reads -- safe to keep trimming the same way each run."

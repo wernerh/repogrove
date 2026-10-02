@@ -7,6 +7,24 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-02 — Dev run 55: added `content/repos/postgresql.md` (`postgres/postgres`,
+  "PostgreSQL License") to the Databases grove, growing it from 3 to 4 repos —
+  picking up run 54's own next-action pointer to continue the product spec's named
+  Database Grove example list (PostgreSQL, DuckDB, SQLite, ClickHouse, SurrealDB,
+  PocketBase). Cross-referenced PostgreSQL and SQLite as mutual open-source
+  alternatives (client-server vs. embedded/serverless) and added
+  `content/comparisons/postgresql-vs-sqlite.md` in the same PR to close that pair
+  immediately rather than leave a dangling-reference gap. Facts verified via
+  WebSearch against Wikipedia, postgresql.org, pgpedia, and the GitHub repo's own
+  "mirror of the official PostgreSQL GIT repository" description. 365/365 tests
+  pass (9 new/updated), lint/`tsc --noEmit` clean, 0 `npm audit` findings, all run
+  locally; `npm run build` reproduced the known ADR-006 sandbox font-fetch gap, left
+  to CI. Independent review (subagent) found no BLOCKER/MAJOR issues (one MINOR
+  style note on the non-SPDX license string, accepted per Vim's existing precedent).
+  PR #107 (3/3 gating checks green, including the non-gating Playwright/axe-core
+  run); post-merge CI on `main` also confirmed green. RG-7/8/9 re-checked — still no
+  owner reply (RG-7 defaults 2026-10-03, due tomorrow), held off Phase 4 feature
+  work again (dev)
 - 2026-10-02 — Dev run 54: added `content/repos/sqlite.md` (`sqlite/sqlite`, Public
   Domain) to the Databases grove, growing it from 2 to 3 repos — picking up run 53's
   own next-action pointer to continue the product spec's named Database Grove example

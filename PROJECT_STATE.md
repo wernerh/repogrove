@@ -15,10 +15,10 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 54: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03, due tomorrow). Added SQLite
-to the Databases grove (now 3 repos) + duckdb-vs-sqlite comparison, #106. Next:
-re-check RG-7/8/9 (apply RG-7's default if due); grow Databases grove further
-(PostgreSQL/SurrealDB/PocketBase) or find the next content gap.
+Run 55: RG-7/8/9 still no reply (RG-7 defaults 2026-10-03, due tomorrow). Added
+PostgreSQL to the Databases grove (now 4 repos) + postgresql-vs-sqlite comparison,
+PR #107, merged, CI green. Next: re-check RG-7/8/9 (apply RG-7's default if due); grow
+Databases grove further (SurrealDB) or find the next content gap.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -55,6 +55,6 @@ None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 stays stubbed u
 - [x] 2026-09-30/10-02 — Decision-free content: dev-tools grove, +PocketBase/Appwrite,
   commercial-slug fix, LocalAI/Dokploy/LlamaIndex/Vim/Helix/Zed/Tig/GitUI, all
   comparisons, all /alternative/:slug pages incl. lm-studio (#81-104); commercial-chip
-  linking (#102); Databases grove added/grown (DuckDB, ClickHouse, SQLite + 2
-  comparisons, #105-106) — 4 groves/20 repos total, all known dangling refs closed.
+  linking (#102); Databases grove added/grown (DuckDB, ClickHouse, SQLite,
+  PostgreSQL + 3 comparisons, #105-107) — 4 groves/21 repos total, dangling refs closed.
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (#76-78), awaiting owner

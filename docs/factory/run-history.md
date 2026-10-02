@@ -12,6 +12,36 @@ context) to skim, same role the archived entries played in state.yaml before thi
 Newest-archived-first, same order they appeared in state.yaml.
 
 ```yaml
+  - "2026-10-01 (run 46): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
+    Held off Phase 4 feature work again this run, consistent with runs 33-45. Picked
+    up run 45's own Next pointer: vim.md, neovim.md, helix.md, and zed.md have listed
+    each other under alternatives.open_source since zed.md was added (run 42) — a
+    fully-mutual 4-way cluster with zero content/comparisons/*.md pages, the last
+    sizeable comparisons gap of the kind run 36/44/45 already closed for their own
+    trios. Major task: added all 6 pairwise comparison pages (helix-vs-neovim,
+    helix-vs-vim, helix-vs-zed, neovim-vs-vim, neovim-vs-zed, vim-vs-zed), each
+    grounded entirely in facts already stated in the four repos' own content files
+    (license, built-in LSP or not, config language, GUI vs terminal, collaboration/AI,
+    plugin-ecosystem maturity) — no new external research needed. Independent review
+    (subagent, skeptical-senior-engineer pass) caught a real self-contradiction in two
+    files' framing sentences (vim-vs-zed.md and helix-vs-vim.md both called Vim
+    'terminal-only' while also correctly noting a few sentences later that Vim can run
+    as a GUI via gVim, per content/repos/vim.md itself) — reworded both to
+    'terminal-first'/'built around the terminal' before merge; everything else the
+    review checked (license/LSP/config-language accuracy, frontmatter format, no
+    duplicate comparison pairs, domain-rule compliance) came back clean. Updated
+    tests/lib/content.test.ts's comparisons fixture-list test (6 new slugs, alphabetical
+    order). 330/330 tests pass, lint clean; npm run build reproduces the known ADR-006
+    sandbox font-fetch gap, left to CI's GitHub-hosted runner — all 3 checks (CI,
+    Factory guardrails, Design screenshots & accessibility) green on PR #97 before
+    squash-merging it myself; post-merge main pulled and confirmed. CHANGELOG.md/
+    PROJECT_STATE.md updated; .factory/decisions.yaml's RG-7 note appended. Next:
+    re-check RG-7/8/9 each run; with the editor cluster closed, every fully-mutual
+    comparison gap flagged since run 36 is now closed — next run should re-scan
+    content/ for any remaining one-off dangling references or other content/validator
+    gaps before falling back to a fresh drift pass, if RG-7 is still open."
   - "2026-10-01 (run 41): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless.
