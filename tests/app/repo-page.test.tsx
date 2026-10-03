@@ -20,6 +20,7 @@ describe("Repo page (/repo/[slug])", () => {
       "localai",
       "neovim",
       "ollama",
+      "open-webui",
       "pocketbase",
       "portainer",
       "postgresql",
@@ -519,6 +520,23 @@ describe("Repo page (/repo/[slug])", () => {
     // "Not yet profiled".
     expect(screen.getAllByRole("link", { name: "Coolify" })[0]).toHaveAttribute("href", "/repo/coolify");
     expect(screen.getAllByRole("link", { name: "Dokploy" })[0]).toHaveAttribute("href", "/repo/dokploy");
+  });
+
+  it("renders /repo/open-webui from content/repos/open-webui.md, not a hardcoded string", async () => {
+    render(await RepoPage({ params: Promise.resolve({ slug: "open-webui" }) }));
+
+    expect(screen.getByRole("heading", { level: 1, name: "Open WebUI" })).toBeInTheDocument();
+    expect(screen.getAllByText(/MIT/, { selector: "dd" })[0]).toBeInTheDocument();
+    expect(screen.getByText(/Open WebUI \(originally released as Ollama WebUI/)).toBeInTheDocument();
+    // The body's own "## Related Grove" section links back to the AI grove —
+    // proves this new content/repos/*.md file renders through the real page,
+    // not just through generateStaticParams.
+    expect(screen.getAllByRole("link", { name: "AI" })[0]).toHaveAttribute("href", "/grove/ai");
+    // alternatives.commercial = [ChatGPT] — no content/alternatives/chatgpt.md
+    // exists yet, so it renders as plain, unresolved text (same shape as
+    // CasaOS's Synology DSM chip), not a link to a page that doesn't exist.
+    expect(screen.getAllByText("ChatGPT")[0]).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "ChatGPT" })).not.toBeInTheDocument();
   });
 
   it("resolves Coolify's own alternatives.open_source (portainer) now that it has a profile", async () => {

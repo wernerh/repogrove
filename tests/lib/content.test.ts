@@ -45,6 +45,7 @@ describe("getAllRepos (real /content fixtures)", () => {
       "localai",
       "neovim",
       "ollama",
+      "open-webui",
       "pocketbase",
       "portainer",
       "postgresql",
@@ -149,6 +150,21 @@ describe("getAllRepos (real /content fixtures)", () => {
     expect(getRepo("dokploy")?.alternatives.open_source).toEqual(["coolify", "portainer"]);
   });
 
+  it("parses Open WebUI's frontmatter correctly", () => {
+    const openWebui = getRepo("open-webui");
+    expect(openWebui).toBeDefined();
+    expect(openWebui?.github).toBe("open-webui/open-webui");
+    expect(openWebui?.name).toBe("Open WebUI");
+    expect(openWebui?.license).toBe("MIT");
+    expect(openWebui?.status).toBe("active");
+    expect(openWebui?.groves).toEqual(["ai"]);
+    // A chat UI layered over a separate inference backend (Ollama, any
+    // OpenAI-compatible API) — nothing else in the catalog is that same
+    // shape yet, so open_source stays empty, same as immich.md.
+    expect(openWebui?.alternatives.open_source).toEqual([]);
+    expect(openWebui?.alternatives.commercial).toEqual(["ChatGPT"]);
+  });
+
   it("returns undefined for a repo that doesn't exist", () => {
     expect(getRepo("does-not-exist")).toBeUndefined();
   });
@@ -182,6 +198,7 @@ describe("getReposInGrove (derived from repo frontmatter, per ADR-003)", () => {
       "llamaindex",
       "localai",
       "ollama",
+      "open-webui",
       "vllm",
     ]);
   });
