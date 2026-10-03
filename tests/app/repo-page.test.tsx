@@ -7,6 +7,7 @@ describe("Repo page (/repo/[slug])", () => {
     const params = generateStaticParams();
     expect(params.map((p) => p.slug).sort()).toEqual([
       "appwrite",
+      "casaos",
       "clickhouse",
       "coolify",
       "dokploy",
@@ -553,6 +554,28 @@ describe("Repo page (/repo/[slug])", () => {
 
     expect(screen.getAllByRole("link", { name: "Dokploy" })[0]).toHaveAttribute("href", "/repo/dokploy");
     expect(screen.queryByText("Not yet profiled")).not.toBeInTheDocument();
+  });
+
+  it("renders /repo/casaos from content/repos/casaos.md, not a hardcoded string", async () => {
+    render(await RepoPage({ params: Promise.resolve({ slug: "casaos" }) }));
+
+    expect(screen.getByRole("heading", { level: 1, name: "CasaOS" })).toBeInTheDocument();
+    expect(screen.getAllByText(/Apache-2.0/, { selector: "dd" })[0]).toBeInTheDocument();
+    expect(screen.getByText(/CasaOS installs on top of Linux/)).toBeInTheDocument();
+    // The body's own "## Related Grove" section links back to Self-Hosted —
+    // proves this new content/repos/*.md file renders through the real page,
+    // not just through generateStaticParams.
+    expect(screen.getAllByRole("link", { name: "Self-Hosted" })[0]).toHaveAttribute(
+      "href",
+      "/grove/self-hosted",
+    );
+    // No content/alternatives/synology-dsm.md exists yet, so its commercial
+    // chip renders as plain text (not a link) — the same unresolved-chip
+    // shape Immich's Google Photos/Apple iCloud Photos chips use. The name
+    // also appears a second time in the body's own "## Alternatives"
+    // prose, so assert with getAllByText rather than a single match.
+    expect(screen.getAllByText("Synology DSM").length).toBeGreaterThan(0);
+    expect(screen.queryByRole("link", { name: "Synology DSM" })).not.toBeInTheDocument();
   });
 
   it("links Coolify's commercial chips to their own /alternative/:slug pages now that they exist", async () => {

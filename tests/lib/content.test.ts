@@ -32,6 +32,7 @@ describe("getAllRepos (real /content fixtures)", () => {
     const slugs = repos.map((r) => r.slug).sort();
     expect(slugs).toEqual([
       "appwrite",
+      "casaos",
       "clickhouse",
       "coolify",
       "dokploy",
@@ -149,6 +150,22 @@ describe("getAllRepos (real /content fixtures)", () => {
     expect(getRepo("dokploy")?.alternatives.open_source).toEqual(["coolify", "portainer"]);
   });
 
+  it("parses CasaOS's frontmatter correctly", () => {
+    const casaos = getRepo("casaos");
+    expect(casaos).toBeDefined();
+    expect(casaos?.github).toBe("IceWhaleTech/CasaOS");
+    expect(casaos?.name).toBe("CasaOS");
+    expect(casaos?.license).toBe("Apache-2.0");
+    expect(casaos?.status).toBe("active");
+    expect(casaos?.groves).toEqual(["self-hosted"]);
+    // A consumer-NAS-style personal cloud OS is a different niche from this
+    // Grove's devops-focused Docker/Kubernetes tools (Portainer) and PaaS
+    // deploy tools (Coolify/Dokploy) — no open-source alternative fits the
+    // catalog yet, same shape as Immich/Nextcloud.
+    expect(casaos?.alternatives.open_source).toEqual([]);
+    expect(casaos?.alternatives.commercial).toEqual(["Synology DSM"]);
+  });
+
   it("returns undefined for a repo that doesn't exist", () => {
     expect(getRepo("does-not-exist")).toBeUndefined();
   });
@@ -190,6 +207,7 @@ describe("getReposInGrove (derived from repo frontmatter, per ADR-003)", () => {
     const reposInSelfHosted = getReposInGrove("self-hosted");
     expect(reposInSelfHosted.map((r) => r.slug).sort()).toEqual([
       "appwrite",
+      "casaos",
       "coolify",
       "dokploy",
       "immich",
