@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-10-03T00:49:05Z"
-  holder: "dev"
-  last_run: "2026-10-02T23:46:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-10-03T01:20:01Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -9,17 +9,22 @@ product:
 
 execution:
   active_tasks: []
-  blocked_tasks: []
-  open_prs: []
+  blocked_tasks:
+    - "PR #125 (feat: Nextcloud to Self-Hosted grove) — blocked on issue #126, a new
+      diff-independent npm audit HIGH finding (braces/GHSA-vfj7-8cjw-p6xm) with no fix
+      currently available upstream; CI otherwise green, independent review PASS WITH
+      NITS. Not this lane's call to resolve (narrowing the audit gate's scope is a
+      security-policy decision) — re-check next run."
+  open_prs: ["#125"]
 
 health:
-  ci: "all checks green on main (PR #121 merged, Portainer added to Self-Hosted grove)"
-  security: green
+  ci: "main green; PR #125 (open, not caused by this PR) blocked on a new npm audit HIGH finding, see blocked_tasks"
+  security: "green on main; new HIGH finding (issue #126) blocks the dependency-scan gate on every PR, no fix available yet"
   production: not_deployed
   infrastructure: none
 
 metrics:
-  runs: 77
+  runs: 78
   features_completed: 41
   bugs_fixed: 12
   security_issues_fixed: 3
@@ -27,6 +32,47 @@ metrics:
   failed_runs: 0
 
 next_actions:
+  - "2026-10-03 (run 60): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. default_due_at
+    (2026-10-03T13:02:34Z) hasn't passed (~12h off at this run's start). Held off Phase 4
+    feature work again this run; used it instead for decision-free editorial content work
+    (Nextcloud added to the Self-Hosted grove — content/repos/nextcloud.md, AGPL-3.0 —
+    the next item from PRODUCT.md's own named Self-Hosted example list; only CasaOS
+    remains). No open-source alternative fits in the catalog yet, so alternatives.open_source
+    stays empty (same shape as Immich); commercial alternatives are Google Drive, Dropbox,
+    Microsoft OneDrive. Facts verified via WebFetch against two independent sources
+    (thenewstack.io, opensourcealternatives.to) after Wikipedia/GitHub direct fetches were
+    declined (unattended provenance-approval prompt). 465 tests (7 new/updated), lint/tsc
+    clean, npm audit --audit-level=high 0 vulnerabilities — all run locally before this
+    run's later re-audit (see below); npm run build reproduced the known ADR-006 sandbox
+    font-fetch gap, confirmed it compiles past content loading first. Independent review
+    (factory-reviewer-dev) PASS WITH NITS: one MINOR (a stale code comment in
+    src/app/repo/[slug]/page.tsx claiming every commercial reference resolves to a real
+    page — no longer true once this PR named three with none) fixed same PR, plus a
+    TECH-DEBT.md row; two NIT/opinion items left as-is. PR #125 pushed, labelled factory —
+    **NOT merged this run**: CI's Dependency vulnerability scan failed on a brand-new,
+    diff-independent finding (braces/GHSA-vfj7-8cjw-p6xm, HIGH, 5 findings, via
+    eslint-config-next's own lint tooling) that appeared mid-run (0 vulnerabilities earlier
+    in this same session, confirming it's a just-published advisory, not anything this PR
+    touched — package.json/package-lock.json are unmodified by this PR). Confirmed no fix
+    is available: braces@3.0.3 (installed) is the newest version npm has ever published,
+    and the advisory's own range (<=3.0.3) covers it; npm audit's suggested \"fix\"
+    (downgrading eslint-config-next 16.3.6->14.2.35, isSemVerMajor: true) is a 2-major-
+    version regression, not a real fix. Confirmed via npm audit --omit=dev --audit-level=high
+    (0 vulnerabilities) that this only affects dev/lint tooling, never the shipped
+    static-export bundle. Deliberately did not narrow ci.yml's audit scope myself — that's
+    a security-gate policy change, not a content-PR fix, and CLAUDE.md rule 7 forbids
+    weakening a CI check to get green regardless of how well-reasoned the narrowing is.
+    Filed issue #126 (security/tech-debt labels, not needs-human — no spend/cloud/
+    destructive action needed, just a technical scoping question for the security lane or
+    owner), added a TECH-DEBT.md row, posted one comment on PR #125 explaining the block,
+    subscribed this session to PR #125's activity. Also confirmed the Azure \"Build and
+    Deploy Job\" failure (maximum staging environments) is the same already-precedented,
+    diff-independent quota error PRs #121/#123 already documented — not a new issue.
+    Next: merge PR #125 once the dependency-scan gate clears (upstream braces patch, or a
+    security-lane/owner decision to scope ci.yml's audit to --omit=dev); re-check issue
+    #126; apply RG-7's default if still unanswered by 2026-10-03T13:02:34Z; grow
+    Self-Hosted further (CasaOS) or find the next content gap."
   - "2026-10-02 (run 59): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. RG-7's default_due_at
     (2026-10-03T13:02:34Z) hasn't passed (~16h off at this run's start). RG-8/RG-9 have
