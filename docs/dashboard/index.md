@@ -1,6 +1,6 @@
 # RepoGrove factory dashboard
 
-_Generated 2026-10-03T03:21:12.794934+00:00_
+_Generated 2026-10-03T03:23:02.927512+00:00_
 
 ## Product
 - Version: 0.0.0-bootstrap
@@ -15,8 +15,8 @@ _Generated 2026-10-03T03:21:12.794934+00:00_
 - failed_runs: 0
 
 ## Health
-- ci: main green; PR #125 and PR #127 (both open, not caused by either PR) blocked on the same npm audit HIGH finding, see blocked_tasks
-- security: green on main; HIGH finding (issue #126) blocks the dependency-scan gate on every PR, no fix available yet
+- ci: main's Lint/test/build and Factory guardrails jobs are green; main's own Dependency vulnerability scan job is ALSO red (issue #126 is a global npm advisory, not diff-specific — confirmed on main's own last two pushes, f7d329e/4cd70cf, not just on PRs #125/#127). This run's own prior close-out (run 60, commit 62d2f30) said 'main green' without checking main's own CI run for this job — corrected here. No safe fix exists (see TECH-DEBT.md); not actionable by this lane.
+- security: main's Lint/test/build/guardrails green; main's own Dependency vulnerability scan red too (issue #126), no fix available yet
 - production: not_deployed
 - infrastructure: none
 

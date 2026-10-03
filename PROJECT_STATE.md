@@ -44,9 +44,9 @@ Accounts, paid subscriptions, watchlists/alerts, recommendation engine, massive 
 Phases 2 and 3 both completed within budget; no Phase 3 item needed a split.
 
 ## Blockers and attempts
-PR #125 and PR #127 both blocked on the same diff-independent CI gate failure (issue
-#126, no fix yet upstream) — waiting on a patch or a security-lane scoping call.
-RG-7/8/9 open (see Next action); Phase 4 stays stubbed.
+PR #125/#127 and main itself all hit the same Dependency vulnerability scan failure
+(issue #126, no upstream fix); main's Lint/test/build/guardrails stay green. RG-7/8/9
+open (see Next action); Phase 4 stays stubbed.
 
 ## Milestones
 - [x] 2026-09-27/30 — Phase 1 walking skeleton (#5-7); Phase 2 ingestion/metrics/
