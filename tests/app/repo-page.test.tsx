@@ -16,6 +16,7 @@ describe("Repo page (/repo/[slug])", () => {
       "immich",
       "langchain",
       "lazygit",
+      "litellm",
       "llamaindex",
       "localai",
       "neovim",
