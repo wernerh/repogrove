@@ -2,7 +2,7 @@
 github: open-webui/open-webui
 name: Open WebUI
 category: [ai, llm, chat-ui]
-license: MIT
+license: BSD-3-Clause (modified, branding clause)
 status: active
 featured: false
 groves: [ai]
@@ -29,14 +29,15 @@ integration — all running on infrastructure you control rather than a vendor's
   choice of vector database backends, not a bolted-on plugin
 - Multi-user accounts with role-based access control and group permissions, useful for a
   team or household sharing one server
-- Large, fast-moving open-source community and frequent releases
+- Large, fast-moving community and frequent releases, with the full source published on GitHub
 
 ## Pros
 - One polished, actively maintained web client over local or self-hosted models, instead of building a front end from scratch
-- RAG, web search, image generation, and multi-model chat ship built in rather than as separate add-ons
-- MIT licensed with no feature paywall between the free and "enterprise" use cases
+- RAG, web search, image generation, and multi-model chat ship built in rather than as separate add-ons, with no functionality gated behind a paid tier
+- Full source code stays publicly visible and modifiable; the licensing restriction below is about branding, not features
 
 ## Cons
+- As of v0.6.6 (April 2025), the project's own license is a modified BSD-3-Clause with an added branding clause: deployments can't remove or alter the "Open WebUI" name/logo without either staying under 50 end users in any 30-day window or buying an enterprise license — by the project's own description, this makes it source-available rather than an OSI-approved open-source license
 - A chat interface, not an inference engine — it still needs Ollama, vLLM, or another compatible backend running separately to actually serve a model
 - RAG and multi-model features add real memory/compute overhead on top of whatever is already serving the model itself
 - The project's own deployment guidance is explicit that exposing it to the public internet needs an authenticated reverse proxy in front of it — it isn't hardened for that by default

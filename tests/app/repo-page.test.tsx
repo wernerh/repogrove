@@ -526,7 +526,7 @@ describe("Repo page (/repo/[slug])", () => {
     render(await RepoPage({ params: Promise.resolve({ slug: "open-webui" }) }));
 
     expect(screen.getByRole("heading", { level: 1, name: "Open WebUI" })).toBeInTheDocument();
-    expect(screen.getAllByText(/MIT/, { selector: "dd" })[0]).toBeInTheDocument();
+    expect(screen.getAllByText(/BSD-3-Clause/, { selector: "dd" })[0]).toBeInTheDocument();
     expect(screen.getByText(/Open WebUI \(originally released as Ollama WebUI/)).toBeInTheDocument();
     // The body's own "## Related Grove" section links back to the AI grove —
     // proves this new content/repos/*.md file renders through the real page,
@@ -534,7 +534,8 @@ describe("Repo page (/repo/[slug])", () => {
     expect(screen.getAllByRole("link", { name: "AI" })[0]).toHaveAttribute("href", "/grove/ai");
     // alternatives.commercial = [ChatGPT] — no content/alternatives/chatgpt.md
     // exists yet, so it renders as plain, unresolved text (same shape as
-    // CasaOS's Synology DSM chip), not a link to a page that doesn't exist.
+    // Immich's Google Photos/Apple iCloud Photos chips), not a link to a page
+    // that doesn't exist.
     expect(screen.getAllByText("ChatGPT")[0]).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "ChatGPT" })).not.toBeInTheDocument();
   });
