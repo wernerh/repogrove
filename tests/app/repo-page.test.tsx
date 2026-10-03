@@ -569,6 +569,13 @@ describe("Repo page (/repo/[slug])", () => {
       "href",
       "/grove/self-hosted",
     );
+    // No content/alternatives/synology-dsm.md exists yet, so its commercial
+    // chip renders as plain text (not a link) — the same unresolved-chip
+    // shape Immich's Google Photos/Apple iCloud Photos chips use. The name
+    // also appears a second time in the body's own "## Alternatives"
+    // prose, so assert with getAllByText rather than a single match.
+    expect(screen.getAllByText("Synology DSM").length).toBeGreaterThan(0);
+    expect(screen.queryByRole("link", { name: "Synology DSM" })).not.toBeInTheDocument();
   });
 
   it("links Coolify's commercial chips to their own /alternative/:slug pages now that they exist", async () => {
