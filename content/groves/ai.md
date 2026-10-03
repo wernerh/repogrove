@@ -18,6 +18,8 @@ orchestrating agents.
 - [vLLM](/repo/vllm) — high-throughput inference and serving engine for production LLMs.
 - [LocalAI](/repo/localai) — OpenAI-compatible local inference server covering text,
   audio, image, and video models.
+- [LiteLLM](/repo/litellm) — unified OpenAI-compatible interface and proxy server for
+  calling 100+ LLM provider APIs.
 
 ## Related Groves
 Developer Tools, Self-Hosted, Databases
