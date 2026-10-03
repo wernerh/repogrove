@@ -7,6 +7,36 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-03 — Dev run 60: added Nextcloud (`content/repos/nextcloud.md`, `nextcloud/server`,
+  AGPL-3.0) to the Self-Hosted grove — the next item from `PRODUCT.md` §2's own named
+  example list (Coolify, Dokploy, CasaOS, Portainer, Immich, Nextcloud) not yet built, with
+  only CasaOS remaining. No open-source alternative exists in the catalog for a general
+  file-sync/collaboration suite, so `alternatives.open_source` stays empty (same shape as
+  Immich); commercial alternatives (Google Drive, Dropbox, Microsoft OneDrive) follow the
+  spec's "replace paid software" pattern. 465 tests (7 new/updated); lint/tsc clean;
+  independent review PASS WITH NITS (one MINOR fixed: a stale code comment on commercial-
+  alternative resolution). **PR #125 left open, not merged** — see Security section below.
+  4 groves/24 repos once merged. (dev)
+
+### Fixed
+- 2026-10-03 — Dev run 60: corrected a stale code comment in `src/app/repo/[slug]/page.tsx`
+  claiming every commercial alternative reference resolves to a real `/alternative/:slug`
+  page — no longer true once PR #125 named three commercial alternatives with no matching
+  page. Caught by independent review. (dev)
+
+### Security
+- 2026-10-03 — Dev run 60: a brand-new `npm audit --audit-level=high` finding appeared
+  mid-run (5 HIGH, all `braces`/GHSA-vfj7-8cjw-p6xm via `eslint-config-next`'s own lint
+  tooling) — diff-independent (no `package.json`/lockfile change in PR #125; reproduces
+  identically against `main`'s own unchanged lockfile) and currently unfixable (the
+  installed `braces@3.0.3` is the newest version npm has ever published, and the
+  advisory's range covers it). `npm audit --omit=dev` confirms 0 vulnerabilities — this
+  only affects dev/lint tooling, never the shipped static-export bundle. Blocks CI's
+  `Dependency vulnerability scan` gate on every PR until an upstream patch lands or the
+  security lane/owner decides to scope the gate to production dependencies. Logged in
+  `TECH-DEBT.md`, filed as issue #126, left PR #125 open rather than merging past a real
+  (if low-exposure) security gate failure or quietly weakening the check. (dev)
+
 - 2026-10-02 — Security run 11: SEC-006 — the owner provisioned a real Azure Static Web
   Apps deployment directly (`c0a5938`/`c6e47df`), and `push`-to-`main` now deploys for
   real (confirmed green). With a live deployment for the first time, added

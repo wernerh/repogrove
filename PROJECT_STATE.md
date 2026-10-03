@@ -15,11 +15,13 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 59: RG-7/8/9 no reply (RG-7 defaults 2026-10-03T13:02:34Z). Added Portainer to
-Self-Hosted (+ coolify/dokploy comparisons), PR #121 merged (CI green); a review
-flagged the alternative cross-reference as a curation judgment call, documented in
-TECH-DEBT.md rather than reverted. Next: apply RG-7's default if still unanswered;
-grow Self-Hosted (Nextcloud/CasaOS) or find the next content gap.
+Run 60: RG-7/8/9 no reply (RG-7 defaults 2026-10-03T13:02:34Z, ~12h off at this run's
+start). Built Nextcloud for Self-Hosted, PR #125 — NOT merged: a new, diff-independent
+npm audit HIGH finding (braces/GHSA-vfj7-8cjw-p6xm, no fix available yet) fails CI's
+dependency-scan gate on every PR; issue #126 filed for the security lane. #125 is
+otherwise clean (lint/test/build/review all pass). Next: merge #125 once the gate
+clears; apply RG-7's default if still unanswered; grow Self-Hosted (CasaOS) or find
+the next content gap.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -43,18 +45,16 @@ Accounts, paid subscriptions, watchlists/alerts, recommendation engine, massive 
 Phases 2 and 3 both completed within budget; no Phase 3 item needed a split.
 
 ## Blockers and attempts
-None blocking (rule 8). RG-7/8/9 open (see Next action); Phase 4 stays stubbed until answered.
+PR #125 blocked on a new, diff-independent CI gate failure (issue #126, no fix yet
+upstream) — waiting on a patch or a security-lane scoping call. RG-7/8/9 open (see
+Next action); Phase 4 stays stubbed.
 
 ## Milestones
-- [x] 2026-09-27/29 — Phase 1 walking skeleton (#5-7); Phase 2 ingestion/metrics,
-  star-growth chart, trending/rising, Grove Heat v1 (#16-21, ADR-004/005/006).
-- [x] 2026-09-29/30 — Phase 3 MVP gate complete: `/alternative/:slug`, `/compare/:a/:b`,
-  sitemap/robots, `/search` (ADR-008), newsletter form UI, news widget (#61-72).
-- [x] 2026-09-30/10-02 — Decision-free content: dev-tools grove, Databases grove
-  (DuckDB/ClickHouse/SQLite/PostgreSQL), all dangling open-source/commercial
-  alternative refs closed, all mutual comparisons incl. Databases' full matrix
-  (#81-108) — 4 groves/21 repos total.
-- [x] 2026-10-02 — Pros/Cons truncation guard (#109); Immich to Self-Hosted (#111) —
-  4 groves/22 repos; ComparisonMatrix mobile-overflow fix (#116/#117, UX-2026-007);
-  Portainer to Self-Hosted (#121) — 4 groves/23 repos.
+- [x] 2026-09-27/30 — Phase 1 walking skeleton (#5-7); Phase 2 ingestion/metrics/
+  Grove Heat v1 (#16-21); Phase 3 MVP gate: alternatives, comparisons, search,
+  newsletter UI, news widget (#61-72).
+- [x] 2026-09-30/10-03 — Decision-free content growth: dev-tools + Databases groves,
+  all dangling alternative refs closed, full comparison matrices (#81-108); Pros/Cons
+  truncation guard (#109); Immich/Portainer/Nextcloud to Self-Hosted (#111/#121/#125,
+  pending merge); ComparisonMatrix mobile-overflow fix (UX-2026-007) — 4 groves/24 repos.
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (#76-78), awaiting owner
