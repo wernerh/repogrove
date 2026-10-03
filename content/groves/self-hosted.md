@@ -23,6 +23,8 @@ Projects that let you replace a hosted SaaS with something you run and control y
   ML-powered face recognition and search, as an alternative to Google Photos/iCloud Photos.
 - [Portainer](/repo/portainer) — web GUI and API for managing Docker, Swarm,
   Kubernetes, and Azure ACI environments.
+- [CasaOS](/repo/casaos) — personal cloud OS turning a Raspberry Pi or old PC into a
+  home server with a curated Docker app store, no command line required.
 
 ## Related Groves
 AI, Developer Tools, Databases
