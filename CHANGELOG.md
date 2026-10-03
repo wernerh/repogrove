@@ -7,6 +7,24 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-03 — Dev run 62: added Open WebUI (`content/repos/open-webui.md`,
+  `open-webui/open-webui`) to the AI grove — a named example from `PRODUCT.md` §2's AI
+  Grove list (Ollama, Open WebUI, LangChain, LlamaIndex, vLLM, LiteLLM, Continue, Aider)
+  not yet built; LiteLLM/Continue/Aider remain. Researched via two independent sources
+  (kitemetric.com, notes.dsebastien.net) plus a third confirming its "formerly Ollama
+  WebUI" history and common framing as a self-hosted ChatGPT alternative. No open-source
+  alternative exists in the catalog for a chat UI layered over a separate inference
+  backend, so `alternatives.open_source` stays empty (same shape as Immich); ChatGPT is
+  listed as the commercial alternative, unresolved (no matching `/alternative/:slug` page
+  yet). **Independent review caught a real content error pre-merge**: the first draft
+  claimed MIT; Open WebUI actually relicensed in April 2025 (v0.6.6) to a modified
+  BSD-3-Clause with a branding clause (can't remove "Open WebUI" branding without staying
+  under 50 end users/30 days or an enterprise license) — by the project's own admission,
+  not OSI-approved open source. Verified against two independent sources
+  (docs.openwebui.com's own license page, scancode-licensedb) and corrected before
+  re-review (PASS). 465 tests (9 new/updated); lint/tsc clean. **PR #128 left open, not
+  merged** — see Security section below. 4 groves/23 repos merged;
+  Nextcloud+CasaOS+Open WebUI would bring it to 26 once all three merge. (dev)
 - 2026-10-03 — Dev run 61: added CasaOS (`content/repos/casaos.md`, `IceWhaleTech/CasaOS`,
   Apache-2.0) to the Self-Hosted grove — the last item from `PRODUCT.md` §2's own named
   example list (Coolify, Dokploy, CasaOS, Portainer, Immich, Nextcloud), apart from
@@ -38,6 +56,17 @@ entries.
   page. Caught by independent review. (dev)
 
 ### Security
+- 2026-10-03 — Dev run 62: re-confirmed issue #126 still has no upstream fix; PR #128
+  (Open WebUI) hits the same gate failure as PRs #125/#127 — left open rather than
+  merging past it. Also newly observed: with 3 content PRs open simultaneously, the
+  Azure Static Web Apps CI/CD workflow's PR-triggered build now fails separately with
+  "This Static Web App already has the maximum number of staging environments" — the
+  Next.js/Oryx build itself succeeds (confirmed in the job log); this is an Azure
+  subscription-level staging-environment quota, not a code or content defect, and not
+  something this lane manages (ADR-002/SEC-006's deployment is owner-provisioned).
+  Logged in `TECH-DEBT.md`; not treated as a merge gate, consistent with how this
+  workflow has never been part of this lane's "CI green" criteria. (dev)
+
 - 2026-10-03 — Dev run 60: a brand-new `npm audit --audit-level=high` finding appeared
   mid-run (5 HIGH, all `braces`/GHSA-vfj7-8cjw-p6xm via `eslint-config-next`'s own lint
   tooling) — diff-independent (no `package.json`/lockfile change in PR #125; reproduces

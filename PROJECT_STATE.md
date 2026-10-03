@@ -15,12 +15,13 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 61: RG-7/8/9 no reply (RG-7 defaults 2026-10-03T13:02:34Z, ~10h off at start). Built
-CasaOS for Self-Hosted, PR #127 — NOT merged: blocked on the same diff-independent npm
-audit HIGH finding as PR #125 (braces/GHSA-vfj7-8cjw-p6xm, issue #126, no fix yet). Both
-PRs otherwise clean. Next: merge #125/#127 once the gate clears; apply RG-7's default if
-still unanswered; CasaOS was the last named Self-Hosted spec example — find the next
-content gap via a fresh cross-reference audit.
+Run 62: RG-7/8/9 no reply (RG-7 defaults 2026-10-03T13:02:34Z). Cross-referenced all 4
+groves vs. PRODUCT.md's named examples (Self-Hosted exhausted pending #125/#127); built
+Open WebUI for AI, PR #128 — NOT merged, same issue #126 gate. Review caught a real
+pre-merge error (claimed MIT; actual license is a modified BSD-3-Clause with a branding
+clause since v0.6.6, not OSI-approved — fixed, re-reviewed PASS). Next: merge all 3 PRs
+once #126 clears, apply RG-7's default if unanswered; AI's LiteLLM/Continue/Aider are
+the next content gap.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -44,9 +45,9 @@ Accounts, paid subscriptions, watchlists/alerts, recommendation engine, massive 
 Phases 2 and 3 both completed within budget; no Phase 3 item needed a split.
 
 ## Blockers and attempts
-PR #125/#127 and main itself all hit the same Dependency vulnerability scan failure
-(issue #126, no upstream fix); main's Lint/test/build/guardrails stay green. RG-7/8/9
-open (see Next action); Phase 4 stays stubbed.
+PR #125/#127/#128 and main all hit the same Dependency vulnerability scan failure (issue
+#126, no upstream fix); Lint/test/build/guardrails stay green. 3 open PRs also trip
+Azure's staging quota on PR builds (not a merge gate, TECH-DEBT.md). Phase 4 stubbed.
 
 ## Milestones
 - [x] 2026-09-27/30 — Phase 1 walking skeleton (#5-7); Phase 2 ingestion/metrics/
@@ -54,7 +55,6 @@ open (see Next action); Phase 4 stays stubbed.
   newsletter UI, news widget (#61-72).
 - [x] 2026-09-30/10-03 — Decision-free content growth: dev-tools + Databases groves,
   all dangling alternative refs closed, full comparison matrices (#81-108); Pros/Cons
-  truncation guard (#109); Immich/Portainer to Self-Hosted (#111/#121, merged) — 4
-  groves/23 repos merged. Nextcloud/CasaOS (#125/#127, both PRs clean, both blocked on
-  issue #126) would bring Self-Hosted to 10 repos/25 total once merged.
+  truncation guard (#109); Immich/Portainer merged (#111/#121) — 4 groves/23 repos.
+  Nextcloud/CasaOS/Open WebUI (#125/#127/#128, clean+reviewed) → 26 once #126 clears.
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (#76-78), awaiting owner

@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-10-03T04:48:44Z"
-  holder: "dev"
-  last_run: "2026-10-03T03:25:00Z"
+  current_run: null
+  holder: null
+  last_run: "2026-10-03T05:14:52Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -17,23 +17,72 @@ execution:
       security-policy decision) — re-check next run."
     - "PR #127 (feat: CasaOS to Self-Hosted grove) — blocked on the same issue #126 as
       PR #125; CI otherwise green, independent review PASS WITH NITS. Re-check next run."
-  open_prs: ["#125", "#127"]
+    - "PR #128 (feat: Open WebUI to AI grove) — blocked on the same issue #126 as
+      #125/#127; CI otherwise green, independent review PASS (after a pre-merge
+      BLOCKER was caught and fixed — see next_actions run-62 entry). Re-check next run."
+  open_prs: ["#125", "#127", "#128"]
 
 health:
-  ci: "main's Lint/test/build and Factory guardrails jobs are green; main's own Dependency vulnerability scan job is ALSO red (issue #126 is a global npm advisory, not diff-specific — confirmed on main's own last two pushes, f7d329e/4cd70cf, not just on PRs #125/#127). This run's own prior close-out (run 60, commit 62d2f30) said 'main green' without checking main's own CI run for this job — corrected here. No safe fix exists (see TECH-DEBT.md); not actionable by this lane."
+  ci: "main's Lint/test/build and Factory guardrails jobs are green; main's own Dependency vulnerability scan job is ALSO red (issue #126, a global npm advisory, not diff-specific). No safe fix exists (see TECH-DEBT.md); not actionable by this lane. New this run: with 3 PRs open simultaneously, the Azure Static Web Apps CI/CD workflow's PR-triggered build separately fails on an Azure staging-environment quota (not a code issue, not a merge gate — see TECH-DEBT.md)."
   security: "main's Lint/test/build/guardrails green; main's own Dependency vulnerability scan red too (issue #126), no fix available yet"
   production: not_deployed
   infrastructure: none
 
 metrics:
-  runs: 79
-  features_completed: 41
+  runs: 80
+  features_completed: 42
   bugs_fixed: 12
   security_issues_fixed: 3
   deployments: 0
   failed_runs: 0
 
 next_actions:
+  - "2026-10-03 (run 62): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. default_due_at
+    (2026-10-03T13:02:34Z) hasn't passed (~8h off at this run's start). Held off Phase 4
+    feature work again; with the Self-Hosted grove's named spec examples exhausted
+    (pending #125/#127's merge), ran a fresh cross-reference audit of all 4 existing
+    groves against PRODUCT.md §2's own named example lists: AI grove still missing Open
+    WebUI, LiteLLM, Continue, Aider (Continue/Aider already researched and rejected in
+    run 57 — acquired/EOL and update-status-unclear respectively). Added Open WebUI
+    (content/repos/open-webui.md, open-webui/open-webui) to the AI grove. Facts
+    researched via two independent sources (kitemetric.com, notes.dsebastien.net) plus a
+    third confirming its 'formerly Ollama WebUI' history and common framing as a
+    self-hosted ChatGPT alternative (railway.com's own deploy-template title,
+    pinggy.io's 'open source alternatives to ChatGPT' roundup). No open-source
+    alternative fits in the catalog yet (Ollama/LocalAI/vLLM are inference engines, not
+    UIs), so alternatives.open_source stays empty (same shape as Immich); ChatGPT is the
+    commercial alternative, unresolved (no matching /alternative/:slug page). 465 tests
+    (9 new/updated), lint/tsc clean, npm audit --audit-level=high still the same 5
+    pre-existing HIGH findings (issue #126) — confirmed unaffected via npm audit
+    --omit=dev (0 vulnerabilities); npm run build reproduced the known ADR-006 sandbox
+    font-fetch gap, confirmed it compiles past content loading first; CI's real build
+    job on PR #128 (GitHub-hosted runner) later confirmed green for real. Independent
+    review (factory-reviewer-dev) first pass found a real BLOCKER: the file claimed MIT
+    licensing, but Open WebUI relicensed in April 2025 (v0.6.6) to a modified
+    BSD-3-Clause with an added branding clause (can't remove 'Open WebUI' branding
+    without staying under 50 end users/30 days or an enterprise license) — by the
+    project's own description, not an OSI-approved open-source license. Verified
+    independently against two sources (docs.openwebui.com's own license page,
+    scancode-licensedb) since the reviewer itself couldn't reach the network to
+    confirm; corrected the frontmatter license field and the affected Pros/Cons bullets.
+    Also fixed a MINOR from the same pass (a test comment citing CasaOS's still-unmerged
+    Synology DSM chip as precedent — swapped for Immich's already-merged Google
+    Photos/Apple iCloud Photos chips). A third NIT (bullet line-wrapping) was checked
+    directly against immich.md/portainer.md/localai.md's raw source and found to be a
+    non-issue — this file already matched house style. Re-review: PASS. PR #128 pushed,
+    labelled factory — **NOT merged this run**: hit the identical CI gate failure
+    #125/#127 already have (issue #126, no upstream fix yet) — left open, PR body
+    explains the block, same as #125/#127. Also newly observed and logged in
+    TECH-DEBT.md: with 3 content PRs now open simultaneously, Azure's static-web-app
+    staging-environment quota separately rejects the PR-preview build (Next.js/Oryx
+    build itself succeeds, confirmed by reading the job's raw logs) — an Azure
+    subscription-level limit, not a code defect, not treated as a merge gate (this
+    workflow has never been part of this lane's 'CI green' criteria). Next: re-check
+    issue #126 for all three open PRs; apply RG-7's default if still unanswered by
+    2026-10-03T13:02:34Z; AI grove's LiteLLM/Continue/Aider are the next content gap
+    (Continue/Aider already rejected once — re-verify their status hasn't changed before
+    re-adding either)."
   - "2026-10-03 (run 61): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. default_due_at
     (2026-10-03T13:02:34Z) hasn't passed (~10h off at this run's start). Held off Phase 4
@@ -377,102 +426,11 @@ next_actions:
     .factory/decisions.yaml updated. Next: re-check RG-7/8/9 (apply RG-7's default if
     due date passed by then); grow Databases grove further (PostgreSQL/SurrealDB/
     PocketBase per the spec's own example list) or find the next content gap."
-  - "2026-10-02 (run 53): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
-    — still exactly the one original message, no owner reply. RG-7's default_due_at
-    (2026-10-03) hasn't passed (due tomorrow); RG-8/RG-9 have no default and stay open
-    regardless. Held off Phase 4 feature work again this run. A fresh cross-reference
-    audit (grove membership, related_groves, alternatives.open_source/commercial
-    references, mutual-alternative-pair comparison coverage) confirmed run 52's
-    finding — zero dangling-reference gaps remain anywhere in content/. With no
-    dangling-reference gap left to close, used the run for breadth instead: the
-    product spec (PRODUCT.md §2) names a 'Database Grove' (PostgreSQL, DuckDB,
-    SQLite, ClickHouse, SurrealDB, PocketBase) that never got built, unlike
-    AI/Self-Hosted/Developer-Tools. Major task: added content/groves/databases.md
-    with two initial repos, DuckDB (duckdb/duckdb, MIT) and ClickHouse
-    (ClickHouse/ClickHouse, Apache-2.0), cross-referencing each other under
-    alternatives.open_source (embedded/in-process vs. distributed/client-server OLAP
-    databases — a comparison already widely drawn across independent industry
-    sources, not an invented pairing). Facts (DuckDB: created by Mark Raasveldt and
-    Hannes Mühleisen at CWI; ClickHouse: built at Yandex, open-sourced 2016, now
-    developed by ClickHouse, Inc.) verified via WebSearch/WebFetch against Wikipedia
-    plus an independent industry comparison source (airbyte.com) for the
-    embedded-vs-distributed differentiation, cross-checked against several other
-    independent 'ClickHouse vs DuckDB' writeups returned by search — not scraped
-    from either project's own one-line description, per CLAUDE.md rule 4. Added
-    content/comparisons/clickhouse-vs-duckdb.md in the same PR, closing that mutual
-    pair rather than leaving it as a gap for a future run. Small related task: added
-    'databases' to content/groves/ai.md's and content/groves/self-hosted.md's
-    related_groves (frontmatter + body prose), reciprocal with databases.md's own
-    related_groves: [self-hosted, ai]; Developer Tools deliberately left out of the
-    relation in both directions. Updated/added tests across all five affected test
-    files (slug-list fixtures, parse-correctness assertions, getReposInGrove
-    (\"databases\") coverage, real-page render tests for all four new pages,
-    recomputed homepage numbers — 19 repos + 4 groves = 23 card links). 359/359
-    tests pass (16 new/updated), lint clean, tsc --noEmit clean, npm audit
-    --audit-level=high 0 vulnerabilities, all run locally; npm run build reproduced
-    the known ADR-006 sandbox font-fetch gap (the full local test suite already
-    exercises content.ts's real build-time validation against every file in this PR,
-    confirming it parses and cross-validates cleanly before that unrelated failure),
-    left to CI's GitHub-hosted runner — confirmed all 4 gating checks green on PR
-    #105 before squash-merging it myself; post-merge CI on main also confirmed
-    green. Independent review (subagent, skeptical-senior-engineer pass) found no
-    CRITICAL/MAJOR issues; one MINOR (ClickHouse's named production adopters have no
-    inline citation, but match its own publicly documented adopters list — not
-    fabricated) left as-is. ROADMAP.md needed no changes (no roadmap item touched).
-    CHANGELOG.md/PROJECT_STATE.md/DECISIONS.md/.factory/decisions.yaml updated.
-    Next: re-check RG-7/8/9 each run; grow the Databases grove further
-    (PostgreSQL/SQLite/SurrealDB/PocketBase cross-link, per the spec's own example
-    list) or find the next content gap."
-  - "2026-10-02 (run 52): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
-    — still exactly the one original message, no owner reply. RG-7's default_due_at
-    (2026-10-03) hasn't passed (due tomorrow); RG-8/RG-9 have no default and stay open
-    regardless. Held off Phase 4 feature work again this run, consistent with runs
-    33-51. Picked up run 51's own next-action pointer: LM Studio was the last and only
-    remaining dangling alternatives.commercial reference (content/repos/ollama.md had
-    named it since bootstrap, with no content/alternatives/lm-studio.md to resolve it
-    against). Major task: added content/alternatives/lm-studio.md, listing
-    Ollama/LocalAI/vLLM as open-source alternatives (all three slugify-resolve to real
-    repo pages). No Free/Commercial section — no other content file cross-references a
-    commercial alternative to LM Studio today — the first alternatives page to exercise
-    both of AlternativePage's omit-when-empty branches. This sandbox's network proxy
-    declined a direct WebFetch to lmstudio.ai this run (a provenance-approval prompt
-    with no one to answer it, unattended) — facts researched and cross-checked against
-    two independent secondary sources instead (knolli.ai's open-source-alternatives
-    roundup confirming LM Studio is free including commercially but closed source, with
-    a bundled GUI/model hub/local OpenAI-compatible API server; a dev.to Ollama-vs-LM-
-    Studio comparison independently corroborating the same closed-source/GUI framing and
-    confirming Ollama's CLI/API-first interface). Independent review (subagent,
-    skeptical-senior-engineer pass) found one real MINOR — a second stale doc comment
-    (src/app/repo/[slug]/page.tsx) still cited LM Studio as an example of an unresolved
-    commercial name, alongside the one this PR's own first pass had already fixed in
-    AlternativesTable.tsx — fixed before merge; otherwise verified every Open-source
-    name resolves to a real repo page, slugifyAlternativeName(\"LM Studio\") matches the
-    new filename exactly, every Best-fit bullet is a single unwrapped line (no
-    truncation risk), and the Best-fit facts don't overreach past what the two secondary
-    sources support. Updated the hardcoded alternatives-slug test fixtures this addition
-    affects (tests/lib/content.test.ts, tests/app/alternative-page.test.tsx) and added a
-    real-page integration test on /repo/ollama asserting its LM Studio commercial chip
-    now resolves to /alternative/lm-studio, plus swapped one synthetic AlternativesTable
-    unit test's \"doesn't resolve\" mock off \"LM Studio\" (now a real resolving name)
-    onto a content-independent placeholder. 352/352 tests pass (6 new/updated), lint
-    clean, tsc --noEmit clean, npm audit --audit-level=high 0 vulnerabilities, all run
-    locally; npm run build reproduced the known ADR-006 sandbox font-fetch gap
-    (confirmed it compiles past content loading first), left to CI's GitHub-hosted
-    runner — all 4 gating checks (CI, Factory guardrails, Dependency vulnerability scan,
-    scripts/factory/check.py) green on PR #104 before squash-merging it myself; the
-    non-gating Playwright/axe-core design check was still in progress at merge time,
-    consistent with its own 'does not gate merges' label; post-merge CI on main also
-    confirmed green. CHANGELOG.md/PROJECT_STATE.md/DECISIONS.md/.factory/decisions.yaml
-    updated. With this merged, every known dangling alternatives.open_source/
-    alternatives.commercial reference in content/ is now closed. Next: re-check
-    RG-7/8/9 (apply RG-7's default if due); a future decision-free run needs a new
-    source of content work (a fresh audit, a new Grove, or a content-accuracy pass) —
-    no further dangling-reference gaps are known."
-  - "Older next_actions entries (runs 22-51) archived to docs/factory/run-history.md
-    on 2026-10-01/02/03 (dev runs 44/46/47/48/50/51/52/53/54/55/56/57/61) -- TECH-DEBT.md's
-    2026-10-01 row: this list's unbounded growth was costing a real tool-output
-    truncation on every lock-acquisition read. Keeping only the most recent ~9 entries
-    here going forward; full history (including these) stays in
+  - "Older next_actions entries (runs 22-53) archived to docs/factory/run-history.md
+    on 2026-10-01/02/03 (dev runs 44/46/47/48/50/51/52/53/54/55/56/57/61/62) --
+    TECH-DEBT.md's 2026-10-01 row: this list's unbounded growth was costing a real
+    tool-output truncation on every lock-acquisition read. Keeping only the most recent
+    ~9 entries here going forward; full history (including these) stays in
     docs/factory/run-history.md, which nothing in scripts/factory/ reads -- safe to
     keep trimming the same way each run."
 security:

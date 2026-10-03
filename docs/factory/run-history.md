@@ -667,3 +667,95 @@ Newest-archived-first, same order they appeared in state.yaml.
 2026-10-02 (run 50): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread) — still exactly the one original message, no owner reply. RG-7's default_due_at (2026-10-03) hasn't passed; RG-8/RG-9 have no default and stay open regardless. Held off Phase 4 feature work again this run, consistent with runs 33-49. Picked up run 49's own next-action pointer: coolify.md/dokploy.md have both listed Vercel, Heroku, and Netlify under alternatives.commercial since bootstrap, but none had its own /alternative/:slug page — the next highest-value commercial-alternative gap (2 referencing repos each), after Firebase (run 48, 3 repos) and GitKraken/Sourcetree (run 49, 3 repos each). Major task: added content/alternatives/vercel.md, heroku.md, and netlify.md together (closely related — same 2 referencing repos, same paas category), each listing Coolify/Dokploy as open-source alternatives (both slugify-resolve to real repo pages) and cross-referencing the other two commercial platforms. Facts (Vercel's Hobby plan is contractually restricted to personal/non-commercial use per vercel.com/legal/terms section 4, and is paused once free-tier usage is exceeded per vercel.com/docs/plans; Heroku removed its free dyno/Postgres/Key-Value Store plans in November 2022, with usage-based Eco dynos and $5/month Mini Postgres and $3/month Mini Key-Value Store as the current minimums, per help.heroku.com's own FAQ; Netlify's free plan explicitly permits commercial projects but suspends a site for the rest of the calendar month once its 100GB bandwidth/300 build minute/125k function invocation allowance is exceeded, per netlify.com's own 'Introducing Netlify's Free plan' post) verified via WebSearch/WebFetch against each vendor's own documentation, ToS, or blog — not scraped descriptions. Small related task: fixed TECH-DEBT.md's 2026-10-01 row (filed by run 48's reviewer) — AlternativesTable.tsx's commercial-alternative chips always rendered as inert plain-text pills, never a link to a matching /alternative/:slug page even once one existed (e.g. Firebase on /repo/appwrite since run 48). Changed its commercial prop from string[] to a new ResolvedCommercialAlternative[] ({name, alternativeSlug}), resolved in src/app/repo/[slug]/page.tsx via getAlternative(slugifyAlternativeName(name)) the same way open-source names already resolve against getAllRepos(); this run's own new alternative pages gave /repo/coolify and /repo/dokploy's long-standing Vercel/Heroku/Netlify chips somewhere real to link to for the first time. Independent review (subagent, skeptical-senior-engineer pass) found no BLOCKER/MAJOR issues with the content or code (verified frontmatter schema, no self-reference, every Best fit bullet on a single unwrapped source line per the extractListItems-truncation lesson from runs 48/49, no slug-like commercial names, facts independently sourced not copy-pasted marketing), but caught a real MAJOR coverage gap: nothing exercised the actual /repo/coolify or /repo/dokploy rendered output with the new resolution wired in, only the isolated component and /alternative/[slug] unit tests. Fixed by adding a real-content integration test (tests/app/repo-page.test.tsx, 'links Coolify's commercial chips to their own /alternative/:slug pages') before merge, and folded the TECH-DEBT.md row's resolved-status update into the same commit per the review's second (MINOR) finding. 346/346 tests pass (8 new/updated), lint clean, tsc --noEmit clean, npm audit --audit-level=high 0 vulnerabilities, all run locally; npm run build reproduced the known ADR-006 sandbox font-fetch gap (confirmed it compiles past content loading first), left to CI's GitHub-hosted runner — all 3 checks (CI, Factory guardrails, Design screenshots & accessibility) green on PR #102 before squash-merging it myself; post-merge CI on main also confirmed green. CHANGELOG.md/PROJECT_STATE.md/DECISIONS.md/.factory/decisions.yaml updated. Next: re-check RG-7/8/9; no further dangling commercial-alternative-reference gaps are known — future decision-free runs may need a fresh content/validator audit or a TECH-DEBT.md row (e.g. #32's Grove Heat v1 threshold-revisit) if RG-7/8/9 are still open by then.
 
 2026-10-02 (run 51): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread) — still exactly the one original message, no owner reply. RG-7's default_due_at (2026-10-03) hasn't passed (due tomorrow); RG-8/RG-9 have no default and stay open regardless. Held off Phase 4 feature work again this run, consistent with runs 33-50. A fresh content audit (run 50's own next-action pointer) cross-referenced every content/repos/*.md's alternatives.open_source and alternatives.commercial against content/alternatives/*.md and content/repos/*.md: confirmed zero remaining dangling open_source references anywhere, and exactly two remaining dangling commercial references — AWS Amplify (2 referencing repos: appwrite, supabase) and LM Studio (1 referencing repo: ollama). Major task: added content/alternatives/aws-amplify.md (the higher-value gap), listing Appwrite/Supabase/PocketBase as open-source alternatives (all three slugify-resolve to real repo pages) and cross-referencing Firebase under Commercial. This sandbox's network proxy declined a direct WebFetch to aws.amazon.com this run (a provenance-approval prompt with no one to answer it, unattended) — facts researched and cross-checked against two independent secondary sources instead (appwrite.io's own BaaS-platform comparison post confirming Amplify is a managed front door onto Cognito/AppSync/Lambda/S3, not a portable backend; a dedicated AWS-Amplify-pricing comparison article confirming the 12-month free tier — 1,000 build minutes, 15 GB data served, 5 GB storage, 500,000 requests — transitions straight to usage-based pay-as-you-go billing with no pause once exceeded, unlike Netlify's suspend-on-overage model). Independent review (subagent, skeptical-senior-engineer pass) found no BLOCKER/MAJOR/MINOR issues — verified every Open-source name resolves to a real repo page, the 'looks like a slug' commercial-name validation doesn't apply to this content type (it only gates Repo.alternatives.commercial frontmatter, not content/alternatives/*.md's own Commercial section), slugifyAlternativeName('AWS Amplify') matches the new filename exactly, and no other file's 'AWS Amplify' reference breaks now that it resolves to a real page. Updated the hardcoded alternatives-slug test fixtures this addition affects (tests/lib/content.test.ts, tests/app/alternative-page.test.tsx) and added a real-page integration test on /repo/appwrite asserting both its Firebase and AWS Amplify commercial chips now resolve to real /alternative/:slug links together (tests/app/repo-page.test.tsx), plus updated one synthetic AlternativesTable unit test whose 'doesn't resolve' mock previously used AWS Amplify (swapped to a content-independent placeholder name, since the old mock's framing would now mislead a future reader even though the test itself wasn't functionally broken). 349/349 tests pass (4 new/updated), lint clean, tsc --noEmit clean, npm audit --audit-level=high 0 vulnerabilities, all run locally; npm run build reproduced the known ADR-006 sandbox font-fetch gap (confirmed it compiles past content loading first), left to CI's GitHub-hosted runner — all 3 gating checks (CI, Factory guardrails, Dependency vulnerability scan) green on PR #103, plus the non-gating Playwright/axe-core design check, before squash-merging it myself; post-merge CI on main also confirmed green. CHANGELOG.md/PROJECT_STATE.md/DECISIONS.md/.factory/decisions.yaml updated. Next: re-check RG-7/8/9 (apply RG-7's default if the 2026-10-03 due date has passed by then); LM Studio (1 referencing repo, ollama.md) is the next and last known commercial-alternative-page gap.
+
+  - "2026-10-02 (run 53): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed (due tomorrow); RG-8/RG-9 have no default and stay open
+    regardless. Held off Phase 4 feature work again this run. A fresh cross-reference
+    audit (grove membership, related_groves, alternatives.open_source/commercial
+    references, mutual-alternative-pair comparison coverage) confirmed run 52's
+    finding — zero dangling-reference gaps remain anywhere in content/. With no
+    dangling-reference gap left to close, used the run for breadth instead: the
+    product spec (PRODUCT.md §2) names a 'Database Grove' (PostgreSQL, DuckDB,
+    SQLite, ClickHouse, SurrealDB, PocketBase) that never got built, unlike
+    AI/Self-Hosted/Developer-Tools. Major task: added content/groves/databases.md
+    with two initial repos, DuckDB (duckdb/duckdb, MIT) and ClickHouse
+    (ClickHouse/ClickHouse, Apache-2.0), cross-referencing each other under
+    alternatives.open_source (embedded/in-process vs. distributed/client-server OLAP
+    databases — a comparison already widely drawn across independent industry
+    sources, not an invented pairing). Facts (DuckDB: created by Mark Raasveldt and
+    Hannes Mühleisen at CWI; ClickHouse: built at Yandex, open-sourced 2016, now
+    developed by ClickHouse, Inc.) verified via WebSearch/WebFetch against Wikipedia
+    plus an independent industry comparison source (airbyte.com) for the
+    embedded-vs-distributed differentiation, cross-checked against several other
+    independent 'ClickHouse vs DuckDB' writeups returned by search — not scraped
+    from either project's own one-line description, per CLAUDE.md rule 4. Added
+    content/comparisons/clickhouse-vs-duckdb.md in the same PR, closing that mutual
+    pair rather than leaving it as a gap for a future run. Small related task: added
+    'databases' to content/groves/ai.md's and content/groves/self-hosted.md's
+    related_groves (frontmatter + body prose), reciprocal with databases.md's own
+    related_groves: [self-hosted, ai]; Developer Tools deliberately left out of the
+    relation in both directions. Updated/added tests across all five affected test
+    files (slug-list fixtures, parse-correctness assertions, getReposInGrove
+    (\"databases\") coverage, real-page render tests for all four new pages,
+    recomputed homepage numbers — 19 repos + 4 groves = 23 card links). 359/359
+    tests pass (16 new/updated), lint clean, tsc --noEmit clean, npm audit
+    --audit-level=high 0 vulnerabilities, all run locally; npm run build reproduced
+    the known ADR-006 sandbox font-fetch gap (the full local test suite already
+    exercises content.ts's real build-time validation against every file in this PR,
+    confirming it parses and cross-validates cleanly before that unrelated failure),
+    left to CI's GitHub-hosted runner — confirmed all 4 gating checks green on PR
+    #105 before squash-merging it myself; post-merge CI on main also confirmed
+    green. Independent review (subagent, skeptical-senior-engineer pass) found no
+    CRITICAL/MAJOR issues; one MINOR (ClickHouse's named production adopters have no
+    inline citation, but match its own publicly documented adopters list — not
+    fabricated) left as-is. ROADMAP.md needed no changes (no roadmap item touched).
+    CHANGELOG.md/PROJECT_STATE.md/DECISIONS.md/.factory/decisions.yaml updated.
+    Next: re-check RG-7/8/9 each run; grow the Databases grove further
+    (PostgreSQL/SQLite/SurrealDB/PocketBase cross-link, per the spec's own example
+    list) or find the next content gap."
+  - "2026-10-02 (run 52): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. RG-7's default_due_at
+    (2026-10-03) hasn't passed (due tomorrow); RG-8/RG-9 have no default and stay open
+    regardless. Held off Phase 4 feature work again this run, consistent with runs
+    33-51. Picked up run 51's own next-action pointer: LM Studio was the last and only
+    remaining dangling alternatives.commercial reference (content/repos/ollama.md had
+    named it since bootstrap, with no content/alternatives/lm-studio.md to resolve it
+    against). Major task: added content/alternatives/lm-studio.md, listing
+    Ollama/LocalAI/vLLM as open-source alternatives (all three slugify-resolve to real
+    repo pages). No Free/Commercial section — no other content file cross-references a
+    commercial alternative to LM Studio today — the first alternatives page to exercise
+    both of AlternativePage's omit-when-empty branches. This sandbox's network proxy
+    declined a direct WebFetch to lmstudio.ai this run (a provenance-approval prompt
+    with no one to answer it, unattended) — facts researched and cross-checked against
+    two independent secondary sources instead (knolli.ai's open-source-alternatives
+    roundup confirming LM Studio is free including commercially but closed source, with
+    a bundled GUI/model hub/local OpenAI-compatible API server; a dev.to Ollama-vs-LM-
+    Studio comparison independently corroborating the same closed-source/GUI framing and
+    confirming Ollama's CLI/API-first interface). Independent review (subagent,
+    skeptical-senior-engineer pass) found one real MINOR — a second stale doc comment
+    (src/app/repo/[slug]/page.tsx) still cited LM Studio as an example of an unresolved
+    commercial name, alongside the one this PR's own first pass had already fixed in
+    AlternativesTable.tsx — fixed before merge; otherwise verified every Open-source
+    name resolves to a real repo page, slugifyAlternativeName(\"LM Studio\") matches the
+    new filename exactly, every Best-fit bullet is a single unwrapped line (no
+    truncation risk), and the Best-fit facts don't overreach past what the two secondary
+    sources support. Updated the hardcoded alternatives-slug test fixtures this addition
+    affects (tests/lib/content.test.ts, tests/app/alternative-page.test.tsx) and added a
+    real-page integration test on /repo/ollama asserting its LM Studio commercial chip
+    now resolves to /alternative/lm-studio, plus swapped one synthetic AlternativesTable
+    unit test's \"doesn't resolve\" mock off \"LM Studio\" (now a real resolving name)
+    onto a content-independent placeholder. 352/352 tests pass (6 new/updated), lint
+    clean, tsc --noEmit clean, npm audit --audit-level=high 0 vulnerabilities, all run
+    locally; npm run build reproduced the known ADR-006 sandbox font-fetch gap
+    (confirmed it compiles past content loading first), left to CI's GitHub-hosted
+    runner — all 4 gating checks (CI, Factory guardrails, Dependency vulnerability scan,
+    scripts/factory/check.py) green on PR #104 before squash-merging it myself; the
+    non-gating Playwright/axe-core design check was still in progress at merge time,
+    consistent with its own 'does not gate merges' label; post-merge CI on main also
+    confirmed green. CHANGELOG.md/PROJECT_STATE.md/DECISIONS.md/.factory/decisions.yaml
+    updated. With this merged, every known dangling alternatives.open_source/
+    alternatives.commercial reference in content/ is now closed. Next: re-check
+    RG-7/8/9 (apply RG-7's default if due); a future decision-free run needs a new
+    source of content work (a fresh audit, a new Grove, or a content-accuracy pass) —
+    no further dangling-reference gaps are known."
