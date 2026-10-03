@@ -19,6 +19,7 @@ describe("Repo page (/repo/[slug])", () => {
       "llamaindex",
       "localai",
       "neovim",
+      "nextcloud",
       "ollama",
       "pocketbase",
       "portainer",
@@ -519,6 +520,29 @@ describe("Repo page (/repo/[slug])", () => {
     // "Not yet profiled".
     expect(screen.getAllByRole("link", { name: "Coolify" })[0]).toHaveAttribute("href", "/repo/coolify");
     expect(screen.getAllByRole("link", { name: "Dokploy" })[0]).toHaveAttribute("href", "/repo/dokploy");
+  });
+
+  it("renders /repo/nextcloud from content/repos/nextcloud.md, not a hardcoded string", async () => {
+    render(await RepoPage({ params: Promise.resolve({ slug: "nextcloud" }) }));
+
+    expect(screen.getByRole("heading", { level: 1, name: "Nextcloud" })).toBeInTheDocument();
+    expect(screen.getAllByText(/AGPL-3\.0/, { selector: "dd" })[0]).toBeInTheDocument();
+    expect(screen.getByText(/Nextcloud syncs files between a server you control/)).toBeInTheDocument();
+    // The body's own "## Related Grove" section links back to Self-Hosted —
+    // proves this new content/repos/*.md file renders through the real page,
+    // not just through generateStaticParams.
+    expect(screen.getAllByRole("link", { name: "Self-Hosted" })[0]).toHaveAttribute(
+      "href",
+      "/grove/self-hosted",
+    );
+    // No open-source alternative in the catalog yet — same "no fit" shape as
+    // Immich — so its commercial chips (Google Drive, Dropbox, Microsoft
+    // OneDrive) render as plain unlinked text, not resolved repo links. Each
+    // name legitimately appears twice (the header's "Direct alternative to:"
+    // summary, plus AlternativesTable's own "Commercial alternatives" list).
+    expect(screen.getAllByText("Google Drive").length).toBe(2);
+    expect(screen.getAllByText("Dropbox").length).toBe(2);
+    expect(screen.getAllByText("Microsoft OneDrive").length).toBe(2);
   });
 
   it("resolves Coolify's own alternatives.open_source (portainer) now that it has a profile", async () => {

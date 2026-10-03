@@ -23,6 +23,8 @@ Projects that let you replace a hosted SaaS with something you run and control y
   ML-powered face recognition and search, as an alternative to Google Photos/iCloud Photos.
 - [Portainer](/repo/portainer) — web GUI and API for managing Docker, Swarm,
   Kubernetes, and Azure ACI environments.
+- [Nextcloud](/repo/nextcloud) — self-hosted file sync, sharing, and collaboration
+  suite, an alternative to Google Drive/Dropbox/Microsoft 365.
 
 ## Related Groves
 AI, Developer Tools, Databases
