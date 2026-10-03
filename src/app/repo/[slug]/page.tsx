@@ -73,12 +73,12 @@ export default async function RepoPage({ params }: PageProps) {
   // against /content/alternatives the same way open-source names resolve
   // against /content/repos above, so a chip links forward to its own
   // /alternative/:slug page once one exists, rather than always rendering as
-  // inert text. Every commercial reference any content/repos/*.md names
-  // today resolves to a real page as of content/alternatives/lm-studio.md
-  // (dev run 52) — this still falls back to plain text for any future name
-  // that doesn't yet have one. assertValidAlternatives (src/lib/content.ts)
-  // already fails the build loudly on a duplicate commercial name, so no
-  // extra dedup is needed here.
+  // inert text. Not every commercial reference has one today (e.g.
+  // Nextcloud's Google Drive/Dropbox/Microsoft OneDrive, dev run 60 — see
+  // TECH-DEBT.md's 2026-10-03 row) — this falls back to plain text for any
+  // name that doesn't yet have a page. assertValidAlternatives
+  // (src/lib/content.ts) already fails the build loudly on a duplicate
+  // commercial name, so no extra dedup is needed here.
   const commercialAlternatives: ResolvedCommercialAlternative[] = repo.alternatives.commercial.map(
     (name) => ({
       name,
