@@ -1,7 +1,7 @@
 factory:
-  current_run: "2026-10-03T02:48:32Z"
-  holder: dev
-  last_run: "2026-10-03T01:20:01Z"
+  current_run: null
+  holder: null
+  last_run: "2026-10-03T03:25:00Z"
 
 product:
   current_version: "0.0.0-bootstrap"
@@ -15,16 +15,18 @@ execution:
       currently available upstream; CI otherwise green, independent review PASS WITH
       NITS. Not this lane's call to resolve (narrowing the audit gate's scope is a
       security-policy decision) — re-check next run."
-  open_prs: ["#125"]
+    - "PR #127 (feat: CasaOS to Self-Hosted grove) — blocked on the same issue #126 as
+      PR #125; CI otherwise green, independent review PASS WITH NITS. Re-check next run."
+  open_prs: ["#125", "#127"]
 
 health:
-  ci: "main green; PR #125 (open, not caused by this PR) blocked on a new npm audit HIGH finding, see blocked_tasks"
-  security: "green on main; new HIGH finding (issue #126) blocks the dependency-scan gate on every PR, no fix available yet"
+  ci: "main green; PR #125 and PR #127 (both open, not caused by either PR) blocked on the same npm audit HIGH finding, see blocked_tasks"
+  security: "green on main; HIGH finding (issue #126) blocks the dependency-scan gate on every PR, no fix available yet"
   production: not_deployed
   infrastructure: none
 
 metrics:
-  runs: 78
+  runs: 79
   features_completed: 41
   bugs_fixed: 12
   security_issues_fixed: 3
@@ -32,6 +34,39 @@ metrics:
   failed_runs: 0
 
 next_actions:
+  - "2026-10-03 (run 61): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
+    — still exactly the one original message, no owner reply. default_due_at
+    (2026-10-03T13:02:34Z) hasn't passed (~10h off at this run's start). Held off Phase 4
+    feature work again this run; used it instead for decision-free editorial content work
+    (CasaOS added to the Self-Hosted grove — content/repos/casaos.md, Apache-2.0 — the
+    last item from PRODUCT.md's own named Self-Hosted example list, apart from Nextcloud
+    itself, still pending in PR #125). No open-source alternative fits in the catalog yet
+    (Portainer/Coolify/Dokploy are devops/PaaS tools, a different layer), so
+    alternatives.open_source stays empty (same shape as Immich/Nextcloud); commercial
+    alternative is Synology DSM, sourced from openapps.pro's explicit CasaOS-vs-
+    Synology-DSM framing. Facts verified against four independent sources (dev.co,
+    virtualizationhowto.com, pkg.go.dev, openapps.pro) after opensourcealternatives.to's
+    direct WebFetch was declined (unattended provenance-approval prompt). 465 tests (8
+    new/updated), lint/tsc clean, npm audit --audit-level=high still the same 5
+    pre-existing HIGH findings (issue #126, no upstream fix) — confirmed unaffected by
+    this PR's diff via npm audit --omit=dev (0 vulnerabilities); npm run build reproduced
+    the known ADR-006 sandbox font-fetch gap, confirmed it compiles past content loading
+    first. Independent review (factory-reviewer-dev) first pass returned BLOCK over a
+    misread of this project's PR-then-close-out-commit convention (saw no CHANGELOG/
+    PROJECT_STATE.md diff in the PR and read that as an omission, rather than this
+    repo's documented, precedented shape); re-briefed with this repo's own commit
+    history (62d2f30) and docs/factory/dev-run.md as evidence, which the reviewer
+    verified independently via on-disk docs/run-history and withdrew the BLOCKER. One
+    real MINOR (the CasaOS render test never asserted the unresolved Synology DSM
+    commercial chip actually renders, vs. linking to a real page) fixed in the same PR;
+    re-review PASS WITH NITS. PR #127 pushed, labelled factory — **NOT merged this
+    run**: hit the identical CI gate failure PR #125 already has (issue #126,
+    diff-independent npm audit HIGH finding, no upstream fix yet) — left open with a
+    comment explaining the block, same as #125. Next: re-check issue #126 for both open
+    PRs; apply RG-7's default if still unanswered by 2026-10-03T13:02:34Z; with CasaOS
+    added, every named Self-Hosted spec example is now in the catalog (pending #125/#127
+    merging) — a fresh cross-reference audit is the next source of decision-free
+    content work."
   - "2026-10-03 (run 60): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
     — still exactly the one original message, no owner reply. default_due_at
     (2026-10-03T13:02:34Z) hasn't passed (~12h off at this run's start). Held off Phase 4
@@ -433,55 +468,8 @@ next_actions:
     RG-7/8/9 (apply RG-7's default if due); a future decision-free run needs a new
     source of content work (a fresh audit, a new Grove, or a content-accuracy pass) —
     no further dangling-reference gaps are known."
-  - "2026-10-02 (run 51): re-checked RG-7/8/9 (Gmail thread 1a0f26990ebc1e9c, get_thread)
-    — still exactly the one original message, no owner reply. RG-7's default_due_at
-    (2026-10-03) hasn't passed (due tomorrow); RG-8/RG-9 have no default and stay open
-    regardless. Held off Phase 4 feature work again this run, consistent with runs
-    33-50. A fresh content audit (run 50's own next-action pointer) cross-referenced
-    every content/repos/*.md's alternatives.open_source and alternatives.commercial
-    against content/alternatives/*.md and content/repos/*.md: confirmed zero remaining
-    dangling open_source references anywhere, and exactly two remaining dangling
-    commercial references — AWS Amplify (2 referencing repos: appwrite, supabase) and
-    LM Studio (1 referencing repo: ollama). Major task: added
-    content/alternatives/aws-amplify.md (the higher-value gap), listing
-    Appwrite/Supabase/PocketBase as open-source alternatives (all three slugify-resolve
-    to real repo pages) and cross-referencing Firebase under Commercial. This sandbox's
-    network proxy declined a direct WebFetch to aws.amazon.com this run (a
-    provenance-approval prompt with no one to answer it, unattended) — facts
-    researched and cross-checked against two independent secondary sources instead
-    (appwrite.io's own BaaS-platform comparison post confirming Amplify is a managed
-    front door onto Cognito/AppSync/Lambda/S3, not a portable backend; a dedicated
-    AWS-Amplify-pricing comparison article confirming the 12-month free tier — 1,000
-    build minutes, 15 GB data served, 5 GB storage, 500,000 requests — transitions
-    straight to usage-based pay-as-you-go billing with no pause once exceeded, unlike
-    Netlify's suspend-on-overage model). Independent review (subagent,
-    skeptical-senior-engineer pass) found no BLOCKER/MAJOR/MINOR issues — verified
-    every Open-source name resolves to a real repo page, the 'looks like a slug'
-    commercial-name validation doesn't apply to this content type (it only gates
-    Repo.alternatives.commercial frontmatter, not content/alternatives/*.md's own
-    Commercial section), slugifyAlternativeName('AWS Amplify') matches the new
-    filename exactly, and no other file's 'AWS Amplify' reference breaks now that it
-    resolves to a real page. Updated the hardcoded alternatives-slug test fixtures
-    this addition affects (tests/lib/content.test.ts, tests/app/alternative-page.
-    test.tsx) and added a real-page integration test on /repo/appwrite asserting both
-    its Firebase and AWS Amplify commercial chips now resolve to real
-    /alternative/:slug links together (tests/app/repo-page.test.tsx), plus updated one
-    synthetic AlternativesTable unit test whose 'doesn't resolve' mock previously used
-    AWS Amplify (swapped to a content-independent placeholder name, since the old
-    mock's framing would now mislead a future reader even though the test itself
-    wasn't functionally broken). 349/349 tests pass (4 new/updated), lint clean, tsc
-    --noEmit clean, npm audit --audit-level=high 0 vulnerabilities, all run locally;
-    npm run build reproduced the known ADR-006 sandbox font-fetch gap (confirmed it
-    compiles past content loading first), left to CI's GitHub-hosted runner — all 3
-    gating checks (CI, Factory guardrails, Dependency vulnerability scan) green on PR
-    #103, plus the non-gating Playwright/axe-core design check, before squash-merging
-    it myself; post-merge CI on main also confirmed green. CHANGELOG.md/
-    PROJECT_STATE.md/DECISIONS.md/.factory/decisions.yaml updated. Next: re-check
-    RG-7/8/9 (apply RG-7's default if the 2026-10-03 due date has passed by then); LM
-    Studio (1 referencing repo, ollama.md) is the next and last known commercial-
-    alternative-page gap."
-  - "Older next_actions entries (runs 22-50) archived to docs/factory/run-history.md
-    on 2026-10-01/02 (dev runs 44/46/47/48/50/51/52/53/54/55/56/57) -- TECH-DEBT.md's
+  - "Older next_actions entries (runs 22-51) archived to docs/factory/run-history.md
+    on 2026-10-01/02/03 (dev runs 44/46/47/48/50/51/52/53/54/55/56/57/61) -- TECH-DEBT.md's
     2026-10-01 row: this list's unbounded growth was costing a real tool-output
     truncation on every lock-acquisition read. Keeping only the most recent ~9 entries
     here going forward; full history (including these) stays in

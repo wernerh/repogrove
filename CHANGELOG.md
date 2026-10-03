@@ -7,6 +7,19 @@ entries.
 ## [Unreleased]
 
 ### Added
+- 2026-10-03 — Dev run 61: added CasaOS (`content/repos/casaos.md`, `IceWhaleTech/CasaOS`,
+  Apache-2.0) to the Self-Hosted grove — the last item from `PRODUCT.md` §2's own named
+  example list (Coolify, Dokploy, CasaOS, Portainer, Immich, Nextcloud), apart from
+  Nextcloud itself (PR #125, still pending merge). No open-source alternative exists in
+  the catalog for a consumer-NAS-style personal cloud OS (Portainer/Coolify/Dokploy sit
+  at a different, devops-focused layer), so `alternatives.open_source` stays empty (same
+  shape as Immich/Nextcloud); the commercial alternative (Synology DSM) is sourced from
+  openapps.pro's explicit CasaOS-vs-Synology-DSM framing, not invented. 465 tests (8
+  new/updated); lint/tsc clean; independent review PASS WITH NITS (one MINOR fixed: added
+  a test assertion that the unresolved Synology DSM commercial chip renders as plain
+  text, not a dangling link). **PR #127 left open, not merged** — see Security section
+  below. 4 groves/23 repos merged; Nextcloud+CasaOS would bring it to 25 once both merge.
+  (dev)
 - 2026-10-03 — Dev run 60: added Nextcloud (`content/repos/nextcloud.md`, `nextcloud/server`,
   AGPL-3.0) to the Self-Hosted grove — the next item from `PRODUCT.md` §2's own named
   example list (Coolify, Dokploy, CasaOS, Portainer, Immich, Nextcloud) not yet built, with
@@ -36,6 +49,10 @@ entries.
   security lane/owner decides to scope the gate to production dependencies. Logged in
   `TECH-DEBT.md`, filed as issue #126, left PR #125 open rather than merging past a real
   (if low-exposure) security gate failure or quietly weakening the check. (dev)
+
+- 2026-10-03 — Dev run 61: re-confirmed issue #126 still has no upstream fix (fresh
+  `npm audit`); PR #127 (CasaOS) hits the same gate failure as PR #125 — left open
+  rather than merging past it. (dev)
 
 - 2026-10-02 — Security run 11: SEC-006 — the owner provisioned a real Azure Static Web
   Apps deployment directly (`c0a5938`/`c6e47df`), and `push`-to-`main` now deploys for

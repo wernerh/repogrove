@@ -15,13 +15,12 @@ migration, or deploy target needed yet.
 completed run 24.
 
 ## Next action (exactly one)
-Run 60: RG-7/8/9 no reply (RG-7 defaults 2026-10-03T13:02:34Z, ~12h off at this run's
-start). Built Nextcloud for Self-Hosted, PR #125 — NOT merged: a new, diff-independent
-npm audit HIGH finding (braces/GHSA-vfj7-8cjw-p6xm, no fix available yet) fails CI's
-dependency-scan gate on every PR; issue #126 filed for the security lane. #125 is
-otherwise clean (lint/test/build/review all pass). Next: merge #125 once the gate
-clears; apply RG-7's default if still unanswered; grow Self-Hosted (CasaOS) or find
-the next content gap.
+Run 61: RG-7/8/9 no reply (RG-7 defaults 2026-10-03T13:02:34Z, ~10h off at start). Built
+CasaOS for Self-Hosted, PR #127 — NOT merged: blocked on the same diff-independent npm
+audit HIGH finding as PR #125 (braces/GHSA-vfj7-8cjw-p6xm, issue #126, no fix yet). Both
+PRs otherwise clean. Next: merge #125/#127 once the gate clears; apply RG-7's default if
+still unanswered; CasaOS was the last named Self-Hosted spec example — find the next
+content gap via a fresh cross-reference audit.
 
 ## Decisions log
 | Date | Decision | Why | Status | Reversibility |
@@ -45,9 +44,9 @@ Accounts, paid subscriptions, watchlists/alerts, recommendation engine, massive 
 Phases 2 and 3 both completed within budget; no Phase 3 item needed a split.
 
 ## Blockers and attempts
-PR #125 blocked on a new, diff-independent CI gate failure (issue #126, no fix yet
-upstream) — waiting on a patch or a security-lane scoping call. RG-7/8/9 open (see
-Next action); Phase 4 stays stubbed.
+PR #125 and PR #127 both blocked on the same diff-independent CI gate failure (issue
+#126, no fix yet upstream) — waiting on a patch or a security-lane scoping call.
+RG-7/8/9 open (see Next action); Phase 4 stays stubbed.
 
 ## Milestones
 - [x] 2026-09-27/30 — Phase 1 walking skeleton (#5-7); Phase 2 ingestion/metrics/
@@ -55,6 +54,7 @@ Next action); Phase 4 stays stubbed.
   newsletter UI, news widget (#61-72).
 - [x] 2026-09-30/10-03 — Decision-free content growth: dev-tools + Databases groves,
   all dangling alternative refs closed, full comparison matrices (#81-108); Pros/Cons
-  truncation guard (#109); Immich/Portainer/Nextcloud to Self-Hosted (#111/#121/#125,
-  pending merge); ComparisonMatrix mobile-overflow fix (UX-2026-007) — 4 groves/24 repos.
+  truncation guard (#109); Immich/Portainer to Self-Hosted (#111/#121, merged) — 4
+  groves/23 repos merged. Nextcloud/CasaOS (#125/#127, both PRs clean, both blocked on
+  issue #126) would bring Self-Hosted to 10 repos/25 total once merged.
 - [ ] Phase 4+ — not yet scoped; RG-7/8/9 raised (#76-78), awaiting owner

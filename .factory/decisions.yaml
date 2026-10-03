@@ -453,6 +453,14 @@
     dependency-scan gate on every PR — see issue #126/TECH-DEBT.md) — not Phase 4
     groundwork, so doesn't preempt either answer.
 
+    Re-checked 2026-10-03 (dev run 61, via get_thread) — thread 1a0f26990ebc1e9c still
+    exactly the one original message, no owner reply. default_due_at (2026-10-03T13:02:34Z)
+    hasn't passed (~10h off at this run's start). Held off Phase 4 feature work again this
+    run; used it instead for decision-free editorial content work (CasaOS added to the
+    Self-Hosted grove — the last named spec example — PR #127, reviewed PASS WITH NITS,
+    but NOT merged this run: hit the same issue #126 CI gate failure already blocking
+    PR #125) — not Phase 4 groundwork, so doesn't preempt either answer.
+
 - id: RG-8
   lane: dev
   question: >
@@ -539,6 +547,8 @@
 
     Re-checked 2026-10-03 (dev run 60) — no owner reply; stays open, no default applies.
 
+    Re-checked 2026-10-03 (dev run 61) — no owner reply; stays open, no default applies.
+
 - id: RG-9
   lane: dev
   question: >
@@ -619,6 +629,8 @@
     Re-checked 2026-10-02 (dev run 58) — no owner reply; stays open, no default applies.
 
     Re-checked 2026-10-03 (dev run 60) — no owner reply; stays open, no default applies.
+
+    Re-checked 2026-10-03 (dev run 61) — no owner reply; stays open, no default applies.
 - id: RG-10
   lane: security
   question: >
