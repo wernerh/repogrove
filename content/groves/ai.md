@@ -12,6 +12,8 @@ orchestrating agents.
 
 ## Core projects
 - [Ollama](/repo/ollama) — run large language models locally with a simple CLI/API.
+- [Open WebUI](/repo/open-webui) — self-hosted, extensible web chat interface for Ollama
+  and OpenAI-compatible backends.
 - [LangChain](/repo/langchain) — framework for composing LLM calls into applications.
 - [LlamaIndex](/repo/llamaindex) — data framework for connecting LLMs to your own
   documents and data via retrieval-augmented generation (RAG).
