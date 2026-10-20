@@ -41,6 +41,7 @@ describe("getAllRepos (real /content fixtures)", () => {
       "immich",
       "langchain",
       "lazygit",
+      "litellm",
       "llamaindex",
       "localai",
       "neovim",
@@ -179,6 +180,7 @@ describe("getReposInGrove (derived from repo frontmatter, per ADR-003)", () => {
     const reposInAi = getReposInGrove("ai");
     expect(reposInAi.map((r) => r.slug).sort()).toEqual([
       "langchain",
+      "litellm",
       "llamaindex",
       "localai",
       "ollama",
