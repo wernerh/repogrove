@@ -44,6 +44,7 @@ describe("getAllRepos (real /content fixtures)", () => {
       "llamaindex",
       "localai",
       "neovim",
+      "nextcloud",
       "ollama",
       "pocketbase",
       "portainer",
@@ -149,6 +150,21 @@ describe("getAllRepos (real /content fixtures)", () => {
     expect(getRepo("dokploy")?.alternatives.open_source).toEqual(["coolify", "portainer"]);
   });
 
+  it("parses Nextcloud's frontmatter correctly", () => {
+    const nextcloud = getRepo("nextcloud");
+    expect(nextcloud).toBeDefined();
+    expect(nextcloud?.github).toBe("nextcloud/server");
+    expect(nextcloud?.name).toBe("Nextcloud");
+    expect(nextcloud?.license).toBe("AGPL-3.0");
+    expect(nextcloud?.status).toBe("active");
+    expect(nextcloud?.groves).toEqual(["self-hosted"]);
+    // No open-source alternative in the catalog yet (same "empty open_source"
+    // shape as Immich) — nothing else here is a general-purpose file
+    // sync/collaboration suite.
+    expect(nextcloud?.alternatives.open_source).toEqual([]);
+    expect(nextcloud?.alternatives.commercial).toEqual(["Google Drive", "Dropbox", "Microsoft OneDrive"]);
+  });
+
   it("returns undefined for a repo that doesn't exist", () => {
     expect(getRepo("does-not-exist")).toBeUndefined();
   });
@@ -193,6 +209,7 @@ describe("getReposInGrove (derived from repo frontmatter, per ADR-003)", () => {
       "coolify",
       "dokploy",
       "immich",
+      "nextcloud",
       "pocketbase",
       "portainer",
       "supabase",
